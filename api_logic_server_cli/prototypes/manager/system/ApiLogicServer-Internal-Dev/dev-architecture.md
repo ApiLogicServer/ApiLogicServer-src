@@ -4,8 +4,45 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.28
+version: 2.31
 changelog:
+  - 2.31 (Jul 2026) - Added a pointer in `queries_dashboards.md` (v1.5) to the published
+    user-facing doc page https://apilogicserver.github.io/Docs/Admin-Customization/#ai-assistant
+    — confirmed via WebFetch that it documents this exact capability, with the same
+    "sales by region, sales by category" example used to build/test this CE. Validates that
+    the Queries/Dashboards feature isn't just an internal experiment — it's already the
+    documented, canonical example of "AI Assistant customizes the Admin App" for external
+    users. Not a new capability; a cross-reference so the training doc points to public proof
+    it works, not just chat-described behavior.
+  - 2.30 (Jul 2026) - Dashboard iframe PLACEMENT preference: Val compared a screenshot of an
+    older dashboard project (chart at top of Admin App home page, before welcome text) against
+    what the v2.28/2.29 CE builds (chart appended after welcome text) and preferred the older
+    top placement. Investigated: `samples/nw_sample/ui/admin/home.js` (the pre-built reference
+    sample cited elsewhere in this CE) already puts the iframe first, inside the `sla_doc`
+    string itself, right after the opening wrapper `<div>` and before the `<h2>Welcome...`
+    heading — i.e. `nw_sample` was already doing it "the good way"; the CE's own Part 2 step 3
+    documented the opposite (append after) and was inconsistent with the sample it points to.
+    Fixed `queries_dashboards.md` v1.4 (gold + venv — no `nw` project existed to update
+    directly, a fresh Manager workspace from the BLT run in this same session doesn't carry
+    forward manually-created test projects) to place the iframe at the top, matching
+    `nw_sample`. Also fixed the JS snippet itself to edit the `sla_doc` constant directly
+    (inserting before the `<h2>`) rather than `getContent()` appending after — matches how
+    `nw_sample` actually structures the file, not just a change in append-vs-prepend order.
+  - 2.29 (Jul 2026) - **Queries and Dashboards CE shipped** — confirmed intact through a full
+    BLT run (`prototypes/base` v3.32 `.copilot-instructions.md`, `queries_dashboards.md`
+    v1.3, `welcome.md` sync all present in freshly-reinstalled venv). Summary of the full
+    arc (v2.20–2.28 above have the incremental detail): replaces `genai-logic genai-graphics`
+    for chart/dashboard requests with direct AI implementation — capability 18, explain-vs-do
+    branching, query-only-vs-full-dashboard disambiguation (Vibe/React consumption vs. Admin
+    App chart are different deliverables), a concrete-example requirement (project schema or
+    Northwind fallback), and the corrected `/chart_graphics/<name>` Jinja-render step (the
+    real bug found live testing on `nw` — raw `jsonify()` output instead of a rendered
+    Chart.js chart). Also fixed in the process: `welcome.md` capability-list drift (separate,
+    pre-existing bug, v2.26) and a basic_demo-overlay misunderstanding that was corrected
+    before it caused lasting harm (v2.24). This is the first CE feature developed and
+    live-tested end-to-end (real project, real server, real browser) in this dev-architecture
+    doc's history — worth treating as the template for how future CE additions should be
+    validated before considering them done.
   - 2.28 (Jul 2026) - Live end-to-end test on `nw` found a REAL functional bug in
     queries_dashboards.md's Part 2 spec (not just a UX/wording gap like v2.26/2.27): the
     doc's `/chart_graphics/<name>` example returned `jsonify(query_result)` — raw JSON — with

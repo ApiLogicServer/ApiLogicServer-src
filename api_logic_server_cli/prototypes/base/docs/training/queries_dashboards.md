@@ -1,6 +1,6 @@
 ---
 title: Queries and Dashboards
-version: 1.3 (Jul 2026) — CORRECTED Part 2 step 2: /chart_graphics/<name> must render through ui/templates/bar_chart.jinja (Chart.js), not jsonify() the raw query result — real bug found live, route returned 200 with correct data but Admin App showed raw JSON instead of a chart
+version: 1.5 (Jul 2026) — Added link to published user-facing demo (Admin-Customization#ai-assistant), which documents this exact capability with the same sales-by-region/sales-by-category example this file was tested against
 usage: AI reads this when user asks for a dashboard, chart, graph, or a saved/reusable query
 overhead: zero until invoked — file is read on demand only
 ---
@@ -11,6 +11,11 @@ Two related but distinct capabilities, both built on plain SQLAlchemy + a custom
 endpoint — no special framework support, no separate CLI pipeline. This file replaces the
 old `genai-logic genai-graphics` command (ChatGPT/PE pipeline) — same output shape for
 dashboards, produced through the normal custom-API-endpoint workflow instead.
+
+**Published user-facing demo:** [Admin-Customization — AI Assistant](https://apilogicserver.github.io/Docs/Admin-Customization/#ai-assistant)
+shows this exact capability working end-to-end (prompt: *"create a dashboard with sales by
+region, and sales by category"*) — the same use case this file was built and tested against.
+Point users here if they want to see it publicly documented, not just described in chat.
 
 ## ACTIVATION TRIGGERS
 
@@ -185,17 +190,36 @@ def sales_by_category_query():
 **3. 🚨 Manual step — embed the iframe into `ui/admin/home.js`:**
 
 Nothing generates this automatically, and a freshly-created project's `home.js` has no
-dashboard hook by default — you must add it. Find the `getContent()` function (or the
-`sla_doc`/welcome-content string it returns) and append the iframe:
+dashboard hook by default — you must add it.
+
+**Placement: put the iframe at the TOP, before the welcome content — not appended after.**
+This matches `samples/nw_sample/ui/admin/home.js` (the working reference implementation):
+the chart is the first thing a user sees, not something they scroll past a page of text to
+reach. Edit the `sla_doc` string itself (not `getContent()`) — insert the iframe right after
+the opening wrapper `<div>`, before the "Welcome to..." `<h2>`:
 
 ```javascript
+const sla_doc =
+    '<div class="MuiTypography-root jss4" style="color: rgba(0, 0, 0, 0.66)">' +
+    '<div style="text-align:center">' +
+    '<div class="dashboard-iframe">' +
+    '<iframe id="iframeTargetDashboard" src="http://localhost:5656/dashboard" style="flex: 1; border: none; width: 100%; height: 200px;"></iframe>' +
+    '</div>' +
+    '<h2>Welcome to Your GenAI-Logic Project</h2>' +
+    '</div><br>' +
+    // ...rest of existing welcome content unchanged...
+    '</div>'
+
 function getContent(){
-    let result = sla_doc;  // existing welcome content
-    result += '<iframe id="iframeTargetDashboard" src="http://localhost:5656/dashboard" ' +
-              'style="flex: 1; border: none; width: 100%; height: 200px;"></iframe>';
+    let result = "";
+    result += sla_doc;
     return result;
 }
 ```
+
+If `home.js` uses a different structure (e.g. `getContent()` builds the string directly
+rather than via a `const sla_doc`), insert the iframe as the first element appended, before
+any other content — the principle is "chart first," not the specific variable name.
 
 Use the project's actual running port (usually `5656`) — hardcoded, not templated;
 `home.js` is plain JS served statically, no build step to inject it at request time.
