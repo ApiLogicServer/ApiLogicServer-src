@@ -332,11 +332,11 @@ def main():
     readme = readme.lstrip("\n")
     print("  ✅ Front matter and style block stripped")
 
-    # Inject Codespaces + browser notes inside the first "see it work" collapsible
-    # section (idempotent). Match on the lightning-bolt-prefixed <summary> — the
-    # exact wording after ⚡ is gold-source copy (org_git/Docs) and changes
-    # independently of this script, so anchor on the emoji prefix, not the wording.
-    summary_re = re.compile(r"<summary>⚡[^<]*</summary>")
+    # Inject Codespaces + browser notes right after the CODESPACES-INSERT-POINT sentinel
+    # comment (idempotent). The README's gold-source heading text/emoji changes
+    # independently of this script (org_git/Docs), so anchor on the sentinel comment,
+    # not on any heading wording or emoji — that's exactly what the sentinel is for.
+    sentinel_re = re.compile(r"<!-- CODESPACES-INSERT-POINT:[^>]*-->")
     if "Use Chrome or Edge" not in readme:
         cs_note = (
             "\n&nbsp;\n\n"
@@ -344,11 +344,13 @@ def main():
             "in your browser. Nothing to install. (Use Chrome or Edge — Safari has known "
             "compatibility issues with VS Code in the browser.)\n"
         )
-        match = summary_re.search(readme)
+        match = sentinel_re.search(readme)
         if not match:
             raise SystemExit(
-                "ERROR: no '<summary>⚡...</summary>' line found in README.md — "
-                "update this script's summary_re pattern to match the current heading."
+                "ERROR: no CODESPACES-INSERT-POINT sentinel comment found in README.md — "
+                "the sentinel itself must have been removed/renamed; restore it (see "
+                "dev-architecture.md's 'F5 Simple Browser auto-open' / Codespaces sections) "
+                "or update this script's sentinel_re pattern to match."
             )
         readme = readme[:match.end()] + cs_note + readme[match.end():]
         print("  ✅ Codespaces + browser notes injected")
