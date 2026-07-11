@@ -4,8 +4,114 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.19
+version: 2.28
 changelog:
+  - 2.28 (Jul 2026) - Live end-to-end test on `nw` found a REAL functional bug in
+    queries_dashboards.md's Part 2 spec (not just a UX/wording gap like v2.26/2.27): the
+    doc's `/chart_graphics/<name>` example returned `jsonify(query_result)` — raw JSON — with
+    no step that renders it into an actual chart. Followed the doc exactly, generated
+    `nw/api/api_discovery/dashboard_services.py` + wired `home.js`'s iframe (both per spec),
+    restarted the server, and the Admin App home page showed a raw JSON dump instead of a bar
+    chart. Root cause: every project already ships `ui/templates/bar_chart.jinja` (Chart.js,
+    reads exactly the `chart_type`/`title`/`columns`/`results` shape the doc already
+    specifies for step 1) — confirmed via `samples/nw_sample`'s working reference
+    implementation, which renders through this template via `env.get_template('bar_chart.jinja').render(result=..., color=...)`.
+    The doc never mentioned this template at all. Fixed `nw/api/api_discovery/
+    dashboard_services.py` directly (verified live: `/chart_graphics/orders_by_category` now
+    returns rendered HTML, chart displays correctly in Admin App), then corrected
+    `queries_dashboards.md` v1.3 (gold + venv + nw) to render through `bar_chart.jinja`
+    instead of `jsonify()`, and added the raw-JSON symptom to the Verify section so a future
+    session recognizes this failure mode immediately instead of assuming the query is wrong.
+  - 2.27 (Jul 2026) - Live test on `nw`: STEP 0's how-to answer explained query-vs-dashboard
+    correctly but only asked "which table/columns?" in the abstract — no concrete example.
+    Fixed `queries_dashboards.md` v1.2: how-to answers must now show a real example, either
+    from the current project's `database/models.py` (if an obvious aggregate exists) or the
+    Northwind Category/Product/Order fallback (everyone recognizes customers/orders/products).
+  - 2.26 (Jul 2026) - Found and fixed a SEPARATE, pre-existing drift bug while live-testing
+    the Queries/Dashboards CE in a freshly created `nw` project: `.github/welcome.md` (shown
+    on "load .github/.copilot-instructions.md") has its OWN hand-maintained 9-item "What can
+    I help you with?" list, entirely separate from `.copilot-instructions.md`'s "Capabilities
+    Reference" section (shown on "show me what you can help me with") — nothing keeps them in
+    sync, and welcome.md's list had gone stale: missing Vital Signs, Logic Diagram, MCP, FAQ,
+    EAI Consume, and (until now) Queries and Dashboards. This is NOT the v2.24 basic_demo
+    overlay mistake — welcome.md legitimately exists in `prototypes/base/.github/` and IS the
+    file every project (including basic_demo) inherits via the base clone; it was just never
+    updated as capabilities were added over many versions. Fixed by syncing welcome.md's list
+    to the current 14 relevant capabilities (base source, propagated to venv). **Open risk,
+    accepted for now:** these two lists can drift apart again — every future capability added
+    to `.copilot-instructions.md`'s Capabilities Reference should also be added to
+    `welcome.md`'s shorter list, or this bug recurs. No automated check enforces this today.
+  - 2.25 (Jul 2026) - Queries/Dashboards CE (v2.23) had a real gap, found by dry-running the
+    trigger against the question "how would I create a dashboard?": the mandatory sequence
+    had no explain-vs-do branch, so a purely informational question could have caused
+    immediate file writes. Also missing: no explicit distinction between "query alone" (for
+    Vibe/React `fetch()` consumption) and "full dashboard" (query + Admin App iframe
+    embedding) — same underlying query code, different deliverable, and the CE didn't force
+    that choice before coding. Fixed in `prototypes/base` v3.32 (both `.github/
+    .copilot-instructions.md` and `docs/training/queries_dashboards.md`, propagated to venv):
+    added a STEP 0 in the training doc (how-to question → explain + quick example + ask;
+    concrete request → confirm query-vs-dashboard if unstated), a worked example showing both
+    flavors of the same query, and a pointer to `samples/nw_sample` (verified — has both
+    `dashboard_services.py` and the `home.js` iframe wired end-to-end) so the user can see
+    real running code rather than only reading prose. No basic_demo-specific copy needed —
+    see v2.24.
+  - 2.24 (Jul 2026) - CORRECTED v2.23: mistakenly created a redundant `basic_demo`-specific
+    copy of `.copilot-instructions.md` and `docs/training/queries_dashboards.md`, believing
+    the documented base-vs-basic_demo drift warning applied here. It doesn't — checked
+    `cli-internals.md`'s actual overlay mechanics (`create_project_and_overlay_prototypes()`):
+    EVERY project, including `basic_demo`, is cloned from `prototypes/base` FIRST
+    (`shutil.copytree`), THEN `prototypes/basic_demo` is `recursive_overwrite`-overlaid on
+    top. The overlay only touches files that exist in `prototypes/basic_demo`'s own tree —
+    and `prototypes/basic_demo/.github/` contains ONLY `welcome.md` (no
+    `.copilot-instructions.md`), and `prototypes/basic_demo/docs/training/` contains ONLY
+    `logic_diagrams/` (no other files). So `base`'s `.copilot-instructions.md` and
+    `docs/training/*.md` (including the new queries_dashboards.md) reach `basic_demo`
+    projects automatically via the base clone — no separate copy needed, ever, for these two
+    files specifically. Removed the redundant `basic_demo` copies (gold source + venv).
+    **Corrected heuristic:** the base-vs-basic_demo drift risk documented at v2.8 (Jun 2026)
+    is real, but only applies to files that ACTUALLY EXIST in both `prototypes/base/` and
+    `prototypes/basic_demo/` trees — check `ls prototypes/basic_demo/<dir>/` before assuming
+    a base CE/training change needs a matching basic_demo edit. Do not pattern-match "this is
+    a CE file" → "must sync to basic_demo" without that check.
+  - 2.23 (Jul 2026) - Closed the v2.22 dashboard-graphics CE gap: added "Queries and
+    Dashboards" trigger section + capability item 18 to project CE (`prototypes/base` v3.31),
+    plus new `docs/training/queries_dashboards.md` (2 parts: plain aggregate-query custom
+    endpoints, and dashboards — query + `/dashboard` route + the manual `ui/admin/home.js`
+    iframe-embed step spelled out explicitly, since that's the step that actually caused
+    trouble). File is read on-demand only (`overhead: zero until invoked` per its front
+    matter), consistent with the "don't let CE grow unconditionally" constraint — no content
+    loads unless a user asks for a query/dashboard/chart. This is the direct replacement for
+    `genai-graphics` for this use case. (See v2.24 correction re: basic_demo — no separate
+    copy was needed or created there in the end.)
+  - 2.22 (Jul 2026) - CORRECTION to v2.21 audit: dashboard graphics has a real, undocumented-
+    in-code gap the audit missed — `genai-graphics` generates `api/api_discovery/
+    dashboard_services.py` and a `/dashboard` endpoint cleanly, but does NOT wire the result
+    into the Admin App. That's a manual step (hand-edit `ui/admin/home.js` to embed an
+    `<iframe src="http://localhost:5656/dashboard">`), documented only in one user-facing doc
+    page (WebGenAI-CLI.md "Dashboard Graphics" section), not discoverable from code. Val
+    confirmed this was the actually-tricky part in practice, not rule/chart generation itself.
+    This is a CE gap to close (add a "Dashboard Graphics" trigger + home.js wiring steps to
+    project CE), not evidence that genai-graphics's pipeline solves something Claude+CE
+    can't — but it's the one concrete case so far where the code-only audit missed a real
+    integration pain point that only lived in end-user docs. See "GenAI CLI Services" note,
+    genai-graphics row, for the update.
+  - 2.21 (Jul 2026) - Audited all `genai-*` CLI commands (genai, genai-utils, genai-logic,
+    genai-graphics, genai-add-app, genai-add-mcp-client, genai-create/iterate) for
+    deterministic value vs. pure-LLM-re-ask, to inform the v2.20 removal note. Conclusion:
+    no rule-correctness or FK/referential-integrity validation exists anywhere in the
+    "repair loop" — it's exception-catch-and-retry or eslint, not semantic verification —
+    so the hardest problems WebGenAI was built to solve were never actually solved
+    deterministically. The one piece genuinely NOT replaced by an interactive Claude Code
+    session: self-serve, no-IDE, browser-only project creation for non-developer users.
+    That's a hosted-frontend problem, not an AI-pipeline problem — solvable by fronting
+    Claude+CE with a hosted VS Code derivative (code-server/github.dev-style) or cs-mgr's
+    existing Codespaces flow, rather than carrying the ChatGPT/PE stack forward. See
+    updated "GenAI CLI Services" note for the per-command breakdown and this conclusion.
+  - 2.20 (Jul 2026) - Flagged `genai-logic genai-*` (ChatGPT fine-tuned + prompt-engineering
+    pipeline) as a candidate for future removal — Claude + Context Engineering now produces
+    materially better results, without the test-data/error-detection complexity WebGenAI was
+    built to paper over. See "GenAI CLI Services" subsection under AI Integration Architecture,
+    mode 3, for the note. Not yet acted on — no code/docs removed, no deprecation warning added.
   - 2.19 (Jul 2026) - Confirmed live in Codespaces: serverReadyAction fails there the
     same way it did in fresh local project windows (v2.17). cs-mgr's launch.json
     override correctly omits it already — documented as confirmed-correct, not an
@@ -499,6 +605,50 @@ Help me understand what this actually does - I want facts, not sales pitch.
 **Commands:**
 - `genai-logic create --using="natural language"` - Generate complete project from prompt
 - `genai-logic logic-translate --using-file=docs/logic` - Generate rules from NL requirements
+
+**🚨 Candidate for future removal (Jul 2026):** This was the original AI story — fine-tuned
+ChatGPT + prompt engineering, exposed via `genai-logic genai-*` and later wrapped by WebGenAI
+as a full web app on top of the same CLI. WebGenAI in particular turned out very complicated:
+correct test-data generation and detecting/fixing rule-generation errors were persistent, hard
+problems that needed significant machinery to paper over. Claude + Context Engineering (mode 2
+below — System Creation Services, Method 4) is now producing materially superior results without
+that complexity: no fine-tuning pipeline, no WGResult parsing/repair loop, no separate WebGenAI
+build/deploy cycle. Val is considering removing `genai-logic genai-*` (and eventually WebGenAI)
+over time. **Not yet acted on** — no code, prompts, or docs have been removed; this is a forward
+note for whoever picks up that removal, not a statement that it's deprecated today. See also
+`CLAUDE.md`'s standing rule to never run `genai-logic genai` — that predates this note and was
+already steering AI assistants away from this path.
+
+**Command-by-command audit (Jul 2026) — deterministic value vs. pure LLM re-ask:**
+
+| Command | Verdict | Why |
+|---|---|---|
+| `genai` (core) | Some real value | Generates model code from the LLM's structured JSON, then **actually executes it** to build a SQLite DB — catches real Python/SQLAlchemy exceptions (e.g. "Could not determine join condition") and retries once with `use_relns=False`. Not semantic validation, just "does the generated code run." |
+| `genai-utils --fixup` | Pure re-ask | Repackages existing artifacts into a new prompt, resubmits. No static analysis of what's wrong. |
+| `genai-utils --import-genai` | Real, but WebGenAI-only | Merges a WebGenAI export's models into `database/models.py`, builds a DB via `runpy`, triggers `rebuild-from-database`. **Goes away entirely once WebGenAI is gone** — it exists solely to consume WebGenAI's export format. |
+| `genai-utils --rebuild-test-data` | Real, but crude | `response2code.py` does `ast.parse()` syntax repair on generated test-data rows; wraps inserts in try/except with a dedup set for idempotent retries. No FK/referential-integrity checking. |
+| `genai-logic` | Pure re-ask | Splices LLM rule text into a file; no execution/correctness check. Same job an interactive assistant does today with the same training docs open. |
+| `genai-graphics` | Real generator, but incomplete pipeline | Jinja-templated dashboard scaffolding; wraps each generated chart query in try/except so one bad query doesn't break the dashboard. **Gap (found Jul 2026, confirmed by Val as the actually-tricky part):** generates `api/api_discovery/dashboard_services.py` + a `/dashboard` endpoint, but does NOT wire it into the Admin App — that requires a manual hand-edit of `ui/admin/home.js` to embed `<iframe src="http://localhost:5656/dashboard">`, documented only in [WebGenAI-CLI.md](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#dashboard-graphics), not discoverable from code. An AI assistant without that doc open will generate the dashboard service correctly and then flail on Admin App integration — exactly what happened when this was tried live. This is a CE gap to close (document the trigger + home.js wiring as a proper CE pattern), not a reason to keep the genai-* pipeline. |
+| `genai-add-app` | Mixed | Runs real `eslint` on generated JS (genuine quality gate) — but on failure just re-asks the LLM from scratch, no auto-fix. `--vibe` flag is only a doc-link log message, no content. |
+| `genai-add-mcp-client` | Real, trivial | No LLM call at all — copies a template file, splices YAML. Worth keeping as a plain CLI utility independent of the genai-* question. |
+| `genai-create`/`genai-iterate` | Bookkeeping only | Prompt-file naming/sequencing for conversation replay; no AI-specific logic. |
+
+**Bottom line of the audit:** there is no rule-correctness or FK/referential-integrity
+validation anywhere in this system's "repair loop" — it's exception-catch-and-retry, or
+eslint, or `ast.parse()`, never semantic verification that rules fire correctly or that test
+data satisfies referential integrity. The hardest problems WebGenAI was built to paper over
+(correct test data, detecting/fixing rule-generation errors) were never actually solved
+deterministically — which matches the lived experience that motivated this whole note.
+
+**What's genuinely lost if WebGenAI goes away: the self-serve, no-IDE, browser-only
+experience** — a non-developer sketching a schema+logic and getting a hosted, running app
+without touching a CLI or editor. Every other capability (rule generation, test data,
+dashboards, React scaffolding) is already matched or exceeded by an interactive Claude Code
+session using this project's CE docs. That's a hosted-frontend problem, not an AI-pipeline
+problem: solvable by fronting Claude + CE with a hosted VS Code derivative (code-server /
+github.dev-style web IDE) or extending `codespaces_mgr`'s existing Codespaces flow — either
+gives a browser-only user the *same* Claude+CE experience developers get locally, rather than
+maintaining a second, weaker, ChatGPT/PE-based pipeline just to serve that one audience.
 
 **What it does:** Transforms natural language → working projects:
 - Parses NL requirements
