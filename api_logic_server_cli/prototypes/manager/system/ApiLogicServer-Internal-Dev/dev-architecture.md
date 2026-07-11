@@ -4,8 +4,23 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.31
+version: 2.32
 changelog:
+  - 2.32 (Jul 2026) - `create_codespaces_mgr.py --release` was broken: step 2d's README.md
+    patch matched on a lightning-bolt-prefixed `<summary>⚡...</summary>` heading that no
+    longer exists anywhere in the current README (removed during unrelated readme rewrites,
+    exact commit not identified) — every `--release` since then would have hard-crashed at
+    this step with `SystemExit`. Found live releasing 17.03.00 (dashboard/queries CE): the
+    run got through Step 1 (file sync) and left `codespaces_mgr` on `dev` with the sync
+    staged but uncommitted/unpushed, then crashed. Fixed by anchoring on the
+    `CODESPACES-INSERT-POINT` sentinel HTML comment (already present in README.md
+    specifically for this purpose, right after "🚀 First Time Here?") instead of matching
+    heading text/emoji, which drifts independently in the Docs-repo gold source. After
+    discarding the partial sync (safe — it was 100% script output, nothing hand-edited) and
+    re-running with the fix, release completed cleanly: synced, committed to `dev`, merged to
+    `main`, tagged `17.03.00`, devcontainer.json prebuild-trigger bumped, pushed. Fixed in
+    gold source (`org_git/ApiLogicServer-src`), local-mgr's own `.devcontainer-codespaces/`
+    copy, and venv.
   - 2.31 (Jul 2026) - Added a pointer in `queries_dashboards.md` (v1.5) to the published
     user-facing doc page https://apilogicserver.github.io/Docs/Admin-Customization/#ai-assistant
     — confirmed via WebFetch that it documents this exact capability, with the same
