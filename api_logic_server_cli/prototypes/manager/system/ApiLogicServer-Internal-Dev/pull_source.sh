@@ -124,9 +124,16 @@ do_blt() {
         echo "x BLT script not found: $blt_script"
         exit 1
     fi
+    local blt_venv_activate="$ORG_GIT/ApiLogicServer-src/venv/bin/activate"
+    if [ ! -f "$blt_venv_activate" ]; then
+        echo "x BLT venv not found: $blt_venv_activate"
+        exit 1
+    fi
     echo ""
     echo "Running BLT from $ORG_GIT/ApiLogicServer-src ..."
-    ( cd "$ORG_GIT/ApiLogicServer-src" && sh tests/build_and_test/blt.sh s )
+    # blt.sh calls bare 'python3' - it expects this venv (which has requests, etc.
+    # installed) to already be active, not system python3.
+    ( cd "$ORG_GIT/ApiLogicServer-src" && . "$blt_venv_activate" && sh tests/build_and_test/blt.sh s )
 }
 
 case "${1:-}" in
