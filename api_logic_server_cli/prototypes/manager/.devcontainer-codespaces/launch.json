@@ -17,10 +17,14 @@
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "program": "api_logic_server_run.py",
-            "python": "${command:python.interpreterPath}",
+            "python": "/usr/local/bin/python",
             "redirectOutput": true,
             "console": "integratedTerminal",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "Python: Current File",
@@ -28,7 +32,7 @@
             "request": "launch",
             "program": "${file}",
             "cwd": "${fileDirname}",
-            "python": "${command:python.interpreterPath}",
+            "python": "/usr/local/bin/python",
             "redirectOutput": true,
             "justMyCode": false,
             "console": "integratedTerminal"

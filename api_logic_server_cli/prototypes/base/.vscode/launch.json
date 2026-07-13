@@ -7,7 +7,7 @@
         {
             "name": "Run Project (start server)",
             "type": "debugpy",
-            "python": "${command:python.interpreterPath}",
+            "python": "/usr/local/bin/python",
             "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "", 
@@ -21,12 +21,16 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "Run Project DEBUG",
             "type": "debugpy",
-            "python": "${command:python.interpreterPath}",
+            "python": "/usr/local/bin/python",
             "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "", 
@@ -41,12 +45,16 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "  - API Logic Server - VERBOSE",
             "type": "debugpy",
-            "python": "${command:python.interpreterPath}",
+            "python": "/usr/local/bin/python",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "api_logic_server_run.py",
@@ -60,12 +68,16 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=True"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "  - No Security ApiLogicServer (e.g., simpler swagger)",
             "type": "debugpy",
-            "python": "${command:python.interpreterPath}",
+            "python": "/usr/local/bin/python",
             "request": "launch",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
@@ -78,12 +90,16 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "  - No Security ApiLogicServer VERBOSE",
             "type": "debugpy",
-            "python": "${command:python.interpreterPath}",
+            "python": "/usr/local/bin/python",
             "request": "launch",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
@@ -97,7 +113,11 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "Test - test/basic/server_test.py",
