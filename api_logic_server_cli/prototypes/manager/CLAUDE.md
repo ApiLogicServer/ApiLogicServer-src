@@ -15,6 +15,6 @@ All file operations use the project subdirectory as prefix — you are running f
 ---
 
 ## Follow the Manager CE (Method 4)
-For all domain project creation, follow the Method 4 sequence in `.github/.copilot-instructions.md` exactly — STEP 1 through STEP 5, uninterrupted.
+For all domain project creation, follow the Method 4 sequence in `.github/copilot-instructions.md` exactly — STEP 1 through STEP 5, uninterrupted.
 
 ⚠️ STEP 5 is mandatory — do not skip it. Write `<name>/docs/requirements/readme.md` (provenance) and `<name>/docs/requirements/ad-libs.md` (every assumption or guess made beyond the prompt spec) before telling the user the project is done.
