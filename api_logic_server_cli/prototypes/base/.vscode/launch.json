@@ -7,7 +7,7 @@
         {
             "name": "Run Project (start server)",
             "type": "debugpy",
-            "python": "/usr/local/bin/python",
+            "python": "${command:python.interpreterPath}",
             "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "", 
@@ -30,7 +30,7 @@
         {
             "name": "Run Project DEBUG",
             "type": "debugpy",
-            "python": "/usr/local/bin/python",
+            "python": "${command:python.interpreterPath}",
             "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "", 
@@ -54,7 +54,7 @@
         {
             "name": "  - API Logic Server - VERBOSE",
             "type": "debugpy",
-            "python": "/usr/local/bin/python",
+            "python": "${command:python.interpreterPath}",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "api_logic_server_run.py",
@@ -77,7 +77,7 @@
         {
             "name": "  - No Security ApiLogicServer (e.g., simpler swagger)",
             "type": "debugpy",
-            "python": "/usr/local/bin/python",
+            "python": "${command:python.interpreterPath}",
             "request": "launch",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
@@ -99,7 +99,7 @@
         {
             "name": "  - No Security ApiLogicServer VERBOSE",
             "type": "debugpy",
-            "python": "/usr/local/bin/python",
+            "python": "${command:python.interpreterPath}",
             "request": "launch",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
