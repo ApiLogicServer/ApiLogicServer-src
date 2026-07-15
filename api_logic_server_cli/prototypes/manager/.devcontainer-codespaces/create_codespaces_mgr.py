@@ -357,6 +357,29 @@ def main():
     else:
         print("  (notes already present, skipped)")
 
+    # AI Assistance opener: swap the LOCAL-MGR-ONLY paragraph(s) for the
+    # CODESPACES-ONLY paragraph(s) — cs-mgr is Copilot-only (no Claude Code
+    # CLI/plugin available), so "any AI assistant works" is misleading there.
+    # Both variants live in gold source, wrapped in HTML comments: the
+    # LOCAL-MGR-ONLY block renders natively (plain markdown) everywhere except
+    # here; the CODESPACES-ONLY block is comment-suppressed everywhere except
+    # here. This is a straight block-for-block swap, not a text-pattern
+    # replace, so it doesn't drift if the surrounding wording changes later.
+    local_mgr_re = re.compile(
+        r"<!-- LOCAL-MGR-ONLY-START -->\n.*?\n<!-- LOCAL-MGR-ONLY-END -->\n?",
+        re.DOTALL,
+    )
+    codespaces_re = re.compile(
+        r"<!-- CODESPACES-ONLY-START\n(.*?)\nCODESPACES-ONLY-END -->\n?",
+        re.DOTALL,
+    )
+    if "<!-- LOCAL-MGR-ONLY-START -->" in readme:
+        readme = local_mgr_re.sub("", readme)
+        readme = codespaces_re.sub(lambda m: m.group(1) + "\n", readme)
+        print("  ✅ AI Assistance opener swapped for Codespaces-specific wording")
+    else:
+        print("  (AI Assistance opener already swapped, skipped)")
+
     readme_path.write_text(readme)
 
     # .vscode/settings.json — global interpreter (Manager root)
