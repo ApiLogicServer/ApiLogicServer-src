@@ -43,17 +43,6 @@ export const getLSConf = ()=> {
   return result;
 };
 
-export const doTelemetry = () => {
-  const currentDate = new Date().toISOString();
-  if(localStorage.getItem("telemetry")){
-    return;
-  }
-  fetch('https://apifabric.ai/static2/tm?p='+document.location.href)
-  .finally(() => {
-    localStorage.setItem("telemetry", currentDate);
-  })
-}
-
 const json2Conf = (conf) => {
   let result = conf;
   if (!result.resources) {
@@ -323,7 +312,6 @@ export const loadHomeConf = async () => {
   
   const projectId = getProjectId();
   console.debug("loadHomeConf:",projectId, window.location.pathname);
-  doTelemetry();
   
   // const storedConfigs = localStorage.getItem("raconfigs");
   // let configs = storedConfigs ? JSON.parse(storedConfigs) : {};
@@ -362,7 +350,6 @@ export const loadHomeConfTbd = async () => {
   let configs = storedConfigs ? JSON.parse(storedConfigs) : {};
   let found = false;
   console.debug("loadHomeConf path:", window.location.pathname);
-  doTelemetry();
   
   for (let root in configs) {
     let conf = configs[root];

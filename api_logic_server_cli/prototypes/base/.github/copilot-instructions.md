@@ -1,5 +1,5 @@
 ---
-version: 3.32 - 7/11/26 - Queries and Dashboards trigger now branches explain-vs-do and forces the query-only-vs-full-dashboard choice explicitly (Vibe/React consumption vs. Admin App chart are different deliverables) before writing code; training doc gained a quick worked example + nw_sample pointer
+version: 3.36 - 7/15/26 - Live-tested the Tree Views guidance (v3.35) end-to-end by building a component from the written CE text alone, blind to Department.js's source. Found and fixed 2 real bugs the guidance let through: (1) useNavigate's import source was unstated, defaulted wrongly to react-admin (fixed in both Map Views and Tree Views); (2) a first pass matching the guidance's literal "valid alternative" (navigate-only) rendered a visibly thinner result than the reference's inline detail panel. Rewrote that bullet: inline detail panel via useGetOne + useGetManyReference (with labeled Tabs showing counts) is now the PRIMARY pattern, navigate-only is the fallback. Also added a new bullet: verify each relationship's real FK field name in models.py before writing useGetManyReference's target= — Employee's FK to Department is WorksForDepartmentId, not DepartmentId, and a wrong guess compiles fine and fails silently (empty list, no error). Second pass re-verified live in the browser: correct 3-level tree, inline detail panel, real Sub-Departments/Employees tab counts and data.
 ---
 
 ---
@@ -47,7 +47,7 @@ Now extend this generated foundation:
 **Business Logic** - Add declarative rules (5 lines, not 200+ procedural code)  
 **Custom APIs** - Add endpoints in `api/api_discovery/` for complex business transactions  
 **Security** - Add RBAC with `genai-logic add-auth`  
-**React Apps** - Create custom UIs with `genai-logic genai-add-app --vibe`  
+**React Apps** - Create custom UIs — I generate them directly from `ui/admin/admin.yaml` (see `ui/app_readme.md`)  
 **Integration** - Add Kafka events, webhooks, B2B APIs  
 **Testing** - Create Behave tests with requirements traceability  
 **MCP Integration** - Natural language queries, orchestration, AI agent integration via Model Context Protocol  
@@ -298,7 +298,7 @@ When user asks "what can I do here", "what can you help me with", "what can you 
 
 1. **Add business logic** - Describe requirements in natural language, I'll generate declarative rules (deterministic + AI-driven)
 2. **Customize the API** - Add custom endpoints for your specific needs
-3. **Create custom UIs** - Build React apps with `genai-logic genai-add-app --vibe`
+3. **Create custom UIs** - Build React apps — I generate them directly from `ui/admin/admin.yaml`, no OpenAI key needed (see `ui/app_readme.md`)
 4. **Add security** - Bootstrap with `genai-logic add-auth` (CLI), then declare roles/grants/filters in `security/declare_security.py` (NL → AI → code, same pattern as logic rules)
 5. **Test your logic** - Create Behave tests with requirements traceability
 6. **Configure Admin UI** - Customize the auto-generated admin interface
@@ -555,8 +555,48 @@ Source: ApiLogicServer-src/prototypes/base/.github/.copilot-instructions.md
 Propagation: CLI create command → created projects (non-basic_demo)
 Instrucions: Changes must be merged from api_logic_server_cli/prototypes/basic_demo/.github - see instructions there
 Usage: AI assistants read this when user opens any created project
-version: 3.32
+version: 3.36
 changelog:
+  - 3.36 (Jul 15, 2026) - Live-verified Tree Views guidance (3.35) by building blind from the
+    written text, no peeking at Department.js source. Found + fixed: useNavigate import
+    source unstated (defaults wrongly to react-admin — same fix applied to Map Views);
+    click-to-detail's "navigate-only" framing let a visibly thinner result through, so it's
+    now explicitly the fallback, not co-equal with the inline-panel pattern (useGetOne +
+    useGetManyReference + labeled Tabs w/ counts is now PRIMARY); added a bullet requiring FK
+    field-name verification against models.py before writing useGetManyReference's target=
+    (Employee's FK to Department is WorksForDepartmentId, guessing DepartmentId compiles and
+    fails silently — empty list, no error). Re-verified live after the fix: correct 3-level
+    tree + working inline detail panel with real relational data.
+  - 3.35 (Jul 15, 2026) - React Component Development Best Practices: added "Tree Views"
+    subsection — react_tree.prompt.md + Department.js (DepartmentTreeView/ExpandableTreeNode)
+    as reference; useGetList (full flat list, not paginated), client-side tree build via
+    parent/child filtering (parseInt both sides of the FK/PK comparison), MUI Collapse not
+    style jsx, click-to-detail (inline panel or navigate), List/Tree toggle matching Map
+    Views' pattern. Explicitly flags samples/nw_sample/.../DepartmentTree.js as an abandoned
+    draft (broken style jsx under CRA, no click-through, never imported by App.js) sitting in
+    the same folder as the real implementation — checking a sample's App.js imports before
+    trusting any file in it is now the documented habit, closing the exact gap the Map Views
+    entry (3.34) surfaced.
+  - 3.34 (Jul 15, 2026) - React Component Development Best Practices: added "Map Views"
+    subsection (leaflet/react-leaflet, real lat/long columns preferred with country-jitter as
+    a legitimate documented fallback — see react_map.prompt.md, local marker icon assets not
+    CDN hotlinks, List/Map toggle, clickable markers → Show page). Real case: built a Supplier
+    map from general Leaflet knowledge without checking
+    samples/nw_sample/ui/reference_react_app/src/Supplier.js first — result was functionally
+    fine but missed UX patterns nw_sample already had (toggle, click-through). Sharpened the
+    existing "reference existing implementations" bullet from a vague reminder into a concrete
+    pointer at nw_sample's reference_react_app, since that vague form didn't actually prevent
+    the skip.
+  - 3.33 (Jul 15, 2026) - "Create and Customize React Apps" now defaults to direct
+    AI-assistant generation (this assistant generates the app itself from admin.yaml,
+    using docs/training/admin_app_2_functionality.prompt.md for the per-resource pattern
+    and ui/app_readme.md for the workflow) — no OpenAI key needed. The old CLI
+    `genai-add-app --vibe` (ChatGPT-driven, one API call per resource) is now a documented
+    fallback for environments with no AI assistant session, not the primary path. Updated
+    all 4 trigger points: capability list (x2), the "Create runnable UI" fallback mention,
+    and the full React Apps section. Confirmed live: direct generation of a 6-resource app
+    (add_vibe_basic_demo) worked end-to-end — npm install, npm start, and the running app
+    correctly rendered against the live API, including a card-view customization pass.
   - 3.32 (Jul 11, 2026) - Queries and Dashboards trigger: added explain-vs-do branch (a
     how-to question gets an explanation + the doc's quick example, not immediate file
     writes) and made the query-only-vs-full-dashboard choice an explicit STEP before coding
@@ -1215,7 +1255,7 @@ This auto-generates correct `models.py` with all boilerplate intact.
    **Pattern:** `session.add_all([parents...]); session.commit()` before constructing any child that
    a formula reads via an FK column. Use `parent_id=parent.id`, not `parent=parent`.
 
-   **"Create runnable UI with examples"** means: load example data via the seed script, then open the Admin App at `http://localhost:5656`. The Admin App IS the runnable UI — full CRUD, relationships, filtering, sorting. Do NOT create a custom HTML page, Flask template, or calculator endpoint. If a production-quality custom UI is needed, use `genai-logic genai-add-app --vibe` (generates a React app).
+   **"Create runnable UI with examples"** means: load example data via the seed script, then open the Admin App at `http://localhost:5656`. The Admin App IS the runnable UI — full CRUD, relationships, filtering, sorting. Do NOT create a custom HTML page, Flask template, or calculator endpoint. If a production-quality custom UI is needed, generate a React app directly from `ui/admin/admin.yaml` (see `ui/app_readme.md`) — no OpenAI key required.
 
 8. **Add logic** — declare `Rule.*` rules in `logic/logic_discovery/` using `docs/training/logic_bank_api.md`. Use `Rule.formula`, `Rule.sum`, `Rule.copy`, `Rule.constraint` — never procedural code in endpoints.
 
@@ -2056,19 +2096,33 @@ resources:
 
 ### Create and Customize React Apps
 
-**REQUIRED METHOD**: Complete customization is provided by generating a React Application (requires OpenAI key, Node):
+**DEFAULT METHOD — generate the app yourself, directly, no OpenAI key needed:**
 
-**DO NOT use `create-react-app` or `npx create-react-app`**
-**ALWAYS use this command instead:**
+**DO NOT use `create-react-app` or `npx create-react-app`.**
 
-```bash
-# Create: ui/admin/my-app-name
-genai-logic genai-add-app --app-name=my-app-name --vibe
-```
+Read `ui/app_readme.md` first — it explains the fast-loop philosophy (get
+`admin.yaml` right first, then generate, then layer on presentation) and gives
+the exact command. In short:
 
-Then, `npm install` and `npm start`
+1. Copy the skeleton from `system/genai/app_templates/react-admin-template/`
+   into `ui/<app-name>/` (a sibling of `ui/admin/`, never inside it).
+2. Read `docs/training/admin_app_2_functionality.prompt.md` for the required
+   per-resource structure (List/Show/Create/Edit) and the reporting format.
+3. Generate one resource `.js` file per table in `ui/admin/admin.yaml`
+   (default: one at a time, reporting progress — see that file for when
+   batching is reasonable), then wire `App.js`.
+
+Then, `npm install` and `npm start`.
 
 Temporary restriction: security must be disabled.
+
+**Fallback (only if no AI assistant is available in this environment):** the
+CLI generator calls OpenAI directly, one API call per resource file:
+```bash
+genai-logic genai-add-app --app-name=my-app-name --vibe
+```
+Requires an OpenAI key in `.env`. Produces the same output shape as the
+default method — prefer the default whenever you're running as the assistant.
 
 **IMPORTANT**: When working with React apps, ALWAYS read `docs/training` first. This file contains critical data access provider configuration that was built when the project was created. The data provider handles JSON:API communication and record context - ignore this at your peril.
 
@@ -2109,7 +2163,117 @@ Customize using CoPilot chat, with `docs/training`.
 **Common Mistakes to Avoid**:
 - Using `{ data, ids }` destructuring and trying to map over `ids` - this pattern is outdated
 - Creating complex error handling when simple loading checks suffice
-- Not referencing existing working implementations before creating new patterns
+- Not referencing existing working implementations before creating new patterns —
+  🚨 **BEFORE building any custom view type for the first time in a project (map, chart,
+  gallery, tree, calendar, etc.), check `samples/nw_sample/ui/reference_react_app/src/` first.**
+  It has working, iterated implementations of most view types. Real case: a map view was
+  built from general Leaflet knowledge without checking `nw_sample/.../Supplier.js` first —
+  the result was functionally fine but missed patterns nw_sample had already solved (see
+  Map Views below). Check first; don't rediscover a solved problem from scratch.
+
+**Map Views (e.g., "add a map for X"):**
+
+Use `leaflet` + `react-leaflet` (OpenStreetMap tiles — free, no API key). Reference
+implementation: `samples/nw_sample/ui/reference_react_app/src/Supplier.js`. Combine the
+strengths of both known implementations:
+
+- ✅ **List/Map toggle — map is optional, not always-shown.** Use a `ToggleButtonGroup`
+  (`view` state, default `'list'`) so the table stays primary and the map is opt-in. Do NOT
+  render the map unconditionally above the list — it pushes content down on every visit even
+  for users who don't care about geography that day.
+- ✅ **Markers are clickable → navigate to the record's Show page** (`useNavigate()` +
+  `onClick`/`eventHandlers.click`), not just a static `<Popup>` with no way to drill in.
+  🚨 `useNavigate` is imported from **`react-router-dom`**, not `react-admin` — `import {
+  useNavigate } from 'react-router-dom';`. It is not one of react-admin's own hooks (unlike
+  `useGetList`/`useListContext`/`useRecordContext`), and importing it from `react-admin`
+  fails to compile (`Attempted import error: 'useNavigate' is not exported from
+  'react-admin'`). Confirmed via a live blind-build trial of the Tree Views guidance below —
+  the same mistake is equally possible there.
+- ✅ **Prefer real lat/long columns on the model over geocode-by-guess from a text field.**
+  If the entity has no coordinates and adding them is in scope, add `latitude`/`longitude`
+  columns via DDL + `rebuild-from-database` (see "After Database Schema Changes" above),
+  backfill real or reasonably-researched coordinates, and offer the `admin.yaml` merge —
+  gives real positions, not approximate ones, and the fields become editable like any other.
+  A country-name-keyed lookup table with random jitter to avoid overlapping markers (e.g.
+  `{'USA': [39.8, -98.5], ...}` + `± Math.random()`) is a legitimate documented pattern too
+  (see `docs/training/react_map.prompt.md`) — use it when the only location data available
+  is a country/region text field and adding real coordinate columns is out of scope for the
+  request. Ask which fits if it's not obvious from the prompt; don't silently pick one.
+- ✅ **Load marker icon assets locally via `require(...)`, never hotlink to external CDNs at
+  runtime** (`cdnjs.cloudflare.com`, `raw.githubusercontent.com`, etc.). `leaflet`'s default
+  icons resolve relative to the page URL under webpack bundling — fix with:
+  ```javascript
+  delete L.Icon.Default.prototype._getIconUrl;
+  L.Icon.Default.mergeOptions({
+      iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+      iconUrl: require('leaflet/dist/images/marker-icon.png'),
+      shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+  });
+  ```
+  Hotlinking makes every marker depend on a third-party host being up at render time, and
+  leaks a request to that host on every page load — avoidable, since the assets ship inside
+  the `leaflet` package already installed locally.
+- Fetch data directly (`fetch(`${serverRoot}/api/<Resource>/`)`) rather than relying solely
+  on `useListContext()` if the map needs to render fields the List's own data isn't already
+  providing, or needs to live in a component that isn't a `List` descendant.
+
+**Tree Views (e.g., "show X as a tree/hierarchy", self-referencing FK data):**
+
+For a self-referencing FK hierarchy (a table with a nullable FK to itself, e.g.
+`Department.DepartmentId → Department.id`), reference prompt:
+`docs/training/react_tree.prompt.md`. Reference implementation:
+`samples/nw_sample/ui/reference_react_app/src/Department.js` (`DepartmentTreeView` +
+`ExpandableTreeNode`, wired into `DepartmentList`) — **not**
+`samples/nw_sample/.../DepartmentTree.js`, an earlier draft left in the same folder that is
+never imported by `App.js`. Check `App.js`'s imports before trusting any file in a sample as
+"the" reference — a sample can contain abandoned drafts alongside the wired-in version, same
+filename-adjacent trap as picking a stale doc copy.
+
+- ✅ **Use react-admin's `useGetList()`, not raw `fetch()`**, to load the full flat dataset
+  (`pagination: { page: 1, perPage: 1000 }` to get all rows in one call, since a tree needs
+  the whole hierarchy client-side to build parent/child relationships — not react-admin's
+  normal paginated page-at-a-time List data).
+- ✅ **Build the tree client-side from the flat list**: filter root rows (`!row.<fk> ||
+  row.<fk> === null`), then recursively filter children by `<fk> === parent.id` inside the
+  node component itself (see `ExpandableTreeNode`) — do not fetch per-node from the API as
+  the user expands; the flat list already has everything.
+- ✅ **Use MUI components** (`Collapse`, `IconButton`, `ExpandMoreIcon`/`ChevronRightIcon`,
+  `Box`/`Paper`), not hand-rolled `<div>` + inline `<style jsx>` — `style jsx` is a
+  Next.js/styled-jsx feature and does not work as scoped CSS in a plain CRA build (the
+  abandoned `DepartmentTree.js` draft has this exact bug — another reason not to reference it).
+- ✅ **PRIMARY PATTERN — clicking a node name shows a real inline detail panel, not just a
+  navigation stub.** Default to it; don't stop at "clicking navigates somewhere" and call the
+  tree done. Confirmed live (blind CE-guidance build, Jul 2026): a first pass that only
+  `useNavigate()`'d to the resource's Show route compiled and ran, but was visibly thinner
+  than the reference — no inline detail, no counts, no tabs, nothing to look at without a
+  second page load. The reference pattern is the bar to hit:
+  - `onDepartmentClick` (or equivalent) sets a `selected` state; render a detail panel
+    side-by-side with the tree (`Box sx={{ display: 'flex' }}`, tree ~50%, detail ~50% when
+    something is selected, 100% when nothing is).
+  - Fetch the selected row's own data with `useGetOne(resource, { id })`.
+  - Fetch its related children/records with `useGetManyReference(childResource, { target:
+    '<fk_field>', id, pagination, sort })` — one call per relationship tab, not a manual
+    filter over an already-loaded flat list.
+  - Render those as labeled `Tabs`/`Tab` (e.g. "Sub-Departments (N)", "Employees (N)") with
+    the count in the tab label, matching the Admin App's own Show-page convention.
+  - `useNavigate()` to the Show route (import from `react-router-dom` — see Map Views note
+    above) is acceptable only as a lighter-weight fallback when an inline panel is genuinely
+    out of scope for the request — not the default.
+- ✅ **List/Tree toggle**, same `ToggleButtonGroup` pattern as Map Views — tree is one view
+  mode among others on the same List page, not a separate resource or route.
+- `parseInt()` both sides of an FK-to-PK comparison when filtering children
+  (`parseInt(dept.DepartmentId) === parseInt(department.id)`) — JSON:API can return these as
+  either numbers or numeric strings depending on the field, and a strict `===` silently
+  produces an empty tree if the types don't match.
+- 🚨 **Verify each relationship's actual FK field name in `database/models.py` before writing
+  `useGetManyReference(..., target: '<fk>')` — do not assume `target` matches the parent
+  table's singular name.** Confirmed live: `Employee`'s FK to `Department` is
+  `WorksForDepartmentId` (and a second, separate `OnLoanDepartmentId` — two relationships to
+  the same parent, the same ambiguity `Rule.sum`/`count`'s `child_role_name` disambiguates on
+  the LogicBank side), not `DepartmentId`. Guessing the field name compiles fine and fails
+  silently at runtime — `useGetManyReference` just returns an empty/wrong list, no error
+  surfaces. Check the model or hit the API directly
+  (`curl .../api/<ChildResource>/?page[limit]=1`) and read the real attribute keys first.
 
 ### Security - Role-Based Access Control
 

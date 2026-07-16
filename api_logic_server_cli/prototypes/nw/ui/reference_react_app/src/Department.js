@@ -7,31 +7,43 @@ import { ReferenceInput, SelectInput, SimpleForm, Show, Edit, Create } from 'rea
 import { Pagination, Labeled } from 'react-admin'; 
 import { EditButton, DeleteButton, CreateButton } from 'react-admin';
 import { Grid, Typography, Box, Divider, Button, ToggleButton, ToggleButtonGroup, Paper, Collapse, IconButton, Tabs, Tab as MuiTab } from '@mui/material';
-import { useRecordContext, useRedirect, useGetList } from 'react-admin';
+import { useRecordContext, useRedirect, useGetList, useGetOne, useGetManyReference } from 'react-admin';
 import AddIcon from '@mui/icons-material/Add';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import FolderIcon from '@mui/icons-material/Folder';
+import DescriptionIcon from '@mui/icons-material/Description';
+import ArticleIcon from '@mui/icons-material/Article';
 // end mandatory imports
 
+// Regenerated per .github/copilot-instructions.md "Tree Views" guidance (CE v3.36) —
+// live-verified against samples/nw_sample before being folded back in here.
+
+const levelIcon = (level) => {
+    if (level === 0) return <FolderIcon fontSize="small" sx={{ mr: 0.5 }} />;
+    if (level === 1) return <DescriptionIcon fontSize="small" sx={{ mr: 0.5 }} />;
+    return <ArticleIcon fontSize="small" sx={{ mr: 0.5 }} />;
+};
+
 // Expandable Tree Node Component
-const ExpandableTreeNode = ({ department, allDepartments, onDepartmentClick, level = 0 }) => {
+const ExpandableTreeNode = ({ department, allDepartments, onDepartmentClick, selectedId, level = 0 }) => {
     const [expanded, setExpanded] = useState(false);
-    
+
     // Get children for this department - children have this department as their parent
-    const children = allDepartments?.filter(dept => 
-        dept.DepartmentId && parseInt(dept.DepartmentId) === parseInt(department.id)
-    ) || [];
-    
+    const children = allDepartments.filter(
+        d => d.DepartmentId != null && parseInt(d.DepartmentId) === parseInt(department.id)
+    );
     const hasChildren = children.length > 0;
-    
+    const isSelected = selectedId === department.id;
+
     const handleToggle = () => {
         if (hasChildren) {
             setExpanded(!expanded);
         }
     };
-    
+
     return (
         <Box>
             {/* Department Row */}
@@ -40,36 +52,37 @@ const ExpandableTreeNode = ({ department, allDepartments, onDepartmentClick, lev
                 <IconButton
                     size="small"
                     onClick={handleToggle}
-                    sx={{ 
-                        width: 24, 
-                        height: 24, 
+                    sx={{
+                        width: 24,
+                        height: 24,
                         mr: 0.5,
                         visibility: hasChildren ? 'visible' : 'hidden'
                     }}
                 >
                     {expanded ? <ExpandMoreIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />}
                 </IconButton>
-                
+
                 {/* Department Button */}
                 <Button
                     variant="text"
                     onClick={() => onDepartmentClick(department)}
-                    sx={{ 
+                    sx={{
                         textAlign: 'left',
                         textTransform: 'none',
                         fontWeight: level === 0 ? 'bold' : 'normal',
                         justifyContent: 'flex-start',
                         p: 0.5,
-                        color: level === 0 ? 'text.primary' : level === 1 ? 'text.secondary' : 'text.disabled',
+                        color: isSelected ? 'secondary.main' : level === 0 ? 'text.primary' : level === 1 ? 'text.secondary' : 'text.disabled',
+                        bgcolor: isSelected ? 'action.selected' : 'transparent',
                         fontSize: level === 0 ? '1rem' : level === 1 ? '0.9rem' : '0.85rem',
                         minWidth: 'auto',
                         flex: 1
                     }}
                 >
-                    {level === 0 ? '📁' : level === 1 ? '📄' : '📃'} {department.DepartmentName}
+                    {levelIcon(level)} {department.DepartmentName}
                 </Button>
             </Box>
-            
+
             {/* Children (with collapse animation) */}
             {hasChildren && (
                 <Collapse in={expanded}>
@@ -80,6 +93,7 @@ const ExpandableTreeNode = ({ department, allDepartments, onDepartmentClick, lev
                                 department={child}
                                 allDepartments={allDepartments}
                                 onDepartmentClick={onDepartmentClick}
+                                selectedId={selectedId}
                                 level={level + 1}
                             />
                         ))}
@@ -91,7 +105,7 @@ const ExpandableTreeNode = ({ department, allDepartments, onDepartmentClick, lev
 };
 
 // Department Tree View Component
-const DepartmentTreeView = ({ onDepartmentClick }) => {
+const DepartmentTreeView = ({ onDepartmentClick, selectedId }) => {
     const { data: allDepartments, isLoading, error } = useGetList('Department', {
         pagination: { page: 1, perPage: 1000 },
         sort: { field: 'DepartmentName', order: 'ASC' }
@@ -101,7 +115,7 @@ const DepartmentTreeView = ({ onDepartmentClick }) => {
     if (error) return <div>Error loading departments: {error.message}</div>;
 
     // Get root departments (those with no parent)
-    const rootDepartments = allDepartments?.filter(d => !d.DepartmentId || d.DepartmentId === null) || [];
+    const rootDepartments = allDepartments?.filter(d => d.DepartmentId == null) || [];
 
     return (
         <Paper sx={{ p: 2, height: '100%', overflow: 'auto' }}>
@@ -120,6 +134,7 @@ const DepartmentTreeView = ({ onDepartmentClick }) => {
                             department={rootDept}
                             allDepartments={allDepartments}
                             onDepartmentClick={onDepartmentClick}
+                            selectedId={selectedId}
                             level={0}
                         />
                     ))}
@@ -171,7 +186,7 @@ export const DepartmentList = (props) => {
                 
                 <Grid container spacing={2} sx={{ height: 'calc(100vh - 200px)' }}>
                     <Grid item xs={12} md={selectedDepartment ? 6 : 12}>
-                        <DepartmentTreeView onDepartmentClick={handleDepartmentClick} />
+                        <DepartmentTreeView onDepartmentClick={handleDepartmentClick} selectedId={selectedDepartment?.id} />
                     </Grid>
                     {selectedDepartment && (
                         <Grid item xs={12} md={6}>
@@ -231,28 +246,27 @@ export const DepartmentList = (props) => {
 };
 
 // Department Details Component (for the split view)
+// Per CE Tree Views PRIMARY PATTERN: useGetOne for the record itself, useGetManyReference
+// per relationship tab — not a second full useGetList + client-side filter.
 const DepartmentDetails = ({ department }) => {
     const [tabValue, setTabValue] = useState(0);
-    
-    const { data: allDepartments } = useGetList('Department', {
-        pagination: { page: 1, perPage: 1000 },
-        sort: { field: 'DepartmentName', order: 'ASC' }
+
+    const { data: subDepartments } = useGetManyReference('Department', {
+        target: 'DepartmentId', id: department.id,
+        pagination: { page: 1, perPage: 100 }, sort: { field: 'DepartmentName', order: 'ASC' },
     });
 
-    const { data: employees } = useGetList('Employee', {
-        filter: { WorksForDepartmentId: department.id },
-        pagination: { page: 1, perPage: 100 },
-        sort: { field: 'LastName', order: 'ASC' }
+    const { data: employees } = useGetManyReference('Employee', {
+        target: 'WorksForDepartmentId', id: department.id,
+        pagination: { page: 1, perPage: 100 }, sort: { field: 'LastName', order: 'ASC' },
     });
 
-    // Filter sub-departments on the client side (fix the ID comparison)
-    const subDepartments = allDepartments?.filter(dept => 
-        dept.DepartmentId && parseInt(dept.DepartmentId) === parseInt(department.id)
-    ) || [];
-
-    // Find parent department if exists (fix the ID comparison)
-    const parentDepartment = department.DepartmentId ? 
-        allDepartments?.find(dept => parseInt(dept.id) === parseInt(department.DepartmentId)) : null;
+    // Parent department lookup — only fetched when this department actually has one
+    const { data: parentDepartment } = useGetOne(
+        'Department',
+        { id: department.DepartmentId },
+        { enabled: department.DepartmentId != null }
+    );
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
@@ -303,14 +317,14 @@ const DepartmentDetails = ({ department }) => {
             {/* Tabbed Content */}
             <Box sx={{ flexGrow: 1 }}>
                 <Tabs value={tabValue} onChange={handleTabChange} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <MuiTab label={`Sub-Departments (${subDepartments.length})`} />
+                    <MuiTab label={`Sub-Departments (${subDepartments?.length || 0})`} />
                     <MuiTab label={`Employees (${employees?.length || 0})`} />
                 </Tabs>
-                
+
                 {/* Tab Panels */}
                 {tabValue === 0 && (
                     <Box sx={{ p: 2, height: 'calc(100% - 48px)', overflow: 'auto' }}>
-                        {subDepartments.length === 0 ? (
+                        {!subDepartments || subDepartments.length === 0 ? (
                             <Typography variant="body2" color="text.secondary">
                                 No sub-departments found
                             </Typography>
@@ -499,7 +513,7 @@ export const DepartmentShow = (props) => (
             {/* Employees */}
             <Box>
                 <Typography variant="h6" sx={{ mb: 2 }}>Employee List</Typography>
-                <ReferenceManyField reference="Employee" target="OnLoanDepartmentId" addLabel={false} pagination={<Pagination />}>
+                <ReferenceManyField reference="Employee" target="WorksForDepartmentId" addLabel={false} pagination={<Pagination />}>
                     <Datagrid rowClick="show">
                         <TextField source="LastName" label="Last Name" />
                         <TextField source="FirstName" label="First Name" />
@@ -541,7 +555,7 @@ const AddEmployeeButton = () => {
     const redirect = useRedirect();
     
     const handleClick = () => {
-        redirect(`/Employee/create?source=${encodeURIComponent(JSON.stringify({ OnLoanDepartmentId: record?.id }))}`);
+        redirect(`/Employee/create?source=${encodeURIComponent(JSON.stringify({ WorksForDepartmentId: record?.id }))}`);
     };
 
     return (
