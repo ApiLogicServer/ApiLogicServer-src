@@ -118,9 +118,13 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
     from_doc_file_path = docs_path.joinpath(f'Docs/docs/{from_doc_file}')
 
     import requests
-    file_src = f"https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/{from_doc_file}"
+    import time
+    # cache-bust: raw.githubusercontent.com CDN-edge-caches responses (~5 min) with
+    # no regard for query strings, so a fetch shortly after a push can silently
+    # return stale content with no error. The timestamp param forces a cache miss.
+    file_src = f"https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/{from_doc_file}?t={int(time.time())}"
     try:
-        r = requests.get(file_src)  # , params=params)
+        r = requests.get(file_src, headers={"Cache-Control": "no-cache"})
         if r.status_code == 200:
             readme_data = r.content.decode('utf-8')
             try:
