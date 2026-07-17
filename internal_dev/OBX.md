@@ -1,6 +1,5 @@
 # OBX — Out of Box Experience
 
-**Status: draft, working document.** Not yet moved to `internal_dev` — Val is still dictating/correcting content.
 
 Why this matters: no SEs or sales reps exist to set or repair expectations. The OBX *is* the sales process for a large share of prospects. It starts at a readme and has to do, unassisted, what a good SE would do in a first call.
 
@@ -11,6 +10,14 @@ Why this matters: no SEs or sales reps exist to set or repair expectations. The 
 1. **AI-Lovers** — believe AI can do it all. Some see it as a copilot (gen some code to help); the true believer holds "prompt is the source" — iterate/maintain by rebuild & retest.
 2. **AI-Skeptics** — concerned about errors, governance.
 3. **AI-Neutral** — BAs, Product Managers, Tech Managers. Focused on results: time to market, ability to change, governance (#1 CIO concern per CIO Agenda research), org alignment (as opposed to shadow-IT wars).
+
+**Not a 4th persona: the acquirer.** Confirmed against `Bus Plan/Yasmin/GenAI-Logic_Sierra_Pitch.pdf` — acquirers don't start at OBX, they start at the pitch deck (or a live 30-min demo). The deck itself ends by sending a sold reader to the OBX Codespaces flow as the verification step. So OBX doesn't need an acquirer-specific path — it needs the *specific claims the deck cites* (CLVS 8-figure catch, CBSA regulation→system, allocation 4-devs/2-yrs→1-day) to be fast to find and verify once someone clicks through. Same "fast lane to proof" need as the veteran-architect fix below, not a separate one — different receipts, same ask.
+
+**Two personas confirmed against this fast-lane need:**
+- **Veteran architect** (e.g., Wynford) — arrives pre-convinced from decades of firsthand rules-engine history, wants proof, not the AI-lover/skeptic buildup.
+- **Post-pitch verifier** — arrives holding specific claims from the Sierra deck, wants to confirm those exact examples are real.
+
+**Confirmed:** genai-logic.com's Codespaces link routes to CS-MGR (case 2) — so a post-pitch verifier lands in the AI-Lovers-oriented readme, not Neutrals. Worth keeping in mind if CS-MGR content ever gets tuned specifically for AI-lovers in ways that would read oddly to a diligence-minded acquirer.
 
 ---
 
@@ -40,7 +47,7 @@ All three start at a readme.
 2. **CE** — now a pre-req on readme samples.
 3. **Sample apps** — many, with specific targets (vibe, mcp, eai) — buildable yourself or run pre-built.
 
-**Finding:** mechanics goals are largely met. The demo is concrete and falsifiable (real line-count comparisons, a real A/B bug count, a save that actually fails so the skeptic watches enforcement happen, not just reads about it). CE-load is structurally first in the doc. The Demo Catalog covers build-it-yourself vs. pre-built. Governance proof (logic flow diagrams, ad-libs report, health check) exists but is buried ~4 `<details>` levels deep inside "Scaling to the Enterprise" — not surfaced as an entry point for the AI-skeptic persona specifically looking for it.
+**Finding:** mechanics goals are largely met. The demo is concrete and falsifiable (real line-count comparisons, a real A/B bug count, a save that actually fails so the skeptic watches enforcement happen, not just reads about it). CE-load is structurally first in the doc. The Demo Catalog covers build-it-yourself vs. pre-built. Governance proof (logic flow diagrams, ad-libs report, health check) *and* the customs system examples (Gherkin CLVS, CBSA regulation) both live together in "Scaling to the Enterprise" — only one `<details>` deep, not nested under the other sections. The real issue is reading-order position, not nesting: it's the 5th of 6 top-level collapsibles, so a reader scans past four sections aimed at convincing AI-lovers/skeptics that rules matter at all before reaching the one section built for someone who already knows that and wants proof fast — exactly the veteran-architect persona.
 
 ---
 
