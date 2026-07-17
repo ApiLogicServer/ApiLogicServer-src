@@ -23,8 +23,19 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.15
+version: 2.17
 changelog:
+  - 2.17 (Jul 16 2026) - User Activation Protocol STEP 3 now checks if any ancestor
+    directory is literally named `ApiLogicServer-dev` (framework dev checkout signal);
+    if so, appends one line after welcome.md offering to load
+    system/ApiLogicServer-Internal-Dev/dev-architecture.md. Structural trigger instead of
+    requiring the user to remember a phrase — end-user/Codespaces workspaces (no such
+    ancestor) never see this line.
+  - 2.16 (Jul 16 2026) - Consolidated with CLAUDE.md: Method 2 (`genai-logic genai`) marked
+    ⛔ SUPER-DEPRECATED (was contradicting CLAUDE.md's ban, now consistent); added standalone
+    "PATH RULE for Manager root" section (previously only in CLAUDE.md and buried inside
+    Method 4 STEP 4). CLAUDE.md now @-loads this file directly instead of duplicating/
+    paraphrasing it, so Claude and Copilot read the same source of truth.
   - 2.15 (Jul 2 2026) - STEP 5 now mandates copying the full originating prompt file VERBATIM to docs/requirements/prompt.md (new STEP 5a) before writing readme.md/ad-libs.md — previously only the source path was recorded in readme.md, which goes stale/dangling if the source prompt file (e.g. samples/prompts/<name>.prompt.md) is later edited or deleted. Renumbered old STEP 5 (tell user) to STEP 6.
   - 2.14 (Jul 1 2026) - STEP 4 now explicitly forbids re-running `genai-logic create`; states the workflow is DDL → rebuild → logic → seed (not create). Fixes case where AI ran create again instead of implementing into the already-created project.
   - 2.13 (Jul 1 2026) - STEP 5 ad-libs format now requires "Creation Steps" section — ordered list of commands actually run (create, DDL, rebuild, seed, logic files) so future readers can replay how the project was built
@@ -75,7 +86,15 @@ This will trigger the appropriate welcome message based on whether you're new or
 ```
 STEP 1: Read .github/welcome.md (silently)
 STEP 2: Display welcome.md content ONLY
-STEP 3: STOP - do nothing else
+STEP 3: Check if any ancestor directory of the current workspace is literally named
+        `ApiLogicServer-dev` (i.e. this is a framework dev checkout, not an end-user
+        Manager clone or Codespaces workspace). If so, append ONE line after the
+        welcome.md content:
+        "Also: load system/ApiLogicServer-Internal-Dev/dev-architecture.md?"
+        If the user says yes, read that file and follow its own mandatory load
+        sequence (see its header). If no ancestor is named `ApiLogicServer-dev`,
+        skip this step entirely — do not mention it.
+STEP 4: STOP - do nothing else
 ```
 
 **✅ CORRECT EXECUTION:**
@@ -197,13 +216,23 @@ If a file has no version/front matter, say so rather than omitting it. This is a
 
 ---
 
+## ⚠️ PATH RULE for Manager root
+
+All file operations use the project subdirectory as prefix — you are running from the Manager root, not inside the project:
+- sqlite3 commands:    `sqlite3 <name>/database/db.sqlite "..."`
+- genai-logic rebuild: `cd <name> && genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite && cd ..`
+- python seed:         `cd <name> && PROJECT_DIR=$(pwd) python database/test_data/alp_init.py && cd ..`
+- file reads/writes:   `<name>/logic/logic_discovery/...`, `<name>/database/...`
+
+---
+
 ## Creating Projects
 
 There are multiple ways to create projects (aka systems, microservices) - see the subsections below.
 
 **KEY DISTINCTION:**
 - `genai-logic create` - Creates infrastructure only (API, UI, models) - **NO business logic rules**
-- `genai-logic genai` - Creates complete system including **business logic rules from natural language**
+- `genai-logic genai` - ⛔ SUPER-DEPRECATED, see Method 2 below — do not use
 
 ### Method 1: Create Projects from an existing database (Infrastructure Only)
 
@@ -217,26 +246,18 @@ genai-logic create  --project_name=nw --db_url=sqlite:///samples/dbs/nw.sqlite
 
 **To add logic:** We can add rules together using natural language in `logic/declare_logic.py`, or you can code them manually with IDE autocomplete.
 
-### Method 2: Create Projects with GenAI (Complete System with Logic)
+### Method 2: Create Projects with GenAI — ⛔ SUPER-DEPRECATED, DO NOT USE
 
-**Use this when you have both database AND business logic requirements.**
+**⚠️ NEVER run `genai-logic genai` — not even for prompt files. Use Method 4 instead.**
 
-Describe database and logic in Natural Language in a prompt file.
-
-See samples at `system/genai/examples`.  For example:
+This command is obsolete. It is documented here only for historical reference — do not run it, do not suggest it, do not use it as a fallback even if Method 4 hits an obstacle.
 
 ```bash
+# ⛔ DO NOT RUN — kept for reference only:
 genai-logic genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
 ```
 
-**This approach:**
-1. Creates the database from description
-2. Generates SQLAlchemy models
-3. **Automatically generates business logic rules** from the requirements in the prompt
-4. Creates test data
-5. Creates API, Admin App, and complete project structure
-
-**When to use:** When you have requirements like "Customer balance is sum of orders" or "Check credit limit" - the LLM will generate the corresponding `Rule.sum`, `Rule.constraint`, etc.
+**Use Method 4 (System Creation Services) instead** for any domain project with database + business logic requirements.
 
 ### Method 3: Create Projects with new databases (Manual Approach)
 
