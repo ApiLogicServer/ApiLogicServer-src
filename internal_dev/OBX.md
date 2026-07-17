@@ -104,6 +104,26 @@ different treatment: `copilot-instructions.md`'s STEP 3 appends an actual yes/no
 after the welcome message when the same ancestor check matches (Copilot can't silently
 read-and-confirm before the user asks anything the way Claude's auto-load does).
 
+**Follow-up, live test (2026-07-16, same day):** confirmed the auto-load is unreliable in
+practice — same underlying platform gap as the deferred welcome-print limitation above
+(no shipped mechanism forces action on a CLAUDE.md instruction before the model judges
+it relevant to the user's actual first message; anthropics/claude-code#25543 territory).
+Live repro: opened a fresh session in the correct workspace root (confirmed via
+`Manager_workspace.code-workspace`'s `"path": ".."`, breadcrumb `genai-logic > CLAUDE.md`
+— not a path bug), said "hi", then "what have you loaded?" — response confirmed
+`CLAUDE.md` was in context but described the dev-architecture read as something that
+"gets pulled in on activation triggers... or when relevant to a task," i.e. treated as
+conditional, not the unconditional first action the instruction asks for. Path and file
+content were both correct; only the forced-execution assumption was wrong.
+
+**Fix:** added an explicit fallback trigger phrase ("load dev architecture" /
+"load dev-architecture.md") to `CLAUDE.md`, same shape as `copilot-instructions.md`'s
+STEP 3 pattern — the auto-load stays as a best-effort attempt (harmless if it fires,
+useful when it does), but the phrase is the reliable path. Same lesson as the
+"please load copilot-instructions.md" README instruction: on this platform, a
+remembered phrase currently beats an unconditional standing instruction for anything
+that must reliably happen before the model decides it's relevant.
+
 ---
 
 ## History
