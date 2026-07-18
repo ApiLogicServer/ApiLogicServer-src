@@ -28,7 +28,7 @@ a quotation of it.
 
 | SHOW | SAY |
 |---|---|
-| GLWS README hero section, or a plain title card. Cut fast — no lingering on logos/branding. | "This is GenAI-Logic Web Studio. What you're about to watch is a Business Analyst or Product Manager building a real, enterprise-class system, governed by rules you can read, trust, and maintain. No install. Runs in your browser. Let's build one, right now." |
+| GLWS README hero section — a highlight box draws around the "User Friendly / Dev Friendly / DevOps Friendly / Enterprise Friendly" bullets as they're mentioned, then cut away. | "This is GenAI-Logic Web Studio. What you're about to watch is a Business Analyst or Product Manager building a real, enterprise-class system, governed by rules you can read, trust, and maintain — and it fits how your organization already works, from the business user to IT. No install. Runs in your browser. Let's build one, right now." |
 
 ---
 
@@ -56,7 +56,7 @@ On Placing Orders, Check Credit
 
 | SHOW | SAY |
 |---|---|
-| Admin App, already loaded — Swagger/API visible briefly. On-screen text overlay during the transition: "~2 min later". | "This is already running. Full REST API. Admin app. The five rules I just described are live, enforced, right now." |
+| F5 to run, show the browser dialog, then to Admin App — Swagger/API visible briefly. On-screen text overlay during the transition: "~2 min later". | "It's ready - F5 to run. Full REST API. Admin app. The five rules I just described are live, enforced... let's verify that.." |
 
 **Why the cut:** the elapsed-time aside was verbal meta-commentary explaining
 an edit — better handled as a small on-screen text card than spoken. Viewers
@@ -104,7 +104,7 @@ never sticks.
 
 | SHOW | SAY |
 |---|---|
-| Back to chat panel briefly, then repeat the large-quantity-and-save trigger — but this time editing an existing order, framed explicitly as "editing, not placing." Let it fail again, real-time, but this run can move faster than Beat 4 since the viewer already knows the shape of it. | "Here's the part that actually surprised me the first time I saw it. That rule — 'On *Placing* Orders, Check Credit' — I only described what happens when you *place* an order. I said nothing about editing one. Watch what happens when I *edit* an existing order instead." *(trigger plays out)* "Same failure. I never wrote a rule for updates. The system didn't need one. Design it once, and it governs every path the change can arrive by — insert, update, delete, an AI agent, whatever comes next. That's what a rules engine gives you." |
+| Back to chat panel briefly — the "On Placing Orders, Check Credit" prompt text on screen again, small. Then repeat the large-quantity-and-save trigger, but this time editing an existing order. Let it fail again, real-time, but this run can move faster than Beat 4 since the viewer already knows the shape of it. As the narrator lists them, on-screen text builds out beside the prompt: **On Insert · On Update · On Delete · On Reselect Product** — one rule, four paths, nothing written for the other three. | "Here's the part that actually surprised me the first time I saw it. That rule only says 'On *Placing* Orders' — it says nothing about *editing* one." *(trigger plays out)* "Same failure. I never wrote a rule for updates. Insert, update, delete, reselecting the product — one rule, and it covers all of it. Design it once, and it governs every path the change can arrive by. That's what a rules engine gives you." |
 
 **This is the single most differentiating moment in the video** — it's proof
 the system generalizes to a case nobody explicitly coded for, not just a
@@ -116,7 +116,7 @@ scripted demo. Give it a real setup + payoff; don't rush it into a single line.
 
 | SHOW | SAY |
 |---|---|
-| Back to narrator, or a simple end-card with the Codespaces link. Hold end card ~5 sec. | "This is a real, running system. Full API. Admin app. Governed logic, exactly as I described it — nothing hidden, nothing hand-tuned after the fact. And this isn't a five-table toy — the same rules engine you just watched holds up on enterprise-scale schemas, hundreds of tables, real production volume. It fits how your organization already works: standard tooling, no proprietary lock-in, hand it to your dev team whenever you're ready. Try it yourself — the link's below. It's the same five lines you just watched me type." |
+| Back to narrator, or a simple end-card with the Codespaces link. Hold end card ~5 sec. | "This is a real, running system. Full API. Admin app. Governed logic, exactly as I described it — you could open the code right now and read every rule; there's simply no need to. It fits how your organization already works: standard REST, no proprietary lock-in — vibe-code your own client against it, or hand the whole thing to your dev team whenever you're ready. Try it yourself — the link's below. Write five lines about a system you actually need, and see what happens." |
 
 **Note:** paraphrase here ("governed logic, exactly as I described it") —
 do NOT restate "Read, Trust, and Maintain" again; that phrase is spent in Beat 6.
