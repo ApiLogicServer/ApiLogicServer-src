@@ -15,7 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "17.03.06"  # last public release: 17.03.01
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/16/2026 - 17.03.06  Context Engineering for Dashboards & Vibe, CS fixes \n"\
+    "\t07/22/2026 - 17.03.06  Context Engineering for Dashboards & Vibe, LB and CS fixes \n"\
     "\t07/10/2026 - 17.02.08  entity types diagram, LB 1.31.05 evt bug, admin home page fixes, simple browser (mgr), count inits \n"\
     "\t06/11/2026 - 17.00.35  logic report / flow diagram, cvls with hazmat, basic_demo_logic_gov, sec & raw logic fixes \n"\
     "\t05/14/2026 - 17.00.24  gov rpt, ad-lib with approach (fair gemini), sample names \n"\

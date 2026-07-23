@@ -1,7 +1,11 @@
-# Declarative Rules vs. Procedural Logic: A Reproducible Comparison
+---
+title: Declarative Rules vs. Procedural Logic — A Reproducible Comparison
+version: 1.1 (07/22/2026)
+author: Val Huber (Architect, GenAI-Logic and LogicBank)
+companion: shorter summary at prototypes/basic_demo/logic/procedural/declarative-vs-procedural-comparison.md
+---
 
-**Author:** Val Huber (Architect, GenAI-Logic and LogicBank)
-**Date:** May 2026
+# Declarative Rules vs. Procedural Logic: A Reproducible Comparison
 
 ---
 
@@ -105,7 +109,7 @@ delete case, and the re-parent case and hoping all of them got fixed.
 ## The proof: same tests, both implementations
 
 The evidence is not the argument — it is the test suite run against both versions. The
-repository's Behave suite exercises insert, update, re-parent, delete, ship, and unship paths.
+repository's committed Behave suite exercises insert, update, delete, ship, and unship paths:
 
 | Scenario                                  | Declarative (LogicBank) | Procedural (as generated, pre-fix) |
 | ----------------------------------------- | ----------------------- | ---------------------------------- |
@@ -114,12 +118,16 @@ repository's Behave suite exercises insert, update, re-parent, delete, ship, and
 | Item quantity change — recalculates       | ✅ pass                 | ✅ pass                            |
 | Delete item — reduces order total         | ✅ pass                 | ✅ pass                            |
 | Ship order — excluded from balance        | ✅ pass                 | ✅ pass                            |
-| Re-parent order (`customer_id` change)    | ✅ pass                 | ❌ **fail — old parent stale**     |
-| Change item product (`product_id` change) | ✅ pass                 | ❌ **fail — stale unit_price**     |
 
-The last two rows are the point. Everything above them passes on both sides — which is
-precisely why these bugs are dangerous, since ordinary testing exercises the happy path and
-stops there.
+**What the suite does *not* yet cover:** the two re-parenting bugs this document is built
+around — reassigning an order's customer, reassigning an item's product — are described above
+from direct testing during development, but are not (yet) committed as Behave scenarios. That's
+a real gap, not a hidden one: reviewing generated tests and adding missing cases is the normal,
+expected discipline here, same as reviewing generated code. If you're relying on this comparison,
+add those two scenarios yourself before treating the reparenting claim as regression-tested —
+and if this specific class of gap (dependency-heavy paths missing from AI-generated tests)
+recurs, that's a signal for the test-generation training material to be strengthened, the same
+way the logic-generation training material was strengthened after the original bugs.
 
 ---
 

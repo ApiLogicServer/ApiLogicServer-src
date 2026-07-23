@@ -1,3 +1,10 @@
+---
+title: Declarative vs. Procedural Business Logic — A Comparison
+version: 1.0 (07/22/2026)
+author: Val Huber (Architect, GenAI-Logic and LogicBank)
+companion: see basic_demo_logic_gov/logic/procedural/declarative-vs-procedural-comparison.md for the fuller writeup with a committed Behave test suite
+---
+
 # Declarative vs. Procedural Business Logic: A Comparison
 
 <br>
@@ -161,4 +168,4 @@ That's the concrete case for pointing AI at declarative rules for business logic
 
 ---
 
-*This comparison is based on an actual AI-generated implementation in the API Logic Server project. It's one example, not a benchmark — see the fuller writeup and reproducible test results in [`basic_demo_logic_gov`](../../../basic_demo_logic_gov/logic/procedural/declarative-vs-procedural-comparison.md) for the same comparison with a committed Behave test suite.*
+*This comparison is based on an actual AI-generated implementation in the API Logic Server project. It's one example, not a benchmark — see the fuller writeup in [`basic_demo_logic_gov`](../../../basic_demo_logic_gov/logic/procedural/declarative-vs-procedural-comparison.md) for the same comparison, with a committed Behave test suite covering the non-reparenting paths (the reparenting scenarios themselves are not yet in that suite — see its "What the suite does not yet cover" note).*
