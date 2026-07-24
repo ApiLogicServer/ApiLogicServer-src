@@ -2,7 +2,7 @@
 title: Welcome - see end for instructions to hide this
 Description: Instant mcp-enabled microservices, standard projects, declarative business logic
 Source: docs/Manager-readme
-version info: 17.00.12 (06/18/2026)
+version info: 17.03.08 (07/22/2026)
 do_process_code_block_titles: True
 Used: Manager Readme (via copy_md())
 demo_customs: Customs-readme
@@ -31,11 +31,47 @@ codespaces_patch: |
 
 # Welcome to GenAI-Logic
 
-One prompt — or your existing database — builds a working API and Admin App, then you declare business logic in **5 readable rules instead of ~200 lines of AI-generated code** to enforce it.
+### Governed Executable Requirements
 
-You'll see that enforcement yourself in a few minutes: those rules run at **one commit point**, no matter which path the transaction came in on — API, MCP, agent, Kafka. **No bypass.**
+Describe it, and get a real system:
 
-And you're not alone: your AI assistant is your partner throughout. Ask it anything — architecture, rules, debugging, deployment, or how the system works.
+<details markdown>
+<summary>For <strong>today:</strong> a working API, Admin App, and governed logic, <strong>built from a prompt</strong></summary>
+
+<br>Leverage AI for what it's great at — database design, data mapping, and more. Start from a prompt alone and AI designs the database too, or point it at your existing database and skip straight to the logic. Either way, your AI assistant reads whatever you already have — plain English, Gherkin, pseudocode — and hands business logic off as rules, not code.
+
+</details>
+
+&nbsp;
+
+<details markdown>
+<summary>And it <strong>fits</strong>: uses your existing org, technology, and practices</summary>
+
+<br>What comes out the other end is exactly what you already run:
+
+1. **A business user can drive it, in the requirements format they already write** — plain English, Gherkin, pseudocode, even actual regulation text; no database design, screen painting, or scripting to learn.
+2. **Standard IDE, standard language** — a project in the IDE and language you already use, ready to extend.
+3. **Standard deploy** — a standard container; cloud or on-prem, no additional charges.
+4. **Standard enterprise infrastructure** — pluggable security (SQL or Keycloak), full REST API, event/messaging integration (Kafka, webhooks) — built in, not bolted on, same as any other enterprise system.
+
+</details>
+
+&nbsp;
+
+<details markdown>
+<summary>And for <strong>tomorrow</strong>: systems <strong><em>governed</em></strong> by rules you can <strong>Read, Trust, and Maintain</strong></summary>
+
+<br>**The key idea:** that split — AI for executable intent, declarative rules for governance — is the whole point. Here's what "governed" means in practice:
+
+- **Read** — [5 rules](samples/basic_demo_logic_gov/logic/logic_discovery/place_order/check_credit.py), not [~200 lines of code](samples/basic_demo_logic_gov/logic/procedural/credit_service.py). A rule you can point to and know what it does, at a glance.
+- **Trust** — those rules run at **one commit point**, no matter which path the transaction came in on — API, MCP, agent, Kafka. **No bypass.**
+- **Maintain** — add a rule anywhere, and the engine resolves dependency order automatically. No untangling existing code to find where it belongs.
+
+And you're not alone throughout: ask your AI assistant anything — architecture, rules, debugging, deployment, or how the system works.
+
+</details>
+
+<br>
 
 This is the start page for the [GenAI-Logic Manager](https://apilogicserver.github.io/Docs/Manager) — where you manage projects, create notes and resources, etc.
 
@@ -43,14 +79,72 @@ This is the start page for the [GenAI-Logic Manager](https://apilogicserver.gith
 
 ## 🤖 AI Assistance
 
+<!-- LOCAL-MGR-ONLY-START -->
+We get good results with **Claude Sonnet 5** — any AI assistant works (Claude Code, GitHub Copilot, etc.), but pick Sonnet 5 if you can. Then say:
+<!-- LOCAL-MGR-ONLY-END -->
+<!-- CODESPACES-ONLY-START
+We get good results with **Claude Sonnet 5**. In this environment, GitHub Copilot is what's available — pick Sonnet 5 if you can. Then say:
+CODESPACES-ONLY-END -->
+
+```
+Please load `.github/.copilot-instructions.md`.
+```
+
 <details markdown>
-<summary>First select your AI assistant, then paste the prompt below</summary>
+<summary>Detailed steps, what to expect, model/cost info, and why we recommend a frontier model</summary>
 
 &nbsp;
 
-We get consistently good results with **Claude Sonnet 4.6** (GitHub Copilot or Claude Code extension). "Ask" mode will not work — use **Agent mode**.
+> **See "Quota reached" in the status bar?** Safe to ignore — it doesn't mean anything is broken or unavailable.
 
-To select Sonnet 4.6 in the Copilot chat panel: click **Agent** → the **gear icon** → choose **Claude Sonnet 4.6**.
+> **This takes 20-30 seconds.** You'll see "Working" the whole time with no other feedback — that's normal, not stuck.
+
+&nbsp;
+
+<!-- LOCAL-MGR-ONLY-START -->
+Any AI assistant works here — Claude Code, the Claude Code plugin, GitHub Copilot, etc. The steps below are for **GitHub Copilot in VS Code**; if you're using something else, the same idea applies, just paste the command above into whatever chat/agent interface you have open.
+<!-- LOCAL-MGR-ONLY-END -->
+
+**Step by step:**
+1. Open the **Chat** tab in the right-hand panel.
+2. Click the model pill at the bottom of the chat box (shows **Auto** by default).
+3. **If Claude Sonnet 5 appears in the list:** select it.
+   **If it's not there:** click **Other Models** near the bottom of that same list — this expands the list to show more models, including Claude Sonnet 5. Still not there (Free/Student plans — see below): leave it on **Auto**.
+4. Type the command above and press Enter.
+
+![Choosing Claude Sonnet 5 from the model picker](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/git-codespaces/genai-logic-web-studio-choose-agent.png?raw=true)
+
+&nbsp;
+
+<details markdown>
+<summary>&emsp;&emsp;Which model, and what does this cost?</summary>
+
+<br>
+
+**Model selection is plan-dependent** (GitHub changed this June 2026):
+- **Copilot Free / Student:** Chat and Agent mode only run in **Auto** — GitHub picks the model for you from a pool that includes Claude Sonnet 4.6 among others. You cannot force Claude specifically.
+- **Copilot Pro ($10/mo) and above:** Manual model selection is available — but Claude Sonnet 5 may not appear until you click **Other Models** to expand the list (see step 3 above).
+
+**Cost, in practice:** All plans (including Free) include a monthly allotment of GitHub AI Credits for chat/agent usage — the Free plan's is small but real; Pro includes about $15/month worth. Two things keep a GenAI-Logic project cheap relative to that allotment:
+- The scaffold — the API, Admin App, and database models — is generated by template, **not** by AI. The AI is only doing the design/logic work (schema decisions, rule translation, Q&A) — a small fraction of what you actually get.
+- If you exceed your monthly credits, GitHub does not silently charge you — on individual plans you're prompted to either wait for the next cycle or opt in to paid overage; it does not happen by accident.
+
+For current figures, see [GitHub Copilot plans & pricing](https://github.com/features/copilot/plans).
+
+</details>
+
+&nbsp;
+
+<details markdown>
+<summary>&emsp;&emsp;Why we recommend a frontier model</summary>
+
+<br>
+
+The mechanical parts of this system — folder structure, rule syntax, provenance files — come through reliably even on lighter/auto-selected models. What separates frontier models (Claude Sonnet 4.6/5, GPT-5, etc.) is judgment on subtler cases: patterns documented in the training material that require reasoning about *why* a naive implementation is wrong, not just matching a syntax example. In testing, a smaller auto-selected model built a project correctly, then wrote a real correctness bug into a follow-up rule that our own docs specifically call out as an easy mistake — and reported it as verified when it wasn't.
+
+For exploring the product, any available model is fine. For real logic you intend to keep, pick a frontier model explicitly when your plan allows it — and review the AI's output either way, the same as you would any other engineer's.
+
+</details>
 
 For more information, see [AI-Enabled Projects](https://apilogicserver.github.io/Docs/Project-AI-Enabled/) or [click here](https://apilogicserver.github.io/Docs/Manager-readme/).
 
@@ -58,31 +152,40 @@ For more information, see [AI-Enabled Projects](https://apilogicserver.github.io
 
 &nbsp;
 
-```
-Please load `.github/.copilot-instructions.md`.
-```
-
-&nbsp;
-
 ## 🚀 First Time Here?
 <!-- CODESPACES-INSERT-POINT: create_codespaces_mgr.py injects browser note here — do not rename this heading -->
 
-<details>
-<summary>⚡ Try Prompt → System — then ask: is this maintainable?</summary>
+<details markdown>
+<summary>The Ideal — executable business prompts, held to an enterprise standard</summary>
 
-&nbsp;
+<br>
+
+<!-- LOCAL-MGR-ONLY-START -->
+> **Heads up:** you're about to switch to the AI chat panel, and back. VS Code's preview forgets which sections below are open/closed when you return — so **drag this preview tab's icon out into its own window** first (once), and it won't happen again.
+<!-- LOCAL-MGR-ONLY-END -->
+<!-- CODESPACES-ONLY-START
+> **Heads up:** you're about to switch to the AI chat panel, and back. The browser tab showing this README forgets which sections below are open/closed when you return — so **open the README on GitHub** ([ApiLogicServer/codespaces_mgr](https://github.com/ApiLogicServer/codespaces_mgr)) **in a split-view tab** first (once), and it won't happen again.
 
 <details markdown>
-<summary>&emsp;&emsp;1. Create — API, Admin App and business logic from a prompt (existing db)</summary>
+<summary>&emsp;&emsp;Show me how</summary>
 
-<br>Say this to your AI assistant (allow 2-3 mins):
+<br>Right-click the GitHub README tab and choose **New Split View with Current Tab**:
+
+<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/git-codespaces/StartSplitView.png?raw=true" alt="Open the README from GitHub, right-click the tab, choose New Split View with Current Tab" width="700">
+
+You'll end up with the Codespace on one side and the README on the other — switch between AI chat and README without losing your place:
+
+<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/git-codespaces/SplitView.png?raw=true" alt="Codespace and README side by side in split view" width="700">
+
+</details>
+CODESPACES-ONLY-END -->
+
+<br>Say this to your AI assistant (allow several minutes):
 
 ```
-Create basic_demo from samples/dbs/basic_demo.sqlite (customers, orders, products).
+Create basic_demo from samples/dbs/basic_demo.sqlite.
 
-Include a notes field for orders.
-
-On Placing Orders, Check Credit    
+On Placing Orders, Check Credit:    
     1. The Customer's balance is less than the credit limit
     2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
     3. The Order's amount_total is the sum of the Item amount
@@ -98,51 +201,107 @@ Use case: App Integration
 
 &nbsp;
 
-The prompt above starts from an existing database — the common real-world case, and much faster (no schema design step). You *could* have AI design a new database from scratch instead — drop the `from samples/dbs/basic_demo.sqlite` clause from the first line above (allow 8-10 mins).
+The prompt above starts from an existing database — the common real-world case, and much faster (no schema design step). You *could* have AI design a new database from scratch instead:
+
+<br>Say this to your AI assistant (allow several minutes):
+
+```
+Create basic_demo from samples/prompts/genai_demo.prompt
+```
 
 </details>
 
 &nbsp;
 
-You've probably seen AI generate code before. The difference here: this produces *models*, not code — each artifact declares structure or policy rather than procedure, so there's no logic buried in the wiring:
+<!-- CODESPACES-ONLY-START
+> **During project creation, a browser tab may auto-open (or offer to)** showing it running — safe to decline or dismiss.
+CODESPACES-ONLY-END -->
+
+The goal here isn't a demo — it's an **enterprise-class** system you can trust and maintain. That's exactly what gets tested next.
+
+</details>
+
+&nbsp;
+
+<details markdown>
+<summary>AI is great — but logic-as-code is hard to Read, Trust, and Maintain — here's why</summary>
+
+<br>AI is genuinely good at UI, data mapping, boilerplate, etc — no argument there. **Business logic is the exception.**
+
+On a real system, business logic routinely consumes **half the development and debugging effort** — and it's the half that determines whether the system is actually correct.
+
+Left unguided, any AI assistant — including the one that just built basic_demo for you — would default to procedural code for logic like this. Ask it directly, and you get three problems:
+
+<details markdown>
+<summary>&emsp;&emsp;<strong>Not readable</strong> — unreadable at scale is ungovernable at scale</summary>
+
+<br>[procedural/credit_service.py](samples/basic_demo_logic_gov/logic/procedural/credit_service.py) — ~200 lines for those same 5 requirements. Open it and judge for yourself. Now picture a real system: 10-20X the requirements of this example, and proportionally more procedural code to match. Nobody can audit that at a glance — not the next developer, not compliance, not you in six months. At that scale, an auditor can't read it all — they can only sample, and hope.
+
+</details>
+
+&nbsp;
+
+<details markdown>
+<summary>&emsp;&emsp;<strong>Not trustworthy</strong> — the procedural version shipped 2 real bugs</summary>
+
+<br>Found only by specifically testing what happens when a row is reparented to a new owner: [the A/B test](samples/basic_demo_logic_gov/logic/procedural/declarative-vs-procedural-comparison.md). Root cause: **path confusion** — procedural code must enumerate every change path (insert, update, delete, reparent) by hand, and it's easy to miss one.
+
+There's a structural problem underneath the bugs, too: **AI pattern-matches dependencies, it doesn't compute them** — so the odds of a miss go up as the system grows. [More detail →](samples/basic_demo_logic_gov/logic/procedural/declarative-vs-procedural-comparison.md#the-underlying-problem-dependency-graphs)
+
+</details>
+
+&nbsp;
+
+<details markdown>
+<summary>&emsp;&emsp;<strong>Not maintainable</strong> — the cost doesn't scale with the fix</summary>
+
+<br>Hand-editing 200 generated lines isn't a real option — nobody reliably patches the output of a code generator, any more than you'd hand-patch a compiler's output. That leaves one path: **change the prompt and regenerate.**
+
+But that doesn't dodge the risk, it repeats it — the AI re-derives everything from scratch, with no guarantee it reproduces the paths that already worked. Adding one small constraint — a one-line change — means regenerating and re-reviewing the whole system, every time, at every table. On a real system that's not a quick edit. It's hours, real AI cost, and a fresh chance at a new bug — to make a change that should have taken a minute.
+
+</details>
+
+&nbsp;
+
+That's not (only) a capability gap — it's a representation problem: procedural code doesn't carry an explicit dependency graph, so nothing short of building one — inside the AI's process or outside it — closes this gap. A rules engine builds that graph explicitly, once, and checks it. That's the difference this document shows.
+
+**We're deeply impressed with AI — this is about closing the one gap it has: logic.** That's next.
+
+</details>
+
+&nbsp;
+
+<details markdown>
+<summary>AI-driven rules are easy to Read, Trust, and Maintain — here's how</summary>
+
+&nbsp;
+
+<details markdown>
+<summary>&emsp;&emsp;1. Run it — see the API and logic operate</summary>
+
+<br>You've probably used AI to generate code before — so what's different here?
+
+**Difference 1: it produces models, not code.** Run the basic_demo prompt above, and instead of a pile of procedural code, you get artifacts that declare structure or policy rather than procedure — same 5 requirements, same AI:
 
 1. **Data model** — `database/models.py`
-2. **Full JSONAPI** — Swagger, pagination, optimistic locking (`api/expose_api_models.py` — 52 lines, zero per-table code)
-3. **Admin App** — multi-table, with navigations and lookups (`ui/admin/admin.yaml`)
-4. **Business logic** — `logic/logic_discovery/place_order/check_credit.py` *(more on this in step 5)*
+2. **Full JSON:API** — Swagger, pagination, optimistic locking (`api/expose_api_models.py` — 52 lines, zero per-table code)
+3. **Admin App** — multi-table, with navigations and lookups (`ui/admin/admin.yaml` — simple YAML, not HTML/JS)
+4. **Business logic** — [logic_discovery/place_order/check_credit.py](samples/basic_demo_logic_gov/logic/logic_discovery/place_order/check_credit.py) — 5 rules (~40X less), same requirements, same AI, 0 bugs
 
-Each small, readable, yours. Plain Python — standard tooling applies.
+**Difference 2: the logic itself is declarative.** 5 lines, intent still clear — not ~200 lines of procedural frankencode. That's what declarative buys — more on that below.
 
-Security is opt-in, not default — bootstrap RBAC anytime with `genai-logic add-auth`.
+Each small, readable, yours. Plain Python — standard tooling applies. Security is opt-in, not default — bootstrap RBAC anytime with `genai-logic add-auth`.
 
-> This prompt adds a column (`notes`) and several derived columns (`balance`, `amount_total`, `amount`) on top of the starting schema — each needs `ui/admin/admin.yaml` refreshed to display correctly. Your AI assistant should offer this automatically; if the Admin App looks incomplete or stale in step 2, just say **"rebuild the admin app"** and it will regenerate and offer to apply the update.
+**See it running:** Press F5 using "API Logic Server Run (run project from manager)", and open the Admin App. Explore the API via Swagger, browse the data, and follow the relationships — all auto-generated from the data model.
 
-</details>
-
-<br>
-
-<details markdown>
-<summary>&emsp;&emsp;2. Run it — F5, then open the Admin App</summary>
-
-<br>Press F5 using "API Logic Server Run (run project from manager)", and open the Admin App. Explore the API via Swagger, browse the data, and follow the relationships — all auto-generated from the data model.
-
-> **Running in Codespaces?** A browser tab/window may auto-open when the server starts — that's expected in Codespaces, not a bug. Just close the extra tab and use the one you want.
-
-</details>
-
-<br>
-
-<details markdown>
-<summary>&emsp;&emsp;3. Trigger the logic</summary>
-
-<br>In the Admin App, open an **unshipped** Order for Alice, edit the Widget item:
+Now trigger it: open an **unshipped** Order for Alice, edit the Widget item:
 
 ```
 Change the quantity to a very large number. Save.
 ```
 
 <details markdown>
-<summary>&emsp;&emsp;&emsp;&emsp;Detail Instructions -- Screen Shots</summary>
+<summary>&emsp;&emsp;Detail Instructions -- Screen Shots</summary>
 
 <br>Alter the quantity for an *unshipped* item:
 
@@ -158,91 +317,117 @@ Change the quantity to a very large number. Save.
 
 <br>
 
-The save fails - note the dialog box. But, *why...?*
-
-> Auditable, not just shown: [sample trace](samples/basic_demo_logic_gov/logs/als-sample.log) of this rule chain firing.
+The save fails — note the dialog. Why? Let's look.
 
 </details>
 
-<br>
+&nbsp;
 
 <details markdown>
-<summary>&emsp;&emsp;4. Your AI assistant can explain the dialog</summary>
+<summary>&emsp;&emsp;2. Debug it — standard logging, standard debugger</summary>
 
-<br>
+<br>No new tools required. The rule chain that just fired is in the log — plain text, readable in your terminal or editor: [sample trace](samples/basic_demo_logic_gov/logs/als-sample.log). A live run writes the same thing to the standard log, `logs/als.log`.
 
-```
-Eeks, why did that save fail?
-```
+Every rule is a plain Python function or lambda. Set a breakpoint on any `calling=` function or `as_condition=` lambda in your IDE, exactly like you would anywhere else in the codebase — no proprietary debugger, no special UI.
 
-Your AI explains the credit-limit rule and shows where it lives.
-
-Notice: you didn't *place* an order, you *edited* one — and the rule still caught it. Hmm....
+![logic-debug](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/logic/logic-debug.png?raw=true)
 
 </details>
 
-<br>
+&nbsp;
 
 <details markdown>
-<summary>&emsp;&emsp;5. Now let's see... what's really going on with the logic?</summary>
+<summary>&emsp;&emsp;3. Iterate — 1 AI prompt adds table, relationship, 2 rules</summary>
 
-<br>Let's compare 2 approaches for implementing the check-credit requirement:
+<br>Ask your AI assistant for a new rule, in plain English:
 
-* Compare **standard AI-generated code** - open [procedural/credit_service.py](samples/basic_demo_logic_gov/logic/procedural/credit_service.py)
-
-* With the **rule-based version** - open [logic_discovery/place_order/check_credit.py](samples/basic_demo_logic_gov/logic/logic_discovery/place_order/check_credit.py) - same requirement, same AI.  5 rules. No bugs.
-
-Well, *that's* different... what's up with that? Ask your AI:
-
-```
-What are rules?
-```
-
-<details markdown>
-<summary>&emsp;&emsp;&emsp;&emsp;No AI handy?</summary>
-
-<br>Rules enforce business policy — multi-table derivations, constraints, and actions like messaging. **LogicBank**, the rule engine, hooks SQLAlchemy's commit event to run them on every transaction — authored as plain Python functions in `logic/logic_discovery/`, readable, version-controlled, owned like any other source file.
-
-But unlike procedural code, they're **declarative**:
-
-| Property | What it means | Why it matters |
-|---|---|---|
-| **Auto-reused** | `Customer.balance = sum of unpaid orders` — declared once, enforced over every change path | No per-path handlers to write or miss |
-| **Auto-invoked** | Rules fire at every commit, from every caller — you never call them | Can't be forgotten, can't be bypassed |
-| **Auto-ordered** | The engine computes dependency order at startup | Add a rule anywhere, it finds its place |
-
-Think of a spreadsheet: `B10 = SUM(B1:B9)` isn't called, it *reacts* — change any input cell, it recalculates. Rules react the same way to changes in what they depend on — that's what makes 5 declarative rules replace ~200 lines of procedural code with zero missed paths, as you just saw above.
-
-Full writeup: [declarative/procedural comparison](samples/basic_demo_logic_gov/logic/procedural/declarative-vs-procedural-comparison.md).
-
-</details>
-
-<br>
-
-> But here's the part that matters beyond line count: with procedural code, even if you find the right passage — how do you know it's called for *every* transaction source? API, MCP, agent, Kafka, a future caller you haven't written yet? With thousands of code paths, you can't know. That's not a testing gap; it's a representation problem. <br><br>Rules solve it structurally — declared once, fired at one commit point, from every caller, with no bypass possible. The 40x reduction in code isn't the point. The verifiable coverage is: ***you can read the rules, and trust they are being enforced.  Always.***
-
-<br>
-
-</details>
-
-<br>
-
-<details markdown>
-<summary>&emsp;&emsp;6. Iterate — ask for a new rule in plain English</summary>
-
-<br>Try:
 ```
 Customers should not be able to create new orders if they have unresolved past due letters.
 ```
-Notice what just happened — two things, easy to miss:
 
-**1. What the AI did.** There was no `Letter` (past-due notice) table in the model — the AI had to add the table and its relationship to `Customer`, then declare two rules: a `count` of unresolved letters, and a `constraint` blocking new orders when that count is non-zero. A schema change and two rules, from one sentence.
+There was no `Letter` table in the model — the AI adds it, relates it to `Customer`, and declares a `count` + a `constraint`. One sentence creates a schema change and two new rules — automatically integrated with the 5 already there. No need to open `check_credit.py` to find where this belongs, or trace the other rules to check for conflicts.
 
-**2. The implications:**
+**A lot just happened here — worth a closer look.**
 
-- **You didn't do archaeology.** No opening `check_credit.py` to find where this belongs, no tracing the other 5 rules to check for conflicts. Auto-ordering means there's no maintenance hunt — you declare the rule, the engine places it.
+</details>
 
-- **AI-only would have to rebuild — and that cost scales with rule count.** Without the engine, an AI rewriting procedural code from scratch would have to re-read and re-touch all existing rules to check for dependencies — more surface area for a missed path, more tokens spent doing it. At 5 rules that's a nuisance; **at 500, the re-read is the bottleneck and the missed-path risk compounds.** Here, the engine resolves dependencies at load time, so adding this rule doesn't touch the rest — no regeneration, no regression risk, at any scale.
+&nbsp;
+
+<details markdown>
+<summary>&emsp;&emsp;4. Why Rules Are Declarative — automatic calling, automatic ordering</summary>
+
+<br>This iteration — like maintenance generally — was remarkably simple, because **rules are declarative:**
+
+- **No need to call the new logic.** Rules are invoked automatically - regardless of the originating path.  You can **trust** that they'll always run.
+- **Order doesn't matter.** Open `check_credit.py` and shuffle the five rules into any order you like. Rerun — still correct. Try that with 200 lines of procedural code.  You can **trust** that they'll run in the right order.
+- **You got more than you asked for.** The original requirement said *"On Placing Orders, Check Credit"* — insert time. But the save that failed was an *edit* to an existing order. Nobody wrote an update-time check.
+
+Functions don't behave like that. So why is that?
+
+> **Traditional logic is procedural** — you own *how*: when it's called, and in what order. **Declarative logic — rules** — is about *what*, not how: you state the fact, and the system takes responsibility for invocation and ordering. That's why the new rule didn't need to be called, and why order didn't matter.
+
+The next section explores this in detail. Ask your AI assistant — *"What are rules?"* — or keep reading.
+
+</details>
+
+&nbsp;
+
+<details markdown>
+<summary>&emsp;&emsp;5. How Declarative Rules Make Logic Easy to Read, Trust, and Maintain</summary>
+
+<br>**Rules** enforce business policy — multi-table derivations, constraints, and actions like messaging. **LogicBank**, the rule engine, hooks SQLAlchemy's commit event to run them on every transaction — authored as plain Python functions in `logic/logic_discovery/`, readable, version-controlled, owned like any other source file.
+
+**How it works:**
+1. **At startup** — rules load, and the engine computes their dependency graph once.
+2. **At commit** — for each transaction, the engine finds the rules relevant to what changed, and fires them in the right order.
+
+Unlike procedural code, they're **declarative** — solving exactly the three problems raised above (AI great, but hard to Read, Trust, and Maintain):
+
+| Property | What it means | Why it matters |
+|---|---|---|
+| **Readable** | 5 lines, one per requirement — declared once, e.g. `Customer.balance = sum of unpaid orders` | No archaeology needed to see what it does |
+| **Trustworthy** | Rules fire at every commit, from every caller, on every insert *and* edit — you never call them | Can't be forgotten, can't be bypassed |
+| **Maintainable** | Dependency order is computed once, automatically — not written into your source file | Add a rule anywhere, it finds its place |
+
+> Think of a **spreadsheet:** `B10 = SUM(B1:B9)` isn't called, it *reacts* — change any input cell, it recalculates. Rules react the same way to changes in what they depend on.
+
+Procedural code is hard to read — so you can't tell whether it's called from every caller, in the right order. That's not a testing gap; it's a representation problem.
+
+> Declarative rules are easy to read — the intent, now rigorous — and with no bypass and automatic ordering.
+>
+> ***You can read the rules, and trust they are being enforced. Always.***
+
+Full writeup: [declarative/procedural comparison](samples/basic_demo_logic_gov/logic/procedural/declarative-vs-procedural-comparison.md).
+
+&nbsp;
+
+<details markdown>
+<summary>&emsp;&emsp;How this works: Context Engineering (CE) + a commit-time rules engine</summary>
+
+<br>Two things have to be true for this to work:
+
+**Step 1 — Context Engineering trains the AI to write rules, not code.** That same AI, left unguided, would have produced the ~200 buggy lines from earlier. Writing rules instead wasn't its own idea — it was told to, in detail, by **Context Engineering** — the same files driving this conversation right now. When you ask for business logic, CE steers the AI toward the *right* rule type (sum vs. count vs. Allocate vs. Request Pattern) for what you actually asked for, instead of letting it default to the procedural code it's seen a million times in training — making rules the default, easy path, not a discipline a team has to maintain by hand.
+
+**Step 2 — the rules engine runs the rules.** Rules aren't called from your code — they're wired into a single SQLAlchemy `before_flush` listener, loaded once at server start as described above. Every write, from any path — API, custom endpoint, Kafka consumer, agent — passes through that one listener before it commits. No bypass — there's no second door.
+
+</details>
+
+&nbsp;
+
+<details markdown>
+<summary>&emsp;&emsp;<strong>Governance reports</strong> — logic flow, AI alerts, health check</summary>
+
+<br>Rules you can read is only half of it — the AI is also proactive about what it wants *you* to double-check. Three reports, generated from the running system, not hand-written:
+
+- **[Logic flow diagram](samples/basic_demo_logic_gov/docs/requirements/logic_flow_basic_demo_logic_gov.md)** — NL requirement, dependency diagram, and rule summary, for every rule chain
+- **[AI alerts](samples/basic_demo_logic_gov/docs/requirements/ad-libs.md)** — every assumption the AI made beyond the spec, flagged for you to verify, not buried
+- **[Health check](samples/basic_demo_logic_gov/docs/requirements/health_check.md)** — rule adoption, dependency-tracking integrity, missing docstrings, across the whole project
+
+A compliance reviewer can check the implementation in minutes, not by reading code. Here's that report for the basic_demo rules you just ran — the same report generates for any project, including the enterprise-scale ones below:
+
+<img src="samples/basic_demo_logic_gov/docs/requirements/logic_diagrams/logic_diagram.svg" alt="Logic diagram: Item/Order/Customer rule chain, generated from the running rules" width="480">
+
+</details>
 
 </details>
 
@@ -251,109 +436,91 @@ Notice what just happened — two things, easy to miss:
 &nbsp;
 
 <details markdown>
-<summary>🚀 How does this lead to enterprise-class systems?</summary>
+<summary>Scaling to the Enterprise — here's how</summary>
 
-<br>
+&nbsp;
 
-Quick recap: you created a system from prompt, ran it, triggered a rule, watched it chain across three tables, driven by 5 lines of code, then added a new one from one sentence — without touching the existing rules.
+<details markdown>
+<summary>&emsp;&emsp;<strong>1. Integrate other enterprise technologies</strong> — EAI, MCP, AI Rules, Custom UIs</summary>
 
-That's the second distinction from AI-generated code: the business logic is *rules*, not procedures. A procedure answers "what happens when X?" — so every new path needs a new procedure. A rule declares a fact about data — it's automatically re-used over every path, including ones that don't exist yet. Step 5 showed this working; step 6 showed it not breaking when you added one. That property is what scales.
-
-How does this lead to enterprise-class systems?
-
-**We add key *enterprise architecture* integration:**
+<br>We have extended the governed API and rules engine you just saw with the integration points a real enterprise system needs:
 
 - **Enterprise Integration (EAI)** — the demo above showed ***Publish** the Order to Kafka topic*. For the **subscribe** side, see [samples/basic_demo_eai/readme.md](samples/basic_demo_eai/readme.md): B2B orders from partner systems, via a Custom API or Kafka subscriber, including *lookups* so partners send `"Account": "Alice"` (not internal IDs).
 
-- **MCP** — your API is **MCP-discoverable** out of the box (`/.well-known/mcp.json`).
-Copilot, Claude, or ChatGPT can find the schema and answer natural-language queries against it.  There's no discovery layer for you to write — see [samples/basic_demo_ai_rules-supplier/readme_ai_mcp.md](samples/basic_demo_ai_rules-supplier/readme_ai_mcp.md)
+<br>
 
-- **AI Rules** — rules that call AI for genuinely judgment-call decisions (e.g. picking a supplier under disrupted shipping lanes).  Such AI "proposals" are governed by the deterministic rules to ensure results conform to business policy — see [samples/basic_demo_ai_rules-supplier/readme.md](samples/basic_demo_ai_rules-supplier/readme.md)
+- **MCP** (Model Context Protocol) — your API is **MCP-discoverable** out of the box (`/.well-known/mcp.json`). Copilot, Claude, or ChatGPT can find the schema and answer natural-language queries against it. There's no discovery layer for you to write — see [samples/basic_demo_ai_rules-supplier/readme_ai_mcp.md](samples/basic_demo_ai_rules-supplier/readme_ai_mcp.md)
 
-That combination — AI, logic automation, and that enterprise architecture — is what enables ***Executable Requirements***: AI building real enterprise-class systems, from formats you already are familiar with, not a new syntax to learn:
+<br>
 
-- **Gherkin-style scenarios** — [business description](samples/demo_customs_clvs/readme.md), and the [actual requirements](samples/demo_customs_clvs/docs/requirements/customs_demo/requirements.md) used by AI to create the system.
+- **AI Rules** — rules that call AI for genuinely judgment-call decisions (e.g. picking a supplier under disrupted shipping lanes). Such AI "proposals" are **governed by the deterministic rules** to ensure results conform to business policy — see [samples/basic_demo_ai_rules-supplier/readme.md](samples/basic_demo_ai_rules-supplier/readme.md)
 
-- The **short prompt that built a system straight from an actual government tariff regulation** (Canada, CBSA) — [the prompt](samples/demo_customs_surtax/readme.md), and [the rules it produced](samples/demo_customs_surtax/logic/logic_discovery/cbsa_steel_surtax.py)
+<br>
 
-    > So, simply by referencing the regs, you get a complete enterprise system — including governed logic you can audit, trust, and maintain.
+- **Custom UIs, safely** — Vibe tools (Cursor, v0, etc.) generate the UI; it's built against the same governed API, so the logic runs the same regardless of what's calling it. Quick-start a React app from your (possibly customized) admin app: `Create a new react app named my-app-name from ui/admin/admin.yaml`.
+
+</details>
 
 &nbsp;
+
+<details markdown>
+<summary>&emsp;&emsp;<strong>2. The Logic Architecture</strong> — any requirement format, one commit point (no bypass)</summary>
+
+<br>The **Commit No Bypass** gate ensures these additional transaction sources — MCP, AI Rules, Custom UIs, and EAI's own Kafka producers and consumers — all converge on the same enforcement point.
 
 <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/architecture/logic-architecture-exec.png?raw=true" alt="Design and Runtime funnels into one governed Rules Engine" height="380" width="380" align="right">
 
-The architecture that makes this work: two funnels, converging on one engine. All requirement formats, and all transaction sources, passing through **the same commit point. No bypass.**
+That's the architecture: two funnels, converging on one engine, at the **same commit point. No bypass.**
 
-**What AI delivers, once logic is off its plate: entire, *governed* systems from requirements** — not just code that becomes instant tech debt. It is this approach that **caught an 8-figure compliance exposure** a major logistics company's hand-coded system missed for months. [Full writeup →](https://apilogicserver.github.io/Docs/Tech-Ent-AI)
+* **Design Funnel:** all requirement formats — NL, Gherkin, pseudocode, formulas
+
+* **Runtime Funnel:** all transaction sources — APIs, messages, MCP, agents, workflows
+
+    * **This architecture is future-proofed:** a new integration tomorrow (another broker, custom API, an MCP tool call) inherits every rule already declared, automatically — because rules operate at the ORM layer, the same `before_flush` listener from above. Nothing to re-wire, nothing to remember to call.
+
+</details>
+
+&nbsp;
+
+<details open markdown>
+<summary>&emsp;&emsp;<strong>3. This is what makes Executable Requirements possible</strong> — at enterprise class</summary>
+
+<br>We now have a comprehensive tool set (AI, rules for governance, enterprise integration services). These enable **Governed Enterprise Systems — from prompts**, in formats you already know, not a new syntax to learn:
+
+- **Budget allocation system:**
+
+    - [The prompt](samples/prompts/allocation.prompt.md) ([↗](https://github.com/ApiLogicServer/allocate_dept_account_demo/blob/main/docs/requirements/prompt.md)) that built it.
+    - **Trust:** read [the resultant rules](samples/allocate_dept_account_demo/logic/logic_discovery/charge_distribution.py) ([↗](https://github.com/ApiLogicServer/allocate_dept_account_demo/blob/main/logic/logic_discovery/charge_distribution.py)) (or see the [logic diagram](samples/allocate_dept_account_demo/docs/requirements/logic_diagrams/logic_diagram.svg) ([↗](https://github.com/ApiLogicServer/allocate_dept_account_demo/blob/main/docs/requirements/logic_diagrams/logic_diagram.svg))) — they'll monitor every transaction.
+    - **Verify:** AI read those same rules and wrote a [Behave test suite](samples/allocate_dept_account_demo/test/api_logic_server_behave/features/charge_distribution.feature) ([↗](https://github.com/ApiLogicServer/allocate_dept_account_demo/blob/main/test/api_logic_server_behave/features/charge_distribution.feature)) from them — no test written by hand. Running it produces an automated [Logic Report](samples/allocate_dept_account_demo/test/api_logic_server_behave/reports/Behave%20Logic%20Report.md) ([↗](https://github.com/ApiLogicServer/allocate_dept_account_demo/blob/main/test/api_logic_server_behave/reports/Behave%20Logic%20Report.md)) — 7 scenarios, 37 steps, all passing, with the rule chain's execution trace on every scenario. Not a hand-written report — regenerate it any time the rules change, and it's still true.
+
+- **Canadian CBSA duty-calculation system:**
+
+    - Use **actual regulations** — [this prompt](samples/demo_customs_surtax/readme.md) ([↗](https://github.com/ApiLogicServer/demo_customs_surtax/blob/main/readme.md)) reads them straight off the web, producing [these rules](samples/demo_customs_surtax/logic/logic_discovery/cbsa_steel_surtax.py) ([↗](https://github.com/ApiLogicServer/demo_customs_surtax/blob/main/logic/logic_discovery/cbsa_steel_surtax.py)).
+    - **Proactive Human-in-the-loop:** the [ad-libs report](samples/demo_customs_surtax/docs/requirements/ad-libs.md) ([↗](https://github.com/ApiLogicServer/demo_customs_surtax/blob/main/docs/requirements/ad-libs.md)) lists every low-confidence decision — so you know exactly where it guessed.
+
+- **Low Value Import Shipments (CLVS)** — screens dangerous goods, using internationally agreed rules:
+
+    - [Business description](samples/demo_customs_clvs/readme.md) ([↗](https://github.com/ApiLogicServer/demo_customs_clvs/blob/main/readme.md)) and [actual requirements](samples/demo_customs_clvs/docs/requirements/customs_demo/requirements.md) ([↗](https://github.com/ApiLogicServer/demo_customs_clvs/blob/main/docs/requirements/customs_demo/requirements.md)), expressed in **Gherkin format**.
+    - Complex incoming messages need only sample [XML examples](samples/requirements/customs_demo_clvs/docs/requirements/customs_demo/message_formats/demo-01-no-match.xml) ([↗](https://github.com/ApiLogicServer/demo_customs_clvs/blob/main/docs/requirements/customs_demo/message_formats/demo-01-no-match.xml)).
+    - Rules make it **auditable** — logistics firms can implement systems *subject to audit*. Failure would mean hiring 100+ additional staff, an *8-figure exposure*. ([Full writeup →](https://apilogicserver.github.io/Docs/Tech-Ent-AI))
+
+**Unburdened from logic, AI is free to do what it's great at** — reading any of these requirement formats and translating intent — while rules turn that intent into real, governed systems.
+
+</details>
 
 </details>
 
 &nbsp;
 
 <details markdown>
-<summary>🔧 An LLM trained on procedural code — how'd it end up writing rules, not code?</summary>
-
-<br>
-
-It didn't figure that out on its own. It was told to, in detail, by **Context Engineering** — the same files driving this conversation right now:
-
-- **Directs rules, not code.** When you ask for business logic, CE steers the AI toward the *right* rule type (sum vs. count vs. Allocate vs. Request Pattern) for what you actually asked for, instead of letting it default to the procedural code it's seen a million times in training.
-
-- **Trains the AI to automate everything above, and to help you when it breaks.** EAI's 2-message Kafka pattern, the AI/Request Pattern wiring, Executable Requirements' pre-coding schema assessment — all of it is documented training material (`docs/training/*`) the AI reads *before* writing your code, not generic knowledge it's guessing from. Ask "what are rules?" or "how do rules work?" — or, without an AI handy, just read [samples/basic_demo_logic_gov/logic/readme_logic.md](samples/basic_demo_logic_gov/logic/readme_logic.md) — same material.
-
-  <details markdown>
-  <summary>The AI was trained on this material — can you trust its answers?</summary>
-
-  <br>Don't take them on faith. Ask the same question a different way, or ask something not covered here — like where this architecture breaks down. If it just recites the same lines back, you've caught it. If it reasons, that's the test passing.
-
-  </details>
-
-**The "can't be bypassed" claim, named:** rules aren't called from your code — they're wired into a single SQLAlchemy `before_flush` listener, installed once at server start. Every write, from any path — API, custom endpoint, Kafka consumer, agent — passes through that one listener before it commits. There's no second door.
-
-This is why the same prompt produces a governed system, not a working-but-ungoverned demo. Details: [3-Legged Stool](https://apilogicserver.github.io/Docs/Customs-readme-full/#3-legged-stool).
-
-**Have some questions before we get started?** Ask your AI assistant directly — it has the same materials we just walked through:
-
-- Is this really infrastructure, like a database?
-- Is this a black box? How do I debug a rule chain?
-- What does it take to migrate off this if we ever wanted to?
-- How does this perform at scale?
-- What does this integrate with — APIs, workflows, agents, MCP?
-- Does this work with my existing database?
-
-More background: [Eval Guide](https://apilogicserver.github.io/Docs/Eval/).
-
-</details>
+<summary>Go deeper — guided tour, plus your AI as on-call support and consulting</summary>
 
 &nbsp;
 
 <details markdown>
-<summary>🔑 Why not just let AI write the code?</summary>
+<summary>&emsp;&emsp;Guided tour — create basic_demo</summary>
 
-<br>
-
-Even if AI generates perfect procedural code — and it doesn't, reliably — you still have a governance problem.
-
-5 declarative rules are readable. Auditable. The next developer can understand them, compliance can sign off on them, and when something goes wrong you can debug them. That's not a convenience — it's a requirement.
-
-Our A/B test on a 3-table system measured this directly: 5 declarative rules vs. ~200 lines of AI-generated procedural code — a ~40X reduction. That reduction compounds: a larger system needs proportionally more procedural code to cover the same change paths, while the rule count grows with the requirements, not with the paths. Code nobody can read, verify, or safely change. Unreadable at scale is ungovernable at scale.
-
-And there's a structural problem underneath: procedural code cannot represent transitive dependencies reliably. The AI diagnosed this itself — *"Business logic is not a coding problem. It's a dependency graph problem."* That's not a capability gap. No amount of AI capability fixes a representation problem.
-
-You already saw the evidence for this above — [the two files side by side](samples/basic_demo_logic_gov/logic/procedural/credit_service.py). This is why that comparison exists.
-
-The full case — with the A/B test, the governance argument, and the scalability problem — is at [Why GenAI-Logic](https://www.genai-logic.com/#h.yo3meupszav4).
-
-</details>
-
-&nbsp;
-
-<details markdown>
-<summary>🔨 Go deeper — 30-45 min guided tour</summary>
-
-&nbsp;
-
-**Create basic_demo** (auto-opens with guided tour option):
+<br>**Create basic_demo** (auto-opens with guided tour option):
 ```bash
 genai-logic create --project_name=basic_demo --db_url=sqlite:///samples/dbs/basic_demo.sqlite
 ```
@@ -361,6 +528,39 @@ genai-logic create --project_name=basic_demo --db_url=sqlite:///samples/dbs/basi
 **Inside the project:** Say to your AI assistant: *"Guide me through basic_demo"* (30-45 min hands-on tour).
 
 > Teaches API creation, declarative rules, security, and Python customization. Fail-safe — scripts ensure no coding errors.
+
+</details>
+
+&nbsp;
+
+<details markdown>
+<summary>&emsp;&emsp;Your AI as on-call consultant — ask it anything, verify it doesn't just recite</summary>
+
+<br>Same materials, same AI you've been using — it doesn't just write rules, it automates everything above and helps when things break: EAI's 2-message Kafka pattern, the AI/Request Pattern wiring, Executable Requirements' pre-coding schema assessment — all documented training material (`docs/training/*`) the AI reads *before* writing your code, not generic knowledge it's guessing from. Ask "what are rules?" or "how do rules work?" — or, without an AI handy, just read [samples/basic_demo_logic_gov/logic/readme_logic.md](samples/basic_demo_logic_gov/logic/readme_logic.md) — same material.
+
+Ask it your own questions directly:
+- Is this really infrastructure, like a database?
+- Is this a black box? How do I debug a rule chain?
+- Can I verify this with tests, not just take it on faith?
+- What did the AI decide on its own that I should double-check? (the ad-libs report)
+- Can I see a governance/health report for this project's logic?
+- What does it take to migrate off this if we ever wanted to?
+- How does this perform at scale?
+- What does this integrate with — APIs, workflows, agents, MCP?
+- Does this work with my existing database?
+
+More background: [Eval Guide](https://apilogicserver.github.io/Docs/Eval/).
+
+Put together: once the AI knows how the system works, it doesn't just generate rules instead of code — it helps you debug them, and helps you understand them. A design assistant, not just a coding assistant.
+
+<details markdown>
+<summary>&emsp;&emsp;&emsp;&emsp;The AI was trained on this material — can you trust its answers?</summary>
+
+<br>Don't take them on faith. Ask the same question a different way, or ask something not covered here — like where this architecture breaks down. If it just recites the same lines back, you've caught it. If it reasons, that's the test passing.
+
+</details>
+
+</details>
 
 </details>
 
@@ -376,21 +576,16 @@ The section above showed you pre-built samples to browse. These are the same use
 
 &nbsp;
 
-## 1. Strategic Use Cases (From [genai-logic.com](https://www.genai-logic.com))
+## 1. Enterprise-Class Systems From Requirements
 
-Explore the key use cases from our home page:
+Each of these builds a complete system from a single prompt or command — 💬 = say it to your AI assistant, › = run in a terminal:
 
 
-| Use Case | Say to your AI / Run | What You'll Learn |
+| Use Case | 💬 Say to your AI, or › run | What You'll Learn |
 |----------|---------|-------------------|
-| **[Allocation with AI Rules](samples/allocate_dept_account_demo/docs/requirements/logic_flow_allocate_dept_account_demo.md)** <br> demo_allo_dept_gl | create demo_allo_dept_gl from samples/prompts/allocation.prompt.md <br> or genai-logic create --project_name=demo_allo_dept_gl --db_url=sqlite:///samples/dbs/starter.sqlite | - [Cascade Allocation (Costs to Depts/GL)](https://apilogicserver.github.io/Docs/Sample_Allo_Dept_GL_full) <br> - AI Rules for fuzzy match to project |
-| **[Use Case 1: AI Rules](samples/basic_demo_ai_rules-supplier/readme.md)**<br> demo_ai_rules_supplier | genai-logic create --project_name=demo_ai_rules_supplier --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Use AI Rules (req pattern) to choose Optimal Supplier, per world conditions |
-| **[Use Case 2: Governed MCP Server](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-MCP-Send-Email)** <br>demo_mcp_send_email | genai-logic create --project_name=demo_mcp_send_email --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Bus Users compose new service to send email to overdue customers, subject to email opt-out rules<br>- Create custom API with NL<br>- Create an email service (req pattern) |
-| **[EAI: Enterprise App Integration](samples/basic_demo_eai/readme.md)** <br>demo_eai | genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Executable Requirements<br>- Create custom API with NL<br>- Create Kafka Listener with NL |
-| **[Use Case 4: Vibe Dev Backend](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-Vibe)** <br> demo_vibe | genai-logic create --project_name=demo_vibe --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - UI elements, eg, Cards, Maps, Trees... |
-| **[Use Case 5: Business Users](https://www.genai-logic.com/#h.69d2voz8q5r1)** <br> webgenai | See `webgenai/` in this Manager | - Create systems from browser, with logic, sample data and derived attributes |
-| **[Customs CLVS](samples/requirements/customs_demo_clvs/docs/requirements/customs_demo/requirements.md)** <br> demo_customs_clvs | genai-logic create  --project_name=demo_customs_clvs --db_url=sqlite:///samples/requirements/customs_demo_clvs/database/customs.sqlite | - Governed Business Systems<br> - EAI (using XML), textual requirements |
-| **[Customs Surtax](samples/prompts/customs_cbsa.prompt.md)** <br> demo_customs_surtax | implement project demo_customs_surtax from samples/prompts/customs_cbsa.prompt.md | - New Business System from Regulations |
+| **[Allocation with AI Rules](samples/allocate_dept_account_demo/docs/requirements/logic_flow_allocate_dept_account_demo.md)** <br> demo_allo_dept_gl | 💬 create demo_allo_dept_gl from samples/prompts/allocation.prompt.md <br> *or* <br> › genai-logic create --project_name=demo_allo_dept_gl --db_url=sqlite:///samples/dbs/starter.sqlite | - [Cascade Allocation (Costs to Depts/GL)](https://apilogicserver.github.io/Docs/Sample_Allo_Dept_GL_full) <br> - AI Rules for fuzzy match to project |
+| **[Customs CLVS](samples/requirements/customs_demo_clvs/docs/requirements/customs_demo/requirements.md)** <br> demo_customs_clvs | › genai-logic create  --project_name=demo_customs_clvs --db_url=sqlite:///samples/requirements/customs_demo_clvs/database/customs.sqlite | - Governed Business Systems<br> - EAI (using XML), textual requirements |
+| **[Customs Surtax](samples/prompts/customs_cbsa.prompt.md)** <br> demo_customs_surtax | 💬 create project demo_customs_surtax from samples/prompts/customs_cbsa.prompt.md | - New Business System from Regulations |
 
 &nbsp;
 
@@ -398,16 +593,32 @@ Explore the key use cases from our home page:
 
 &nbsp;
 
-## 2. Additional Demos
+## 2. Enterprise Technology Demos
+
+Each of these builds a complete system from a single prompt or command — 💬 = say it to your AI assistant, › = run in a terminal:
+
+
+| Use Case | 💬 Say to your AI, or › run | What You'll Learn |
+|----------|---------|-------------------|
+| **[Use Case 1: AI Rules](samples/basic_demo_ai_rules-supplier/readme.md)**<br> demo_ai_rules_supplier | › genai-logic create --project_name=demo_ai_rules_supplier --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Use AI Rules (req pattern) to choose Optimal Supplier, per world conditions |
+| **[Use Case 2: Governed MCP Server](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-MCP-Send-Email)** <br>demo_mcp_send_email | › genai-logic create --project_name=demo_mcp_send_email --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Bus Users compose new service to send email to overdue customers, subject to email opt-out rules<br>- Create custom API with NL<br>- Create an email service (req pattern) |
+| **[EAI: Enterprise App Integration](samples/basic_demo_eai/readme.md)** <br>demo_eai | › genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Executable Requirements<br>- Create custom API with NL<br>- Create Kafka Listener with NL |
+| **[Use Case 4: Vibe Dev Backend](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-Vibe)** <br> demo_vibe | › genai-logic create --project_name=demo_vibe --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - UI elements, eg, Cards, Maps, Trees... |
+| **[Use Case 5: Business Users](https://www.genai-logic.com/#h.69d2voz8q5r1)** <br> webgenai | See `webgenai/` in this Manager | - Create systems from browser, with logic, sample data and derived attributes |
+
+&nbsp;
+
+
+## 3. Additional Demos
 
 Advanced examples and specialized patterns:
 
-| Demo | Say to your AI / Run | What You'll Learn |
+| Demo | 💬 Say to your AI, or › run | What You'll Learn |
 |------|---------|-------------------|
 | **Executable Requirements** | See [samples/requirements/readme_reqmts.md](samples/requirements/readme_reqmts.md) | Create from Gherkin requirements <br>implement reqs <path> |
-| **New system from prompt** | genai-logic genai --using=samples/prompts/genai_demo.prompt | Create systems from prompt<br>Like WebGenAI, but from IDE |
-| **Coding Samples** | code samples/nw_sample | Useful code examples<br>Search: `#als` |
-| **MCP Discovery** <br> demo_copilot_mcp_discovery | genai-logic create --project_name=demo_copilot_mcp_discovery --db_url=sqlite:///samples/dbs/basic_demo.sqlite | test rules via Copilot access to MCP Server | 
+| **New system from prompt** | › genai-logic genai --using=samples/prompts/genai_demo.prompt | Create systems from prompt<br>Like WebGenAI, but from IDE |
+| **Coding Samples** | › code samples/nw_sample | Useful code examples<br>Search: `#als` |
+| **MCP Discovery** <br> demo_copilot_mcp_discovery | › genai-logic create --project_name=demo_copilot_mcp_discovery --db_url=sqlite:///samples/dbs/basic_demo.sqlite | test rules via Copilot access to MCP Server | 
 
 
 **Copy Snippets for venv:**
@@ -419,462 +630,6 @@ python -m venv venv            # may require python3 -m venv venv
 
 &nbsp;
 
-
-# Appendices
-
-## GenAI CLI (requires an OpenAI key)
-
-Everything above — the walkthrough, the samples, Demo Catalog — runs through your AI assistant (Copilot/Claude), no separate signup. The `genai-logic genai` CLI commands below predate that: they call OpenAI's API directly, which means you need your own OpenAI account and key (see *Get an OpenAI Key*, below) and pay for usage.
-
-That's real friction most readers don't need to take on — the AI-assistant path covers the same ground. This section is kept for completeness: scripted/CI use, or specific model-iteration workflows the AI-assistant path doesn't (yet) replicate.
-
-<br>
-
-<details markdown>
-
-<summary>1. New Database - using GenAI Microservice Automation (Experiment with AI - Signup optional)</summary>
-
-<br>You can do this with or without signup:
-
-1. If you have signed up (see *Get an OpenAI Key*, below), this will create a new database and project called `genai_demo`, and open the project.  It's created using `genai_demo.prompt`, visible in left Explorer pane:
-
-```bash
-genai-logic genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
-```
-
-
-2. ***Or,*** you can simulate the process (no signup) using:
-
-
-```bash
-genai-logic genai --repaired-response=system/genai/examples/genai_demo/genai_demo.response_example --project-name=genai_demo
-```
-
-Verify it's operating properly:
-
-1. Run Configurations are provided to start the server
-2. Verify the logic by navigating to a Customer with an unshipped order, and altering one of the items to have a very large quantity
-3. Observe the constraint operating on the rollup of order amount_totals.
-    * View the logic in `logic/declare_logic.py`
-    * Put a breakpoint on the `as_condition`.  Observe the console log to see rule execution for this multi-table transaction.
-
-</br>
-
-<details markdown>
-
-<summary> What Just Happened? &nbsp;&nbsp;&nbsp;Next Steps...</summary>
-
-<br>`genai` processing is shown below (internal steps denoted in grey):
-
-1. You create your.prompt file, and invoke `genai-logic genai --using=your.prompt`.  genai then creates your project as follows:
-
-    a. Submits your prompt to the `ChatGPT API`
-
-    b. Writes the response to file, so you can correct and retry if anything goes wrong
-
-    c. Extracts model.py from the response
-
-    d. Invokes `genai-logic create-from-model`, which creates the database and your project
-
-2. Your created project is opened in your IDE, ready to execute and customize.  
-
-    a. Review `Tutorial`, Explore Customizations.
-
-![GenAI Automation](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/genai.png?raw=true)
-
-</details>
-</br>
-
-<details markdown>
-
-<summary> You can iterate the logic and data model</summary>
-
-<br>The approach for an iteration is to create a new project from an existing one:
-
-1. add another prompt to an existing projects `docs` directory, specifying your changes
-2. use `genai-logic genai`, specifying 
-    * `--using` existing projects `docs` directory, and 
-    * `--project-name` as the output project
- 
- **Logic iterations** are particularly useful.  For example, here we take the basic check-credit logic, and add:
-
-> Provide a 10% discount when buying more than 10 carbon neutral products.<br><br>The Item carbon neutral is copied from the Product carbon neutral
-
-Explore [genai_demo_iteration_discount](system/genai/examples/genai_demo/genai_demo_iteration_discount).  It's an iteration of basic_demo (see system/genai/examples/genai_demo/genai_demo_iteration_discount/002_create_db_models.prompt).  This will add carbon_neutral to the data model, and update the logic to provide the discount:
-
-**Iterate Business Logic:**
-```bash title='Iterate Business Logic'
-# Iterate with data model and logic
-genai-logic genai --project-name='genai_demo_with_discount' --using=system/genai/examples/genai_demo/genai_demo_iteration_discount
-# open Docs/db.dbml
-```
-
-<br>
-
-You can perform **model iterations:** add new columns/tables, while keeping the prior model intact.  First, we create a project with no logic, perhaps just to see the screens (this step is optional, provided just to illustrate that iterations create new projects from existing ones):
-
-**Iterate Without Logic:**
-```bash title='Iterate Without Logic'
-# Step 1 - create without logic
-genai-logic genai --project-name='genai_demo_no_logic' --using=system/genai/examples/genai_demo/genai_demo_no_logic.prompt
-# open Docs/db.dbml
-```
-
-Then, we would create another prompt in the docs directory with our model changes. We've already created these for you in `system/genai/examples/genai_demo/genai_demo_iteration` - we use that to alter the data model (see `system/genai/examples/genai_demo/genai_demo_iteration/004_iteration_renames_logic.prompt`):
-
-**Iterate With Logic:**
-```bash title='Iterate With Logic'
-# Iterate with data model and logic
-genai-logic genai --project-name='genai_demo_with_logic' --using=system/genai/examples/genai_demo/genai_demo_iteration
-# open Docs/db.dbml
-```
-
-Explore [genai_demo_iteration](system/genai/examples/genai_demo/genai_demo_iteration) - observe the `--using` is a *directory* of prompts.  These include the prompts from the first example, plus an *iteration prompt* (`004_iteration_renames_logic.prompt`) to rename tables and add logic.
-
-
-</details>
-</br>
-
-<details markdown>
-
-<summary> You can declare informal logic</summary>
-
-<br>You can declare rules using dot notation, or more informally:
-
-**Informal Logic (no dot notation):**
-```bash title="Informal Logic (no dot notation)"
-genai-logic genai --using=system/genai/examples/genai_demo/genai_demo_informal.prompt --project-name=genai_demo_informal
-```
-</details>
-</br>
-
-
-<details markdown>
-
-<summary> Multi-Rule Logic</summary>
-
-<br>You can add new columns/tables, while keeping the prior model intact:
-
-**Multi-Rule Logic:**
-```bash title="Multi-Rule Logic"
-genai-logic genai --using=system/genai/examples/emp_depts/emp_dept.prompt
-```
-</details>
-</br>
-
-<details markdown>
-
-<summary> You can ask AI to suggest logic (great way to learn!)</summary>
-
-<br>You can create a project, and ask GenAI for logic suggestions:
-
-**1. Create Project, without Rules:**
-```bash title='1. Create Project, without Rules'
-# 1. Create Project, without Rules
-genai-logic genai --project-name='genai_demo_no_logic' --using=system/genai/examples/genai_demo/genai_demo_no_logic.prompt
-```
-
-**2. Request Rule Suggestions:**
-```bash title="2. Request Rule Suggestions"
-# 2. Request Rule Suggestions
-cd genai_demo_no_logic
-genai-logic genai-logic --suggest
-```
-
-You can review the [resultant logic suggestions](genai_demo_no_logic/docs/logic_suggestions) in the `genai_demo_no_logic` project:
-
- * See and edit: `docs/logic_suggestions/002_logic_suggestions.prompt` (used in step 3, below)
-    * This corresponds to the Logic Editor - Logic View in the WebGenAI web app
-
-**3. See the rules for the logic:**
-```bash title="3. See the rules for the logic"
-# 3. See the rule code for the logic
-genai-logic genai-logic --suggest --logic='*'
-```
-
-Important notes about suggestions and generated code:
-* `--suggest --logic='*'` is intended to enable you to identify logic that does not translate into proper code
-* The example above was pretty good, but sometimes the results are downright silly:
-    * Just run suggest again, or
-    * Repair `docs/logic_suggestions/002_logic_suggestions.prompt`
-
-Also...
-* It is not advised to paste the code into `logic/declare_logic.py`
-    * The suggested logic may result in new data model attributes
-    * These are created automatically by running `genai-logic genai` (next step)
-
-The [logic suggestions directory](genai_demo_no_logic/docs/logic_suggestions) now contains the prompts to create a new project with the suggested logic.  
-When you are ready to proceed:
-1. Execute the following to create a *new project* (iteration), with suggested logic:
-
-**4. Create a new project with the Rule Suggestions:**
-```bash title="4. Create a new project with the Rule Suggestions"
-# 4. Create a new project with the Rule Suggestions
-cd ..  # important - back to manager root dir
-genai-logic genai --project-name='genai_demo_with_logic' --using=genai_demo_no_logic/docs/logic_suggestions
-```
-
-Observe:
-1. The created project has the rule suggestions in `logic/declare_logic.py`
-2. A revised Data Model in `database/models.py` that includes attributes introduced by the logic suggestions
-3. Revised test database, initialized to reflect the derivations in the suggested logic
-
-Internal Note: this sequence available in the run configs (s1/s4).
-
-</details>
-
-</br>
-
-<details markdown>
-
-<summary>Fixup - update data model with new attributes from rules</summary>
-
-<br>Fixes project issues by updating the Data Model and Test Data:
-when adding rules, such as using suggestions, you may introduce new attributes.
-If these are missing, you will see exceptions when you start your project.
-
-The `genai-utils --fixup` fixes such project issues by updating the Data Model and Test Data:
-
-1. Collects the latest model, rules, and test data from the project. 
-2. Calls ChatGPT (or similar) to resolve missing columns or data in the project.
-3. Saves the fixup request/response under a 'fixup' folder.
-4. You then use this to create a new project
-
-***Setup***
-
-After starting the [Manager](https://apilogicserver.github.io/Docs/Manager): 
-
-**0. Create Project Requiring Fixup:**
-```bash title="0. Create Project Requiring Fixup"
-# 0. Create a project requiring fixup
-genai-logic genai --repaired-response=system/genai/examples/genai_demo/genai_demo_fixup_required.json --project-name=genai_demo_fixup_required
-```
-
-If you run this project, you will observe that it fails with:
-```bash
-Logic Bank Activation Error -- see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#recovery-options
-Invalid Rules:  [AttributeError("type object 'Customer' has no attribute 'balance'")]
-Missing Attrs (try genai-logic genai-utils --fixup): ['Customer.balance: constraint']
-```
-&nbsp;
-
-***Fixup***
-
-To Fix it:
-**1. Run FixUp to add missing attributes to the fixup response data model:**
-```bash title="1. Run FixUp to add missing attributes to the fixup response data model"
-# 1. Run FixUp to add missing attributes to the data model
-cd genai_demo_fixup_required
-genai-logic genai-utils --fixup
-```
-
-Finally, use the created [fixup files](genai_demo_fixup_required/docs/fixup/) to rebuild the project:
-**2. Rebuild the project from the fixup response data model:**
-```bash title="2. Rebuild the project from the fixup response data model"
-# 2. Rebuild the project from the fixup response data model
-cd ../
-genai-logic genai --repaired-response=genai_demo_fixup_required/docs/fixup/response_fixup.json --project-name=fixed_project
-```
-    
-&nbsp;
-The created project may still report some attributes as missing.  
-(ChatGPT seems to often miss attributes mentioned in sum/count where clauses.)  To fix:
-
-1. Note the missing attributes(s) from the log
-2. Add them to `docs/003_suggest.prompt`
-3. Rebuild the project: `genai-logic genai --project-name='genai_demo_with_logic' --using=genai_demo_no_logic/docs`
-
-
-Internal Note: this sequence available in the run configs (f1/f2).
-
-</details>
-
-
-</br>
-
-<details markdown>
-
-<summary>Create from WebGenAI, and import (merge) subsequent changes</summary>
-
-<br>You can use [WebGenAI](https://apilogicserver.github.io/Docs/WebGenAI/) to create a project, and export it.  
-
-You (or colleagues) can make changes to both the WebGenAI project (on the web), and your downloaded project.  You can import the WebGenAI project, and the system will merge changes to the data model and rules automatically.  
-
-This is possible since the logic is declarative, so ordering is automatic.  This eliminates the troublesome merge issues so prevalent in procedural code.  For more on import, [click here](https://apilogicserver.github.io/Docs/IDE-Import-WebGenAI/).
-
-The Manager pre-installs a sample project you can use to explore import:
-
-```bash
-cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
-genai-logic genai-utils --import-genai --using=../wg_demo_no_logic_fixed
-```
-Observe:
-1. The [data model](system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/database) contains `Customer.balance` and `Product.carbon_neutral`
-2. The test data has been updated to include these attributes, with proper values
-
-</details>
-
-</br>
-
-<details markdown>
-
-<summary>Rebuild the test data</summary>
-
-<br>Fixes project issues by rebuilding the database to conform to the derivation rules:
-
-1. Create genai_demo: 
-```
-genai-logic genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
-```
-2. Rebuild:
-```
-cd genai_demo
-genai-logic genai-utils --rebuild-test-data
-```
-
-</details>
-</br>
-
-<details markdown>
-
-<summary> You can also execute directly, and iterate</summary>
-
-<br>You can add new columns/tables, while keeping the prior model intact:
-
-**Iterate:**
-```bash title="Iterate"
-# create project without creating a file...
-genai-logic genai-create --project-name='customer_orders' --using='customer orders'
-
-genai-logic genai-iterate --using='add Order Details and Products'
-# open Docs/db.dbml
-```
-
-</details>
-</br>
-
-<details markdown>
-
-<summary> AI sometimes fails - here's how to recover</summary>
-
-<br>AI results are not consistent, so the model file may need corrections.  You can find it at `system/genai/temp/model.py`.  You can correct the model file, and then run:
-
-```bash
-genai-logic create --project-name=genai_demo --from-model=system/genai/temp/create_db_models.py --db-url=sqlite
-```
-
-Or, correct the chatgpt response, and
-
-```bash
-genai-logic genai --repaired-response=system/genai/examples/genai_demo/genai_demo.response_example --project-name=genai_demo
-```
-
-We have seen failures such as:
-
-* duplicate definition of `DECIMAL`
-* unclosed parentheses
-* data type errors in test data creation
-* wrong engine import: from logic_bank import Engine, constraint
-* bad test data creation: with Engine() as engine...
-* Bad load code (no session)
-
-</details>
-</br>
-
-<details markdown>
-
-<summary> Postgresql Example </summary>
-
-You can test this as follows:
-
-1. Use [our docker image](https://apilogicserver.github.io/Docs/Database-Docker/):
-2. And try:
-
-```bash
-genai-logic genai --using=system/genai/examples/postgres/genai_demo_pg.prompt --db-url=postgresql://postgres:p@localhost/genai_demo
-```
-
-Provisos:
-
-* You have to create the database first; we are considering automating that: https://stackoverflow.com/questions/76294523/why-cant-create-database-if-not-exists-using-sqlalchemy
-
-</details>
-</details>
-</br>
-
-<details markdown>
-
-<summary> 2. New Database - using Copilot (Signup optional) </summary>
-
-<br>You can use Copilot chat (if extension installed; if not, skip to step 3):
-
-1. Create a model, eg:
-
-<details markdown>
-
-<summary> Show Me How to Use Copilot </summary>
-
-<br>>Paste this into the Copilot prompt:
-
-```
-Use SQLAlchemy to create a sqlite database named sample_ai.sqlite, with customers, orders, items and product
-
-Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints.
-
-Include a notes field for orders.
-
-Create a few rows of only customer and product data.
-
-Enforce the Check Credit requirement (do not generate check constraints):
-
-1. Customer.Balance <= CreditLimit
-2. Customer.Balance = Sum(Order.AmountTotal where date shipped is null)
-3. Order.AmountTotal = Sum(Items.Amount)
-4. Items.Amount = Quantity * UnitPrice
-5. Store the Items.UnitPrice as a copy from Product.UnitPrice
-```
-
-![copilot](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/copilot.png?raw=true)
-</details>
-
-<br>
-
-2. Paste the copilot response into a new `sample_ai.py` file
-
-3. Create your project:
-
-```bash
-genai-logic create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
-```
-
-4. This will create your database, create an API Logic Project from it, and launch your IDE.
-
-5. Create business logic
-
-    * You can create logic with either your IDE (and code completion), or Natural Language
-    * To use Natural Language:
-
-        1. Use the CoPilot chat,
-        2. Paste the logic above
-        3. Copy it to `logic/declare_logic.py` after `discover_logic()`
-        
-            * Alert:  Table and Column Names may require correction to conform to the model
-            * Alert: you may to apply [defaulting](https://apilogicserver.github.io/Docs/Logic-Use/#insert-defaulting), and initialize derived attributes in your database
-
-</details>
-</br>
-
-<details markdown>
-
-<summary> 3. New Database - using ChatGPT in the Browser (Signup not required)</summary>
-
-<br>A final option for GenAI is to use your Browser with ChatGPT.
-
-Please see [this doc](https://apilogicserver.github.io/Docs/Sample-AI-ChatGPT/)
-
-</details>
-
-<br>
 
 ## Procedures
 
@@ -964,46 +719,6 @@ To explore our new logic for green products:
 
 &nbsp;
 
-### Setup Codespaces
-
-Codespaces enables you to run in the cloud: VSCode via your Browser, courtesy GitHub.  
-
-<details markdown>
-
-<summary> Using codespaces on your GenAI project</summary>
-
-__1. Open your project on GitHub__
-
-![API Logic Server Intro](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/genai/open-github.png?raw=true)
-
-__2. Open it in Codespaces (takes a minute or 2):__
-
-![API Logic Server Intro](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/genai/start-codespaces.png?raw=true)
-
-> You'll see your project running in VSCode, in the browser. Behind the scenes, Codespaces requisitioned a cloud machine and loaded your project with a complete development environment — Python, dependencies, git — and attached your browser to it.
-
-__3. Start the Server and open the App in the Browser__
-
-* Use the pre-defined Launch Configuration
-
-![API Logic Server Intro](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/git-codespaces/start-codespaces.png?raw=true)
-
-</details>
-
-&nbsp;
-
-### Get an OpenAI ApiKey
-
-<br>GenAI-Logic uses OpenAI, which requires an OpenAI Key:
-
-1. Obtain one from [here](https://platform.openai.com/account/api-keys) or [here](https://platform.openai.com/api-keys)
-
-2. Authorize payments [here](https://platform.openai.com/settings/organization/billing/overview)
-
-</details>
-
-&nbsp;
-
 ### Pre-created Samples
 
 <details markdown>
@@ -1059,5 +774,33 @@ To hide the YAML or JSON front matter (the metadata block at the top of your mar
 The preview will now automatically strip the front matter from the rendered view.
 
 ![hide-front-matter](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/hide-front-matter.png?raw=true)
+
+</details>
+
+&nbsp;
+
+### Appendix
+
+<details markdown>
+
+<summary>Appendix</summary>
+
+#### Recurrent Errors on Complex Business Logic Dependencies
+
+The A/B test's two bugs came from AI writing *procedural logic* and missing the reparenting case — old parent left stale when a foreign key is reassigned. Separately, AI was also asked to generate the *Behave test suite* for `basic_demo_logic_gov` directly from the declared rules — a credible, well-structured result, reactive and API-driven, comparable in shape to test infrastructure that took weeks to write by hand for other sample projects in this repo. But it has the same gap: no scenario reassigns an existing order's customer or an existing item's product. Same AI, same underlying reasoning pattern, two different generative tasks (write the logic, write the tests for the logic) — one recurring miss.
+
+That's not a knock on either result — both are genuinely useful starting points. It's evidence for the underlying claim: AI reasons locally, case by case, not by systematically enumerating a dependency graph — and that blind spot doesn't go away because you ask it to "be careful about dependencies" in a different task. It shows up again. **This is exactly what LogicBank takes off the table** — not just the reparenting case, but the entire category: every change path (insert, update, delete, and their combinations with every foreign key and conditional aggregate), across every use case, from every source (API, message, MCP, agent). Not because the rules are written more carefully, but because the engine derives the paths structurally — there's no enumeration step left for anyone, human or AI, to get wrong.
+
+#### A Proven Technology
+
+The 40X figure isn't a one-off — it's consistent with two decades of production measurement on a predecessor system (Versata, 1995-2010: 94-99% of logic automated by rules, typically ~97%, across several dozen systems). The remaining 3-6% is exactly the hand-written event code the guard below governs — most of a real system falls inside the declarative vocabulary, not outside it. This is the architect's own measurement, not an independently audited figure — treat it as a strong internal data point, not third-party verification. [Full history →](https://apilogicserver.github.io/Docs/Tech-Proven/)
+
+#### Not a RETE Engine
+
+Purpose-built for transaction processing, not inference/decision logic. [Why this matters →](https://apilogicserver.github.io/Docs/FAQ-RETE/)
+
+#### Events and No Bypass
+
+Hand-written event code can reopen the bug class — if a `row_event`/`commit_row_event` mutates a row directly, that value skips derivation, cascades, and constraints entirely. But this isn't a silent hole: the engine **refuses to start** if it detects a mutating event without an explicit `allow_row_mutation=True` override. The safe alternative (`early_row_event`, or `logic_row.insert()`) gets full rule processing automatically. Net effect: the escape hatch is closed by default, and every place it's deliberately opened is a single `grep` away. [Details →](https://apilogicserver.github.io/Docs/Logic-Type-Events/#events-must-not-mutate-row)
 
 </details>
