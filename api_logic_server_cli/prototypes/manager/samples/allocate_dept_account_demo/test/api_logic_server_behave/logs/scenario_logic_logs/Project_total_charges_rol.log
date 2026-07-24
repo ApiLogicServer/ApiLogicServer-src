@@ -1,0 +1,312 @@
+
+Project total_charges rol
+ - 2026-07-24 11:57:31,216 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6a7a0) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,217 - logic_logger - INFO
+..Charge[None] {Insert - client} id: None, project_id: 10, contractor_id: None, project_description: None, amount: 30000, total_distributed_amount: None, description: Behave test charge, charge_date: None  row: 0x10ae93b10  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,217 - logic_logger - INFO
+..Charge[None] {server_defaults: total_distributed_amount } id: None, project_id: 10, contractor_id: None, project_description: None, amount: 30000, total_distributed_amount: 0, description: Behave test charge, charge_date: None  row: 0x10ae93b10  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,217 - logic_logger - INFO
+..Charge[None] {server aggregate_defaults: total_distributed_amount } id: None, project_id: 10, contractor_id: None, project_description: None, amount: 30000, total_distributed_amount: 0, description: Behave test charge, charge_date: None  row: 0x10ae93b10  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,217 - logic_logger - INFO
+..Charge[None] {BEGIN Allocate Rule, creating: ChargeDeptAllocation} id: None, project_id: 10, contractor_id: None, project_description: None, amount: 30000, total_distributed_amount: 0, description: Behave test charge, charge_date: None  row: 0x10ae93b10  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,218 - logic_logger - INFO
+....ChargeDeptAllocation[None] {server_defaults: percent amount } id: None, charge_id: None, project_funding_line_id: None, department_id: None, dept_charge_definition_id: None, percent: 0, amount: 0  row: 0x10ae691c0  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,218 - logic_logger - INFO
+....ChargeDeptAllocation[None] {Insert - Allocate charge to dept} id: None, charge_id: None, project_funding_line_id: None, department_id: 13, dept_charge_definition_id: 12, percent: 60.0000, amount: 18000.0000  row: 0x10ae691c0  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,218 - logic_logger - INFO
+....ChargeDeptAllocation[None] {BEGIN Allocate Rule, creating: ChargeGlAllocation} id: None, charge_id: None, project_funding_line_id: None, department_id: 13, dept_charge_definition_id: 12, percent: 60.0000, amount: 18000.0000  row: 0x10ae691c0  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,219 - logic_logger - INFO
+......ChargeGlAllocation[None] {server_defaults: percent amount } id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: None, percent: 0, amount: 0  row: 0x10aca2250  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,219 - logic_logger - INFO
+......ChargeGlAllocation[None] {Insert - Allocate dept amount to GL account} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 22, percent: 60.0000, amount: 10800.00000000  row: 0x10aca2250  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,219 - logic_logger - INFO
+......ChargeGlAllocation[None] {copy_rules for role: dept_charge_definition_line - percent} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 22, percent: 60.0000, amount: 10800.00000000  row: 0x10aca2250  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,219 - logic_logger - INFO
+........GlAccount[22] {Update - Adjusting gl_account: total_allocated} id: 22, department_id: 13, account_number: 511930, name: roads_labor 1784919451193, total_allocated:  [0.00-->] 10800.00000000, notes: None  row: 0x10af64450  session: 0x10ac6a7a0  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,219 - logic_logger - INFO
+......ChargeGlAllocation[None] {server_defaults: percent amount } id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: None, percent: 0, amount: 0  row: 0x10acf9650  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,219 - logic_logger - INFO
+......ChargeGlAllocation[None] {Insert - Allocate dept amount to GL account} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 23, percent: 40.0000, amount: 7200.00000000  row: 0x10acf9650  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,220 - logic_logger - INFO
+......ChargeGlAllocation[None] {copy_rules for role: dept_charge_definition_line - percent} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 23, percent: 40.0000, amount: 7200.00000000  row: 0x10acf9650  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,220 - logic_logger - INFO
+........GlAccount[23] {Update - Adjusting gl_account: total_allocated} id: 23, department_id: 13, account_number: 511991, name: roads_equipment 1784919451199, total_allocated:  [0.00-->] 7200.00000000, notes: None  row: 0x10af64ad0  session: 0x10ac6a7a0  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,220 - logic_logger - INFO
+....ChargeDeptAllocation[None] {END Allocate Rule, creating: ChargeGlAllocation} id: None, charge_id: None, project_funding_line_id: None, department_id: 13, dept_charge_definition_id: 12, percent: 60.0000, amount: 18000.0000  row: 0x10ae691c0  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,220 - logic_logger - INFO
+....ChargeDeptAllocation[None] {copy_rules for role: project_funding_line - percent} id: None, charge_id: None, project_funding_line_id: None, department_id: 13, dept_charge_definition_id: 12, percent: 60.0000, amount: 18000.0000  row: 0x10ae691c0  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,220 - logic_logger - INFO
+......Charge[None] {Adjustment logic chaining deferred for this parent (charge) - will run when the parent itself is processed this transaction} id: None, project_id: 10, contractor_id: None, project_description: None, amount: 30000, total_distributed_amount:  [0-->] 18000.0000, description: Behave test charge, charge_date: None  row: 0x10ae93b10  session: 0x10ac6a7a0  ins_upd_dlt: *, initial: * - 2026-07-24 11:57:31,220 - logic_logger - INFO
+....ChargeDeptAllocation[None] {server_defaults: percent amount } id: None, charge_id: None, project_funding_line_id: None, department_id: None, dept_charge_definition_id: None, percent: 0, amount: 0  row: 0x10ae69370  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,220 - logic_logger - INFO
+....ChargeDeptAllocation[None] {Insert - Allocate charge to dept} id: None, charge_id: None, project_funding_line_id: None, department_id: 14, dept_charge_definition_id: 13, percent: 40.0000, amount: 12000.0000  row: 0x10ae69370  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,221 - logic_logger - INFO
+....ChargeDeptAllocation[None] {BEGIN Allocate Rule, creating: ChargeGlAllocation} id: None, charge_id: None, project_funding_line_id: None, department_id: 14, dept_charge_definition_id: 13, percent: 40.0000, amount: 12000.0000  row: 0x10ae69370  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,221 - logic_logger - INFO
+......ChargeGlAllocation[None] {server_defaults: percent amount } id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: None, percent: 0, amount: 0  row: 0x10acf84d0  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,221 - logic_logger - INFO
+......ChargeGlAllocation[None] {Insert - Allocate dept amount to GL account} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 24, percent: 70.0000, amount: 8400.00000000  row: 0x10acf84d0  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,221 - logic_logger - INFO
+......ChargeGlAllocation[None] {copy_rules for role: dept_charge_definition_line - percent} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 24, percent: 70.0000, amount: 8400.00000000  row: 0x10acf84d0  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,222 - logic_logger - INFO
+........GlAccount[24] {Update - Adjusting gl_account: total_allocated} id: 24, department_id: 14, account_number: 512040, name: construction_labor 1784919451204, total_allocated:  [0.00-->] 8400.00000000, notes: None  row: 0x10ae8b350  session: 0x10ac6a7a0  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,222 - logic_logger - INFO
+......ChargeGlAllocation[None] {server_defaults: percent amount } id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: None, percent: 0, amount: 0  row: 0x10aee1dd0  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,222 - logic_logger - INFO
+......ChargeGlAllocation[None] {Insert - Allocate dept amount to GL account} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 25, percent: 30.0000, amount: 3600.00000000  row: 0x10aee1dd0  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,222 - logic_logger - INFO
+......ChargeGlAllocation[None] {copy_rules for role: dept_charge_definition_line - percent} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 25, percent: 30.0000, amount: 3600.00000000  row: 0x10aee1dd0  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,222 - logic_logger - INFO
+........GlAccount[25] {Update - Adjusting gl_account: total_allocated} id: 25, department_id: 14, account_number: 512101, name: construction_materials 1784919451210, total_allocated:  [0.00-->] 3600.00000000, notes: None  row: 0x10aee38d0  session: 0x10ac6a7a0  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,223 - logic_logger - INFO
+....ChargeDeptAllocation[None] {END Allocate Rule, creating: ChargeGlAllocation} id: None, charge_id: None, project_funding_line_id: None, department_id: 14, dept_charge_definition_id: 13, percent: 40.0000, amount: 12000.0000  row: 0x10ae69370  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,223 - logic_logger - INFO
+....ChargeDeptAllocation[None] {copy_rules for role: project_funding_line - percent} id: None, charge_id: None, project_funding_line_id: None, department_id: 14, dept_charge_definition_id: 13, percent: 40.0000, amount: 12000.0000  row: 0x10ae69370  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,223 - logic_logger - INFO
+......Charge[None] {Adjustment logic chaining deferred for this parent (charge) - will run when the parent itself is processed this transaction} id: None, project_id: 10, contractor_id: None, project_description: None, amount: 30000, total_distributed_amount:  [18000.0000-->] 30000.0000, description: Behave test charge, charge_date: None  row: 0x10ae93b10  session: 0x10ac6a7a0  ins_upd_dlt: *, initial: * - 2026-07-24 11:57:31,223 - logic_logger - INFO
+..Charge[None] {END Allocate Rule, creating: ChargeDeptAllocation} id: None, project_id: 10, contractor_id: None, project_description: None, amount: 30000, total_distributed_amount: 30000.0000, description: Behave test charge, charge_date: None  row: 0x10ae93b10  session: 0x10ac6a7a0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,223 - logic_logger - INFO
+....Project[10] {Update - Adjusting project: total_charges} id: 10, name: Test Project 1784919451185, project_funding_definition_id: 7, total_charges:  [0.00-->] 30000.00, notes: None  row: 0x10aee1e50  session: 0x10ac6a7a0  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,223 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6a7a0)   										 - 2026-07-24 11:57:31,223 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6a7a0)   										 - 2026-07-24 11:57:31,224 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,224 - logic_logger - INFO
+  Charge		## - 2026-07-24 11:57:31,224 - logic_logger - INFO
+    1. RowEvent Charge.identify_project_for_charge() 		## - 2026-07-24 11:57:31,224 - logic_logger - INFO
+    2. Derive <class 'database.models.Charge'>.total_distributed_amount as Sum(ChargeDeptAllocation.amount Where  - None)		## - 2026-07-24 11:57:31,224 - logic_logger - INFO
+    3. RowEvent Charge.check_active_funding() 		## - 2026-07-24 11:57:31,224 - logic_logger - INFO
+  ChargeDeptAllocation		## - 2026-07-24 11:57:31,224 - logic_logger - INFO
+    4. Derive <class 'database.models.ChargeDeptAllocation'>.amount as Formula (1): as_expression=lambda row: (
+            row.charg [...]		## - 2026-07-24 11:57:31,224 - logic_logger - INFO
+    5. Derive <class 'database.models.ChargeDeptAllocation'>.percent as Copy(project_funding_line.percent)		## - 2026-07-24 11:57:31,224 - logic_logger - INFO
+  ChargeGlAllocation		## - 2026-07-24 11:57:31,224 - logic_logger - INFO
+    6. Derive <class 'database.models.ChargeGlAllocation'>.percent as Copy(dept_charge_definition_line.percent)		## - 2026-07-24 11:57:31,224 - logic_logger - INFO
+    7. Derive <class 'database.models.ChargeGlAllocation'>.amount as Formula (1): as_expression=lambda row: (
+            row.charg [...]		## - 2026-07-24 11:57:31,225 - logic_logger - INFO
+  GlAccount		## - 2026-07-24 11:57:31,225 - logic_logger - INFO
+    8. Derive <class 'database.models.GlAccount'>.total_allocated as Sum(ChargeGlAllocation.amount Where  - None)		## - 2026-07-24 11:57:31,225 - logic_logger - INFO
+  Project		## - 2026-07-24 11:57:31,225 - logic_logger - INFO
+    9. Derive <class 'database.models.Project'>.total_charges as Sum(Charge.amount Where  - None)		## - 2026-07-24 11:57:31,225 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6a7a0))       	 - 2026-07-24 11:57:31,225 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6b350) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,228 - logic_logger - INFO
+..Charge[None] {Insert - client} id: None, project_id: 10, contractor_id: None, project_description: None, amount: 20000, total_distributed_amount: None, description: Behave test charge, charge_date: None  row: 0x10ae18c30  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,228 - logic_logger - INFO
+..Charge[None] {server_defaults: total_distributed_amount } id: None, project_id: 10, contractor_id: None, project_description: None, amount: 20000, total_distributed_amount: 0, description: Behave test charge, charge_date: None  row: 0x10ae18c30  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,228 - logic_logger - INFO
+..Charge[None] {server aggregate_defaults: total_distributed_amount } id: None, project_id: 10, contractor_id: None, project_description: None, amount: 20000, total_distributed_amount: 0, description: Behave test charge, charge_date: None  row: 0x10ae18c30  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,228 - logic_logger - INFO
+..Charge[None] {BEGIN Allocate Rule, creating: ChargeDeptAllocation} id: None, project_id: 10, contractor_id: None, project_description: None, amount: 20000, total_distributed_amount: 0, description: Behave test charge, charge_date: None  row: 0x10ae18c30  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,229 - logic_logger - INFO
+....ChargeDeptAllocation[None] {server_defaults: percent amount } id: None, charge_id: None, project_funding_line_id: None, department_id: None, dept_charge_definition_id: None, percent: 0, amount: 0  row: 0x10ae68e60  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,229 - logic_logger - INFO
+....ChargeDeptAllocation[None] {Insert - Allocate charge to dept} id: None, charge_id: None, project_funding_line_id: None, department_id: 13, dept_charge_definition_id: 12, percent: 60.0000, amount: 12000.0000  row: 0x10ae68e60  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,229 - logic_logger - INFO
+....ChargeDeptAllocation[None] {BEGIN Allocate Rule, creating: ChargeGlAllocation} id: None, charge_id: None, project_funding_line_id: None, department_id: 13, dept_charge_definition_id: 12, percent: 60.0000, amount: 12000.0000  row: 0x10ae68e60  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,230 - logic_logger - INFO
+......ChargeGlAllocation[None] {server_defaults: percent amount } id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: None, percent: 0, amount: 0  row: 0x10aee10d0  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,230 - logic_logger - INFO
+......ChargeGlAllocation[None] {Insert - Allocate dept amount to GL account} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 22, percent: 60.0000, amount: 7200.00000000  row: 0x10aee10d0  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,230 - logic_logger - INFO
+......ChargeGlAllocation[None] {copy_rules for role: dept_charge_definition_line - percent} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 22, percent: 60.0000, amount: 7200.00000000  row: 0x10aee10d0  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,230 - logic_logger - INFO
+........GlAccount[22] {Update - Adjusting gl_account: total_allocated} id: 22, department_id: 13, account_number: 511930, name: roads_labor 1784919451193, total_allocated:  [10800.00-->] 18000.00000000, notes: None  row: 0x10af64150  session: 0x10ac6b350  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,231 - logic_logger - INFO
+......ChargeGlAllocation[None] {server_defaults: percent amount } id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: None, percent: 0, amount: 0  row: 0x10aee2dd0  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,231 - logic_logger - INFO
+......ChargeGlAllocation[None] {Insert - Allocate dept amount to GL account} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 23, percent: 40.0000, amount: 4800.00000000  row: 0x10aee2dd0  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,231 - logic_logger - INFO
+......ChargeGlAllocation[None] {copy_rules for role: dept_charge_definition_line - percent} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 23, percent: 40.0000, amount: 4800.00000000  row: 0x10aee2dd0  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,231 - logic_logger - INFO
+........GlAccount[23] {Update - Adjusting gl_account: total_allocated} id: 23, department_id: 13, account_number: 511991, name: roads_equipment 1784919451199, total_allocated:  [7200.00-->] 12000.00000000, notes: None  row: 0x10af647d0  session: 0x10ac6b350  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,231 - logic_logger - INFO
+....ChargeDeptAllocation[None] {END Allocate Rule, creating: ChargeGlAllocation} id: None, charge_id: None, project_funding_line_id: None, department_id: 13, dept_charge_definition_id: 12, percent: 60.0000, amount: 12000.0000  row: 0x10ae68e60  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,231 - logic_logger - INFO
+....ChargeDeptAllocation[None] {copy_rules for role: project_funding_line - percent} id: None, charge_id: None, project_funding_line_id: None, department_id: 13, dept_charge_definition_id: 12, percent: 60.0000, amount: 12000.0000  row: 0x10ae68e60  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,231 - logic_logger - INFO
+......Charge[None] {Adjustment logic chaining deferred for this parent (charge) - will run when the parent itself is processed this transaction} id: None, project_id: 10, contractor_id: None, project_description: None, amount: 20000, total_distributed_amount:  [0-->] 12000.0000, description: Behave test charge, charge_date: None  row: 0x10ae18c30  session: 0x10ac6b350  ins_upd_dlt: *, initial: * - 2026-07-24 11:57:31,231 - logic_logger - INFO
+....ChargeDeptAllocation[None] {server_defaults: percent amount } id: None, charge_id: None, project_funding_line_id: None, department_id: None, dept_charge_definition_id: None, percent: 0, amount: 0  row: 0x10ae69400  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,232 - logic_logger - INFO
+....ChargeDeptAllocation[None] {Insert - Allocate charge to dept} id: None, charge_id: None, project_funding_line_id: None, department_id: 14, dept_charge_definition_id: 13, percent: 40.0000, amount: 8000.0000  row: 0x10ae69400  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,232 - logic_logger - INFO
+....ChargeDeptAllocation[None] {BEGIN Allocate Rule, creating: ChargeGlAllocation} id: None, charge_id: None, project_funding_line_id: None, department_id: 14, dept_charge_definition_id: 13, percent: 40.0000, amount: 8000.0000  row: 0x10ae69400  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,232 - logic_logger - INFO
+......ChargeGlAllocation[None] {server_defaults: percent amount } id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: None, percent: 0, amount: 0  row: 0x10af65b50  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,232 - logic_logger - INFO
+......ChargeGlAllocation[None] {Insert - Allocate dept amount to GL account} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 24, percent: 70.0000, amount: 5600.00000000  row: 0x10af65b50  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,232 - logic_logger - INFO
+......ChargeGlAllocation[None] {copy_rules for role: dept_charge_definition_line - percent} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 24, percent: 70.0000, amount: 5600.00000000  row: 0x10af65b50  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,233 - logic_logger - INFO
+........GlAccount[24] {Update - Adjusting gl_account: total_allocated} id: 24, department_id: 14, account_number: 512040, name: construction_labor 1784919451204, total_allocated:  [8400.00-->] 14000.00000000, notes: None  row: 0x10af64650  session: 0x10ac6b350  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,233 - logic_logger - INFO
+......ChargeGlAllocation[None] {server_defaults: percent amount } id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: None, percent: 0, amount: 0  row: 0x10af65ad0  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,233 - logic_logger - INFO
+......ChargeGlAllocation[None] {Insert - Allocate dept amount to GL account} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 25, percent: 30.0000, amount: 2400.00000000  row: 0x10af65ad0  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,233 - logic_logger - INFO
+......ChargeGlAllocation[None] {copy_rules for role: dept_charge_definition_line - percent} id: None, charge_dept_allocation_id: None, dept_charge_definition_line_id: None, gl_account_id: 25, percent: 30.0000, amount: 2400.00000000  row: 0x10af65ad0  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,233 - logic_logger - INFO
+........GlAccount[25] {Update - Adjusting gl_account: total_allocated} id: 25, department_id: 14, account_number: 512101, name: construction_materials 1784919451210, total_allocated:  [3600.00-->] 6000.00000000, notes: None  row: 0x10af65750  session: 0x10ac6b350  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,234 - logic_logger - INFO
+....ChargeDeptAllocation[None] {END Allocate Rule, creating: ChargeGlAllocation} id: None, charge_id: None, project_funding_line_id: None, department_id: 14, dept_charge_definition_id: 13, percent: 40.0000, amount: 8000.0000  row: 0x10ae69400  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,234 - logic_logger - INFO
+....ChargeDeptAllocation[None] {copy_rules for role: project_funding_line - percent} id: None, charge_id: None, project_funding_line_id: None, department_id: 14, dept_charge_definition_id: 13, percent: 40.0000, amount: 8000.0000  row: 0x10ae69400  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,234 - logic_logger - INFO
+......Charge[None] {Adjustment logic chaining deferred for this parent (charge) - will run when the parent itself is processed this transaction} id: None, project_id: 10, contractor_id: None, project_description: None, amount: 20000, total_distributed_amount:  [12000.0000-->] 20000.0000, description: Behave test charge, charge_date: None  row: 0x10ae18c30  session: 0x10ac6b350  ins_upd_dlt: *, initial: * - 2026-07-24 11:57:31,234 - logic_logger - INFO
+..Charge[None] {END Allocate Rule, creating: ChargeDeptAllocation} id: None, project_id: 10, contractor_id: None, project_description: None, amount: 20000, total_distributed_amount: 20000.0000, description: Behave test charge, charge_date: None  row: 0x10ae18c30  session: 0x10ac6b350  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,234 - logic_logger - INFO
+....Project[10] {Update - Adjusting project: total_charges} id: 10, name: Test Project 1784919451185, project_funding_definition_id: 7, total_charges:  [30000.00-->] 50000.00, notes: None  row: 0x10aee1cd0  session: 0x10ac6b350  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,234 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6b350)   										 - 2026-07-24 11:57:31,234 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6b350)   										 - 2026-07-24 11:57:31,235 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,235 - logic_logger - INFO
+  Charge		## - 2026-07-24 11:57:31,235 - logic_logger - INFO
+    1. RowEvent Charge.identify_project_for_charge() 		## - 2026-07-24 11:57:31,235 - logic_logger - INFO
+    2. Derive <class 'database.models.Charge'>.total_distributed_amount as Sum(ChargeDeptAllocation.amount Where  - None)		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+    3. RowEvent Charge.check_active_funding() 		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+  ChargeDeptAllocation		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+    4. Derive <class 'database.models.ChargeDeptAllocation'>.amount as Formula (1): as_expression=lambda row: (
+            row.charg [...]		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+    5. Derive <class 'database.models.ChargeDeptAllocation'>.percent as Copy(project_funding_line.percent)		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+  ChargeGlAllocation		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+    6. Derive <class 'database.models.ChargeGlAllocation'>.percent as Copy(dept_charge_definition_line.percent)		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+    7. Derive <class 'database.models.ChargeGlAllocation'>.amount as Formula (1): as_expression=lambda row: (
+            row.charg [...]		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+  GlAccount		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+    8. Derive <class 'database.models.GlAccount'>.total_allocated as Sum(ChargeGlAllocation.amount Where  - None)		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+  Project		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+    9. Derive <class 'database.models.Project'>.total_charges as Sum(Charge.amount Where  - None)		## - 2026-07-24 11:57:31,236 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6b350))       	 - 2026-07-24 11:57:31,236 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6b240) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,240 - logic_logger - INFO
+..Department[None] {Insert - client} id: None, name: Roads 1784919451240, notes: None  row: 0x10ac769e0  session: 0x10ac6b240  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,241 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6b240)   										 - 2026-07-24 11:57:31,241 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6b240)   										 - 2026-07-24 11:57:31,241 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,241 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6b240))       	 - 2026-07-24 11:57:31,241 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6b9b0) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,243 - logic_logger - INFO
+..Department[None] {Insert - client} id: None, name: Construction 1784919451242, notes: None  row: 0x10ac750f0  session: 0x10ac6b9b0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,243 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6b9b0)   										 - 2026-07-24 11:57:31,243 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6b9b0)   										 - 2026-07-24 11:57:31,243 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,243 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6b9b0))       	 - 2026-07-24 11:57:31,243 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6b020) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,245 - logic_logger - INFO
+..DeptChargeDefinition[None] {Insert - client} id: None, department_id: 15, name: Roads Split 1784919451244, total_percent: None, is_active: None, notes: None  row: 0x10ae8b4d0  session: 0x10ac6b020  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,245 - logic_logger - INFO
+..DeptChargeDefinition[None] {server_defaults: total_percent is_active } id: None, department_id: 15, name: Roads Split 1784919451244, total_percent: 0, is_active: 0, notes: None  row: 0x10ae8b4d0  session: 0x10ac6b020  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,245 - logic_logger - INFO
+..DeptChargeDefinition[None] {server aggregate_defaults: total_percent } id: None, department_id: 15, name: Roads Split 1784919451244, total_percent: 0, is_active: 0, notes: None  row: 0x10ae8b4d0  session: 0x10ac6b020  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,245 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6b020)   										 - 2026-07-24 11:57:31,245 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6b020)   										 - 2026-07-24 11:57:31,245 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,245 - logic_logger - INFO
+  DeptChargeDefinition		## - 2026-07-24 11:57:31,245 - logic_logger - INFO
+    1. Derive <class 'database.models.DeptChargeDefinition'>.is_active as Formula (1): as_expression=lambda row: 1 if row.total_percent  [...]		## - 2026-07-24 11:57:31,245 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6b020))       	 - 2026-07-24 11:57:31,245 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6bac0) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,247 - logic_logger - INFO
+..DeptChargeDefinition[None] {Insert - client} id: None, department_id: 16, name: Construction Split 1784919451246, total_percent: None, is_active: None, notes: None  row: 0x10ae89c50  session: 0x10ac6bac0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,247 - logic_logger - INFO
+..DeptChargeDefinition[None] {server_defaults: total_percent is_active } id: None, department_id: 16, name: Construction Split 1784919451246, total_percent: 0, is_active: 0, notes: None  row: 0x10ae89c50  session: 0x10ac6bac0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,247 - logic_logger - INFO
+..DeptChargeDefinition[None] {server aggregate_defaults: total_percent } id: None, department_id: 16, name: Construction Split 1784919451246, total_percent: 0, is_active: 0, notes: None  row: 0x10ae89c50  session: 0x10ac6bac0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,247 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6bac0)   										 - 2026-07-24 11:57:31,248 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6bac0)   										 - 2026-07-24 11:57:31,248 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,248 - logic_logger - INFO
+  DeptChargeDefinition		## - 2026-07-24 11:57:31,248 - logic_logger - INFO
+    1. Derive <class 'database.models.DeptChargeDefinition'>.is_active as Formula (1): as_expression=lambda row: 1 if row.total_percent  [...]		## - 2026-07-24 11:57:31,248 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6bac0))       	 - 2026-07-24 11:57:31,248 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6b130) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,250 - logic_logger - INFO
+..ProjectFundingDefinition[None] {Insert - client} id: None, name: Test PFD 1784919451249, total_percent: None, is_active: None, notes: None  row: 0x10ac63150  session: 0x10ac6b130  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,250 - logic_logger - INFO
+..ProjectFundingDefinition[None] {server_defaults: total_percent is_active } id: None, name: Test PFD 1784919451249, total_percent: 0, is_active: 0, notes: None  row: 0x10ac63150  session: 0x10ac6b130  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,250 - logic_logger - INFO
+..ProjectFundingDefinition[None] {server aggregate_defaults: total_percent } id: None, name: Test PFD 1784919451249, total_percent: 0, is_active: 0, notes: None  row: 0x10ac63150  session: 0x10ac6b130  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,250 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6b130)   										 - 2026-07-24 11:57:31,250 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6b130)   										 - 2026-07-24 11:57:31,250 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,250 - logic_logger - INFO
+  ProjectFundingDefinition		## - 2026-07-24 11:57:31,250 - logic_logger - INFO
+    1. Derive <class 'database.models.ProjectFundingDefinition'>.is_active as Formula (1): as_expression=lambda row: 1 if row.total_percent  [...]		## - 2026-07-24 11:57:31,250 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6b130))       	 - 2026-07-24 11:57:31,250 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6bdf0) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,252 - logic_logger - INFO
+..Project[None] {Insert - client} id: None, name: Test Project 1784919451251, project_funding_definition_id: 8, total_charges: None, notes: None  row: 0x10aee22d0  session: 0x10ac6bdf0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,252 - logic_logger - INFO
+..Project[None] {server_defaults: total_charges } id: None, name: Test Project 1784919451251, project_funding_definition_id: 8, total_charges: 0, notes: None  row: 0x10aee22d0  session: 0x10ac6bdf0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,252 - logic_logger - INFO
+..Project[None] {server aggregate_defaults: total_charges } id: None, name: Test Project 1784919451251, project_funding_definition_id: 8, total_charges: 0, notes: None  row: 0x10aee22d0  session: 0x10ac6bdf0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,252 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6bdf0)   										 - 2026-07-24 11:57:31,252 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6bdf0)   										 - 2026-07-24 11:57:31,252 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,252 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6bdf0))       	 - 2026-07-24 11:57:31,253 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6a580) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,254 - logic_logger - INFO
+..ProjectFundingLine[None] {Insert - client} id: None, project_funding_definition_id: 8, department_id: 15, dept_charge_definition_id: 14, percent: 60, notes: None  row: 0x10aee3bd0  session: 0x10ac6a580  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,254 - logic_logger - INFO
+....ProjectFundingDefinition[8] {Update - Adjusting project_funding_definition: total_percent} id: 8, name: Test PFD 1784919451249, total_percent:  [0.0000-->] 60.0000, is_active: 0, notes: None  row: 0x10aee2850  session: 0x10ac6a580  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,255 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6a580)   										 - 2026-07-24 11:57:31,255 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6a580)   										 - 2026-07-24 11:57:31,256 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,256 - logic_logger - INFO
+  ProjectFundingDefinition		## - 2026-07-24 11:57:31,256 - logic_logger - INFO
+    1. Derive <class 'database.models.ProjectFundingDefinition'>.is_active as Formula (1): as_expression=lambda row: 1 if row.total_percent  [...]		## - 2026-07-24 11:57:31,256 - logic_logger - INFO
+    2. Derive <class 'database.models.ProjectFundingDefinition'>.total_percent as Sum(ProjectFundingLine.percent Where  - None)		## - 2026-07-24 11:57:31,256 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6a580))       	 - 2026-07-24 11:57:31,256 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6a140) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,258 - logic_logger - INFO
+..ProjectFundingLine[None] {Insert - client} id: None, project_funding_definition_id: 8, department_id: 16, dept_charge_definition_id: 15, percent: 40, notes: None  row: 0x10aee29d0  session: 0x10ac6a140  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,258 - logic_logger - INFO
+....ProjectFundingDefinition[8] {Update - Adjusting project_funding_definition: total_percent} id: 8, name: Test PFD 1784919451249, total_percent:  [60.0000-->] 100.0000, is_active: 0, notes: None  row: 0x10af65cd0  session: 0x10ac6a140  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,258 - logic_logger - INFO
+....ProjectFundingDefinition[8] {Formula is_active} id: 8, name: Test PFD 1784919451249, total_percent:  [60.0000-->] 100.0000, is_active:  [0-->] 1, notes: None  row: 0x10af65cd0  session: 0x10ac6a140  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,258 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6a140)   										 - 2026-07-24 11:57:31,258 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6a140)   										 - 2026-07-24 11:57:31,259 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,259 - logic_logger - INFO
+  ProjectFundingDefinition		## - 2026-07-24 11:57:31,259 - logic_logger - INFO
+    1. Derive <class 'database.models.ProjectFundingDefinition'>.is_active as Formula (1): as_expression=lambda row: 1 if row.total_percent  [...]		## - 2026-07-24 11:57:31,259 - logic_logger - INFO
+    2. Derive <class 'database.models.ProjectFundingDefinition'>.total_percent as Sum(ProjectFundingLine.percent Where  - None)		## - 2026-07-24 11:57:31,259 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6a140))       	 - 2026-07-24 11:57:31,259 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac69e10) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,261 - logic_logger - INFO
+..GlAccount[None] {Insert - client} id: None, department_id: 15, account_number: 512600, name: roads_labor 1784919451260, total_allocated: None, notes: None  row: 0x10aee1bd0  session: 0x10ac69e10  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,261 - logic_logger - INFO
+..GlAccount[None] {server_defaults: total_allocated } id: None, department_id: 15, account_number: 512600, name: roads_labor 1784919451260, total_allocated: 0, notes: None  row: 0x10aee1bd0  session: 0x10ac69e10  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,261 - logic_logger - INFO
+..GlAccount[None] {server aggregate_defaults: total_allocated } id: None, department_id: 15, account_number: 512600, name: roads_labor 1784919451260, total_allocated: 0, notes: None  row: 0x10aee1bd0  session: 0x10ac69e10  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,261 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac69e10)   										 - 2026-07-24 11:57:31,261 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac69e10)   										 - 2026-07-24 11:57:31,261 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,262 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac69e10))       	 - 2026-07-24 11:57:31,262 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10af8c160) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,263 - logic_logger - INFO
+..DeptChargeDefinitionLine[None] {Insert - client} id: None, dept_charge_definition_id: 14, gl_account_id: 26, percent: 60, notes: None  row: 0x10aee3e50  session: 0x10af8c160  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,263 - logic_logger - INFO
+....DeptChargeDefinition[14] {Update - Adjusting dept_charge_definition: total_percent} id: 14, department_id: 15, name: Roads Split 1784919451244, total_percent:  [0.0000-->] 60.0000, is_active: 0, notes: None  row: 0x10af666d0  session: 0x10af8c160  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,264 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10af8c160)   										 - 2026-07-24 11:57:31,264 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10af8c160)   										 - 2026-07-24 11:57:31,264 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,264 - logic_logger - INFO
+  DeptChargeDefinition		## - 2026-07-24 11:57:31,264 - logic_logger - INFO
+    1. Derive <class 'database.models.DeptChargeDefinition'>.is_active as Formula (1): as_expression=lambda row: 1 if row.total_percent  [...]		## - 2026-07-24 11:57:31,264 - logic_logger - INFO
+    2. Derive <class 'database.models.DeptChargeDefinition'>.total_percent as Sum(DeptChargeDefinitionLine.percent Where  - None)		## - 2026-07-24 11:57:31,264 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10af8c160))       	 - 2026-07-24 11:57:31,264 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10af8c050) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,266 - logic_logger - INFO
+..GlAccount[None] {Insert - client} id: None, department_id: 15, account_number: 512651, name: roads_equipment 1784919451265, total_allocated: None, notes: None  row: 0x10aee2a50  session: 0x10af8c050  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,266 - logic_logger - INFO
+..GlAccount[None] {server_defaults: total_allocated } id: None, department_id: 15, account_number: 512651, name: roads_equipment 1784919451265, total_allocated: 0, notes: None  row: 0x10aee2a50  session: 0x10af8c050  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,266 - logic_logger - INFO
+..GlAccount[None] {server aggregate_defaults: total_allocated } id: None, department_id: 15, account_number: 512651, name: roads_equipment 1784919451265, total_allocated: 0, notes: None  row: 0x10aee2a50  session: 0x10af8c050  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,266 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10af8c050)   										 - 2026-07-24 11:57:31,266 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10af8c050)   										 - 2026-07-24 11:57:31,267 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,267 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10af8c050))       	 - 2026-07-24 11:57:31,267 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10af8c6b0) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,268 - logic_logger - INFO
+..DeptChargeDefinitionLine[None] {Insert - client} id: None, dept_charge_definition_id: 14, gl_account_id: 27, percent: 40, notes: None  row: 0x10aee0a50  session: 0x10af8c6b0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,268 - logic_logger - INFO
+....DeptChargeDefinition[14] {Update - Adjusting dept_charge_definition: total_percent} id: 14, department_id: 15, name: Roads Split 1784919451244, total_percent:  [60.0000-->] 100.0000, is_active: 0, notes: None  row: 0x10af64bd0  session: 0x10af8c6b0  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,269 - logic_logger - INFO
+....DeptChargeDefinition[14] {Formula is_active} id: 14, department_id: 15, name: Roads Split 1784919451244, total_percent:  [60.0000-->] 100.0000, is_active:  [0-->] 1, notes: None  row: 0x10af64bd0  session: 0x10af8c6b0  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,269 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10af8c6b0)   										 - 2026-07-24 11:57:31,269 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10af8c6b0)   										 - 2026-07-24 11:57:31,270 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,270 - logic_logger - INFO
+  DeptChargeDefinition		## - 2026-07-24 11:57:31,270 - logic_logger - INFO
+    1. Derive <class 'database.models.DeptChargeDefinition'>.is_active as Formula (1): as_expression=lambda row: 1 if row.total_percent  [...]		## - 2026-07-24 11:57:31,270 - logic_logger - INFO
+    2. Derive <class 'database.models.DeptChargeDefinition'>.total_percent as Sum(DeptChargeDefinitionLine.percent Where  - None)		## - 2026-07-24 11:57:31,270 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10af8c6b0))       	 - 2026-07-24 11:57:31,270 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6bbd0) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,271 - logic_logger - INFO
+..GlAccount[None] {Insert - client} id: None, department_id: 16, account_number: 512710, name: construction_labor 1784919451271, total_allocated: None, notes: None  row: 0x10ae168d0  session: 0x10ac6bbd0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,272 - logic_logger - INFO
+..GlAccount[None] {server_defaults: total_allocated } id: None, department_id: 16, account_number: 512710, name: construction_labor 1784919451271, total_allocated: 0, notes: None  row: 0x10ae168d0  session: 0x10ac6bbd0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,272 - logic_logger - INFO
+..GlAccount[None] {server aggregate_defaults: total_allocated } id: None, department_id: 16, account_number: 512710, name: construction_labor 1784919451271, total_allocated: 0, notes: None  row: 0x10ae168d0  session: 0x10ac6bbd0  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,272 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6bbd0)   										 - 2026-07-24 11:57:31,272 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6bbd0)   										 - 2026-07-24 11:57:31,272 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,272 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6bbd0))       	 - 2026-07-24 11:57:31,272 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6a030) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,274 - logic_logger - INFO
+..DeptChargeDefinitionLine[None] {Insert - client} id: None, dept_charge_definition_id: 15, gl_account_id: 28, percent: 70, notes: None  row: 0x10aee2fd0  session: 0x10ac6a030  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,274 - logic_logger - INFO
+....DeptChargeDefinition[15] {Update - Adjusting dept_charge_definition: total_percent} id: 15, department_id: 16, name: Construction Split 1784919451246, total_percent:  [0.0000-->] 70.0000, is_active: 0, notes: None  row: 0x10aee2a50  session: 0x10ac6a030  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,275 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6a030)   										 - 2026-07-24 11:57:31,275 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6a030)   										 - 2026-07-24 11:57:31,275 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,275 - logic_logger - INFO
+  DeptChargeDefinition		## - 2026-07-24 11:57:31,275 - logic_logger - INFO
+    1. Derive <class 'database.models.DeptChargeDefinition'>.is_active as Formula (1): as_expression=lambda row: 1 if row.total_percent  [...]		## - 2026-07-24 11:57:31,275 - logic_logger - INFO
+    2. Derive <class 'database.models.DeptChargeDefinition'>.total_percent as Sum(DeptChargeDefinitionLine.percent Where  - None)		## - 2026-07-24 11:57:31,275 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6a030))       	 - 2026-07-24 11:57:31,275 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6a140) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,277 - logic_logger - INFO
+..GlAccount[None] {Insert - client} id: None, department_id: 16, account_number: 512761, name: construction_materials 1784919451276, total_allocated: None, notes: None  row: 0x10aee1d50  session: 0x10ac6a140  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,277 - logic_logger - INFO
+..GlAccount[None] {server_defaults: total_allocated } id: None, department_id: 16, account_number: 512761, name: construction_materials 1784919451276, total_allocated: 0, notes: None  row: 0x10aee1d50  session: 0x10ac6a140  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,277 - logic_logger - INFO
+..GlAccount[None] {server aggregate_defaults: total_allocated } id: None, department_id: 16, account_number: 512761, name: construction_materials 1784919451276, total_allocated: 0, notes: None  row: 0x10aee1d50  session: 0x10ac6a140  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,277 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6a140)   										 - 2026-07-24 11:57:31,277 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6a140)   										 - 2026-07-24 11:57:31,277 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,278 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6a140))       	 - 2026-07-24 11:57:31,278 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10ac6b130) (sqlalchemy before_flush)			 - 2026-07-24 11:57:31,279 - logic_logger - INFO
+..DeptChargeDefinitionLine[None] {Insert - client} id: None, dept_charge_definition_id: 15, gl_account_id: 29, percent: 30, notes: None  row: 0x10aee18d0  session: 0x10ac6b130  ins_upd_dlt: ins, initial: ins - 2026-07-24 11:57:31,279 - logic_logger - INFO
+....DeptChargeDefinition[15] {Update - Adjusting dept_charge_definition: total_percent} id: 15, department_id: 16, name: Construction Split 1784919451246, total_percent:  [70.0000-->] 100.0000, is_active: 0, notes: None  row: 0x10ae89dd0  session: 0x10ac6b130  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,280 - logic_logger - INFO
+....DeptChargeDefinition[15] {Formula is_active} id: 15, department_id: 16, name: Construction Split 1784919451246, total_percent:  [70.0000-->] 100.0000, is_active:  [0-->] 1, notes: None  row: 0x10ae89dd0  session: 0x10ac6b130  ins_upd_dlt: upd, initial: upd - 2026-07-24 11:57:31,280 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10ac6b130)   										 - 2026-07-24 11:57:31,280 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ac6b130)   										 - 2026-07-24 11:57:31,280 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-07-24 11:57:31,280 - logic_logger - INFO
+  DeptChargeDefinition		## - 2026-07-24 11:57:31,280 - logic_logger - INFO
+    1. Derive <class 'database.models.DeptChargeDefinition'>.is_active as Formula (1): as_expression=lambda row: 1 if row.total_percent  [...]		## - 2026-07-24 11:57:31,280 - logic_logger - INFO
+    2. Derive <class 'database.models.DeptChargeDefinition'>.total_percent as Sum(DeptChargeDefinitionLine.percent Where  - None)		## - 2026-07-24 11:57:31,280 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10ac6b130))       	 - 2026-07-24 11:57:31,280 - logic_logger - INFO
