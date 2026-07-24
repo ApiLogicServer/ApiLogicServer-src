@@ -58,6 +58,7 @@ import shutil
 import subprocess
 import urllib.request
 import urllib.error
+from urllib.parse import unquote
 from pathlib import Path
 
 # ── paths ────────────────────────────────────────────────────────────────────
@@ -210,7 +211,7 @@ def check_broken_links(target: Path) -> list:
             continue
         if link.startswith(("http://", "https://")):
             continue  # other external links (GitHub images, raw URLs, etc.) - not this check's job
-        link_path = link.split("#")[0]
+        link_path = unquote(link.split("#")[0])
         if not link_path:
             continue  # pure same-page anchor, e.g. "#section"
         if "." not in Path(link_path).name and not link_path.endswith("/"):
