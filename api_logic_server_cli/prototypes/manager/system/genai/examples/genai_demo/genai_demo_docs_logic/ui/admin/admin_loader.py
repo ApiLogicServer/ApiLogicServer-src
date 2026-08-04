@@ -199,15 +199,5 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         response.headers["Access-Control-Expose-Headers"] = "X-Auth-Token, Content-disposition, X-Requested-With"
         #response.headers["Content-Type"] = "application/json, text/html"
         
-        # This is a short cut to auto login to Ontimize
-        try:
-            #from security.system.authentication import access_token
-            from flask import g
-            if "access_token" in g:
-                response.headers["X-Auth-Token"] = g.access_token  # required for Ontimize (kludge alert)
-        except:
-            logging.error('\nadmin_loader - after_request - access_token not set\n')
-
-        
         admin_logger.debug(f'cors after_request - response: {str(response)}')
         return response

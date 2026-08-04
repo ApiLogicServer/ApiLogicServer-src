@@ -411,17 +411,6 @@ def get_config(search_for: str, in_file: str) -> str:
                             f'.. in {in_file}')
         return file_lines[insert_line].split('=')[1].strip().replace("'","",2)
 
-def get_ontimize_apps(project_dir_path):
-    result = []
-    for name in os.listdir(f"{project_dir_path}/ui"):
-        if name not in ["admin","templates","images","__pycache__"]:
-            a_dir = os.path.join(f"{project_dir_path}/ui", name)
-            if os.path.isdir(a_dir):
-                with contextlib.suppress(FileNotFoundError):
-                    with open(Path(f"{a_dir}/app_model.yaml"),"r+") as fp:
-                        result.append(name)    
-    log.debug(f"Found {len(result)} Ontimize app(s)")          
-    return result
 # genai_core/fs_utils.py
 
 

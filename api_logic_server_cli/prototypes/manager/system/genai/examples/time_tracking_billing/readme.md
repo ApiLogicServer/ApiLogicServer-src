@@ -31,20 +31,6 @@ $als add-auth --provider-type=sql --db-url={database config} # Use SQL database 
 To ensure defaults are applied (impacts rules) we need to add a global environment variable in the environment and restart the application.
 ALL_DEFAULTS=True
 
-## Add Ontimize Application
-To create an angular Ontimize application, you need to follow these steps.  Note the name 'app' is your project name which you can change or create another project.
-```
-$cd timetrack
-$als app-create --app=app #if the ui/app folder does not exist
-$als app-build --app=app # generates pages from the API entities
-$cd ui/app
-
-$npm install && npm start  # install and start the NodeJS/Angular app
-
-# Launch your new Ontimize application (http://localhost:4299)
-
-```
-
 ## Testing Time Tracker and Billing
 You can delete the existing sample data or you can start by entering new data.  To test the logic - follow these steps:
 ```

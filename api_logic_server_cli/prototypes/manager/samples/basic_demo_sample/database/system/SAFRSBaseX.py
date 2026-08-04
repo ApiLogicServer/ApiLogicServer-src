@@ -12,33 +12,9 @@ import json
 
 
 Base = declarative_base()  # type: flask_sqlalchemy.model.DefaultMeta
-#vh new x
-@classmethod
-def jsonapi_filter(cls):
-    """
-    Use this to override SAFRS JSON:API filtering
-
-    Returns:
-        _type_: SQLAlchemy query filter
-    """
-    from sqlalchemy import text, or_, and_
-    from flask import request
-    expressions = []
-    sqlWhere = ""
-    query = cls._s_query
-    if args := request.args:
-        from api.system.expression_parser import advancedFilter
-        expressions, sqlWhere = advancedFilter(cls, args)
-    if sqlWhere != "":    
-        return query.filter(text(sqlWhere))
-    else:
-        return query.filter(and_(*expressions))   
-
 class SAFRSBaseX(SAFRSBase, safrs.DB.Model):
     __abstract__ = True
-    if do_enable_ont_advanced_filters := False:
-        jsonapi_filter = jsonapi_filter
-        
+
     def _s_parse_attr_value(self, attr_name: str, attr_val: any):
         """
         Parse the given jsonapi attribute value so it can be stored in the db

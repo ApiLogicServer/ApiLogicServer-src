@@ -131,7 +131,6 @@ these, the table below records their **as-generated line count**. No external
 | `api/customize_api.py` | 63 |
 | `api/expose_api_models.py` | 51 |
 | `api/api_discovery/auto_discovery.py` | 27 |
-| `api/api_discovery/ontimize_api.py` | 494 |
 | `api/api_discovery/system.py` | 77 |
 | `api/api_discovery/mcp_discovery.py` | 97 |
 | `api/api_discovery/new_service.py` | 20 |

@@ -159,36 +159,6 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "Install Ontimize (npm install)",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/ui/app",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["install --force"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "  - Start Ontimize (npm start)",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/ui/app",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["start"],
-            "restart": true,
-            "timeout": 30000,
-            "console": "integratedTerminal",
-            "env": {
-                "NODE_ENV": "development"
-            }
-        },
-        {
-            "name": "  - Rebuild app from altered model (overwrites app)",
-            "type": "node-terminal",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "command": "als app-build --app=app"
-        },
-        {
             "name": "Behave Run",
             "type": "debugpy",
             "request": "launch",

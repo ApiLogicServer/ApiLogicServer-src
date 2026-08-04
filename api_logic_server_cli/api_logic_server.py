@@ -1129,7 +1129,6 @@ from database import <project.bind_key>_models
              via multi-db support (add-db flow).
           5. For northwind (nw / nw+): overwrites declare_security.py with the nw sample
              grants; for all other projects, leaves the user's declare_security.py alone.
-          6. For Ontimize apps in the project: regenerates auth components.
 
         Called from:
           - CLI:  `genai-logic add-auth --provider-type=keycloak|sql|None`
@@ -1228,24 +1227,6 @@ from database import <project.bind_key>_models
             if self.auth_db_url != "'sqlite:///../database/authentication_db.sqlite'  #":
                 self.add_auth_model(msg=msg, is_nw=is_nw)
         
-        #if msg.startswith('ApiLogicProject customizable project (for northwind)'):
-        from create_from_model import ont_build
-        app_list = create_utils.get_ontimize_apps(self.project_directory_path)
-        for app in app_list:
-            build = ont_build.OntBuilder(self, app)
-            #use_keycloak = was_provider_type == "keycloak"
-            keycloak_realm = create_utils.get_config(search_for="KEYCLOAK_REALM",
-                                            in_file=config_file)
-            keycloak_client_id = create_utils.get_config(search_for="KEYCLOAK_CLIENT_ID",
-                                            in_file=config_file)
-            keycloak_args = {
-                "use_keycloak": use_keycloak,
-                "keycloak_url": self.auth_db_url,
-                "keycloak_realm": keycloak_realm,
-                "keycloak_client_id": keycloak_client_id
-            }
-            build.gen_auth_components(build.app_path, keycloak_args, use_keycloak=use_keycloak, overwrite=True)
-            log.info(f'\n.. ..for Ontimize Keycloak setting, use_keycloak={use_keycloak} for app={build.project}\n')
         self.add_auth_in_progress = False
 
 
@@ -1555,32 +1536,6 @@ from database import <project.bind_key>_models
             self.abs_db_url = create_project_and_overlay_prototypes(self, f"2. Create Project:")
         return self.abs_db_url
 
-    def create_and_build_ontimize_app(self, model_creation_services : ModelCreationServices):
-            if self.command not in ["add_db", "add_auth", "add-auth", "add-db", "rebuild-from-database", "rebuild-from-model"]:
-                log.debug(" d.  Create Ontimize from models")
-                from api_logic_server_cli.create_from_model.ont_create import OntCreator
-                ont_creator = OntCreator(project = model_creation_services.project)
-                ont_creator.create_application(show_messages=False)
-
-            if self.command in ["rebuild-from-database", "rebuild-from-model"]:
-                app_list = create_utils.get_ontimize_apps(self.project_directory_path)
-                for app in app_list:
-                    from create_from_model import ont_build
-                    from api_logic_server_cli.create_from_model.ont_create import OntCreator
-                    build = ont_build.OntBuilder(self, app)
-                    log.debug(f" d.  Create Ontimize app_model_merge.yml from models for project: {build.project}")
-                    ont_creator = OntCreator(project = build.project)
-                    ont_creator.create_application(show_messages=False)
-
-            if self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
-                # eg, nw project contains this for demo purposes
-                copyfile (src=self.project_directory_path.joinpath('ui/app_model_custom.yaml'),
-                            dst=self.project_directory_path.joinpath('ui/app/app_model.yaml'))
-
-            from api_logic_server_cli.create_from_model.ont_build import OntBuilder
-            ont_creator = OntBuilder(project = model_creation_services.project)
-            ont_creator.build_application(show_messages=False)
-
     def final_message(self):
         if self.command.startswith("add_"):
             pass  # keep silent for add-db, add-auth...
@@ -1673,9 +1628,6 @@ from database import <project.bind_key>_models
         if (self.nw_db_status in ["nw+"]):
             self.add_auth(f"\nApiLogicProject customizable project (for northwind) created.  \nAdding Security to {self.project_name_last_node}:")
 
-        if not self.add_auth_in_progress:
-            self.create_and_build_ontimize_app(model_creation_services)
-      
         if self.open_with != "" and 'create' == self.command:  # open project with open_with (vscode, charm, atom) -- NOT for docker!!
             start_open_with(project = self)  # can be from  cli, or env variable: echo $APILOGICSERVER_OPEN_WITH
         

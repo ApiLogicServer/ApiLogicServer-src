@@ -134,7 +134,6 @@ settings:
     new_mode: dialog
     pick_style: list
     row_height: small,
-    serviceType: OntimizeEE
     startSessionPath: /auth/login
     style: light
     thousand_separator: ','

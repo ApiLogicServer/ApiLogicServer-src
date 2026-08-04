@@ -1,6 +1,8 @@
 # Removing Ontimize Support — Analysis
 
-**Status:** Analysis only — no code changes made. Written to inform a decision, not to record one.
+**Status:** Executed on branch `remove-ont` (uncommitted working tree). The analysis below is
+the pre-decision record; see **Execution** at the end for what was actually removed — the real
+footprint turned out to be substantially larger than this analysis scoped.
 
 ## What "Ontimize support" actually is
 
@@ -44,7 +46,8 @@ scaffold. Only a small subset inside it is Ontimize-specific:
 
 So `app_model_editor` as a whole is **not** on the chopping block if the goal is "remove
 Ontimize" — only ~13 files inside it are. Deleting the whole directory would be a much larger,
-unrelated cut.
+unrelated cut.  
+Val's view - cut it.
 
 **Full seed app:** `api_logic_server_cli/prototypes/ont_app/` — a complete 161-file Angular
 project (`ontimize_seed/`), including its own `README.md`, `package-lock.json` (pulling
@@ -112,3 +115,68 @@ project actually contains an ontimize app dir — they're inert otherwise.
   app_model_editor," which would remove unrelated functionality.
 - **No test debt is retired by this removal** (there wasn't any), and no test debt is created
   (nothing currently exercises this code as passing/verified).
+
+## Execution
+
+Done on branch `remove-ont`. Everything removed was archived first, mirroring original repo
+paths, to `/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/ontimize-archive/` (2157 files).
+Nothing was committed — working tree only (2088 deletions, 75 edits).
+
+**Scope grew well beyond this analysis.** Two decisions changed scope from what's written above:
+
+1. **`app_model_editor` — removed in full** (441 files), not just the ~13-file Ontimize subset
+   this analysis recommended (§ "Considerations" above literally warned against this). Val's
+   call, recorded inline at the time: "Val's view - cut it."
+2. **A second, deeper Ontimize integration layer was found during execution**, not visible to
+   the original grep-based analysis because it wasn't named `ont_*` or `*ontimize*` in an
+   obvious way. This analysis's "Blast radius" section (narrow, only `api_logic_server.py`/
+   `cli.py`/one comment) was **wrong** — it only covered the CLI-command entry points, not the
+   runtime integration baked into the base project prototype itself:
+   - `api/system/custom_endpoint.py` — docstring says "Internal system services for Ontimize";
+     `__init__` unconditionally imported the now-deleted `ontimize_api.py`. Entirely
+     Ontimize-dependent, not general customization machinery with an Ontimize corner.
+   - `api/system/expression_parser.py` — implements Ontimize's `@basic_expression`/
+     `@filter_expression` advanced-filter payload format (`ONTIMIZE_OPERATORS`). Its only
+     wiring into `SAFRSBaseX.py`'s `jsonapi_filter` was dead code, gated by
+     `if do_enable_ont_advanced_filters := False:` (never `True`) — confirms it was already
+     inert, not a live feature.
+   - `api/system/gen_csv_report.py`, `gen_pdf_report.py` — both entirely dependent on
+     `CustomEndpoint` and `expression_parser.parsePayload`; `gen_pdf_report.py`'s own docstring
+     documents the "Ontimize Payload" shape. Neither had any caller elsewhere in the prototype.
+   - `config/config.py` — `ONTIMIZE_SERVICE_TYPE`/`service_type` and (once its only consumers
+     were gone) `BACKTIC_AS_QUOTE`/`backtic_as_quote`, both now fully dead.
+   - `security/system/authentication.py` — two extra `@flask_app.route` decorators
+     (`/ontimizeweb/services/rest/{auth,users}/login`) stacked on the same `login()` also
+     serving `/api/auth/login`.
+   - `api_logic_server_run.py` — `/ontimizeweb/.*` CORS resource entry.
+   - `ui/admin/admin_loader.py` — a `try/except` block setting `X-Auth-Token` response header,
+     comment: "required for Ontimize (kludge alert)".
+   - `.vscode/launch.json` (all copies) — "Install/Start Ontimize (npm)" and "Rebuild app from
+     altered model" (`als app-build`) launch configs; root Manager `.vscode/launch.json` also had
+     debug configs for `app-create`/`app-build`/`app-build JSONAPI`.
+   - 9 samples' `ui/app/` — the full *generated* Ontimize Angular app instances (not just
+     `ontimize_api.py`/`docker-compose-ontimize.yml` as this analysis's §"Other copies" listed —
+     the entire `angular.json`/`package.json`/`src/` tree, 100–260 files each).
+   - Stray doc/example references: `docs/training/health_check.md` baseline-LOC table row for
+     `ontimize_api.py`; `genai_demo_docs_logic/ui/admin/admin.yaml`'s `serviceType: OntimizeEE`;
+     `prototypes/nw/ui/app_model_custom.yaml` (the nw sample's Ontimize app model, orphaned once
+     its only consumer — the deleted `create_and_build_ontimize_app` — was gone);
+     `time_tracking_billing/readme.md`'s "Add Ontimize Application" section.
+
+   All of the above were **repeated per-project-prototype copies** (base + up to 9 samples +
+   `genai_demo_docs_logic` + `mini_skel` + one test fixture), so each item above is really
+   ~10 files touched, not one.
+
+**Confirmed dead, not just unused:** the `SAFRSBaseX.py` / `expression_parser.py` advanced-filter
+hook was already switched off in source (`:= False`) before this removal — i.e. some of what
+this analysis called "no test coverage" was actually "no coverage because already disabled."
+
+**Verification:** ran `genai-logic create` from source (classicmodels.sqlite), then started the
+generated project's server — booted clean, rules loaded, `/api/Customer` returned real data, zero
+`ontimize` matches anywhere in the generated project. Also re-ran a repo-wide
+case-insensitive grep for `ontimize` afterward (excluding `build/`, `venv/`, logs, and this
+analysis doc itself) — zero remaining matches in live source.
+
+**Not touched:** the Docs repo (`org_git/Docs`, separate sibling — item 7 above, still open),
+and stale runtime log/output snapshots (`logs/als.log`, test failure `.txt` fixtures) that
+happen to mention Ontimize from past runs — those are historical records, not source.

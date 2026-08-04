@@ -75,10 +75,9 @@ class ModelCreationServices(object):
             my_parents_list: dict = None,
             version: str = "0.0.0"):
         """
-        Called from 
-        
+        Called from
+
         * main driver (create_project) to open db, build resource_list
-        * from ont_create, for resource data
         """
         self.project = project
         project.model_creation_services = self
