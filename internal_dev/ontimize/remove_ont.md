@@ -180,3 +180,59 @@ analysis doc itself) — zero remaining matches in live source.
 **Not touched:** the Docs repo (`org_git/Docs`, separate sibling — item 7 above, still open),
 and stale runtime log/output snapshots (`logs/als.log`, test failure `.txt` fixtures) that
 happen to mention Ontimize from past runs — those are historical records, not source.
+
+## BLT verification (post-removal)
+
+Ran the full BLT suite (`tests/build_and_test/blt.sh`, which does `python setup.py sdist
+bdist_wheel` + `pip install` from this working tree, then creates and exercises several
+generated projects) against the branch as described above — **passed**. Confirmed the mainline
+`create`/rebuild flow (the one piece flagged in the original analysis as worth a regression
+pass, since `create_and_build_ontimize_app` ran on every `create`) is unaffected by the removal.
+
+Side effect noted as a useful confirmation the removed weight was real, not just line count:
+installed venv size dropped from **493MB to 360MB (−27%)**.
+
+## Dependency security check (separate from, but folded into, this same branch)
+
+Trigger: a Dependabot alert on `GenAI-Logic` for
+[GHSA-xrxm-cp7j-8xf6](https://github.com/advisories/GHSA-xrxm-cp7j-8xf6) (`@angular/
+platform-server`, SSRF via URL-parser differential, CVSS 8.2 high). Looked this up directly
+(`gh api advisories/GHSA-xrxm-cp7j-8xf6`) rather than assume: the vulnerable range is `>=
+19.0.0-next.0` and up through 22.x pre-releases; the version actually pinned in the (now-deleted)
+`ontimize_seed/package-lock.json` was **15.2.10**, technically outside GitHub's stated vulnerable
+range. Doesn't matter for the outcome — Dependabot flags the package's mere presence in the
+dependency graph, and that whole `package-lock.json` lineage (seed app + all its generated sample
+copies) is now gone from source, confirmed by grep (zero `ontimize` matches in any
+`package.json`/`package-lock.json` in the tree). This alert should clear once the branch reaches
+the default branch and Dependabot re-scans.
+
+Val: won't close the Dependabot alerts until a re-release happens with some testing first — this
+section is the record of what was checked in the meantime, not a claim that GitHub's alert list
+is already clear.
+
+**Broader dependency scan run while at it** (not Ontimize-specific, but same branch/session):
+- `pip-audit` against the installed venv (post-BLT-install): clean. Only `pip` itself had listed
+  advisories (PYSEC-2026-196/1795/1796/2875/2876), all fixed by a `pip` upgrade — no
+  vulnerabilities in any actual framework runtime dependency (Flask, SQLAlchemy, LogicBank, etc).
+- `npm audit` against every `package-lock.json` remaining in the source tree (the *supported*
+  React admin app template — `prototypes/basic_demo/ui/my-react-app{,-cards}`,
+  `prototypes/basic_demo/customizations/ui/reference_react_app`,
+  `prototypes/nw/ui/reference_react_app`,
+  `prototypes/manager/system/genai/app_templates/react-admin-template` — 5 copies, not Ontimize):
+  found **59 advisories each (3 critical, 29 high, 14 moderate, 13 low)**, unrelated to this
+  removal — stale transitive deps under the `react-scripts`/CRA toolchain (`form-data`,
+  `shell-quote`, `websocket-driver` were the 3 critical). `internal_dev/react-admin/package-lock.json`
+  was clean by contrast, confirming this was specifically the CRA-template copies that had drifted.
+
+  Fixed with plain `npm audit fix` (no `--force`) on all 5 copies: **59 → 32 advisories, 0
+  critical** (all three cleared). `package.json` came out byte-identical in every copy — only
+  `package-lock.json` moved to compatible transitive versions, no direct dependency bumps, no
+  application code touched. Verified each of the 5 rebuilds successfully
+  (`npm install && npm run build` → "The build folder is ready to be deployed") before and after
+  the fix, so this isn't just "advisory count went down," it's confirmed non-breaking.
+
+  Remaining 32 advisories all require `npm audit fix --force`, which attempted to downgrade
+  `react-scripts` to `0.0.0` (npm's resolver giving up, not a real version) — declined to pursue;
+  this is deep dev/build-tooling risk (webpack-dev-server, workbox), not code shipped to end
+  users in a deployed app, and forcing it risked breaking the build for marginal gain. Left as
+  known/accepted residual for now.
