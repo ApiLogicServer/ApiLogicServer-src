@@ -214,25 +214,31 @@ is already clear.
 - `pip-audit` against the installed venv (post-BLT-install): clean. Only `pip` itself had listed
   advisories (PYSEC-2026-196/1795/1796/2875/2876), all fixed by a `pip` upgrade — no
   vulnerabilities in any actual framework runtime dependency (Flask, SQLAlchemy, LogicBank, etc).
-- `npm audit` against every `package-lock.json` remaining in the source tree (the *supported*
-  React admin app template — `prototypes/basic_demo/ui/my-react-app{,-cards}`,
+- `npm audit` against every `package-lock.json` remaining in the source tree. First pass only
+  covered 5 copies of the React admin template (`prototypes/basic_demo/ui/my-react-app{,-cards}`,
   `prototypes/basic_demo/customizations/ui/reference_react_app`,
   `prototypes/nw/ui/reference_react_app`,
-  `prototypes/manager/system/genai/app_templates/react-admin-template` — 5 copies, not Ontimize):
-  found **59 advisories each (3 critical, 29 high, 14 moderate, 13 low)**, unrelated to this
-  removal — stale transitive deps under the `react-scripts`/CRA toolchain (`form-data`,
-  `shell-quote`, `websocket-driver` were the 3 critical). `internal_dev/react-admin/package-lock.json`
-  was clean by contrast, confirming this was specifically the CRA-template copies that had drifted.
+  `prototypes/manager/system/genai/app_templates/react-admin-template`) — missed that the same
+  template is also replicated into 3 more samples
+  (`basic_demo_ai_rules-supplier`, `basic_demo_logic_gov`, `basic_demo_sample`, 3 lockfile copies
+  each = 9 more), caught on a follow-up "check the whole repo" pass rather than the first one.
+  **14 of 15 total lockfiles in the tree started at 59 advisories each (3 critical, 29 high, 14
+  moderate, 13 low)** — stale transitive deps under the `react-scripts`/CRA toolchain
+  (`form-data`, `shell-quote`, `websocket-driver` were the 3 critical each time).
+  `internal_dev/react-admin/package-lock.json` was the only one already clean, confirming this
+  was specifically the CRA-template copies that had drifted.
 
-  Fixed with plain `npm audit fix` (no `--force`) on all 5 copies: **59 → 32 advisories, 0
-  critical** (all three cleared). `package.json` came out byte-identical in every copy — only
-  `package-lock.json` moved to compatible transitive versions, no direct dependency bumps, no
-  application code touched. Verified each of the 5 rebuilds successfully
-  (`npm install && npm run build` → "The build folder is ready to be deployed") before and after
-  the fix, so this isn't just "advisory count went down," it's confirmed non-breaking.
+  Fixed with plain `npm audit fix` (no `--force`) on all 14 affected copies: **59 → 32 advisories
+  each, 0 critical** (all three cleared, every copy). `package.json` came out byte-identical in
+  every copy — only `package-lock.json` moved to compatible transitive versions, no direct
+  dependency bumps, no application code touched. Verified every one of the 14 rebuilds
+  successfully (`npm install && npm run build` → "The build folder is ready to be deployed")
+  before and after the fix, so this isn't just "advisory count went down," it's confirmed
+  non-breaking. Final repo-wide re-scan after both passes: **all 15 package-lock.json files in
+  the tree show `critical: 0`.**
 
-  Remaining 32 advisories all require `npm audit fix --force`, which attempted to downgrade
-  `react-scripts` to `0.0.0` (npm's resolver giving up, not a real version) — declined to pursue;
-  this is deep dev/build-tooling risk (webpack-dev-server, workbox), not code shipped to end
-  users in a deployed app, and forcing it risked breaking the build for marginal gain. Left as
-  known/accepted residual for now.
+  Remaining 32 advisories per lockfile all require `npm audit fix --force`, which attempted to
+  downgrade `react-scripts` to `0.0.0` (npm's resolver giving up, not a real version) — declined
+  to pursue; this is deep dev/build-tooling risk (webpack-dev-server, workbox), not code shipped
+  to end users in a deployed app, and forcing it risked breaking the build for marginal gain.
+  Left as known/accepted residual for now.
