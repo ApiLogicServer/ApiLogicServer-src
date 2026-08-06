@@ -540,9 +540,13 @@ STEP 6: Implement all steps in requirements.md in sequence.
                      return 1 if not _reasons(row) else 0
                The governance report flags missing anchors as 🔴 "Broken dependency tracking."
 STEP 7: Write completed ad-libs report to docs/requirements/<name>/ad-libs.md AND summarize in chat
+        ⛔ ALSO MANDATORY: append a link to it from docs/requirements/project_creation_report.md's
+        "Use Cases" section — see implement_requirements.md for the exact line format.
+        project_creation_report.md is the project's live index of every use case implemented;
+        skipping this leaves it silently out of date after the first "impl req" run.
 ```
 
-**Ad-libs report format:** See `docs/training/implement_requirements.md` for the complete format including Pre-Coding Analysis, Execution Metrics, and Error Correction Loop detail.
+**Ad-libs report format:** See `docs/training/implement_requirements.md` for the complete format including the Walkthrough summary, Pre-Coding Analysis, Execution Metrics, and Error Correction Loop detail.
 
 **Key principle:** README.md is narrative, not spec. `requirements.md` and `message_formats/*` are the executable artifacts. File paths in `requirements.md` are relative to the project root, within `docs/requirements/<name>/`.
 
