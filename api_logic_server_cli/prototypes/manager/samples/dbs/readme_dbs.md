@@ -8,6 +8,8 @@ For example, create Northwind and basic_demo like this (more connectivity shown 
 genai-logic create  --project_name=nw --db_url=sqlite:///samples/dbs/nw.sqlite
 
 genai-logic create --project_name=basic_demo --db_url=sqlite:///samples/dbs/basic_demo.sqlite
+
+genai-logic create --project_name=demo_customs --db_url=sqlite:///samples/dbs/customs.sqlite
 ```
 
 Or, create database with just a `SysConfig` table, and then use [Subsystem Creation](https://apilogicserver.github.io/Docs/Project-Structure/#subsystem-creation-in-proj) in the created project:
