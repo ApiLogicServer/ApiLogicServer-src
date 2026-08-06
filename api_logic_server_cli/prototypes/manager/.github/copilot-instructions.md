@@ -23,8 +23,16 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.17
+version: 2.18
 changelog:
+  - 2.18 (Aug 5 2026) - STEP 5a/5b filenames updated to match the CLI-guaranteed floor
+    now written by `genai-logic create` itself (STEP 2): docs/requirements/prompt.md →
+    project_creation_prompt.md; docs/requirements/readme.md → project_creation_report.md.
+    Since v2.15, `create` has (independently of this Manager CE) started writing baseline
+    versions of both files for every project/method — this CE's STEP 5a/5b was never
+    updated to match, so it still named the pre-rename files. Added explicit notes that
+    STEP 5a overwrites (not creates) the CLI's inferred prompt file with the real verbatim
+    prompt, and STEP 5b enriches (not creates) the CLI's baseline report.
   - 2.17 (Jul 16 2026) - User Activation Protocol STEP 3 now checks if any ancestor
     directory is literally named `ApiLogicServer-dev` (framework dev checkout signal);
     if so, appends one line after welcome.md offering to load
@@ -334,18 +342,25 @@ STEP 4: Implement the domain prompt using the project CE's System Creation Servi
 
 STEP 5: ⛔ MANDATORY PROVENANCE — before telling the user the project is done:
    a. Copy the full originating prompt file VERBATIM (byte-for-byte, no paraphrase,
-      no excerpting) to <name>/docs/requirements/prompt.md — this is the durable
-      record of what was actually requested; the source file (e.g.
+      no excerpting) to <name>/docs/requirements/project_creation_prompt.md — this
+      is the durable record of what was actually requested; the source file (e.g.
       samples/prompts/<name>.prompt.md) may later be edited or deleted, so
       referencing its path alone is not sufficient provenance.
-   b. Write <name>/docs/requirements/readme.md (provenance: source path, date,
-      model, creation commands, schema decisions) — may reference prompt.md
-      instead of re-explaining what was asked.
+      NOTE: `genai-logic create` (STEP 2) already writes this file itself — an
+      inferred one-liner if no real prompt exists yet. STEP 5a here OVERWRITES it
+      with the real prompt, verbatim — do not skip this step just because the file
+      already exists from STEP 2.
+   b. Write <name>/docs/requirements/project_creation_report.md (provenance: source
+      path, date, model, creation commands, schema decisions) — may reference
+      project_creation_prompt.md instead of re-explaining what was asked.
+      NOTE: `genai-logic create` (STEP 2) already writes a baseline version of this
+      file too; STEP 5b here enriches it with the real details listed above.
    c. Write <name>/docs/requirements/ad-libs.md (every assumption or guess made
       beyond the prompt spec).
    Do NOT skip (a) even if per-use-case docs/requirements/<use_case>/requirements.md
    excerpts already exist (STEP 4) — those are partial, per-rule-file excerpts;
-   prompt.md is the complete original text, preserved once at the project root.
+   project_creation_prompt.md is the complete original text, preserved once at the
+   project root.
 
 STEP 6: After F5 is confirmed working, tell the user:
    "Your project is in <name>/. To work on it further, open it as a workspace."

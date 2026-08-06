@@ -1270,6 +1270,16 @@ This auto-generates correct `models.py` with all boilerplate intact.
 
 9. **Press F5** — full JSON:API + Admin UI + logic enforcement.
 
+**🚨 Before-you're-done scan — verify these two are actually present, not just planned:**
+   - **Per-use-case requirements.md:** for every file in `logic/logic_discovery/`, confirm a
+     matching `docs/requirements/<use_case_name>/requirements.md` exists (step 8's mandate).
+     If any are missing, create them now — do not end the session with logic files that lack
+     their traceability anchor.
+   - **Transcript export:** if the readme/prompt that drove this session said to export a
+     transcript (e.g. `/export docs/requirements/transcript_creation`), confirm that file
+     exists now. This step is easy to skip because it comes after the "real" work feels done —
+     check for the file, don't rely on remembering to run the command.
+
 **Key rules:**
 - Never write `models.py` manually — always `rebuild-from-database` after SQL DDL
 - Never copy from existing projects — generate fresh from the prompt

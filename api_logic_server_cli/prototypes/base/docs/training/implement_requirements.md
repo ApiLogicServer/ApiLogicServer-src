@@ -1194,6 +1194,23 @@ Create a fully functional application and database
 
    ---
 
+   ## Walkthrough
+
+   Five steps, one or two lines each — what actually happened, in order. This is the
+   scannable summary; full diagnostic detail (DDL list, rule plan, rejected alternatives,
+   replay log) is collapsed below, not repeated here.
+
+   1. **Basic data model** — [entities/tables inferred from the spec]
+   2. **Derived/predicted schema additions** — [constants found → SysConfig; FK/lookup
+      columns added; allocate junction tables detected (or "none"); Request Pattern
+      columns added (or "none")]
+   3. **Create db** — [DDL + rebuild-from-database — table count]
+   4. **Run impl-req** — [rule types used: sum/count/formula/constraint/Allocate/events]
+   5. **Test data / testing** — [alp_init.py seed status; Behave tests if created]
+
+   <details markdown>
+   <summary>Full diagnostic detail (DDL change list, rule plan, rejected alternatives, replay log)</summary>
+
    ### 🟢 Diagnostic Appendix
 
    #### Pre-Coding Analysis
@@ -1299,7 +1316,26 @@ Create a fully functional application and database
    - `` `logic/logic_discovery/clvs_eligibility.py:12` — used Decimal('3300') for threshold comparison ``
    - `` `integration/row_dict_maps/IsdcMapper.py` — ShipmentCommodity composite PK workaround: inserted via parent.ShipmentCommodityList.append() to avoid UNIQUE constraint on (local_shipment_oid_nbr, sequence_nbr) ``
 
+   </details>
+
    *(end template)*
+
+   ---
+
+   **Also mandatory — link this ad-libs.md from project_creation_report.md:**
+
+   After writing `docs/requirements/<name>/ad-libs.md`, append one line to
+   `docs/requirements/project_creation_report.md`'s `## Use Cases` section (create the
+   section if this is somehow the first entry and it's missing):
+
+   ```markdown
+   - [<name>](<name>/ad-libs.md) — <one-line summary>, <ISO date>
+   ```
+
+   Example: `- [charge_distribution](charge_distribution/ad-libs.md) — cascade allocation, 2026-08-05`
+
+   This keeps `project_creation_report.md` a live index of every use case implemented in
+   the project, not just a snapshot from `create` time.
 
 
 8. **Business Logic Patterns:**

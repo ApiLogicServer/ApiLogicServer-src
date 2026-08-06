@@ -44,6 +44,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
     import create_from_model.api_logic_server_utils as create_utils
     import clone_and_overlay_prototypes.add_cust as sample_mgr
     import clone_and_overlay_prototypes.create_readme as create_readme
+    import clone_and_overlay_prototypes.create_provenance as create_provenance
 
     import tempfile
     cloned_from = project.from_git
@@ -57,42 +58,49 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             if remove_project_debug and project.project_name != ".":
                 delete_dir(os.path.realpath(project.project_directory), "1.")
 
-        from_dir = project.from_git
         api_logic_server_dir_str = str(get_api_logic_server_dir())
-        if project.from_git.startswith("https://"):  # warning - very old code, not tested in a long time
-            cmd = 'git clone --quiet https://github.com/valhuber/ApiLogicServerProto.git ' + project.project_directory
-            cmd = f'git clone --quiet {project.from_gitfrom_git} {project.project_directory}'
-            result = create_utils.run_command(cmd, msg=msg)
-            delete_dir(f'{project.project_directory}/.git', "3.")
-        else:
-            if from_dir == "":
-                from_dir = (Path(api_logic_server_dir_str)).\
-                    joinpath('prototypes/base')
-            log.debug(f'{msg} {os.path.realpath(project.project_directory)}')
-            log.debug(f'.. ..Clone from {from_dir} ')
-            cloned_from = from_dir
-            try:
-                if project.merge_into_prototype:  # create project over current (e.g., docker, learning center)
-                    recursive_overwrite(project.project_directory, str(tmpdirname))  # save, restore @ end
-                    delete_dir(str(Path(str(tmpdirname)) / ".devcontainer"), "")
-                    delete_dir(str(Path(str(tmpdirname)) / "api"), "")
-                    delete_dir(str(Path(str(tmpdirname)) / "database"), "")
-                    delete_dir(str(Path(str(tmpdirname)) / "logic"), "")
-                    delete_dir(str(Path(str(tmpdirname)) / "security"), "")
-                    delete_dir(str(Path(str(tmpdirname)) / "test"), "")
-                    delete_dir(str(Path(str(tmpdirname)) / "ui"), "")
-                    if os.path.exists(str(Path(str(tmpdirname))  / "api_logic_server_run.py" )):
-                        os.remove(str(Path(str(tmpdirname)) / "api_logic_server_run.py"))
-                    delete_dir(os.path.realpath(project.project_directory), "")
-                    recursive_overwrite(from_dir, project.project_directory)  # ApiLogic Proto -> current (new) project
-                else:
-                    shutil.copytree(from_dir, project.project_directory)  # normal path (fails if project_directory not empty)
-            except OSError as e:
-                raise Exception(f'\n==>Error - unable to copy to {project.project_directory} -- see log below'
-                    f'\n\n{str(e)}\n\n'
-                    f'Suggestions:\n'
-                    f'.. Verify the --project_name argument\n'
-                    f'.. If you are using Docker, verify the -v argument\n\n')
+
+        # base is always the foundation - --from_git (if given) is overlaid on top of it,
+        # same as the nw / allocation / BudgetApp overlays below - it never replaces base.
+        from_dir = (Path(api_logic_server_dir_str)).joinpath('prototypes/base')
+        log.debug(f'{msg} {os.path.realpath(project.project_directory)}')
+        log.debug(f'.. ..Clone from {from_dir} ')
+        cloned_from = from_dir
+        try:
+            if project.merge_into_prototype:  # create project over current (e.g., docker, learning center)
+                recursive_overwrite(project.project_directory, str(tmpdirname))  # save, restore @ end
+                delete_dir(str(Path(str(tmpdirname)) / ".devcontainer"), "")
+                delete_dir(str(Path(str(tmpdirname)) / "api"), "")
+                delete_dir(str(Path(str(tmpdirname)) / "database"), "")
+                delete_dir(str(Path(str(tmpdirname)) / "logic"), "")
+                delete_dir(str(Path(str(tmpdirname)) / "security"), "")
+                delete_dir(str(Path(str(tmpdirname)) / "test"), "")
+                delete_dir(str(Path(str(tmpdirname)) / "ui"), "")
+                if os.path.exists(str(Path(str(tmpdirname))  / "api_logic_server_run.py" )):
+                    os.remove(str(Path(str(tmpdirname)) / "api_logic_server_run.py"))
+                delete_dir(os.path.realpath(project.project_directory), "")
+                recursive_overwrite(from_dir, project.project_directory)  # ApiLogic Proto -> current (new) project
+            else:
+                shutil.copytree(from_dir, project.project_directory)  # normal path (fails if project_directory not empty)
+        except OSError as e:
+            raise Exception(f'\n==>Error - unable to copy to {project.project_directory} -- see log below'
+                f'\n\n{str(e)}\n\n'
+                f'Suggestions:\n'
+                f'.. Verify the --project_name argument\n'
+                f'.. If you are using Docker, verify the -v argument\n\n')
+
+        if project.from_git:  # overlay a user-supplied scaffold (git repo or local dir) on top of base
+            cloned_from = project.from_git
+            if project.from_git.startswith("https://") or project.from_git.startswith("git@"):
+                git_clone_dir = str(Path(tmpdirname) / "from_git_overlay")
+                cmd = f'git clone --quiet {project.from_git} {git_clone_dir}'
+                log.debug(f'.. ..Overlay --from_git: {cmd}')
+                result = create_utils.run_command(cmd, msg=msg)
+                delete_dir(f'{git_clone_dir}/.git', "3.")
+                recursive_overwrite(git_clone_dir, project.project_directory)
+            else:
+                log.debug(f'.. ..Overlay --from_git (local dir): {project.from_git}')
+                recursive_overwrite(project.from_git, project.project_directory)
 
         if project.nw_db_status in ["nw", "nw+"]:
             log.debug(".. ..Copying nw customizations: logic, custom api, readme, tests, admin app")
@@ -154,6 +162,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
                 pass
 
         create_readme.create_readme(project=project, api_logic_server_dir_str=api_logic_server_dir_str)
+        create_provenance.create_provenance(project=project, api_logic_server_dir_str=api_logic_server_dir_str)
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
             log.debug(".. ..Copy in classicmodels customizations")
