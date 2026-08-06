@@ -857,8 +857,8 @@ The [Customs POC full case study](https://apilogicserver.github.io/Docs/Customs-
 
 | Leg | What it provides | Without it |
 |-----|-----------------|------------|
-| **Logic Automation** (Rules, API Engines) | Correct, auto-enforced business logic across all write paths; enterprise API; governed AI execution |  • **Procedural Logic:** Dependency bugs, hard to maintain  • **Fat API:** Unshared, Path-dependent logic  • **Demo-class APIs** (no optimistic locking, etc) |
-| **Generative AI** | Rapid creation∂∂, iteration, test generation from natural language | Weeks of manual development |
+| **Logic Automation** (Rules, API Engines) | Correct, auto-enforced business logic across all write paths; enterprise, MCP-enabled API scaffolded with RBAC security, EAI (Kafka) integration, and AI Rules wiring ready to use; governed AI execution |  • **Procedural Logic:** Dependency bugs, hard to maintain  • **Fat API:** Unshared, Path-dependent logic  • **Demo-class APIs** (no optimistic locking, no security/integration wiring, etc) |
+| **Generative AI** | Rapid creation, iteration, test generation from natural language | Weeks of manual development |
 | **Context Engineering** | Guides AI to the right architecture (declarative rules, proper data model) | AI defaults to "Fat API" procedural code — works but ungoverned |
 
 **Key insight:** Without Context Engineering, AI generates working demos that lack enterprise architecture. Without rules automation, AI generates procedural code with correctness bugs. Together: a several-week effort became **30 minutes**, producing a correct, enterprise-class, fully tested system.
