@@ -249,6 +249,57 @@ DO NOT display any of the three files. DO NOT summarize them. Just confirm and a
 ═══════════════════════════════════════════════════════════════════════════════
 -->
 
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+🚨 MANDATORY OPERATING RULE — GOLD SOURCE, EVERY EDIT, THIS SESSION ONLY
+═══════════════════════════════════════════════════════════════════════════════
+
+This workspace (`build_and_test/genai-logic`, aka "BLT Manager" or "local-mgr") is
+Val's TEST bench, not the product. Real users never see this rule — it only applies
+when dev-architecture.md is loaded. His most common workflow: make a change here,
+prove it works, then propagate the fix back to gold source (and Docs, if it's a
+readme). A fix that stays local-only is not done — it's invisible to every future
+BLT run, every new Manager workspace, every user. Losing a fix this way costs hours
+to rediscover. (Incident: Aug 2026 — a CE fix was applied 3 layers downstream of
+gold before the gap was caught, only because Val asked "what is BLT?" — see BLT
+section below for the propagation chain this rule exists to enforce.)
+
+BEFORE editing ANY file in this session, classify it:
+  - Is this file GOLD SOURCE (org_git/ApiLogicServer-src, org_git/Docs), or
+  - Is it DOWNSTREAM of gold (venv copy, a created/BLT-generated project,
+    prototypes/manager/samples/* built-reference copies, this workspace's own
+    README.md/samples/*)?
+
+If downstream: say so out loud ("this is a downstream copy — editing it is
+temporary/for-testing only") and find + edit the matching gold source too, in the
+SAME turn if practical, not as a deferred follow-up.
+
+THREE gold sources to check, every session, every relevant fix — not just the one
+that's obviously implicated:
+  1. `org_git/ApiLogicServer-src` — code, CE/`.copilot-instructions.md`, prototype
+     templates. Propagates via pip install / BLT run.
+  2. `org_git/Docs` — anything with "readme"/"README" in the name. Propagates via
+     `copy_md()`, which fetches live from `raw.githubusercontent.com` — requires a
+     git push, not just a local commit, to take effect. CDN edge-cache can lag
+     ~5 min after push.
+  3. `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/manager/samples/*`
+     — BLT-copies this tree VERBATIM (shutil.copytree) into every fresh Manager
+     workspace's `samples/`. These are static, point-in-time snapshots that go
+     stale silently — a fix made in this workspace's own `samples/*` does NOT
+     propagate here automatically. Check this path explicitly whenever a
+     `samples/*` fix is made downstream, even if it feels like a separate task.
+
+BEFORE declaring any fix "done," state which of the three you checked and what you
+found — even "N/A, not applicable" for ones that don't apply. This is the check
+that was skipped on Aug 2026; state it explicitly so it can't be silently skipped
+again.
+
+If a change lands only on a non-`main`/non-default branch (e.g. a WIP branch like
+`remove-ont`), say so plainly — "committed, not pushed" / "on branch X, not merged"
+— do not let silence imply it reached gold.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+
 # Context Restoration: BLT Manager Workspace
 
 **Purpose:** This file re-establishes AI assistant context after BLT runs regenerate this workspace.
