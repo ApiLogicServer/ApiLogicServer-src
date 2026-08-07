@@ -4,10 +4,10 @@ Propagate Copilot Instructions Changes from BLT Test Projects to Source Prototyp
 
 Usage:
     cd /Users/val/dev/ApiLogicServer/ApiLogicServer-dev
-    python3 build_and_test/ApiLogicServer/system/ApiLogicServer-Internal-Dev/propagate_copilot_changes.py
+    python3 build_and_test/genai-logic/system/ApiLogicServer-Internal-Dev/propagate_copilot_changes.py
 
 Purpose:
-    When you edit .copilot-instructions.md in test projects (tests/ApiLogicProject),
+    When you edit copilot-instructions.md in test projects (tests/ApiLogicProject),
     this script copies those changes back to the source prototype 
     (org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/).
     
@@ -24,8 +24,8 @@ def propagate_copilot_instructions():
     base_dir = Path('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev')
     
     # Source files
-    test_file = base_dir / 'build_and_test/ApiLogicServer/tests/ApiLogicProject/.github/.copilot-instructions.md'
-    source_file = base_dir / 'org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/.github/.copilot-instructions.md'
+    test_file = base_dir / 'build_and_test/genai-logic/tests/ApiLogicProject/.github/copilot-instructions.md'
+    source_file = base_dir / 'org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/.github/copilot-instructions.md'
     
     if not test_file.exists():
         print(f"❌ Test file not found: {test_file}")

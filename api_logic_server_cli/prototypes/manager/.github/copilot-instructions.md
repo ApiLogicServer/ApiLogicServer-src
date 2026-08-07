@@ -102,8 +102,22 @@ STEP 3: Check if any ancestor directory of the current workspace is literally na
         If the user says yes, read that file and follow its own mandatory load
         sequence (see its header). If no ancestor is named `ApiLogicServer-dev`,
         skip this step entirely — do not mention it.
-STEP 4: STOP - do nothing else
+STEP 4: Check whether the user's message contains ANYTHING beyond the activation
+        phrase itself (additional instructions, a pasted script, commands prefixed
+        with "!", other requests — on their own line or following the trigger phrase
+        in the same message).
+        - If there IS more content: continue on to process it now, in this same
+          turn, immediately after displaying welcome.md. Do NOT stop and wait for
+          the user to ask again — the rest of the message is the next thing to do,
+          not a separate future request.
+        - If the activation phrase is the ENTIRE message: STOP - do nothing else.
 ```
+
+> **⚠️ COMMON FAILURE MODE:** a user pastes the activation phrase as the first line of a
+> longer message (setup commands, an "implement requirements" instruction, etc.) expecting
+> the whole thing to run in one turn. Treating STEP 4's stop as unconditional — even when
+> real, actionable content follows the trigger phrase in the same paste — silently drops
+> that content and forces the user to re-prompt. Always check for trailing content first.
 
 **✅ CORRECT EXECUTION:**
 ```

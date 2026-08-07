@@ -297,6 +297,15 @@ again.
 If a change lands only on a non-`main`/non-default branch (e.g. a WIP branch like
 `remove-ont`), say so plainly — "committed, not pushed" / "on branch X, not merged"
 — do not let silence imply it reached gold.
+
+⚠️ EDITING GOLD IS ONLY HALF THE JOB — this rule tells you WHERE gold lives and
+that you must edit it; it does NOT by itself get the fix into THIS workspace's
+venv so it can actually be tested. For the mechanics of gold → venv propagation
+(BLT run, or the faster direct-venv-edit-then-backport loop for quick iteration),
+see "Development Workflow for CE Changes" further down in this same file
+(search for "Quick iteration / venv test" and "Permanent propagation"). A fix
+that only exists in gold, never installed into this venv and exercised, is
+UNVERIFIED, not done — "prove it works" (above) requires the venv step too.
 ═══════════════════════════════════════════════════════════════════════════════
 -->
 
@@ -1324,8 +1333,8 @@ Your architectural choices in prototypes become templates for all future project
 
 **Propagating Changes to Source:**
 - **Copilot Instructions:** Use `system/ApiLogicServer-Internal-Dev/propagate_copilot_changes.py`
-  - Copies changes from `tests/ApiLogicProject/.github/.copilot-instructions.md` → source prototype
-  - Usage: `python3 build_and_test/ApiLogicServer/system/ApiLogicServer-Internal-Dev/propagate_copilot_changes.py`
+  - Copies changes from `tests/ApiLogicProject/.github/copilot-instructions.md` → source prototype
+  - Usage: `python3 build_and_test/genai-logic/system/ApiLogicServer-Internal-Dev/propagate_copilot_changes.py`
   - Extracts sections between title and "Key Technical Points"
   - Ensures edits propagate to future project creations
 - **README Files:** Manual update required in Docs repo (see above)

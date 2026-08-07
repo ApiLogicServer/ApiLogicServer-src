@@ -1156,6 +1156,32 @@ Create a fully functional application and database
    Run DDL + `rebuild-from-database` ONCE before writing any logic or mapper files.
    ❌ NEVER discover a missing column while writing a logic file — that causes an error loop.
 
+   **🚨 MANDATORY CLOSING CHECK — "planned a derived column" is not the same as "derived it":**
+   Every row in the DDL change list whose Reason names a rule type (e.g. "Rule.count where=
+   clause", "Rule.formula output") is a promise that some code will assign that column —
+   not just declare a rule that reads it. Before the report is complete (after coding, not
+   during Phase 1 planning), go back through this same DDL change list and confirm, for each
+   such row, that the logic file actually contains an assignment to that column
+   (`row.<col> = ...` in an `early_row_event`/`row_event`, or a `Rule.formula`/`Rule.copy`
+   whose `derive=` names it). A column that only ever appears on the *reading* side (inside
+   a `Rule.count`/`Rule.sum` `where=`, or a `_reasons()`-style helper) and never on the
+   *writing* side is a bug, not a finding to note — fix it before finishing, don't just log it.
+
+   **Real failure case (customs_demo_clvs, Aug 2026):** the DDL change list correctly
+   included `shipment_commodity | ADD is_prohibited | Step 3 — Rule.count where= clause` —
+   the AI had already reasoned, correctly, that this column existed because a rule would
+   read it. The Phase 2 anti-pattern checklist even explicitly named it, paired with its
+   sibling column, as confirmed-correct: "`is_prohibited`/`controlled_regulated_goods_id`
+   are child-table Rule.count sources, not a stale parent flag." Despite writing this down
+   twice, the actual logic file only ever wrote `controlled_regulated_goods_id` (via a real
+   HS-code lookup) — `is_prohibited` was never assigned anywhere, so the `Rule.count` reading
+   it was permanently stuck at 0. The gap was 3 missing lines in an early_row_event that
+   otherwise correctly set the sibling column right next to it. This is not a case of the AI
+   not knowing a derivation was needed — its own planning notes proved it knew. It planned
+   correctly and then didn't close the loop on its own plan. This closing check exists
+   because the DDL change list already contains everything needed to catch this — it's a
+   verification against the AI's own prior reasoning, not new analysis.
+
    ---
 
    **Phase 2 — CE / Pattern Assessment**
