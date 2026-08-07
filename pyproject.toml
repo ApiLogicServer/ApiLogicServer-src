@@ -28,7 +28,7 @@ namespaces = true
 
 [project]
 dependencies = [
-        "PyJWT>=2.12.0",
+        "PyJWT>=2.13.0",
         "python-dateutil==2.8.2",
         "SQLAlchemy-Utils==0.38.2",
         "logicbankutils==0.6.0",
@@ -50,7 +50,7 @@ dependencies = [
         #  "pyodbc==4.0.34",
          "six==1.16.0",
          "SQLAlchemy>=2.0.48",
-         "Werkzeug>=3.0.0", 
+         "Werkzeug>=3.1.6", 
          # 2.3.3 caused Poetry to fail per safrs conflict (Werkzeug>=2.3.8), 2.3.8 fails to build
         "safrs>=3.1.7",
         "Flask-Admin==1.5.7",
@@ -92,7 +92,16 @@ dependencies = [
         "astor==0.8.1",
         # https://stackoverflow.com/questions/56678060/why-is-python-3-not-recognizing-colorama/56678374
         "colorama==0.4.6",
-        "openai==1.55.3"
+        "openai==1.55.3",
+
+        # transitive dependency security pins
+        "click>=8.3.3",
+        "idna>=3.15",
+        "lxml>=6.1.0",
+        "mako>=1.3.12",
+        "pillow>=12.3.0",
+        "pyasn1>=0.6.4",
+        "urllib3>=2.7.0"
 ]
 name = "ApiLogicServer"
 authors = [
