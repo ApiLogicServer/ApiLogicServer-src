@@ -1,8 +1,8 @@
 ---
 title: Customs EAI
 notes: gold source is docs
-source: docs/Customs-readme
-version: 1.2 from docsite, for readme, for readme 5/5/2026
+source: docs/Customs-clvs-readme
+version: 1.3 from docsite, for readme, for readme 8/6/2016
 ---
 <style>
   -typeset h1,
@@ -40,9 +40,17 @@ version: 1.2 from docsite, for readme, for readme 5/5/2026
 
 <br>
 
+This simulates a common real-world case: an *existing* database and project, plus a *new* set of requirements — prepared by the BA team as a requirements folder (`samples/requirements/customs_demo_clvs`) — that need to be implemented against it.
+
+The demo therefore has 3 parts:
+
+1. **Rebuild** the existing db/project (Step A)
+2. **Copy in** the BA team's requirements folder (Step E)
+3. **Run `implement requirements`**, with a couple of small SQLAlchemy work-arounds (Steps F, G)
+
 ```bash title="Establish Initial State, Execute Requirements"
 # A - Create the project (already done, typically from Manager)
-genai-logic create  --project_name=demo_customs --db_url=sqlite:///samples/requirements/customs_demo/database/customs.sqlite
+genai-logic create  --project_name=demo_customs_clvs --db_url=sqlite:///samples/dbs/customs.sqlite
 
 # B - activate Claude Code in the VSCode terminal
 claude
@@ -56,28 +64,34 @@ Please load `.github/.copilot-instructions.md`.
 # E - in created project, get the requirements (win: Copy-Item -Path "..\samples\requirements\customs_demo\*" -Destination "." -Recurse -Force -Verbose 4>&1).Count)
 ! cp -rv ../samples/requirements/customs_demo_clvs/. . | wc -l
 
-# F - required hardening for delete integrity (no orphans after parent delete via API):
-in database/models.py, add ORM relationship cascade on Shipment child lists.
-Apply as follows (NOTE: ShipmentCommodityList is a special case):
-
-   Shipment.PieceList          → relationship(cascade="all, delete", back_populates="shipment")
-   Shipment.SpecialHandlingList → relationship(cascade="all, delete", back_populates="shipment")
-   Shipment.ShipmentPartyList  → relationship(cascade="all, delete", back_populates="shipment")
-
-   Shipment.ShipmentCommodityList → relationship(passive_deletes='all', back_populates="shipment")
-   # ⚠️  ShipmentCommodity has a composite PK where the FK (local_shipment_oid_nbr) is also
-   # part of the PK. cascade="all, delete" causes SQLAlchemy to null-out the FK before
-   # deleting — which fails for PK columns (any database, not SQLite-specific).
-   # passive_deletes='all' bypasses ORM cascade and delegates to the DB-level
-   # ON DELETE CASCADE on the FK column.
-   # SQLite extra: also requires PRAGMA foreign_keys = ON per connection;
-   # PostgreSQL/MySQL enforce FK cascades by default.
-   # Note: perhaps simpler to alter db design for single-field pkey
+# F - apply the delete-cascade pattern below to database/models.py (no orphans after parent delete via API)
 
 # G - ask Coding Agent to create the system by implementing the requirements
 implement requirements docs/requirements/customs_demo
 /export docs/requirements/transcript_creation
 ```
+
+<details markdown>
+
+<summary>Why Step F is needed</summary>
+
+<br>
+
+This schema is derived from a real carrier database (FedEx-like), not a toy design — so it carries a real-world wrinkle: `ShipmentCommodity` has a composite primary key (`local_shipment_oid_nbr`, `sequence_nbr`), where the foreign key back to `Shipment` is itself part of that key. SQLAlchemy's normal `cascade="all, delete"` tries to null out the FK before deleting the child, which fails when the FK is also a PK column.
+
+So `Shipment`'s four child lists use two different cascade strategies:
+
+```python
+Shipment.PieceList             → relationship(cascade="all, delete", back_populates="shipment")
+Shipment.SpecialHandlingList   → relationship(cascade="all, delete", back_populates="shipment")
+Shipment.ShipmentPartyList     → relationship(cascade="all, delete", back_populates="shipment")
+
+Shipment.ShipmentCommodityList → relationship(passive_deletes='all', back_populates="shipment")
+```
+
+`ShipmentCommodityList` uses `passive_deletes='all'` instead — it skips ORM-managed cascade and lets the database's own `ON DELETE CASCADE` (already present on the FK) do the work.
+
+</details>
 
 </details>
 

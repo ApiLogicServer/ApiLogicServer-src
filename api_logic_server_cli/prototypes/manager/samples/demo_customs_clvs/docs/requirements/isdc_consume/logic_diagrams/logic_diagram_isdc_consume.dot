@@ -1,0 +1,28 @@
+digraph logic {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=13,
+         label=<<B>Logic Diagram — demo_customs_clvs  [isdc_consume]</B>>, labelloc=t,
+         pad=0.4, nodesep=0.90, ranksep=1.10, bgcolor="white",
+         splines=spline]
+  node  [fontname="Helvetica", fontsize=11, shape=plaintext]
+  edge  [fontname="Helvetica", fontsize=10]
+
+  // ── trigger ─────────────────────────────────────────────────────
+  TRIGGER [label=<<TABLE BORDER="2" CELLBORDER="0" CELLPADDING="5" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60"><B>&#9889; ShipmentXml inserted</B></FONT></TD></TR></TABLE>>, shape=plaintext]
+
+  // ── schema layer ──────────────────────────────────────────────────
+  ShipmentXml [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> ShipmentXml </B></FONT></TD></TR><TR><TD></TD><TD BGCOLOR="#dbe4f0"><FONT COLOR="#1a1a2e">  </FONT></TD><TD></TD></TR></TABLE>>]
+  // ── rank groupings ────────────────────────────────────────────────
+  { rank=min; ShipmentXml; TRIGGER }
+
+  // ── trigger edge ──────────────────────────────────────────────
+  TRIGGER -> ShipmentXml [color="#27ae60", style=bold, arrowhead=vee, penwidth=2, weight=10]
+
+  // ── logic edges ────────────────────────────────────────────────────
+
+  // ── events (right cluster) ─────────────────────────────────────
+  subgraph cluster_events {
+    style=invis
+    evt__publish_isdc [label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60" POINT-SIZE="10">&#9889; _publish_isdc</FONT></TD></TR></TABLE>>, shape=plaintext]
+  }
+  ShipmentXml -> evt__publish_isdc [label="after_flush", color="#27ae60", style=dashed, arrowhead=open, penwidth=1.2, fontcolor="#27ae60", constraint=false]
+}

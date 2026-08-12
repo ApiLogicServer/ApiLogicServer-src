@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1264pt" height="569pt" viewBox="18.80 18.80 1264.40 569.40">
+<svg xmlns="http://www.w3.org/2000/svg" width="899pt" height="569pt" viewBox="18.80 18.80 899.40 569.40">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 578.42)">
 <title>logic</title>
-<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-578.42 1273.55,-578.42 1273.55,28.8 -28.8,28.8" />
-<text xml:space="preserve" text-anchor="start" x="500.12" y="-534.27" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_customs_clvs</text>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-578.42 908.3,-578.42 908.3,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="263.12" y="-534.27" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_customs_clvs  [clvs_eligibility]</text>
 <g id="clust4" class="cluster">
 <title>cluster_events</title>
 </g>
@@ -112,7 +112,7 @@
 <polygon fill="none" stroke="#4a6fa5" points="304.88,-175.25 304.88,-355.25 512.12,-355.25 512.12,-175.25 304.88,-175.25" />
 </g>
 
-<g id="node5" class="node">
+<g id="node4" class="node">
 <title>SysConfig</title>
 <polygon fill="#4a6fa5" stroke="none" points="305.38,-473.5 305.38,-489.5 441.62,-489.5 441.62,-473.5 305.38,-473.5" />
 <text xml:space="preserve" text-anchor="start" x="343.12" y="-478.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> SysConfig </text>
@@ -131,7 +131,7 @@
 <polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="391,-368.88 397.12,-359.78 391.88,-363.73 392.64,-359.26 392.64,-359.26 392.64,-359.26 391.88,-363.73 388.24,-358.27 391,-368.88" />
 </g>
 
-<g id="node6" class="node">
+<g id="node5" class="node">
 <title>evt__set_customs_office</title>
 <polygon fill="#e8f5e9" stroke="none" points="523.75,-458.38 523.75,-486.62 641.25,-486.62 641.25,-458.38 523.75,-458.38" />
 <text xml:space="preserve" text-anchor="start" x="530.75" y="-469.12" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _set_customs_office</text>
@@ -165,41 +165,18 @@
 <text xml:space="preserve" text-anchor="middle" x="285.58" y="-121.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">6</text>
 </g>
 
-<g id="node7" class="node">
+<g id="node6" class="node">
 <title>evt__set_controlled_good</title>
-<polygon fill="#e8f5e9" stroke="none" points="722,-458.38 722,-486.62 841,-486.62 841,-458.38 722,-458.38" />
-<text xml:space="preserve" text-anchor="start" x="729" y="-469.12" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _set_controlled_good</text>
-<polygon fill="none" stroke="#27ae60" points="722,-458.38 722,-486.62 841,-486.62 841,-458.38 722,-458.38" />
+<polygon fill="#e8f5e9" stroke="none" points="727,-458.38 727,-486.62 846,-486.62 846,-458.38 727,-458.38" />
+<text xml:space="preserve" text-anchor="start" x="734" y="-469.12" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _set_controlled_good</text>
+<polygon fill="none" stroke="#27ae60" points="727,-458.38 727,-486.62 846,-486.62 846,-458.38 727,-458.38" />
 </g>
 
 <g id="edge8" class="edge">
 <title>ShipmentCommodity-&gt;evt__set_controlled_good</title>
-<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M469.59,-80C493.95,-105.42 525.85,-139.62 552.5,-171.25 635.01,-269.19 724.94,-392.48 762.92,-445.41" />
-<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="768.54,-453.27 759.06,-447.76 766.4,-450.45 762.64,-445.19 762.72,-445.14 762.8,-445.08 766.56,-450.33 766.38,-442.52 768.54,-453.27" />
-<text xml:space="preserve" text-anchor="middle" x="709.13" y="-261.38" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">early</text>
-</g>
-
-<g id="node4" class="node">
-<title>ShipmentXml</title>
-<polygon fill="#4a6fa5" stroke="none" points="1155.25,-472.5 1155.25,-488.5 1235.75,-488.5 1235.75,-472.5 1155.25,-472.5" />
-<text xml:space="preserve" text-anchor="start" x="1157.25" y="-477.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> ShipmentXml </text>
-<polygon fill="#dbe4f0" stroke="none" points="1180.08,-456.5 1180.08,-472.5 1210.92,-472.5 1210.92,-456.5 1180.08,-456.5" />
-<text xml:space="preserve" text-anchor="start" x="1192.5" y="-461.5" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e">  </text>
-<polygon fill="none" stroke="#4a6fa5" points="1154.25,-455.5 1154.25,-489.5 1236.75,-489.5 1236.75,-455.5 1154.25,-455.5" />
-</g>
-
-<g id="node8" class="node">
-<title>evt__publish_isdc</title>
-<polygon fill="#e8f5e9" stroke="none" points="922.5,-458.38 922.5,-486.62 1008.5,-486.62 1008.5,-458.38 922.5,-458.38" />
-<text xml:space="preserve" text-anchor="start" x="929.5" y="-469.12" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _publish_isdc</text>
-<polygon fill="none" stroke="#27ae60" points="922.5,-458.38 922.5,-486.62 1008.5,-486.62 1008.5,-458.38 922.5,-458.38" />
-</g>
-
-<g id="edge9" class="edge">
-<title>ShipmentXml-&gt;evt__publish_isdc</title>
-<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M1146.45,-472.5C1111.71,-472.5 1064.85,-472.5 1027.51,-472.5" />
-<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="1017.72,-472.5 1027.72,-468 1021.26,-472.4 1027.72,-472.4 1027.72,-472.5 1027.72,-472.6 1021.26,-472.6 1027.72,-477 1017.72,-472.5" />
-<text xml:space="preserve" text-anchor="middle" x="1081.38" y="-477.25" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">after_flush</text>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M469.21,-79.81C493.55,-105.29 525.59,-139.64 552.5,-171.25 636.19,-269.55 728.41,-392.65 767.41,-445.47" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="773.19,-453.32 763.64,-447.94 771.01,-450.53 767.18,-445.33 767.26,-445.27 767.34,-445.21 771.17,-450.41 770.88,-442.6 773.19,-453.32" />
+<text xml:space="preserve" text-anchor="middle" x="711.99" y="-261.38" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">early</text>
 </g>
 
 <g id="edge4" class="edge">

@@ -3,13 +3,18 @@ title: EAI Consume Pattern — Kafka + XML/JSON → DB
 description: Two-message Kafka consume pattern with generic by-name XML/JSON mapper. Covers blob-row bridge, 3-tier mapping contract, local debug mode, and generated test data.
 source: Generic training for ApiLogicServer projects with GenAI integration
 usage: AI assistants read this when detecting Kafka consume, EAI, or XML/JSON-to-DB patterns in a user prompt
-version: 1.2
+version: 1.4
 date: April 4, 2026
 related:
   - implement_requirements.md (Kafka outbound, row_event patterns)
   - logic_bank_patterns.md (row_event, commit_row_event)
   - logic_bank_api.md (full rule API)
 changelog:
+  - 1.4 (Aug 6, 2026): Added artifact #9 (test/send_xyz.py, Kafka test publisher) to the
+    "Generated Artifacts" / "Minimal Generation Prompt" lists — a downstream project's
+    requirements.md referenced "eai_subscribe.md artifact #9" for this file, but only 8
+    artifacts were ever listed here, leaving a dangling reference. Also corrected the stale
+    version header (said 1.2, changelog already at 1.3).
   - 1.3 (April 22, 2026): (a) Two "do it this way" template fixes (demo_eai rebuild caught both): Consumer 1 now sets is_processed=False explicitly; JSON mapper skeleton replaced with concrete parent+child-array pattern with child_rows.append(child_row). (b) Two high-value diagnostics: process_xyz_payload now raises TypeError immediately if parse() returns tuples instead of model rows; row-event bridge now logs when the is_processed guard fires (makes silent skip visible in logic log)
   - 1.2 (April 15, 2026): Added mandatory is_processed guard to Artifact 3 row-event bridge template; without it the debug path triggers a spurious Kafka re-publish that crashes Consumer 2 on UNIQUE constraint (bug caught by customs_demo implementation)
   - 1.1 (April 12, 2026): Added source-PK normalization rule for placeholder external IDs (e.g. 0), plus insert-only rerun DB-reset guidance
@@ -668,6 +673,11 @@ Generate:
 6. api/api_discovery/xyz_kafka_consume_debug.py — one file per topic, auto-discovered by api_discovery; calls `process_xyz_payload()` directly (env-var gated, no Kafka required)
 7. ui/admin/admin.yaml — add XyzMessage section; set payload field as `type: textarea`
 8. integration/kafka/xyz_reset.sh — **required, do not skip** — bash script to delete+recreate Kafka topics and truncate log (see § Kafka Reset Script below for the template); step 8 of the live-Kafka workflow references this script by name
+9. test/send_xyz.py — Kafka test publisher used for the live-Kafka verification step; use
+   `confluent_kafka.Producer` directly (never `subprocess` + `kafka-console-producer`, which
+   sends one message per input line and mangles multi-line XML/JSON payloads — see
+   § TEST PUBLISHERS above). Reads the topic name and a sample payload file, publishes one
+   message, and reports delivery via a `Producer.produce(..., callback=...)` + `flush()`.
 
 Example admin.yaml entry for the blob table:
 ```yaml

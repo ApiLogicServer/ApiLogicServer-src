@@ -1,0 +1,868 @@
+ ▐▛███▜▌   Claude Code v2.1.226
+▝▜█████▛▘  Sonnet 5 · Claude Pro
+  ▘▘ ▝▝    ~/…/build_and_test/genai-logic/demo_customs_clvs
+
+
+❯ Please load `.github/.copilot-instructions.md`.                               
+                                                                                
+  # E - in created project, get the requirements (win: Copy-Item -Path          
+  "..\samples\requirements\customs_demo\*" -Destination "." -Recurse -Force     
+  -Verbose 4>&1).Count)                                                         
+  ! cp -rv ../samples/requirements/customs_demo_clvs/. . | wc -l                
+                                                                                
+  # F - apply the delete-cascade pattern below to database/models.py (no        
+  orphans after parent delete via API)                                          
+                                                                                
+  # G - ask Coding Agent to create the system by implementing the requirements  
+  implement requirements docs/requirements/customs_demo                         
+  /export docs/requirements/transcript_creation                                 
+
+  Read 1 file, recalled 1 memory (ctrl+o to expand)
+
+⏺ Bash(pwd && echo "---" && ls -la && echo "--- docs/requirements ---" && ls -la
+      docs/requirements 2>/dev/null && echo "--- database/models.py head ---"
+      && head -50 da…)
+  ⎿  /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-
+     logic/demo_customs_clvs
+     ---
+     … +86 lines (ctrl+o to expand)
+
+⏺ Bash(cd .. && pwd && ls -la samples/requirements/ 2>/dev/null && echo "---
+      customs_demo_clvs ---" && find samples/requirements/customs_demo_clvs
+      -maxdepth 2 2>/dev/n…)
+  ⎿  /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-
+     logic
+     total 16
+     … +15 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to /Users/val/dev/ApiLogicServer/ApiLogicServer-de
+     v/build_and_test/genai-logic/demo_customs_clvs
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ Good — confirms this is copied to the project root. Now let me display the
+  welcome message, then proceed through steps E, F, G.
+
+  Welcome to Your GenAI-Logic Project
+
+  This is a complete, working microservice auto-generated from a database
+  schema.
+
+  What's been created:
+  - Admin Web Application - Live at http://localhost:5656
+  - REST API Endpoints - All database tables exposed at /api/*
+  - Database Models - Complete SQLAlchemy ORM in database/models.py
+  - Authentication System - JWT-based auth framework ready to configure
+  - Business Logic Engine - Declarative rules system in logic/declare_logic.py
+
+  ---
+  To start your application: Press F5
+
+  ---
+  What can I help you with?
+
+  Ask me to 'show me what you can help me with' for a complete list of services,
+  or jump right in:
+
+  1. Add business logic - Translate requirements into declarative rules
+  2. Customize the API - Add custom endpoints for your specific needs
+  3. Create custom UIs - Build React apps with genai-logic genai-add-app --vibe
+  4. Add security - Bootstrap with genai-logic add-auth, then declare
+  roles/grants/filters in security/declare_security.py
+  5. Test your logic - Create Behave tests with requirements traceability
+  6. Configure Admin UI - Customize the auto-generated admin interface
+  7. Query via MCP - Process natural language queries through Model Context
+  Protocol
+  8. Create B2B APIs - Complex integration endpoints with partner systems
+  9. Add events - Integrate with Kafka, webhooks, or other event systems
+  10. Customize models - Add tables, attributes, or derived fields
+  11. Executable Requirements - Copy a requirements set into
+  docs/requirements/<name>/, say "implement reqs <name>", and I execute the spec
+  end-to-end with an ad-libs audit report
+  12. Governance Report - Say "vital signs" or "health check" for rule adoption,
+  dependency tracking, and docstring hygiene
+  13. Logic Diagram - Say "create logic diagram" for an SVG showing the rule
+  chain
+  14. Queries and Dashboards - Ask for a query, report, or a dashboard/chart
+
+  Ready to customize your project?
+
+  ---
+  Your message also includes follow-on steps (E, F, G) — proceeding with those
+  now.
+
+  Step E — copying requirements into the project:
+
+⏺ Bash(cp -rv ../samples/requirements/customs_demo_clvs/. . | wc -l)
+  ⎿  24
+
+  Listed 1 directory (ctrl+o to expand)
+
+⏺ Step E complete — requirements, message formats, and Kafka reset scripts are
+  in place.
+
+  Step F — applying the delete-cascade pattern to database/models.py (per
+  memory, this must be re-applied fresh each run: cascade="all, delete" on
+  PieceList/SpecialHandlingList/ShipmentPartyList, passive_deletes='all' on
+  ShipmentCommodityList, plus a PRAGMA foreign_keys=ON listener). Let me check
+  the current model relationships and database/customize_models.py before
+  editing.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ Now let me look at the exact relationship lines and the customize_models.py
+  file to apply the cascade pattern.
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(database/models.py)
+  ⎿  Added 4 lines, removed 4 lines
+      259      # parent relationships (access parent)
+      260  
+      261      # child relationships (access children)
+      262 -    PieceList : Mapped[List["Piece"]] = relationship(back_popu
+          -lates="shipment")                                             
+      263 -    SpecialHandlingList : Mapped[List["SpecialHandling"]] = re
+          -lationship(back_populates="shipment")                         
+      264 -    ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] 
+          -= relationship(back_populates="shipment")                     
+      265 -    ShipmentPartyList : Mapped[List["ShipmentParty"]] = relati
+          -onship(back_populates="shipment")                             
+      262 +    PieceList : Mapped[List["Piece"]] = relationship(back_popu
+          +lates="shipment", cascade="all, delete")                      
+      263 +    SpecialHandlingList : Mapped[List["SpecialHandling"]] = re
+          +lationship(back_populates="shipment", cascade="all, delete")  
+      264 +    ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] 
+          += relationship(back_populates="shipment", passive_deletes='all
+          +')                                                            
+      265 +    ShipmentPartyList : Mapped[List["ShipmentParty"]] = relati
+          +onship(back_populates="shipment", cascade="all, delete")      
+      266  
+      267  
+      268  
+
+  Read 1 file (ctrl+o to expand)
+⏺ Bash(sqlite3 database/db.sqlite ".schema shipment_commodity" && echo
+      "---piece---" && sqlite3 database/db.sqlite ".schema piece" && echo
+      "---shipment_party---" && sq…)
+  ⎿  CREATE TABLE IF NOT EXISTS "shipment_commodity" (
+         local_shipment_oid_nbr      INTEGER NOT NULL,
+         sequence_nbr                INTEGER NOT NULL,
+     … +128 lines (ctrl+o to expand)
+
+⏺ Good — DB-level ON DELETE CASCADE is already in place, so the SQLite PRAGMA 
+  foreign_keys=ON connect listener is essential for those to fire. Let me add it
+  to customize_models.py.
+
+⏺ Update(database/customize_models.py)
+  ⎿  Added 11 lines
+       1  from database import models
+       2  from safrs import jsonapi_attr
+       3  from sqlalchemy.orm import relationship, remote, foreign
+       4 +from sqlalchemy import event                                   
+       5 +from sqlalchemy.engine import Engine                           
+       6  import logging
+       7  
+       8  app_logger = logging.getLogger(__name__)
+       9  
+      10 +@event.listens_for(Engine, "connect")                          
+      11 +def _set_sqlite_pragma_foreign_keys(dbapi_connection, connectio
+         +n_record):                                                     
+      12 +    """SQLite disables FK enforcement per-connection by default
+         +; ON DELETE CASCADE                                            
+      13 +    clauses in the schema (shipment -> piece/shipment_party/spe
+         +cial_handling/shipment_commodity)                              
+      14 +    are silent no-ops without this."""                         
+      15 +    cursor = dbapi_connection.cursor()                         
+      16 +    cursor.execute("PRAGMA foreign_keys=ON")                   
+      17 +    cursor.close()                                             
+      18 +                                                               
+      19  from database.database_discovery.auto_discovery import discover
+          _models
+      20  discover_models()
+      21  
+
+⏺ Step F complete. Now starting Step G — implementing requirements via the
+  Executable Requirements workflow.
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ I already have logic_bank_api.md loaded (via CLAUDE.md). Per the mandatory
+  workflow, I need to read the remaining training files before writing any code.
+  Let me load them now.
+
+  Searched for 1 pattern, read 5 files (ctrl+o to expand)
+
+⏺ Bash(python3 -c "
+      import xml.etree.ElementTree as ET…)
+  ⎿  ROOT: {http://cim.corp.ship}CIMCorpShipment
+     messageMetadata - children: ['messageTimestamp', 'messageSource', 'sou
+     rceSystemId']
+     … +36 lines (ctrl+o to expand)
+
+⏺ Good, matches memory design exactly. Now let's check the LVS reference (which
+  sets a different PLANNED_CLEARANCE_LOCATION_CD per memory's known-issue note)
+  and read the current models.py for the relevant tables.
+
+⏺ Bash(python3 -c "
+      import xml.etree.ElementTree as ET…)
+  ⎿  MDE-CDV-LVS-1.xml
+      PLANNED_CLEARANCE_LOCATION_CD= None
+      SERVICE_TYPE_CD= None
+     … +9 lines (ctrl+o to expand)
+
+⏺ Bash(python3 -c "
+      import xml.etree.ElementTree as ET…)
+  ⎿  MDE-CDV-LVS-1.xml
+       PLANNED_CLEARANCE_LOCATION_CD = 0704
+       SERVICE_TYPE_CD = 04
+     … +9 lines (ctrl+o to expand)
+
+⏺ This exactly matches the memory's documented pattern (LVS uses CBSA numeric
+  codes, HVS uses airport codes). Now let's check the current models.py for the
+  relevant tables and existing
+  customs_office/controlled_regulated_goods/customer/sys_config schema.
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+⏺ Bash(for t in customer customs_office controlled_regulated_goods govt_dept
+      customs_region sys_config shipment; do
+        echo -n "$t: "; sqlite3 database/db.sqlite "selec…)
+  ⎿  customer: 11
+     customs_office: 104
+     controlled_regulated_goods: 184
+     … +4 lines (ctrl+o to expand)
+
+⏺ Bash(sqlite3 database/db.sqlite "select id, name, duty_bill_to_acct_nbr from
+      customer;")
+  ⎿  1|ACME IMPORTS INC|451000001
+     2|NORTHERN LIGHTS TRADING CO|451000002
+     3|PACIFIC RIM IMPORTS LTD|451000003
+     … +8 lines (ctrl+o to expand)
+
+⏺ Bash(sqlite3 database/db.sqlite "select id, office_code, name, clvs_release
+      from customs_office where office_code in ('0704','0504') or office_code
+      like '%MEM%' or o…)
+  ⎿  17|0504|Montréal Mirabel Airport (Cargo)|1
+     41|0704|Toronto Pearson Cargo (Infield)|1
+⏺ Now I have the full picture matching the proven design from memory. Let me
+  write the DDL change list and run it.
+
+  Made 1 scratchpad edit +24 (ctrl+o to expand)
+
+⏺ Bash(sqlite3 database/db.sqlite <
+      /private/tmp/claude-502/-Users-val-dev-ApiLogicServer-ApiLogicServer-dev-b
+      uild-and-test-genai-logic-demo-customs-clvs/ff0a11bd-fbac…)
+  ⎿  DDL_OK
+     3300
+     CREATE TABLE shipment_xml (
+     … +5 lines (ctrl+o to expand)
+
+⏺ DDL applied. Now let's rebuild models from the database.
+
+⏺ Bash(source ../venv/bin/activate 2>/dev/null && which genai-logic &&
+      genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite
+      2>&1 | tail -40)
+  ⎿  /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-
+     logic/venv/bin/genai-logic
+     .. ..Updated .vscode/settings.json NOT SET
+     … +9 lines (ctrl+o to expand)
+
+  Listed 1 directory (ctrl+o to expand)
+
+⏺ Rebuild overwrote my Step F cascade edits (expected — matches memory's note
+  that they must be reapplied after every rebuild). Let me reapply them now.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ Update(database/models.py)
+  ⎿  Added 4 lines, removed 4 lines
+      385      sys_config : Mapped["SysConfig"] = relationship(back_popul
+           ates=("ShipmentList"))
+      386  
+      387      # child relationships (access children)
+      388 -    PieceList : Mapped[List["Piece"]] = relationship(back_popu
+          -lates="shipment")                                             
+      389 -    ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] 
+          -= relationship(back_populates="shipment")                     
+      390 -    SpecialHandlingList : Mapped[List["SpecialHandling"]] = re
+          -lationship(back_populates="shipment")                         
+      391 -    ShipmentPartyList : Mapped[List["ShipmentParty"]] = relati
+          -onship(back_populates="shipment")                             
+      388 +    PieceList : Mapped[List["Piece"]] = relationship(back_popu
+          +lates="shipment", cascade="all, delete")                      
+      389 +    ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] 
+          += relationship(back_populates="shipment", passive_deletes='all
+          +')                                                            
+      390 +    SpecialHandlingList : Mapped[List["SpecialHandling"]] = re
+          +lationship(back_populates="shipment", cascade="all, delete")  
+      391 +    ShipmentPartyList : Mapped[List["ShipmentParty"]] = relati
+          +onship(back_populates="shipment", cascade="all, delete")      
+      392  
+      393  
+      394  
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ Good, that survived (as expected — customize_models.py is preserved across
+  rebuilds). Now let me initialize SysConfig.clvs_lvs_threshold_cad for
+  pre-existing rows and write the Pre-Coding Analysis into ad-libs.md before
+  writing any logic files.
+
+⏺ Bash(sqlite3 database/db.sqlite "select id, clvs_lvs_threshold_cad from
+      sys_config; update sys_config set clvs_lvs_threshold_cad = 3300.00 where
+      clvs_lvs_threshold_c…)
+  ⎿  1|3300
+     1|3300
+
+⏺ Write(docs/requirements/customs_demo/ad-libs.md)
+  ⎿  Wrote 138 lines to docs/requirements/customs_demo/ad-libs.md
+      1 ## Ad-Libs Report
+         needed.**
+      4 ---
+      6 ## Walkthrough
+      8 1. **Basic data model** — Shipment / Piece / ShipmentParty / Ship
+        mentCommodity / ControlledRegulatedGood / CustomsOffice / Custome
+        ce built from a pre-seeded domain schema, not `starter.sqlite`). 
+        d columns.
+        able; 8 columns on `shipment` (clvs_reason, clvs_eligible, prohib
+        , sys_config_id FK, clvs_lvs_threshold_cad,
+     … +267 lines (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ I have a structural bug — a stray closing </details> mid-document. Let me fix
+  the nesting to match the template exactly.
+
+⏺ Update(docs/requirements/customs_demo/ad-libs.md)
+  ⎿  Removed 2 lines
+      111  
+      112  *(Error Correction Loops and remaining metrics completed after
+            implementation — see end of this file.)*
+      113  
+      114 -</details>                                                    
+      115 -                                                              
+      114  ---
+      115  
+      116  ### 🔴 Review Required
+
+⏺ Now the <details> block closes only once at the very end, right before the FYI
+  section. Let me verify the final structure.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ Structure is correct. Now let's link this ad-libs.md from
+  project_creation_report.md, then move to implementation.
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(docs/requirements/project_creation_report.md)
+  ⎿  Added 2 lines
+      42  ## Use Cases
+      43  
+      44  *(each `impl req` run appends a link here to its `docs/requirem
+          ents/<use_case>/ad-libs.md`)*
+      45 +                                                               
+      46 +- [customs_demo](customs_demo/ad-libs.md) — EAI Kafka consume (
+         +isdc) + importer matching + CLVS eligibility, 2026-08-11       
+
+⏺ Now implementing. Let me check integration/system/EaiSubscribeMapper.py for
+  the exact helper signatures before writing the mapper.
+
+  Read 1 file, listed 1 directory (ctrl+o to expand)
+
+⏺ Bash(python3 -c "
+      import xml.etree.ElementTree as ET…)
+  ⎿  consignee -> {'PARTY_OID_NBR': '0', 'OID_NBR': '6210187919', 'OID_TYPE
+     _CD': 'S', 'SHIPMENT_PARTY_TYPE_CD': 'C'}
+     shipper -> {'PARTY_OID_NBR': '0', 'OID_NBR': '6210187919', 'OID_TYPE_C
+     … +3 lines (ctrl+o to expand)
+⏺ Bash(python3 -c "
+      import xml.etree.ElementTree as ET…)
+  ⎿  commodities -> {'LOCAL_SHIPMENT_OID_NBR': '6210187919', 'SEQUENCE_NBR'
+     : '1', 'CLEARANCE_COUNTRY_CD': None, 'COMMODITY_DESC': 'HARD COVER BOO
+     KS', 'COMMODITY_WGT': '0.0', 'COMMODITY_WGT_UOM_CD': None, 'CUSTOMS_VA
+     … +11 lines (ctrl+o to expand)
+
+⏺ Bash(sqlite3 database/db.sqlite "select id, hs_code, category, clvs_reason
+      from controlled_regulated_goods limit 5;")
+  ⎿  1|9301.10.00|firearms_weapons|Prohibited weapon
+     2|9301.20.00|firearms_weapons|Prohibited weapon
+     3|9301.90.00|firearms_weapons|Prohibited weapon
+     … +2 lines (ctrl+o to expand)
+
+⏺ Bash(sqlite3 database/db.sqlite "select hs_code,
+      length(replace(hs_code,'.','')) as len from controlled_regulated_goods
+      limit 20;" && echo "---distinct lens---" && s…)
+  ⎿  9301.10.00|8
+     9301.20.00|8
+     9301.90.00|8
+     … +19 lines (ctrl+o to expand)
+
+⏺ Now writing the EAI mapper, consumer, and debug endpoint files.
+
+⏺ Write(integration/IsdcMapper.py)
+  ⎿  Wrote 48 lines to integration/IsdcMapper.py
+       1 """
+         Party + ShipmentCommodity + SpecialHandling.
+       3 
+         s/Classify_Entity_Details.csv
+       5 (Tier 1 auto lowercase(field) -> column). Sections mawbAsgmt, ma
+       6 virtualRouteLegs, extraData have no corresponding target table i
+         n this schema and are skipped.
+       8 import xml.etree.ElementTree as ET
+       9 from database import models
+         _local
+     … +49 lines (ctrl+o to expand)
+
+⏺ Write(integration/kafka/kafka_subscribe_discovery/isdc.py)
+  ⎿  Wrote 102 lines to integration/kafka/kafka_subscribe_discovery/isdc.py
+       1 """
+       3   1. integration/kafka/kafka_subscribe_discovery/isdc.py  - isdc
+       4        reads message, inserts raw payload into ShipmentXml blob 
+         (Tx 1)
+       6        insert -> publishes payload to topic: isdc_processed
+       7   3. integration/kafka/kafka_subscribe_discovery/isdc.py  - isdc
+       8        parses payload -> domain rows (lookups + LogicBank rules)
+          (Tx 2)
+       9   4. api/api_discovery/isdc_kafka_consume_debug.py
+         tion directly
+     … +123 lines (ctrl+o to expand)
+
+⏺ Now the row-event bridge:
+
+⏺ Write(logic/logic_discovery/isdc_consume.py)
+  ⎿  Wrote 33 lines to logic/logic_discovery/isdc_consume.py
+       1 """
+       2 EAI Consume — isdc topic, row-event bridge.
+       4 On ShipmentXml insert (Tx 1, from Consumer 1 or /consume_debug),
+          publish the raw
+       5 payload to isdc_processed so Consumer 2 can parse and persist do
+       6 See integration/kafka/kafka_subscribe_discovery/isdc.py for the 
+         full pipeline.
+       7 """
+       9 from logic_bank.exec_row_logic.logic_row import LogicRow
+      10 from database import models
+     … +36 lines (ctrl+o to expand)
+
+⏺ Now the debug endpoint:
+
+⏺ Write(api/api_discovery/isdc_kafka_consume_debug.py)
+  ⎿  Wrote 36 lines to api/api_discovery/isdc_kafka_consume_debug.py
+       1 import logging
+       2 import os
+       3 from pathlib import Path
+       4 import safrs
+       5 from flask import request, jsonify
+       7 app_logger = logging.getLogger("api_logic_server_app")
+       8 
+       9 
+      10 def add_service(app, api, project_dir, swagger_host: str, PORT: 
+         str, method_decorators=[]):
+     … +34 lines (ctrl+o to expand)
+
+⏺ Now writing the importer-matching logic (Step 2):
+
+⏺ Write(logic/logic_discovery/shipment_matching.py)
+  ⎿  Wrote 45 lines to logic/logic_discovery/shipment_matching.py
+       1 """
+       2 Logic discovery: Shipment matching (Phase 2).
+       3 
+       5 
+       6 On Shipment insert, look up the matching Customer using:
+       7     Shipment.trprt_bill_to_acct_nbr == Customer.duty_bill_to_acc
+         t_nbr
+       9 If no match: log a warning, do nothing.
+      10 If match found: create a ShipmentParty row, matching high confid
+         ence columns
+     … +45 lines (ctrl+o to expand)
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ Write(logic/logic_discovery/clvs_eligibility.py)
+  ⎿  Wrote 93 lines to logic/logic_discovery/clvs_eligibility.py
+       1 """
+       3   Given a shipment imported by an authorized CLVS courier
+       4   And the shipment has an estimated value for duty not exceeding
+       5   And the shipment has no prohibited commodity lines (ShipmentCo
+         mmodity.is_prohibited = 1)
+          using first ten digits of the harmonized tariff number)
+       7   And the shipment is released at a CBSA-designated customs offi
+       8   When the shipment eligibility is evaluated
+       9   Then the shipment shall be eligible for the CLVS Program
+          reasons why failed (or blank)
+     … +113 lines (ctrl+o to expand)
+
+⏺ Update(docs/requirements/customs_demo/ad-libs.md)
+  ⎿  Added 1 line
+      130  - `integration/IsdcMapper.py` — `mawbAsgmt`, `mawb`, `currenci
+           es`, `virtualRouteLegs`, and `extraData` XML sections are pres
+           ent in the sample message but have no corresponding target tab
+           le in this schema; skipped in `TAG_ROUTING` (only `shipment`, 
+           `consignee`/`shipper`, `piece`, `commodities`, `specialHandlin
+           gCodes` are routed).
+      131  - `integration/kafka/kafka_subscribe_discovery/isdc.py` — dupl
+           icate policy implemented as replace-on-duplicate (parse first,
+            then replace the prior shipment graph and insert parsed rows)
+           , matching `ISDC_DUPLICATE_POLICY=replace` default per explici
+           t requirement text (this project's spec explicitly asks for re
+           place, unlike the EAI training doc's insert-only default).
+      132  - `integration/IsdcMapper.py` (`ShipmentParty.shipment_party_o
+           id_nbr`) — `PARTY_OID_NBR` sentinel value `0` normalized to `N
+           one` before insert so DB autoincrement assigns a unique PK (bo
+           th consignee and shipper carry `0` in some sample payloads).
+      133 +- `logic/logic_discovery/clvs_eligibility.py:39` (`_set_contro
+          +lled_good`) — spec says "first ten digits of the harmonized ta
+          +riff number," but the seeded `controlled_regulated_goods.hs_co
+          +de` lookup table stores 8-digit codes only (confirmed: all 184
+          + rows are 8 digits after removing dots). Matched on the first 
+          +8 digits (the table's actual precision) instead of 10, formatt
+          +ed with dots (`NNNN.NN.NN`) to match the stored format.       
+      134  
+      135  </details>
+      136  
+
+⏺ Now let's write the per-use-case requirements.md traceability files.
+
+⏺ Bash(mkdir -p docs/requirements/isdc_consume
+      docs/requirements/shipment_matching docs/requirements/clvs_eligibility)
+  ⎿  Done
+
+⏺ Write(docs/requirements/isdc_consume/requirements.md)
+  ⎿  Wrote 26 lines to docs/requirements/isdc_consume/requirements.md
+      1 ---
+      2 created: 2026-08-11T18:10:00
+      3 created_by: claude-sonnet-5
+      4 use_case: isdc_consume
+      5 ---
+      6 
+      7 Read `docs/training/eai_subscribe.md`, then:
+      8 
+      9 Subscribe to Kafka topic `isdc`. Each message is a CIMCorp shipme
+        nt XML.
+     … +26 lines (ctrl+o to expand)
+
+⏺ Write(docs/requirements/shipment_matching/requirements.md)
+  ⎿  Wrote 18 lines to docs/requirements/shipment_matching/requirements.md
+      1 ---
+      2 created: 2026-08-11T18:10:00
+      3 created_by: claude-sonnet-5
+      4 use_case: shipment_matching
+      5 ---
+      6 
+      7 Logic discovery: Shipment matching (Phase 2).
+      8 
+      9 Create `logic/logic_discovery/shipment_matching.py`.
+     … +11 lines (ctrl+o to expand)
+
+⏺ Write(docs/requirements/clvs_eligibility/requirements.md)  ⎿  Wrote 15 lines to docs/requirements/clvs_eligibility/requirements.md
+       1 ---
+       2 created: 2026-08-11T18:10:00
+       3 created_by: claude-sonnet-5
+       5 ---
+       6 
+       7 Scenario: Shipment at or below the LVS threshold is eligible
+       8   Given a shipment imported by an authorized CLVS courier
+          CAD $3,300
+      10   And the shipment has no prohibited commodity lines (ShipmentCo
+         mmodity.is_prohibited = 1)
+     … +9 lines (ctrl+o to expand)
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+⏺ Update(config/default.env)
+  ⎿  Added 2 lines, removed 2 lines
+      15  # include all keys and keep group.id aligned with KAFKA_CONSUME
+          R_GROUP.
+      16  # Do not set conflicting values across these two sources.
+      17  
+      18 -# KAFKA_SERVER = localhost:9092                                
+      19 -# KAFKA_CONSUMER_GROUP = <project>-group1                      
+      18 +KAFKA_SERVER = localhost:9092                                  
+      19 +KAFKA_CONSUMER_GROUP = customs_demo-group1                     
+      20  # APILOGICPROJECT_KAFKA_CONSUMER = "{\"bootstrap.servers\": \"l
+          ocalhost:9092\", \"group.id\": \"<project>-group1\", \"auto.off
+          set.reset\": \"earliest\", \"enable.auto.commit\": \"false\", \
+          "session.timeout.ms\": \"6000\", \"heartbeat.interval.ms\": \"2
+          000\"}"
+      21  # APILOGICPROJECT_KAFKA_PRODUCER = "{\"bootstrap.servers\": \"l
+          ocalhost:9092\"}"
+      22  
+
+  Searched for 1 pattern, listed 1 directory (ctrl+o to expand)
+
+⏺ Write(test/send_isdc.py)
+  ⎿  Wrote 40 lines to test/send_isdc.py
+      1 """
+      2 Kafka test publisher for the isdc EAI consume pipeline.
+      3 
+        a topic `isdc`.
+      5 Uses confluent_kafka.Producer directly — never subprocess + kafka
+        -console-producer,
+      6 which sends one message per input line and mangles multi-line XML
+      7 
+      8 Usage:
+      9     python test/send_isdc.py [path/to/message.xml]
+     … +37 lines (ctrl+o to expand)
+
+⏺ All artifacts written. Now let's start the server and verify it boots cleanly
+  (checking for the "row.attr" trap and other startup errors).
+
+⏺ Bash(pkill -f "python api_logic_server_run.py" 2>/dev/null; sleep 1; lsof -i
+      :5656 2>/dev/null; echo "port check done")
+  ⎿  COMMAND   PID USER   FD   TYPE            DEVICE SIZE/OFF NODE NAME
+     Python  19557  val    9u  IPv4 0xee76ac80ea7b4ea      0t0  TCP *:5656
+     (LISTEN)
+     port check done
+
+⏺ Bash(kill -9 19557 2>/dev/null; sleep 1; lsof -i :5656 2>/dev/null; echo
+      "cleared")
+  ⎿  cleared
+
+⏺ Bash(source ../venv/bin/activate && rm -f logs/als.log && python
+      api_logic_server_run.py > logs/server_stdout.log 2>&1 &
+      sleep 6…)
+  ⎿  ..ShipmentCommodity.is_prohibited: aggregate where clause
+     ..Shipment.controlled_item_count: aggregate derivation
+     ..ShipmentCommodity.controlled_regulated_goods_id: aggregate where cla
+     … +77 lines (ctrl+o to expand)
+
+⏺ Server started clean — 14 rules loaded, no crashes. Now testing the debug
+  endpoint with the HVS reference message.
+
+⏺ Bash(curl -s 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/
+      customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml' | python3 -m
+      json.tool)
+  ⎿  {
+         "awb_nbr": "427153913307",
+         "blob_id": 1,
+     … +8 lines (ctrl+o to expand)
+
+⏺ Bash(curl -s 'http://localhost:5656/api/Shipment/' | python3 -m json.tool |
+      head -60)
+  ⎿  {
+         "data": [
+             {
+     … +57 lines (ctrl+o to expand)
+
+⏺ Bash(curl -s 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/
+      customs_demo/message_formats/MDE-CDV-LVS-1.xml' | python3 -m json.tool
+      echo "---"…)
+  ⎿  {
+         "awb_nbr": "427153913308",
+         "blob_id": 2,
+     … +12 lines (ctrl+o to expand)
+
+⏺ Bash(curl -s 'http://localhost:5656/api/ShipmentCommodity/?filter[local_shipme
+      nt_oid_nbr]=6210187921' | python3 -c "
+      import json,sys…)
+  ⎿  Traceback (most recent call last):
+       File "<string>", line 3, in <module>
+         d=json.load(sys.stdin)
+     … +16 lines (ctrl+o to expand)
+
+⏺ Bash(sqlite3 database/db.sqlite "select * from controlled_regulated_goods
+      where hs_code='6110.20.00';"
+      echo "---api curl retry---"…)
+  ⎿  174|12|textile_quota|6110.20.00|Jerseys, pullovers, cardigans (cotton)
+     |Textile - may require import permit
+     ---api curl retry---
+     … +19 lines (ctrl+o to expand)
+
+⏺ Excellent — that's a genuine match (real textile-quota entry), confirming the
+  lookup logic works correctly across mixed dotted/undotted HS-code formats.
+  Let's test LVS-2 to see if we get a genuinely eligible case.
+
+⏺ Bash(curl -s 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/
+      customs_demo/message_formats/MDE-CDV-LVS-2.xml' | python3 -m json.tool
+      curl -s 'http://…)
+  ⎿  {
+         "awb_nbr": "427153913309",
+         "blob_id": 4,
+     … +14 lines (ctrl+o to expand)
+
+⏺ All three test cases behave correctly: HVS ineligible (value + office), LVS-1
+  ineligible (genuine controlled-goods match), and LVS-2 fully eligible
+  (clvs_eligible=1, blank reason). The eligibility engine works end-to-end. Now
+  let's verify duplicate-replace behavior and the delete-cascade.
+⏺ Bash(echo "--- replay same LVS-2 message (should replace, not duplicate) ---"
+      curl -s 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/c
+      ustoms_demo/m…)
+  ⎿  --- replay same LVS-2 message (should replace, not duplicate) ---
+     {
+         "awb_nbr": "427153913309",
+     … +18 lines (ctrl+o to expand)
+
+⏺ All checks pass. Now let's check logs/als.log for warnings, then run the
+  automated test gate.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ Clean. Let's check the test gate script before running it.
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Bash(docker ps 2>&1 | head -10)
+  ⎿  CONTAINER ID   IMAGE                              COMMAND
+          CREATED        STATUS        PORTS
+                                   NAMES
+     … +13 lines (ctrl+o to expand)
+
+⏺ Kafka broker (broker1) is already running. Let's run the full test gate with
+  KAFKA_PHASE_REQUIRED=true, matching the memory's successful configuration.
+
+⏺ Bash(pkill -f "python api_logic_server_run.py" 2>/dev/null; sleep 1
+      cd /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-l
+      ogic/demo_customs_clvs…)
+  ⎿  Using Python: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_a
+     nd_test/genai-logic/demo_customs_clvs/../venv/bin/python
+     == [1/6] strict reset (server stop + db + topics) ==
+     … +61 lines (ctrl+o to expand)
+  ⎿  (timeout 2m 30s)
+
+⏺ The full test gate passed on the first attempt — zero error-correction loops.
+  Let me finalize the ad-libs.md metrics.
+
+⏺ Update(docs/requirements/customs_demo/ad-libs.md)
+  ⎿  Added 14 lines, removed 7 lines
+      102  | Schema Read First | Yes — models.py + live sqlite schema + r
+           ow counts read before any logic or mapper file |
+      103  | Sample Data Read | Yes — Classify_Entity_Details.csv + both 
+           reference XML fixtures parsed before mapper written |
+      104  | Subagent Used | No — single pass |
+      105 -| Self-Verification | (filled in after coding) |              
+      106 -| Lightweight Checks Used | (filled in after coding) |        
+      107 -| Gate Test Run Count | (filled in after coding) |            
+      108 -| Gate Test Purpose | (filled in after coding) |              
+      109 -| Error Correction Loops | (filled in after coding) |         
+      110 -| Long-Run Diagnostics | None so far |                        
+      105 +| Self-Verification | Yes — server started clean (14 rules loa
+          +ded, no exceptions), `/consume_debug/isdc` tested against all 
+          +3 sample fixtures (HVS, LVS-1, LVS-2) plus a replay, `logs/als
+          +.log` scanned for errors, API `DELETE /api/Shipment/<id>/` ver
+          +ified with zero orphaned children |                           
+      106 +| Lightweight Checks Used | Yes — curl + `logs/als.log` per ph
+          +ase, before running the full gate script |                    
+      107 +| Gate Test Run Count | 1 — final verification only |         
+      108 +| Gate Test Purpose | Final verification |                    
+      109 +| Error Correction Loops | None — implementation passed on fir
+          +st run |                                                      
+      110 +| Long-Run Diagnostics | None |                               
+      111  
+      112 -*(Error Correction Loops and remaining metrics completed after
+          - implementation — see end of this file.)*                     
+      112 +**Error Correction Loops:** None — implementation passed on fi
+          +rst run. `docs/requirements/customs_demo/test_gate.sh` with `K
+          +AFKA_PHASE_REQUIRED=true` reported `PASS: customs_demo XR test
+          + gate (debug + Kafka)` on the first execution.                
+      113  
+      114 +**Live verification results (beyond the gate script):**       
+      115 +- HVS fixture (`MDE-CDV-HVS-WR-Rev260328.xml`): `clvs_eligible
+          +=0`, reason = value exceeds threshold + no CBSA-designated off
+          +ice match (airport code `MEM` doesn't match any seeded `custom
+          +s_office.office_code` — see 🔴 Review Required)               
+      116 +- LVS-1 fixture: `clvs_eligible=0` — value under threshold, of
+          +fice matched (`0704`→Toronto Pearson, `clvs_release=1`), but g
+          +enuinely carries a real controlled/textile-quota commodity (HS
+          + `6110.20.00` — "Jerseys, pullovers, cardigans (cotton)", matc
+          +hed against seeded `controlled_regulated_goods` row id 174) — 
+          +correct rejection, not a false positive                       
+      117 +- LVS-2 fixture: `clvs_eligible=1`, `clvs_reason=""` — fully e
+          +ligible: value $3,000 (under $3,300), office matched, no prohi
+          +bited/controlled lines                                        
+      118 +- Replay of the same payload twice left domain-row counts unch
+          +anged and only incremented the `shipment_xml` audit count (rep
+          +lace-on-duplicate confirmed working)                          
+      119 +- `DELETE /api/Shipment/<id>/` → 204, zero orphaned `Piece`/`S
+          +hipmentParty`/`ShipmentCommodity` rows (delete-cascade + `PRAG
+          +MA foreign_keys=ON` confirmed working end-to-end via the real 
+          +API)                                                          
+      120 +                                                              
+      121  ---
+      122  
+      123  ### 🔴 Review Required
+
+⏺ Bash(lsof -i :5656 2>/dev/null; ps aux | grep "api_logic_server_run" | grep -v
+      grep)
+  ⎿  No matches found
+
+⏺ Everything is implemented and the test gate passes. Before finishing, per the
+  CE's mandatory rule ("never copy admin-merge.yaml to admin.yaml without
+  explicit confirmation — no exceptions"), I need your call on the Admin UI
+  update.
+
+⏺ User answered Claude's questions:
+  ⎿  · rebuild-from-database generated ui/admin/admin-merge.yaml reflecting the 
+     new schema (ShipmentXml section, new Shipment/ShipmentCommodity columns, 
+     new relationships). admin.yaml itself wasn't touched. How should I proceed?
+     → Replace (Recommended)
+
+⏺ Bash(cp ui/admin/admin.yaml ui/admin/admin.yaml.bak && cp
+      ui/admin/admin-merge.yaml ui/admin/admin.yaml && echo "swap done")
+  ⎿  swap done
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+⏺ Update(ui/admin/admin.yaml)
+  ⎿  Added 1 line
+      526        type: DATETIME
+      527      - name: payload
+      528        required: true
+      529 +      type: textarea                                          
+      530      - name: is_processed
+      531        type: Boolean
+      532      type: ShipmentXml
+
+⏺ Bash(cd /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-
+      logic/demo_customs_clvs
+      source ../venv/bin/activate…)
+  ⎿  HTTP 302
+     done
+
+⏺ Server starts clean with the new Admin UI (HTTP 302 redirect to the Admin App,
+  as expected, no errors in the log).
+
+⏺ Bash(cd /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-
+      logic/demo_customs_clvs
+      curl -s http://localhost:5656/admin-app/ -o /dev/null -w "admin…)
+  ⎿  admin-app HTTP 404
+     ShipmentXml API HTTP 200
+
+  Searched for 1 pattern (ctrl+o to expand)
+⏺ All steps from the runbook are complete. Summary:
+
+  Step E — copied customs_demo_clvs requirements (24 files: requirements.md,
+  message formats, Kafka scripts) into the project.
+
+  Step F — reapplied the delete-cascade pattern to database/models.py
+  (cascade="all, delete" on Piece/SpecialHandling/ShipmentParty,
+  passive_deletes='all' on ShipmentCommodity) plus the PRAGMA foreign_keys=ON
+  SQLite listener in customize_models.py. Verified via DELETE 
+  /api/Shipment/<id>/ → 204 with zero orphaned children.
+
+  Step G — implemented all 4 requirement steps (EAI Kafka consume, importer
+  matching, CLVS eligibility, live Kafka), following the full Executable
+  Requirements workflow (schema assessment, DDL, rule plan, ad-libs.md written
+  before coding). Result: docs/requirements/customs_demo/test_gate.sh with
+  KAFKA_PHASE_REQUIRED=true → PASS on the first run, zero error-correction
+  loops. Live-verified all 3 sample messages: HVS ineligible (value + no office
+  match), LVS-1 correctly ineligible (genuine textile-quota commodity match),
+  LVS-2 fully eligible.
+
+  You confirmed the Admin UI swap, so ui/admin/admin.yaml now reflects the new
+  schema (backed up to admin.yaml.bak).
+
+  Three items flagged for your review in
+  docs/requirements/customs_demo/ad-libs.md:
+  1. authorized_clvs_courier defaulted to always-1 — no courier data exists
+  anywhere in the schema or sample messages.
+  2. customs_office_id lookup only matches LVS-format messages (CBSA numeric
+  codes); HVS-format messages carry airport codes that never match — always
+  ineligible on that clause.
+  3. ShipmentCommodity.is_prohibited derived from hazardous_material_cd
+  non-blank — no explicit "prohibited" signal exists in source data.
+
+  One thing I can't do myself: /export docs/requirements/transcript_creation is
+  a Claude Code CLI command that operates on this interactive session — you'll
+  need to type that yourself in the terminal to export the transcript.
+
+✻ Churned for 13m 28s

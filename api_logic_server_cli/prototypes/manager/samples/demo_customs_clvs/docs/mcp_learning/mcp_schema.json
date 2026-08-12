@@ -425,14 +425,14 @@
                 "portofentry",
                 "warehousecode",
                 "surface_intl_shipment_nbr",
-                "sys_config_id",
-                "clvs_lvs_threshold",
-                "clvs_service_type_cd",
-                "customs_office_id",
-                "clvs_eligible",
                 "clvs_reason",
+                "clvs_eligible",
+                "prohibited_commodity_count",
                 "controlled_item_count",
-                "prohibited_item_count"
+                "customs_office_id",
+                "sys_config_id",
+                "clvs_lvs_threshold_cad",
+                "authorized_clvs_courier"
             ],
             "filterable": [
                 "local_shipment_oid_nbr",
@@ -574,14 +574,14 @@
                 "portofentry",
                 "warehousecode",
                 "surface_intl_shipment_nbr",
-                "sys_config_id",
-                "clvs_lvs_threshold",
-                "clvs_service_type_cd",
-                "customs_office_id",
-                "clvs_eligible",
                 "clvs_reason",
+                "clvs_eligible",
+                "prohibited_commodity_count",
                 "controlled_item_count",
-                "prohibited_item_count"
+                "customs_office_id",
+                "sys_config_id",
+                "clvs_lvs_threshold_cad",
+                "authorized_clvs_courier"
             ]
         },
         {
@@ -599,8 +599,7 @@
                 "discount_rate",
                 "tax_rate",
                 "notes",
-                "clvs_lvs_threshold",
-                "clvs_service_type_cd"
+                "clvs_lvs_threshold_cad"
             ],
             "filterable": [
                 "id",
@@ -608,8 +607,7 @@
                 "discount_rate",
                 "tax_rate",
                 "notes",
-                "clvs_lvs_threshold",
-                "clvs_service_type_cd"
+                "clvs_lvs_threshold_cad"
             ]
         },
         {
@@ -649,7 +647,6 @@
                 "classification_status_desc",
                 "classification_status_cd",
                 "part_expiration_dt",
-                "is_controlled",
                 "is_prohibited"
             ],
             "filterable": [
@@ -680,7 +677,6 @@
                 "classification_status_desc",
                 "classification_status_cd",
                 "part_expiration_dt",
-                "is_controlled",
                 "is_prohibited"
             ]
         },

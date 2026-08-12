@@ -12,47 +12,34 @@ from Customer to ShipmentParty.
 Use Rule.row_event (not early_row_event) — fires before_flush so the new
 ShipmentParty writes atomically with the parent Shipment.
 """
-
-import logging
-
 from logic_bank.logic_bank import Rule
+from logic_bank.exec_row_logic.logic_row import LogicRow
 from database import models
 
-app_logger = logging.getLogger("api_logic_server_app")
+
+def _match_importer(row: models.Shipment, old_row, logic_row: LogicRow):
+    """Shipment event: looks up Customer by trprt_bill_to_acct_nbr == duty_bill_to_acct_nbr
+    and creates an importer ShipmentParty row (shipment_party_type_cd='I') when matched."""
+    if not logic_row.is_inserted():
+        return
+    customer = logic_row.session.query(models.Customer).filter(
+        models.Customer.duty_bill_to_acct_nbr == row.trprt_bill_to_acct_nbr).first()
+    if customer is None:
+        logic_row.log(f"shipment_matching: no Customer found for trprt_bill_to_acct_nbr={row.trprt_bill_to_acct_nbr}")
+        return
+    importer_party = models.ShipmentParty(
+        shipment_party_type_cd="I",
+        company_nm=customer.name,
+        city_nm=customer.city,
+        state_cd=customer.state,
+        country_cd=customer.country,
+        postal_cd=customer.postal,
+        customer_acct_nbr=customer.duty_bill_to_acct_nbr,
+        business_nbr=customer.business_nbr,
+    )
+    row.ShipmentPartyList.append(importer_party)
+    logic_row.log(f"shipment_matching: matched Customer {customer.name} -> importer ShipmentParty")
 
 
 def declare_logic():
-
-    def _match_importer(row: models.Shipment, old_row: models.Shipment, logic_row):
-        """On Shipment insert, find matching Customer and create ShipmentParty type 'I'."""
-        if old_row is not None:
-            return  # inserts only
-
-        if not row.trprt_bill_to_acct_nbr:
-            return
-
-        customer = logic_row.session.query(models.Customer).filter_by(
-            duty_bill_to_acct_nbr=row.trprt_bill_to_acct_nbr
-        ).first()
-
-        if customer is None:
-            app_logger.warning(
-                f'shipment_matching: no Customer found for '
-                f'trprt_bill_to_acct_nbr={row.trprt_bill_to_acct_nbr}'
-            )
-            return
-
-        importer = models.ShipmentParty(
-            shipment_party_type_cd='I',
-            company_nm=customer.name,
-            city_nm=customer.city,
-            country_cd=customer.country,
-            state_cd=customer.state,
-            postal_cd=customer.postal,
-            business_nbr=str(customer.business_nbr)[:15] if customer.business_nbr else None,
-            customer_acct_nbr=customer.id,
-        )
-        row.ShipmentPartyList.append(importer)
-        logic_row.log(f'shipment_matching: created importer party for customer {customer.name}')
-
     Rule.row_event(on_class=models.Shipment, calling=_match_importer)

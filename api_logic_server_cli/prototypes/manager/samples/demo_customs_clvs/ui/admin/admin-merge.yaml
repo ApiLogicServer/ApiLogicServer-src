@@ -1,11 +1,11 @@
 about:
-  date: June 29, 2026 12:22:36
+  date: August 11, 2026 18:01:21
   merged:
-    at: June 29, 2026 13:47:02
-    new_attributes: 'Shipment.customs_office_id Shipment.sys_config_id Shipment.clvs_eligible
-      Shipment.clvs_reason Shipment.controlled_item_count Shipment.prohibited_item_count
-      Shipment.clvs_lvs_threshold Shipment.clvs_service_type_cd SysConfig.clvs_lvs_threshold
-      SysConfig.clvs_service_type_cd ShipmentCommodity.is_controlled ShipmentCommodity.is_prohibited '
+    at: August 11, 2026 18:06:15
+    new_attributes: 'Shipment.customs_office_id Shipment.sys_config_id Shipment.clvs_reason
+      Shipment.clvs_eligible Shipment.prohibited_commodity_count Shipment.controlled_item_count
+      Shipment.authorized_clvs_courier Shipment.clvs_lvs_threshold_cad SysConfig.clvs_lvs_threshold_cad
+      ShipmentCommodity.is_prohibited '
     new_resources: 'ShipmentXml '
     new_tab_groups: 'CustomsOffice.ShipmentList Shipment.customs_office Shipment.sys_config
       SysConfig.ShipmentList '
@@ -374,12 +374,12 @@ resources:
     - name: iid_classify_cd
     - name: customs_office_id
     - name: sys_config_id
-    - name: clvs_eligible
     - name: clvs_reason
+    - name: clvs_eligible
+    - name: prohibited_commodity_count
     - name: controlled_item_count
-    - name: prohibited_item_count
-    - name: clvs_lvs_threshold
-    - name: clvs_service_type_cd
+    - name: authorized_clvs_courier
+    - name: clvs_lvs_threshold_cad
     tab_groups:
     - direction: tomany
       fks:
@@ -450,7 +450,6 @@ resources:
     - name: commodity_currency_cd
     - name: unit_of_measure_cd
     - name: classification_status_cd
-    - name: is_controlled
     - name: is_prohibited
     tab_groups:
     - direction: toone
@@ -528,6 +527,7 @@ resources:
     - name: payload
       required: true
     - name: is_processed
+      type: Boolean
     type: ShipmentXml
     user_key: id
   SpecialHandling:
@@ -561,8 +561,7 @@ resources:
     - name: tax_rate
     - name: notes
     - name: id
-    - name: clvs_lvs_threshold
-    - name: clvs_service_type_cd
+    - name: clvs_lvs_threshold_cad
     tab_groups:
     - direction: tomany
       fks:

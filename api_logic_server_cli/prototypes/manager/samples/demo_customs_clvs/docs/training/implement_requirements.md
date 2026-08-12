@@ -1156,6 +1156,32 @@ Create a fully functional application and database
    Run DDL + `rebuild-from-database` ONCE before writing any logic or mapper files.
    ❌ NEVER discover a missing column while writing a logic file — that causes an error loop.
 
+   **🚨 MANDATORY CLOSING CHECK — "planned a derived column" is not the same as "derived it":**
+   Every row in the DDL change list whose Reason names a rule type (e.g. "Rule.count where=
+   clause", "Rule.formula output") is a promise that some code will assign that column —
+   not just declare a rule that reads it. Before the report is complete (after coding, not
+   during Phase 1 planning), go back through this same DDL change list and confirm, for each
+   such row, that the logic file actually contains an assignment to that column
+   (`row.<col> = ...` in an `early_row_event`/`row_event`, or a `Rule.formula`/`Rule.copy`
+   whose `derive=` names it). A column that only ever appears on the *reading* side (inside
+   a `Rule.count`/`Rule.sum` `where=`, or a `_reasons()`-style helper) and never on the
+   *writing* side is a bug, not a finding to note — fix it before finishing, don't just log it.
+
+   **Real failure case (customs_demo_clvs, Aug 2026):** the DDL change list correctly
+   included `shipment_commodity | ADD is_prohibited | Step 3 — Rule.count where= clause` —
+   the AI had already reasoned, correctly, that this column existed because a rule would
+   read it. The Phase 2 anti-pattern checklist even explicitly named it, paired with its
+   sibling column, as confirmed-correct: "`is_prohibited`/`controlled_regulated_goods_id`
+   are child-table Rule.count sources, not a stale parent flag." Despite writing this down
+   twice, the actual logic file only ever wrote `controlled_regulated_goods_id` (via a real
+   HS-code lookup) — `is_prohibited` was never assigned anywhere, so the `Rule.count` reading
+   it was permanently stuck at 0. The gap was 3 missing lines in an early_row_event that
+   otherwise correctly set the sibling column right next to it. This is not a case of the AI
+   not knowing a derivation was needed — its own planning notes proved it knew. It planned
+   correctly and then didn't close the loop on its own plan. This closing check exists
+   because the DDL change list already contains everything needed to catch this — it's a
+   verification against the AI's own prior reasoning, not new analysis.
+
    ---
 
    **Phase 2 — CE / Pattern Assessment**
@@ -1193,6 +1219,23 @@ Create a fully functional application and database
    **N items need your review. M FYIs — standard patterns, no action needed.**
 
    ---
+
+   ## Walkthrough
+
+   Five steps, one or two lines each — what actually happened, in order. This is the
+   scannable summary; full diagnostic detail (DDL list, rule plan, rejected alternatives,
+   replay log) is collapsed below, not repeated here.
+
+   1. **Basic data model** — [entities/tables inferred from the spec]
+   2. **Derived/predicted schema additions** — [constants found → SysConfig; FK/lookup
+      columns added; allocate junction tables detected (or "none"); Request Pattern
+      columns added (or "none")]
+   3. **Create db** — [DDL + rebuild-from-database — table count]
+   4. **Run impl-req** — [rule types used: sum/count/formula/constraint/Allocate/events]
+   5. **Test data / testing** — [alp_init.py seed status; Behave tests if created]
+
+   <details markdown>
+   <summary>Full diagnostic detail (DDL change list, rule plan, rejected alternatives, replay log)</summary>
 
    ### 🟢 Diagnostic Appendix
 
@@ -1299,7 +1342,26 @@ Create a fully functional application and database
    - `` `logic/logic_discovery/clvs_eligibility.py:12` — used Decimal('3300') for threshold comparison ``
    - `` `integration/row_dict_maps/IsdcMapper.py` — ShipmentCommodity composite PK workaround: inserted via parent.ShipmentCommodityList.append() to avoid UNIQUE constraint on (local_shipment_oid_nbr, sequence_nbr) ``
 
+   </details>
+
    *(end template)*
+
+   ---
+
+   **Also mandatory — link this ad-libs.md from project_creation_report.md:**
+
+   After writing `docs/requirements/<name>/ad-libs.md`, append one line to
+   `docs/requirements/project_creation_report.md`'s `## Use Cases` section (create the
+   section if this is somehow the first entry and it's missing):
+
+   ```markdown
+   - [<name>](<name>/ad-libs.md) — <one-line summary>, <ISO date>
+   ```
+
+   Example: `- [charge_distribution](charge_distribution/ad-libs.md) — cascade allocation, 2026-08-05`
+
+   This keeps `project_creation_report.md` a live index of every use case implemented in
+   the project, not just a snapshot from `create` time.
 
 
 8. **Business Logic Patterns:**

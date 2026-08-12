@@ -254,14 +254,14 @@ Table Shipment {
     portofentry VARCHAR(6) 
     warehousecode VARCHAR(6) 
     surface_intl_shipment_nbr NUMERIC 
-    sys_config_id INTEGER 
-    clvs_lvs_threshold FLOAT 
-    clvs_service_type_cd TEXT 
-    customs_office_id INTEGER 
-    clvs_eligible INTEGER 
     clvs_reason TEXT 
+    clvs_eligible INTEGER 
+    prohibited_commodity_count INTEGER 
     controlled_item_count INTEGER 
-    prohibited_item_count INTEGER 
+    customs_office_id INTEGER 
+    sys_config_id INTEGER 
+    clvs_lvs_threshold_cad NUMERIC(15, 2) 
+    authorized_clvs_courier INTEGER 
     }
 
 Table SysConfig {
@@ -270,8 +270,7 @@ Table SysConfig {
     discount_rate FLOAT 
     tax_rate FLOAT 
     notes TEXT 
-    clvs_lvs_threshold FLOAT 
-    clvs_service_type_cd TEXT 
+    clvs_lvs_threshold_cad NUMERIC(15, 2) 
     }
 
 Table ShipmentCommodity {
@@ -302,7 +301,6 @@ Table ShipmentCommodity {
     classification_status_desc VARCHAR(200) 
     classification_status_cd VARCHAR(10) 
     part_expiration_dt DATE 
-    is_controlled INTEGER 
     is_prohibited INTEGER 
     }
 
@@ -345,7 +343,7 @@ Table ShipmentXml {
     id INTEGER [primary key]
     received_at DATETIME 
     payload TEXT 
-    is_processed INTEGER 
+    is_processed BOOLEAN 
     }
 
 Table SpecialHandling {

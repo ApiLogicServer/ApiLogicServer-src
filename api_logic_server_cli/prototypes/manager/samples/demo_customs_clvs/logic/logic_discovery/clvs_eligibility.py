@@ -9,140 +9,85 @@ Scenario: Shipment at or below the LVS threshold is eligible
   Then the shipment shall be eligible for the CLVS Program
   And set the clvs_reason as a comma delimited list of short all reasons why failed (or blank)
 """
-
-import logging
-
 from logic_bank.logic_bank import Rule
+from logic_bank.exec_row_logic.logic_row import LogicRow
 from database import models
 
-app_logger = logging.getLogger("api_logic_server_app")
 
-
-# ---------------------------------------------------------------------------
-# ShipmentCommodity early events — must fire BEFORE Rule.count where= evaluates
-# ---------------------------------------------------------------------------
-
-def _set_commodity_flags(row: models.ShipmentCommodity, old_row, logic_row):
-    """Set is_controlled and is_prohibited by HS code lookup before Rule.count aggregates."""
-    hs = row.harmonized_tariff_nbr or ''
-    prefix = hs.replace('.', '')[:10]  # first 10 significant digits
-
-    row.is_controlled = 0
-    row.is_prohibited = 0
-
-    if not prefix:
+def _set_customs_office(row: models.Shipment, old_row, logic_row: LogicRow):
+    """Shipment event: looks up CustomsOffice by planned_clearance_location_cd == office_code
+    and sets customs_office_id before Row Logic formulas evaluate CLVS eligibility."""
+    location_cd = row.planned_clearance_location_cd
+    if not location_cd:
         return
-
-    match = logic_row.session.query(models.ControlledRegulatedGood).filter(
-        models.ControlledRegulatedGood.hs_code.like(prefix + '%')
-    ).first()
-
-    if match:
-        row.is_controlled = 1
-        row.controlled_regulated_goods_id = match.id
-        app_logger.debug(f'clvs: HS {hs} → controlled (category={match.category})')
-
-    if row.hazardous_material_cd:
-        row.is_prohibited = 1
-        app_logger.debug(f'clvs: HS {hs} hazardous_material_cd={row.hazardous_material_cd} → prohibited')
-
-
-# ---------------------------------------------------------------------------
-# Shipment early event — set customs_office_id before formula rules fire
-# ---------------------------------------------------------------------------
-
-def _set_customs_office(row: models.Shipment, old_row, logic_row):
-    """Set customs_office_id by looking up PLANNED_CLEARANCE_LOCATION_CD in customs_office."""
-    loc = row.planned_clearance_location_cd
-    if not loc:
-        return
-    office = logic_row.session.query(models.CustomsOffice).filter_by(
-        office_code=loc
-    ).first()
-    if office:
+    office = logic_row.session.query(models.CustomsOffice).filter(
+        models.CustomsOffice.office_code == location_cd).first()
+    if office is not None:
         row.customs_office_id = office.id
-        app_logger.debug(f'clvs: clearance location {loc} → customs_office id={office.id}')
-    else:
-        app_logger.debug(f'clvs: clearance location {loc!r} not found in customs_office table')
 
 
-# ---------------------------------------------------------------------------
-# CLVS eligibility formulas — shared helper + two separate Rule.formula rules
-# ---------------------------------------------------------------------------
-
-def _reasons(row: models.Shipment, session) -> list:
-    """Return list of CLVS ineligibility reasons (empty list = eligible)."""
-    reasons = []
-
-    if row.service_type_cd != row.clvs_service_type_cd:
-        reasons.append(f'service type {row.service_type_cd!r} not CLVS-authorized (expected {row.clvs_service_type_cd!r})')
-
-    value = float(row.local_customs_value_amt or 0)
-    threshold = float(row.clvs_lvs_threshold or 3300)
-    if value > threshold:
-        reasons.append(f'duty value {value} exceeds CAD ${threshold} threshold')
-
-    if (row.prohibited_item_count or 0) > 0:
-        reasons.append(f'{row.prohibited_item_count} prohibited commodity line(s)')
-
-    if (row.controlled_item_count or 0) > 0:
-        reasons.append(f'{row.controlled_item_count} controlled/regulated goods line(s)')
-
-    if row.customs_office_id is None:
-        reasons.append('no CBSA-designated customs office assigned')
-    else:
-        # Do NOT use row.customs_office relationship — FK was set in same flush, may be stale
-        office = session.query(models.CustomsOffice).get(row.customs_office_id)
-        if office is None or office.clvs_release != 1:
-            reasons.append('customs office not CLVS-designated')
-
-    return reasons
+def _set_controlled_good(row: models.ShipmentCommodity, old_row, logic_row: LogicRow):
+    """ShipmentCommodity event: looks up ControlledRegulatedGood by the harmonized_tariff_nbr
+    prefix (matched to the lookup table's stored precision) and sets controlled_regulated_goods_id
+    before Rule.count aggregates it on Shipment."""
+    tariff_nbr = row.harmonized_tariff_nbr
+    if not tariff_nbr:
+        return
+    digits = ''.join(ch for ch in tariff_nbr if ch.isdigit())
+    if len(digits) < 8:
+        return
+    prefix = digits[:8]
+    formatted_hs_code = f"{prefix[0:4]}.{prefix[4:6]}.{prefix[6:8]}"
+    match = logic_row.session.query(models.ControlledRegulatedGood).filter(
+        models.ControlledRegulatedGood.hs_code == formatted_hs_code).first()
+    if match is not None:
+        row.controlled_regulated_goods_id = match.id
 
 
-def _clvs_eligible(row: models.Shipment, old_row, logic_row):
-    """Derive clvs_eligible: 1 if shipment meets all CLVS criteria, else 0."""
-    # Dependency anchor — LB scans this body; keep in sync with _reasons().
-    _ = (row.service_type_cd, row.clvs_service_type_cd, row.local_customs_value_amt,
-         row.clvs_lvs_threshold, row.controlled_item_count, row.prohibited_item_count,
-         row.customs_office_id)
-    return 1 if not _reasons(row, logic_row.session) else 0
+def _is_prohibited(row, old_row, logic_row):
+    """Derive is_prohibited: 1 if the commodity line carries a hazardous material code, else 0."""
+    hazmat_cd = row.hazardous_material_cd
+    return 1 if hazmat_cd else 0
 
 
-def _clvs_reason(row: models.Shipment, old_row, logic_row):
+def _clvs_reason(row, old_row, logic_row):
     """Derive clvs_reason: comma-delimited list of CLVS ineligibility reasons (blank if eligible)."""
-    # Dependency anchor — LB scans this body; keep in sync with _reasons().
-    _ = (row.service_type_cd, row.clvs_service_type_cd, row.local_customs_value_amt,
-         row.clvs_lvs_threshold, row.controlled_item_count, row.prohibited_item_count,
-         row.customs_office_id)
-    return ', '.join(_reasons(row, logic_row.session))
+    reasons = []
+    courier_ok = row.authorized_clvs_courier
+    if courier_ok != 1:
+        reasons.append("not an authorized CLVS courier")
+    value_amt = row.local_customs_value_amt
+    threshold = row.clvs_lvs_threshold_cad
+    if value_amt is not None and threshold is not None and value_amt > threshold:
+        reasons.append(f"value for duty {value_amt} exceeds CLVS threshold {threshold}")
+    prohibited_count = row.prohibited_commodity_count
+    if prohibited_count and prohibited_count > 0:
+        reasons.append(f"{prohibited_count} prohibited commodity line(s)")
+    controlled_count = row.controlled_item_count
+    if controlled_count and controlled_count > 0:
+        reasons.append(f"{controlled_count} controlled or regulated goods line(s)")
+    office_id = row.customs_office_id
+    if office_id is None:
+        reasons.append("not released at a CBSA-designated customs office")
+    else:
+        office = logic_row.session.query(models.CustomsOffice).get(office_id)
+        if office is None or office.clvs_release != 1:
+            reasons.append("not released at a CBSA-designated customs office")
+    return ", ".join(reasons)
 
-
-# ---------------------------------------------------------------------------
-# Rule declarations
-# ---------------------------------------------------------------------------
 
 def declare_logic():
-    # TODO: Review parent-value rules below.
-    #   Rule.copy = snapshot (value frozen at insert time, no cascade on SysConfig change) ← default
-    #   Rule.formula referencing row.parent.attr = live (re-derives if parent changes)
-    #   Change Rule.copy → Rule.formula where live propagation is required.
-
-    # ShipmentCommodity: set is_controlled / is_prohibited BEFORE Rule.count where= runs
-    Rule.early_row_event(on_class=models.ShipmentCommodity, calling=_set_commodity_flags)
-
-    # Shipment: set customs_office_id BEFORE formula rules run
     Rule.early_row_event(on_class=models.Shipment, calling=_set_customs_office)
+    Rule.early_row_event(on_class=models.ShipmentCommodity, calling=_set_controlled_good)
 
-    # Aggregate counts on parent Shipment (reactive to child changes)
-    Rule.count(derive=models.Shipment.controlled_item_count, as_count_of=models.ShipmentCommodity,
-               where=lambda row: row.is_controlled == 1)
-    Rule.count(derive=models.Shipment.prohibited_item_count, as_count_of=models.ShipmentCommodity,
+    Rule.copy(derive=models.Shipment.clvs_lvs_threshold_cad, from_parent=models.SysConfig.clvs_lvs_threshold_cad)
+
+    Rule.formula(derive=models.ShipmentCommodity.is_prohibited, calling=_is_prohibited)
+
+    Rule.count(derive=models.Shipment.prohibited_commodity_count, as_count_of=models.ShipmentCommodity,
                where=lambda row: row.is_prohibited == 1)
+    Rule.count(derive=models.Shipment.controlled_item_count, as_count_of=models.ShipmentCommodity,
+               where=lambda row: row.controlled_regulated_goods_id is not None)
 
-    # Copy regulatory constants from SysConfig (snapshot at insert time)
-    Rule.copy(derive=models.Shipment.clvs_lvs_threshold,    from_parent=models.SysConfig.clvs_lvs_threshold)
-    Rule.copy(derive=models.Shipment.clvs_service_type_cd,  from_parent=models.SysConfig.clvs_service_type_cd)
-
-    # CLVS eligibility formulas
-    Rule.formula(derive=models.Shipment.clvs_eligible, calling=_clvs_eligible)
-    Rule.formula(derive=models.Shipment.clvs_reason,   calling=_clvs_reason)
+    Rule.formula(derive=models.Shipment.clvs_reason, calling=_clvs_reason)
+    Rule.formula(derive=models.Shipment.clvs_eligible, as_expression=lambda row: 1 if row.clvs_reason == "" else 0)

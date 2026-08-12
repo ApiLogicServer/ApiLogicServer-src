@@ -1,6 +1,6 @@
 # coding: utf-8
 from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
-from sqlalchemy import Column, DECIMAL, Date, DateTime, Float, ForeignKey, Integer, Numeric, String, Text, text
+from sqlalchemy import Boolean, Column, DECIMAL, Date, DateTime, Float, ForeignKey, Integer, Numeric, String, Text, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  June 29, 2026 13:47:02
+# Created:  August 11, 2026 18:06:15
 # Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_customs_clvs/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -117,9 +117,9 @@ class ShipmentXml(Base):  # type: ignore
     _s_collection_name = 'ShipmentXml'  # type: ignore
 
     id = Column(Integer, primary_key=True)
-    received_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
+    received_at = Column(DateTime)
     payload = Column(Text, nullable=False)
-    is_processed = Column(Integer, server_default=text("0"))
+    is_processed = Column(Boolean, default=False)
 
     # parent relationships (access parent)
 
@@ -136,8 +136,7 @@ class SysConfig(Base):  # type: ignore
     discount_rate = Column(Float, server_default=text("0.05"))
     tax_rate = Column(Float, server_default=text("0.10"))
     notes = Column(Text)
-    clvs_lvs_threshold = Column(Float, server_default=text("3300.0"))
-    clvs_service_type_cd = Column(Text, server_default=text("'04'"))
+    clvs_lvs_threshold_cad = Column(Numeric(15, 2), server_default=text("3300.00"))
 
     # parent relationships (access parent)
 
@@ -372,24 +371,24 @@ class Shipment(Base):  # type: ignore
     portofentry = Column(String(6))
     warehousecode = Column(String(6))
     surface_intl_shipment_nbr = Column(Numeric)
-    sys_config_id = Column(ForeignKey('sys_config.id'), server_default=text("1"))
-    clvs_lvs_threshold = Column(Float, server_default=text("3300.0"))
-    clvs_service_type_cd = Column(Text, server_default=text("'04'"))
-    customs_office_id = Column(ForeignKey('customs_office.id'))
-    clvs_eligible = Column(Integer, server_default=text("0"))
     clvs_reason = Column(Text, server_default=text("''"))
+    clvs_eligible = Column(Integer, server_default=text("0"))
+    prohibited_commodity_count = Column(Integer, server_default=text("0"))
     controlled_item_count = Column(Integer, server_default=text("0"))
-    prohibited_item_count = Column(Integer, server_default=text("0"))
+    customs_office_id = Column(ForeignKey('customs_office.id'))
+    sys_config_id = Column(ForeignKey('sys_config.id'), server_default=text("1"))
+    clvs_lvs_threshold_cad = Column(Numeric(15, 2), server_default=text("3300.00"))
+    authorized_clvs_courier = Column(Integer, server_default=text("1"))
 
     # parent relationships (access parent)
     customs_office : Mapped["CustomsOffice"] = relationship(back_populates=("ShipmentList"))
     sys_config : Mapped["SysConfig"] = relationship(back_populates=("ShipmentList"))
 
     # child relationships (access children)
-    PieceList : Mapped[List["Piece"]] = relationship(cascade="all, delete", back_populates="shipment")
-    ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] = relationship(passive_deletes='all', back_populates="shipment")
-    SpecialHandlingList : Mapped[List["SpecialHandling"]] = relationship(cascade="all, delete", back_populates="shipment")
-    ShipmentPartyList : Mapped[List["ShipmentParty"]] = relationship(cascade="all, delete", back_populates="shipment")
+    PieceList : Mapped[List["Piece"]] = relationship(back_populates="shipment", cascade="all, delete")
+    ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] = relationship(back_populates="shipment", passive_deletes='all')
+    SpecialHandlingList : Mapped[List["SpecialHandling"]] = relationship(back_populates="shipment", cascade="all, delete")
+    ShipmentPartyList : Mapped[List["ShipmentParty"]] = relationship(back_populates="shipment", cascade="all, delete")
 
 
 
@@ -483,7 +482,6 @@ class ShipmentCommodity(Base):  # type: ignore
     classification_status_desc = Column(String(200))
     classification_status_cd = Column(String(10))
     part_expiration_dt = Column(Date)
-    is_controlled = Column(Integer, server_default=text("0"))
     is_prohibited = Column(Integer, server_default=text("0"))
     allow_client_generated_ids = True
 

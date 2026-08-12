@@ -1,37 +1,40 @@
 """
-Send a CIMCorp ISDC XML message to the Kafka 'isdc' topic.
-Used for Step 4 (Live Kafka end-to-end test).
+Kafka test publisher for the isdc EAI consume pipeline.
 
-Usage (from project root, with Kafka running):
-    python test/send_isdc.py
-    python test/send_isdc.py docs/requirements/customs_demo/message_formats/MDE-CDV-LVS-1.xml
+Reads a sample CIMCorp shipment XML file and publishes it to Kafka topic `isdc`.
+Uses confluent_kafka.Producer directly — never subprocess + kafka-console-producer,
+which sends one message per input line and mangles multi-line XML payloads.
+
+Usage:
+    python test/send_isdc.py [path/to/message.xml]
+
+Default file: docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml
 """
-
-import os
 import sys
+from pathlib import Path
+from confluent_kafka import Producer
 
-try:
-    from confluent_kafka import Producer
-except ImportError:
-    print('ERROR: confluent_kafka not installed. Run: pip install confluent_kafka')
-    sys.exit(1)
+BOOTSTRAP_SERVERS = "localhost:9092"
+TOPIC = "isdc"
+DEFAULT_FILE = "docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml"
 
-DEFAULT_FILE = 'docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
-TOPIC = 'isdc'
 
-kafka_server = os.getenv('KAFKA_SERVER', 'localhost:9092')
-xml_file = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_FILE
+def delivery_report(err, msg):
+    if err is not None:
+        print(f"Delivery failed: {err}")
+    else:
+        print(f"Delivered to {msg.topic()} [{msg.partition()}] offset {msg.offset()}")
 
-print(f'send_isdc: broker={kafka_server}, file={xml_file}, topic={TOPIC}')
 
-with open(xml_file, 'rb') as fh:
-    xml_bytes = fh.read()
+def main():
+    file_path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_FILE
+    payload = Path(file_path).read_text()
 
-producer = Producer({'bootstrap.servers': kafka_server})
-producer.produce(TOPIC, value=xml_bytes)
-outstanding = producer.flush(timeout=15)
-if outstanding > 0:
-    print(f'ERROR: {outstanding} messages not delivered')
-    sys.exit(1)
+    producer = Producer({"bootstrap.servers": BOOTSTRAP_SERVERS})
+    producer.produce(TOPIC, value=payload.encode("utf-8"), callback=delivery_report)
+    producer.flush(timeout=10)
+    print(f"Sent {file_path} to topic '{TOPIC}'")
 
-print(f'send_isdc: delivered {len(xml_bytes)} bytes to topic {TOPIC!r}')
+
+if __name__ == "__main__":
+    main()

@@ -25,13 +25,18 @@ This is a complete, working microservice auto-generated from a database schema.
 Ask me to ***'show me what you can help me with'*** for a complete list of services, or jump right in:
 
 1. **Add business logic** - Translate requirements into declarative rules
-2. **Configure security** - Set up role-based access control (RBAC)
-3. **Customize the Admin UI** - Edit `ui/admin/admin.yaml`
-4. **Create custom API endpoints** - Add routes in `api/customize_api.py`
-5. **Build React apps** - Generate custom UIs with `genai-logic genai-add-app`
-6. **Add automated tests** - Create Behave scenarios for requirements traceability
-7. **Integrate with other systems** - Add Kafka events, webhooks, or B2B APIs
-8. **Understand the architecture** - Explore what was auto-generated and why
-9. **Implement Executable Requirements** - Copy a requirements set into `docs/requirements/<name>/`, say "implement reqs <name>", and I execute the spec end-to-end with an ad-libs audit report
+2. **Customize the API** - Add custom endpoints for your specific needs
+3. **Create custom UIs** - Build React apps with `genai-logic genai-add-app --vibe`
+4. **Add security** - Bootstrap with `genai-logic add-auth`, then declare roles/grants/filters in `security/declare_security.py`
+5. **Test your logic** - Create Behave tests with requirements traceability
+6. **Configure Admin UI** - Customize the auto-generated admin interface
+7. **Query via MCP** - Process natural language queries through Model Context Protocol
+8. **Create B2B APIs** - Complex integration endpoints with partner systems
+9. **Add events** - Integrate with Kafka, webhooks, or other event systems
+10. **Customize models** - Add tables, attributes, or derived fields
+11. **Executable Requirements** - Copy a requirements set into `docs/requirements/<name>/`, say "implement reqs <name>", and I execute the spec end-to-end with an ad-libs audit report
+12. **Governance Report** - Say "vital signs" or "health check" for rule adoption, dependency tracking, and docstring hygiene
+13. **Logic Diagram** - Say "create logic diagram" for an SVG showing the rule chain
+14. **Queries and Dashboards** - Ask for a query, report, or a dashboard/chart
 
 Ready to customize your project?
