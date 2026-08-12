@@ -604,8 +604,30 @@ Source: ApiLogicServer-src/prototypes/base/.github/.copilot-instructions.md
 Propagation: CLI create command → created projects (non-basic_demo)
 Instrucions: Changes must be merged from api_logic_server_cli/prototypes/basic_demo/.github - see instructions there
 Usage: AI assistants read this when user opens any created project
-version: 3.37
+version: 3.38
 changelog:
+  - 3.38 (Aug 10, 2026) - Two fixes to the "ONE VALUE PER FORMULA" / "LB tokenizer gotcha"
+    guidance, both found live building demo_customs_clvs's CLVS eligibility rules (detail
+    value = clvs_reason, derived flag = clvs_eligible). (1) The existing "✅ CORRECT" example
+    under ONE VALUE PER FORMULA showed a 2-level shared-helper pattern (_clvs_eligible and
+    _clvs_reason both calling a private _reasons() helper, each needing a manually-maintained
+    dependency-anchor tuple) with no simpler alternative shown — and a rebuild's own transcript
+    confirmed the AI never reached the existing "DETAIL VALUE + DERIVED FLAG" section ~400
+    lines further down, defaulting instead to the nearer 2-level example. Fix: reordered so the
+    1-level pattern (derive the detail value directly, e.g. clvs_reason; derive the flag as a
+    trivial as_expression= over that column, e.g. clvs_eligible = row.clvs_reason == "") is now
+    the "✅ BEST" example shown first; the 2-level shared-helper form is now "⚠️ FALLBACK ONLY"
+    for genuinely-shared helpers, with a cross-reference instead of duplicated disconnected
+    advice. Verified: an independent rebuild after this reordering produced clvs_eligibility.py
+    with 1 function, 0 anchor tuples (down from 3 functions/2 anchors pre-fix). (2) Generalized
+    the tokenizer gotcha from the narrow `if not row.X:` case to the real root cause — ANY
+    punctuation directly adjacent to a `row.attr` token (not just `not X:`) gets captured by
+    LB's whitespace-split scanner. New case found: a multi-line `if (row.a is not None and
+    row.b is not None\n        and row.a > row.b):` crashed activation via `row.b):` (closing
+    paren + colon) being read as the attribute name — `Missing Attrs:
+    ['Shipment.clvs_lvs_threshold_cad)::']`. Fix generalizes the safe-alternative advice to
+    "bind to a local variable before any multi-line/multi-clause condition," which sidesteps
+    the whole class of adjacency bugs regardless of which punctuation triggers it.
   - 3.37 (Aug 6, 2026) - Fixed a self-inflicted bug in the "implement reqs" dependency-anchor
     example (STEP 6, LOGIC FILES checklist): the example comment's wording contained the
     literal substring "row.attr", which LogicBank's dependency scanner (inspect.getsource(),
@@ -1210,15 +1232,30 @@ def get_supplier_from_ai(product_id: int, logic_row: LogicRow) -> models.SysSupp
        return Decimal(str(row.service_years or 0)) * Decimal(str(row.military_stipend_rate_per_year or 0))
    ```
 
-   **⚠️ LB tokenizer gotcha — avoid bare `if not row.X:` or `if row.X:` guards:**
-   LogicBank's dependency scanner whitespace-splits the `calling=` function body and collects tokens
-   starting with `row.`. In `if not row.military:`, Python syntax places a colon immediately
-   after the attribute name with no intervening space — the scanner captures `row.military:`
-   (colon included) as the token, which matches no real column name. The rule then has no tracked
-   dependency and silently fires on every commit regardless of `military` changes.
-   **Safe alternatives:** `if row.military != "yes":`, `if row.military == "no":` — any form that
-   puts an operator before the next Python token. The pattern `if not row.X:` is the failure form;
-   `if row.X != value:` is safe.
+   **⚠️ LB tokenizer gotcha — no punctuation directly adjacent to any `row.attr` token:**
+   LogicBank's dependency scanner whitespace-splits the `calling=`/`as_expression=` body and
+   collects tokens starting with `row.`. Any punctuation glued directly onto a `row.attr`
+   reference — with no separating space — gets captured as part of the token, which then
+   matches no real column name and either silently drops the dependency (rule stops re-firing
+   on change) or crashes activation outright with `LBActivateException: Missing Attrs`. Two
+   confirmed forms:
+     - `if not row.military:` → scanner captures `row.military:` (trailing colon)
+     - `if (row.a is not None and row.b is not None\n        and row.a > row.b):` → scanner
+       captures `row.b):` (closing paren + colon from the wrapped `if`) — hit verbatim in
+       a customs demo project, crashing server startup with
+       `Missing Attrs: ['Shipment.clvs_lvs_threshold_cad)::']`
+   **Safe alternatives:** put an operator or whitespace between the attribute and any following
+   punctuation — `if row.military != "yes":` is safe. For multi-line or multi-clause conditions
+   where wrapping might land punctuation next to a `row.attr` token, bind to a local variable
+   first and use the variable in the conditional:
+   ```python
+   value_amt = row.local_customs_value_amt
+   threshold = row.clvs_lvs_threshold_cad
+   if value_amt is not None and threshold is not None and value_amt > threshold:
+       ...
+   ```
+   This is always safe and costs nothing — prefer it over relying on line-wrapping to happen to
+   leave whitespace in the right place.
 
    **⚠️ Boolean axis naming — use pure-letter names (e.g. `military`) not `is_military`:**
    The admin app `show_when` regex `/record\["[a-zA-Z]+"\]/` rejects attribute names with underscores.

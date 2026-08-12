@@ -300,15 +300,49 @@ CRITICAL — ONE VALUE PER FORMULA:
   # clvs_reason is never re-derived when inputs change — LogicBank does not know about it
   ```
 
-  ✅ CORRECT — one Rule.formula per derived column:
+  (See also: "DETAIL VALUE + DERIVED FLAG" further below — the general form of the ✅ BEST
+  pattern immediately following this note.)
+
+  ✅ BEST — one Rule.formula per derived column, PREFER 1 LEVEL (no shared helper at all):
+  Real 2-level splits (a helper called from 2+ rule functions) are rare. Before writing a
+  helper, check whether one of the two derived columns can just be a formula over the OTHER
+  derived column — this is usually possible when one value is a detail (a reason string, a
+  computed amount) and the other is a status/flag summarizing it:
+  ```python
+  def _clvs_reason(row, old_row, logic_row):
+      """Derive clvs_reason: comma-delimited list of CLVS ineligibility reasons (blank if eligible)."""
+      reasons = []
+      if float(row.local_customs_value_amt or 0) > 3300:
+          reasons.append("value exceeds threshold")
+      if row.prohibited_commodity_count > 0:
+          reasons.append(f"{row.prohibited_commodity_count} prohibited line(s)")
+      return ", ".join(reasons)
+
+  Rule.formula(derive=models.Shipment.clvs_reason, calling=_clvs_reason)
+  Rule.formula(derive=models.Shipment.clvs_eligible, as_expression=lambda row: 1 if row.clvs_reason == "" else 0)
+  ```
+  No helper, no anchor tuple needed on either rule: `_clvs_reason` references every row.attr
+  it needs directly in its own body, and `clvs_eligible` depends on the real, scannable
+  `row.clvs_reason` column. This is the preferred shape whenever it fits — reach for it first.
+
+  ⚠️ FALLBACK ONLY — a shared helper genuinely called from 2+ independent rule functions
+  (not decomposable into "one derives from the other"): every calling function that delegates
+  to the helper needs a manually-maintained dependency-anchor tuple, since LB does not scan
+  into helpers:
   ```python
   def _clvs_eligible(row, old_row, logic_row):
+      """Derive clvs_eligible: 1 if shipment meets all CLVS criteria, else 0."""
+      # Dependency anchor — LB scans this function's own body only; _reasons() holds the
+      # real reads. Keep this list in sync with every row.attr read inside _reasons().
+      _ = row.local_customs_value_amt, row.prohibited_commodity_count
       return 1 if not _reasons(row) else 0
 
   def _clvs_reason(row, old_row, logic_row):
+      """Derive clvs_reason: comma-delimited list of CLVS ineligibility reasons (blank if eligible)."""
+      _ = row.local_customs_value_amt, row.prohibited_commodity_count
       return ", ".join(_reasons(row))
 
-  def _reasons(row):                          # shared helper — called directly from each function body
+  def _reasons(row):
       reasons = []
       if float(row.local_customs_value_amt or 0) > 3300:
           reasons.append("value exceeds threshold")
@@ -319,11 +353,9 @@ CRITICAL — ONE VALUE PER FORMULA:
   Rule.formula(derive=models.Shipment.clvs_eligible, calling=_clvs_eligible)
   Rule.formula(derive=models.Shipment.clvs_reason,   calling=_clvs_reason)
   ```
-  Both functions reference row.attr DIRECTLY — LB sees the dependencies on both rules.
-  Note: _clvs_eligible calls _reasons(row) — LB scans _clvs_eligible's body and sees
-  row.local_customs_value_amt and row.prohibited_commodity_count via the helper. However,
-  for maximum LB visibility, each function should reference row.attr directly (not via helper).
-  The safe pattern: reference the SAME intermediate columns from each function body directly.
+  Before writing this shape, confirm the helper truly can't be collapsed into the "derive one
+  from the other" form above — that form needs zero anchors and is almost always available
+  when the two values are a detail/flag pair.
 
   ❌ WRONG — shared helper called from as_expression: LB sees zero dependencies on BOTH rules:
   ```python
