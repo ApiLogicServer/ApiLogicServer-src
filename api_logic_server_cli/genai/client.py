@@ -1,9 +1,12 @@
 import os
-from openai import AzureOpenAI
-from openai import OpenAI
 
 
 def get_ai_client():
+    try:
+        from openai import AzureOpenAI, OpenAI
+    except ImportError:
+        raise Exception("openai package not installed - pip install apilogicserver[ai-rules]")
+
     api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
 
     if not api_key:

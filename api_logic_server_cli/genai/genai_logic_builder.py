@@ -10,7 +10,10 @@ import os
 import datetime
 import create_from_model.api_logic_server_utils as utils
 import time
-from openai import OpenAI
+try:
+    from openai import OpenAI  # optional: pip install apilogicserver[ai-rules]
+except ImportError:
+    OpenAI = None
 from api_logic_server_cli.genai.genai_svcs import WGResult
 from api_logic_server_cli.genai.genai_svcs import Rule
 import api_logic_server_cli.genai.genai_svcs as genai_svcs

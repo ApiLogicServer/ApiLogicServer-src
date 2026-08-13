@@ -9,6 +9,10 @@ FROM --platform=linux/amd64 apilogicserver/api_logic_server
 
 USER root
 
+# this project's AI Rules (logic/logic_discovery ai_requests/*) call openai directly at runtime;
+# the base image no longer bundles it (moved to an optional extra to keep the base image openai-free)
+RUN pip install openai==1.55.3
+
 # user api_logic_server comes from apilogicserver/api_logic_server
 WORKDIR /home/api_logic_project
 # USER api_logic_server

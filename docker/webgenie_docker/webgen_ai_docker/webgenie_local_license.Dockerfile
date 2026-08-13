@@ -32,7 +32,7 @@ RUN rm -fr /home/api_logic_server/api_logic_server_cli/create_from_model/safrs-r
 COPY sra/build /home/api_logic_server/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
 RUN chown -R api_logic_server /etc/nginx /opt /home/api_logic_server
 USER api_logic_server
-RUN pip install colorama astor
+RUN pip install colorama astor openai==1.55.3
 
 EXPOSE 5656-7000
 

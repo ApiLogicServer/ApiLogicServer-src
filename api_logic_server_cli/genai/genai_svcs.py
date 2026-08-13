@@ -12,7 +12,10 @@ import sys
 import create_from_model.api_logic_server_utils as utils
 from api_logic_server_cli.genai.genai_fatal_excp import GenAIException
 import time
-from openai import OpenAI
+try:
+    from openai import OpenAI  # optional: pip install apilogicserver[ai-rules]
+except ImportError:
+    OpenAI = None
 import json
 from typing import List, Dict
 from pydantic import BaseModel

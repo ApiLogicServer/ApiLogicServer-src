@@ -92,7 +92,10 @@ dependencies = [
         "astor==0.8.1",
         # https://stackoverflow.com/questions/56678060/why-is-python-3-not-recognizing-colorama/56678374
         "colorama==0.4.6",
-        "openai==1.55.3",
+        # genai_svcs.py defines pydantic BaseModel classes (WGResult, Rule, Model, etc.) used by
+        # sqlacodegen_wrapper.py on every project `create` - previously worked only because it was
+        # transitively installed by openai; now a direct dependency since openai moved to an extra.
+        "pydantic>=2.0",
 
         # transitive dependency security pins
         "click>=8.3.3",
@@ -126,6 +129,14 @@ classifiers=[
 "Programming Language :: Python :: 3.9",
 "Programming Language :: Python :: 3.8",
 "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.optional-dependencies]
+# opt in with: pip install apilogicserver[ai-rules]
+# backs WebGenAI / genai-logic genai* / genai-add-app / runtime "AI Rules" that call OpenAI directly.
+# kept out of the base install so SCA/dependency scans of a stock install show no openai package.
+ai-rules = [
+    "openai==1.55.3",
 ]
 
 [project.urls]

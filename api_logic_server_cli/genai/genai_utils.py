@@ -9,7 +9,10 @@ import logging
 from pathlib import Path
 from typing import Dict, List
 from dotmap import DotMap
-from openai import OpenAI
+try:
+    from openai import OpenAI  # optional: pip install apilogicserver[ai-rules]
+except ImportError:
+    OpenAI = None
 from api_logic_server_cli.cli_args_project import Project
 from api_logic_server_cli.genai.genai_svcs import (
     get_prompt_messages_from_dirs,

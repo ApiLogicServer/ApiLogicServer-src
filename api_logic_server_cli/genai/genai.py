@@ -12,8 +12,12 @@ import requests
 import os,re
 import create_from_model.api_logic_server_utils as utils
 import shutil
-import openai
-from openai import OpenAI
+try:
+    import openai  # optional: pip install apilogicserver[ai-rules]
+    from openai import OpenAI
+except ImportError:
+    openai = None
+    OpenAI = None
 from typing import List, Dict
 from pydantic import BaseModel
 from dotmap import DotMap

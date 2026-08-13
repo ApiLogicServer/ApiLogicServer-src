@@ -1329,6 +1329,14 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
             cwd=install_api_logic_server_path,
             msg=f'\nInstall pyodbc')
 
+    # openai moved to pyproject.toml's optional "ai-rules" extra (2026-08-13, keeps the base
+    # install/Docker image free of the openai package for SCA scans) - same pattern as pyodbc
+    # above: BLT installs it explicitly here since do_test_genai (als genai --using=...) needs it.
+    result_openai = run_command(
+        f'{set_venv} && {python} -m pip install openai==1.55.3',
+        cwd=install_api_logic_server_path,
+        msg=f'\nInstall openai (for genai tests)')
+
 if just_build := False:  # most times, we need to create mgr and run nw
     if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
         print("\nBuild/Install successful\n\n")
