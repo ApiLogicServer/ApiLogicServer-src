@@ -23,8 +23,27 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.18
+version: 2.19
 changelog:
+  - 2.19 (Aug 12 2026) - Method 4 STEP 1 now forks when no domain prompt is provided —
+    AI asks whether the user has a prompt file or wants to discuss the system
+    conversationally ("AI-as-BA"). "Discuss" branches into a Socratic interview (new
+    STEP 1a) covering the same ground SCS step 4a-4d would extract from written text
+    (constants, FK lookups, Request Pattern judgment calls, type hierarchies), batched
+    (not incremental DDL), synthesized into a real requirements.md before any schema
+    work — the transcript itself is ALSO written verbatim to
+    docs/requirements/<name>-transcript.md (once, at the end, not per-turn) as a
+    companion record of how the requirements were derived, not just the final shape.
+    Output feeds STEP 5a's project_creation_prompt.md exactly as a written prompt file
+    would. Validated live (project RFI, local trial in build_and_test/genai-logic,
+    Aug 12 2026): 4-entity domain (Customer/Order/Item/Product), full derivation chain
+    + credit-limit constraint + Kafka shipping notification, verified working end to
+    end against a running server (over-limit order correctly rejected, shipping event
+    fired exactly once on is_paid transition, no refire on redundant update). Gate is
+    narrow — only fires inside Method 4 (new domain project, no prompt in hand yet);
+    existing projects and prompt-supplied creation are unaffected. See
+    marketing/Analysis.tech/ai-as-ba-design.md for full design rationale and the
+    revised transcript decision.
   - 2.18 (Aug 5 2026) - STEP 5a/5b filenames updated to match the CLI-guaranteed floor
     now written by `genai-logic create` itself (STEP 2): docs/requirements/prompt.md →
     project_creation_prompt.md; docs/requirements/readme.md → project_creation_report.md.
@@ -291,7 +310,7 @@ If you provide a description but want to create the database manually:
 
 ### Method 4: New Domain Project from Business Prompt (System Creation Services)
 
-**TRIGGER:** User provides a business domain prompt (multi-line description of tables, rules, constraints).
+**TRIGGER:** User provides a business domain prompt (multi-line description of tables, rules, constraints) — OR asks to start a new system with no prompt in hand yet (STEP 1 forks below).
 
 **STAY IN THE MANAGER** — do NOT ask the user to open a new workspace. Execute everything here, prefixing all file paths with the project subdirectory.
 
@@ -299,6 +318,42 @@ If you provide a description but want to create the database manually:
 
 ```
 STEP 1: Ask user for project name if not provided (short, snake_case, e.g. allo_dept_gl)
+
+   🗣️ FORK — no prompt provided yet:
+   If the user hasn't supplied a prompt (file, paste, or path), ask: "Do you have a
+   domain prompt, or would you like to discuss the system and I'll draft one with
+   you?" (AI-as-BA)
+   - Prompt in hand → proceed exactly as today (STEP 2 onward, unchanged).
+   - "Discuss" → go to STEP 1a BEFORE STEP 2. Do not create the project yet — the
+     interview happens first, in this same Manager conversation, with no project
+     directory required (there's no CE to load until the project exists, and none
+     is needed yet: the checklist below is self-contained).
+
+STEP 1a: Socratic interview (only when the user chose "discuss" above)
+   Walk the same ground SCS step 4a-4d extracts from written text, but conversationally.
+   Ask one topic at a time, not a wall of questions:
+   - Constants: "Is there a rate, threshold, or date that's fixed policy rather than
+     user data?" → becomes a SysConfig column.
+   - FK inventory: "When you say <noun>, is that a lookup you'd want to browse or
+     report on separately?" → becomes an integer FK, not a text code.
+   - Request Pattern: if the user describes an AI/email/Kafka-driven decision or a
+     judgment call (e.g. "pick the optimal supplier") — flag it for AI resolution,
+     don't force it into a formula.
+   - Type hierarchy: "Are there different kinds of <thing> that share most fields but
+     differ in a few?" → becomes single-table inheritance.
+   ⚠️ BATCH, NOT INCREMENTAL — do not alter any schema turn-by-turn as answers land.
+      Accumulate understanding across the whole conversation first.
+   When the interview feels complete, synthesize a real requirements.md-style
+   narrative from it and read it back to the user for confirmation before treating
+   it as the prompt. Once confirmed, this synthesized text IS the domain prompt —
+   proceed to STEP 2, and it becomes the verbatim content STEP 5a writes to
+   project_creation_prompt.md.
+   ⛔ ALSO write the raw Q&A transcript (verbatim, human/AI turns, not paraphrased)
+      to <name>/docs/requirements/<name>-transcript.md — once, at the end, after
+      the interview is confirmed (not incrementally per turn). This is a companion
+      record showing HOW the requirements were derived (which answer surfaced which
+      rule) — do not skip it on the assumption that requirements.md alone suffices;
+      a live run showed the transcript itself is something the user wants back.
 
    🚨 NAME-COLLISION GUARD — the ONLY collision that matters is the actual create
    target: `<name>/` at the Manager root. Before proceeding:
