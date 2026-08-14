@@ -1,7 +1,9 @@
 <!--
   src: api_logic_server_cli/prototypes/manager/samples/requirements/readme_reqmnts.md
   Added: BLT 16.x (Apr 9, 2026)
-  Revsied: 6/11/2016
+  Revised: Aug 13, 2026 — loosened PM/Dev framing (any author can write requirements.md),
+    added AI Interview as a way to arrive at requirements.md without one, added
+    Manager-vs-project as an explicit either/or for running "implement reqs"
   Propagation: part of proto/manager — present in every Manager workspace after BLT
 -->
 
@@ -21,26 +23,37 @@ For full docs, [click here](https://apilogicserver.github.io/Docs/Exec-Reqmts/).
 
 ```
 docs/requirements/<name>/
-    requirements.md      ← the spec  (PM writes this)
-    message_formats/     ← sample messages, DDL, mappings (PM gathers these)
+    requirements.md      ← the spec
+    message_formats/     ← sample messages, DDL, mappings
     ad-libs.md           ← AI writes this after running — audit trail of decisions
 ```
 
 Say `implement reqs <name>` in Copilot Agent mode. AI reads the spec, builds the system, and writes `ad-libs.md` alongside.
 
+&nbsp;
 
-## PM / Dev scenario
+## Where `requirements.md` comes from
 
-| Who | Does what |
-|-----|-----------|
-| **PM** | Gathers raw artifacts (DDL, sample messages, architecture notes) — in iCloud, SharePoint, wherever they work |
-| **PM** | Writes `requirements.md` — structured prose: what tables, what logic, what integrations |
-| **Dev** | Creates `docs/requirements/<name>/` in the project repo, drops in `requirements.md` + supporting files |
-| **Dev** | Types `implement reqs <name>` |
-| **AI** | Builds the system, writes `ad-libs.md` with 🔴 items needing review and 🟡 FYIs |
-| **PM/Dev** | Reviews `ad-libs.md`, updates `requirements.md`, runs again |
+There's no fixed authoring process — `requirements.md` just needs to exist before you say `implement reqs`. Three common ways to get there:
 
-The rinse-and-repeat loop is the point — each cycle tightens the spec and narrows the AI's decision space.
+- **Written by a person** — a PM, analyst, or dev drafts it directly from DDL, sample messages, architecture notes, whatever they have on hand.
+- **A prompt file, as-is** — the same `.prompt.md` files used to *create* a project (see `samples/prompts/`) are already requirements prose. Drop one into `docs/requirements/<name>/requirements.md` unchanged and it works.
+- **AI Interview** — no document at all yet. Say something like "create a new project called `<name>`, and let's discuss the system" instead of handing over a written spec; the AI interviews you conversationally (constants, lookups/FKs, integration/judgment calls, type hierarchies), then synthesizes the transcript into a real `requirements.md` and reads it back for confirmation before anything is built. This is the same mechanism Method 4 uses for new-project creation when you don't have a prompt in hand — it works the same way for an existing project's next iteration. See [RFI/RFI-transcript.md](RFI/RFI-transcript.md) for a real transcript (Customer/Order/Item/Product, credit-limit constraint, Kafka shipping notification).
+
+Whichever path you took, the loop from there is the same: AI builds, writes `ad-libs.md` with 🔴 items needing review and 🟡 FYIs, you update `requirements.md` to resolve them, run again. Each cycle tightens the spec and narrows the AI's decision space.
+
+&nbsp;
+
+## Where to run it: Manager or project
+
+`implement reqs <name>` works from either place — pick based on where you are, not because one is "more correct":
+
+| Where | When |
+|-------|------|
+| **Inside the project** (`cd <name>` first, or open it as its own workspace) | You're already there — most iteration happens here |
+| **From the Manager**, prefixing paths with `<name>/` | You just created the project in this same Manager session (Method 4) and want to keep going without switching workspaces, or you're managing several projects side by side |
+
+Same spec, same AI reasoning, same `ad-libs.md` output either way — only the path prefix changes. See the Manager's own CE for the `<name>/`-prefix convention when operating from Manager root.
 
 &nbsp;
 
@@ -58,6 +71,8 @@ What to leave out: implementation details, file names, framework choices — let
 ## Try it — demo_eai walkthrough
 
 `demo_eai/` — B2B order intake via Kafka, with custom API endpoint and outbound shipping notification. Run it end-to-end in under 10 minutes.
+
+This walkthrough opens the created project in its own VS Code workspace — the more common path. If you'd rather stay in the Manager (e.g. you just created the project this session), skip the "open in VS Code" step and prefix Steps 2–4's paths with `demo_eai_exec_reqmts/` instead, per the Manager's path-prefix convention.
 
 **Step 1 — Create the project** (in the Manager terminal):
 
@@ -96,7 +111,7 @@ AI reads `docs/requirements/demo_eai/requirements.md`, builds the system, and wr
 
 Update `requirements.md` to clarify anything flagged red, then re-run.
 
-> **What you just did:** a PM-authored spec drove a full system build — Kafka consumer, custom API, business logic, test fixtures — with a reviewable audit trail. No ambiguous handoff, no interpretation gap.
+> **What you just did:** a written spec drove a full system build — Kafka consumer, custom API, business logic, test fixtures — with a reviewable audit trail. No ambiguous handoff, no interpretation gap.
 
 **Step 5 — Test:**
 

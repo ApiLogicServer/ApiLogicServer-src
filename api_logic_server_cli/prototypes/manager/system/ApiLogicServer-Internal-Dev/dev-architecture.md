@@ -4,8 +4,21 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.32
+version: 2.33
 changelog:
+  - 2.33 (Aug 2026) - `openai` is now an optional dependency, not a base install. Commit
+    `5e031b97` ("17.03.10 - pip-audit passes", org_git/ApiLogicServer-src) moved it to
+    `pyproject.toml`'s `[project.optional-dependencies]` as an `ai-rules` extra
+    (`pip install apilogicserver[ai-rules]`) — a stock install now shows no `openai`
+    package to SCA/dependency scans. Side effect: `pydantic` had to become a direct
+    base dependency (`pyproject.toml` line ~98) since it was previously pulled in only
+    transitively via `openai`, but `genai_svcs.py`'s pydantic `BaseModel` classes
+    (WGResult, Rule, Model, etc.) are used by `sqlacodegen_wrapper.py` on every
+    `create`, unconditionally. This lines up with the mode-3 "candidate for future
+    removal" note below (GenAI CLI Services / `genai-logic genai*`) — the openai
+    dependency backs exactly that deprecation-candidate pipeline (WebGenAI,
+    `genai-add-app`, runtime "AI Rules"), so making it optional is a step in that same
+    direction even though the CLI commands themselves haven't been removed yet.
   - 2.32 (Jul 2026) - `create_codespaces_mgr.py --release` was broken: step 2d's README.md
     patch matched on a lightning-bolt-prefixed `<summary>⚡...</summary>` heading that no
     longer exists anywhere in the current README (removed during unrelated readme rewrites,
@@ -730,6 +743,12 @@ over time. **Not yet acted on** — no code, prompts, or docs have been removed;
 note for whoever picks up that removal, not a statement that it's deprecated today. See also
 `CLAUDE.md`'s standing rule to never run `genai-logic genai` — that predates this note and was
 already steering AI assistants away from this path.
+
+**Build update (v2.33, Aug 2026):** `openai` — the package this entire mode depends on — is no
+longer a base install dependency; it moved to the `ai-rules` optional extra
+(`pip install apilogicserver[ai-rules]`). A stock install/venv now has no `openai` package at all,
+so any of the commands below will fail at import time unless that extra was installed. See the
+v2.33 changelog entry above for the commit and full detail.
 
 **Command-by-command audit (Jul 2026) — deterministic value vs. pure LLM re-ask:**
 
