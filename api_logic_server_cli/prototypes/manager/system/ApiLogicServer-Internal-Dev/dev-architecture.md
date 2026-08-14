@@ -4,8 +4,43 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.33
+version: 2.34
 changelog:
+  - 2.34 (Aug 14 2026) - Sonatype/InfoSec follow-up to v2.33's openai-extras fix, prompted by a
+    second scan (`Infosec_GenAI-Logic_17.3.14`) coming back WORSE (16 violations vs. 15) after a
+    rebuild/re-release. Two real bugs in the original fix, plus one clarification:
+    1. **Scope gap** — the npm `overrides` fix only touched `react-admin-template/package.json`
+       (1 of 14 checked-in React app skeletons carrying the same vulnerable `react-scripts@5.0.1`
+       chain: `basic_demo`'s and `nw`'s built-in apps, plus 3 copies under each
+       `manager/samples/{basic_demo_sample,basic_demo_ai_rules-supplier,basic_demo_logic_gov}`).
+       Fixed: same overrides applied to all 14, `package-lock.json` regenerated everywhere (not
+       just `package.json` — a scanner reading the checked-in lockfile directly wouldn't see a
+       fix that only lives in the override declaration).
+    2. **Wrong override floors** — `lodash: "^4.17.23"` and `nanoid: "^3.3.11"` used the
+       *vulnerable* version itself as the caret floor, not the patched one; npm was free to
+       resolve to exactly the vulnerable release (and did, in 13 of 14 trees — the one file
+       tested on 08-13 happened to land higher for unrelated reasons). Corrected against real
+       `npm audit` advisory ranges: `lodash→^4.18.1`, `nanoid→^3.3.18`,
+       `serialize-javascript→^7.0.5` (the old `^6.0.2` pin was never actually safe), added
+       `underscore→^1.13.8` (present in every tree via `react-scripts`→`bfj`→`jsonpath`, never
+       overridden at all until now). All 14 re-verified: `npm audit` zero-high across the board.
+    3. **Flask-Cors — proved clean, not just asserted.** Same puzzle (`3.0.9` in both scans
+       despite a correct `>=6.0.0` pin since before the first one) resolved by actually
+       downloading the published PyPI release (`pip download apilogicserver==17.3.14`) and doing
+       a real `pip install` in a clean venv: `Flask-Cors 6.0.5` installs, `openai` is absent. The
+       gold source, the built wheel, AND the live PyPI artifact are all correct — the gap is
+       entirely in what Sonatype's scan process actually installed/inspected, not in this repo.
+       Val confirmed their process is "install the release, inspect the tar files" — worth
+       asking them directly whether that install step used a clean environment against current
+       PyPI, or reused something stale.
+    4. **`venv_setup/requirements-no-cli.txt` clarified and fixed** — see the corrected note
+       under "pip-audit — Where fixes go" below: this file is NOT a BLT-propagation path (that's
+       `prototypes/base/requirements.txt`, already correct by construction). It's a standalone
+       manual-install helper for a customer to `pip install -r` it directly, without the CLI —
+       Val: "doubt anyone uses it." Still had the same stale `openai`-unconditional/missing-
+       `pydantic` gap as `pyproject.toml` pre-v2.33, across all 10 copies; fixed for consistency,
+       but correctly re-scoped as low-severity given it's not wired into any propagation path.
+    Full writeup: `internal_dev/code_base/openai-dependency-removal-proposal-2026-08-12.md`.
   - 2.33 (Aug 2026) - `openai` is now an optional dependency, not a base install. Commit
     `5e031b97` ("17.03.10 - pip-audit passes", org_git/ApiLogicServer-src) moved it to
     `pyproject.toml`'s `[project.optional-dependencies]` as an `ai-rules` extra
@@ -1498,8 +1533,10 @@ venv/bin/pip-audit 2>&1 | tee pip-audit-report.txt
 **Where fixes go:**
 - `org_git/ApiLogicServer-src/requirements.txt` — dev install
 - `org_git/ApiLogicServer-src/pyproject.toml` — published package (keep in sync with requirements.txt)
-- `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/venv_setup/requirements-no-cli.txt` — base prototype (propagates to all created projects via BLT)
+- `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/venv_setup/requirements-no-cli.txt` — see note below; bump for consistency, low real-world impact
 - All other `venv_setup/requirements-no-cli.txt` files in `prototypes/manager/samples/*/` — bump these too (use `grep -rln` + `sed -i`)
+
+**`requirements-no-cli.txt` — what it actually is (corrected 2026-08-14):** NOT wired into any CLI code path — confirmed via `grep`, zero `.py` files reference it, and it does NOT propagate into created projects via BLT (the file that does that is `prototypes/base/requirements.txt`, which is just `ApiLogicServer` with no version pin — installs whatever `pyproject.toml` currently declares, already correct by construction). `requirements-no-cli.txt` is a standalone, manual setup path: lets a customer `pip install -r` it directly, without the CLI, if they want the underlying libraries without going through `genai-logic`/`ApiLogicServer`. Val's assessment: doubt anyone uses it. Still worth keeping in sync (10 copies exist under `prototypes/base/` and `prototypes/manager/samples/*/`, plus one `genai_demo` example — all fixed 2026-08-14 for the `openai`-extras/`pydantic` change, see `internal_dev/code_base/openai-dependency-removal-proposal-2026-08-12.md`), but a stale pin here is a low-severity/low-likelihood gap, not a propagation risk to real created projects.
 
 **Last scan (2026-05-26):** 5 vulnerabilities in 2 packages:
 - `pip 25.1.1` — 4 CVEs (CVE-2025-8869, CVE-2026-1703, CVE-2026-3219, CVE-2026-6357); fix: `pip 26.1`

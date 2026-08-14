@@ -24,6 +24,19 @@
     "url-join": "^5.0.0",
     "web-vitals": "^2.1.4"
   },
+  "overrides": {
+    "postcss": "^8.5.25",
+    "nth-check": "^2.1.1",
+    "css-what": "^6.1.0",
+    "svgo": "^2.8.3",
+    "serialize-javascript": "^7.0.5",
+    "nanoid": "^3.3.18",
+    "minimatch": "^9.0.9",
+    "glob": "^11.1.0",
+    "lodash": "^4.18.1",
+    "underscore": "^1.13.8",
+    "typescript": "^4.9.5"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
