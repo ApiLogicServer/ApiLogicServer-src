@@ -1,9 +1,17 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.22
-# Last Updated: July 10, 2026
+# Version: 1.0.23
+# Last Updated: August 15, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 # Changelog:
+#   1.0.23 (Aug 2026) - Documented Rule.commit_constraint (engine-side since Jul 22 2026, never
+#     added here): a Constraint checked once, after the transaction's cascade settles, instead of
+#     inline per-row. Closes a real gap - min-cardinality rules ("Order must have at least one
+#     Item") were undocumented, so an AI asked for one would default to a plain Rule.constraint,
+#     which false-negatives on same-transaction insert (Order's own insert-time check runs before
+#     its Item rows are added, so item_count reads 0). Added as a sibling entry right after
+#     Rule.constraint's own docstring, with a one-line cross-pointer from constraint's docstring,
+#     so the AI sees it exactly where it would otherwise reach for as_condition on a stale count.
 #   1.0.22 (Jul 2026) - Added step 7 + a full "initialize derived columns for pre-existing rows"
 #     section to the AFTER DATABASE SCHEMA CHANGES workflow. Real case: adding basic_demo's
 #     Customer.order_count/past_due_letter_count (Rule.count) via ALTER TABLE left existing
@@ -503,11 +511,59 @@ class Rule:
             error_msg: string, with {row.attribute} replacements
             error_attributes: list of attributes
 
+        Note: for min-cardinality rules (e.g. "Order must have at least one Item"), a
+        Constraint checks row.item_count > 0 too early - Order's own insert is processed
+        before its same-transaction Item rows have been added, so item_count is still 0.
+        Use Rule.commit_constraint instead - see below.
+
         """
         if error_attributes is None:
             error_attributes = []
         return Constraint(validate=validate, calling=calling, as_condition=as_condition,
                           error_attributes=error_attributes, error_msg=error_msg)
+
+
+    @staticmethod
+    def commit_constraint(validate: object,
+                          calling: Callable = None,
+                          as_condition: any = None,
+                          error_msg: str = "(error_msg not provided)",
+                          error_attributes=None):
+        """
+        Like Rule.constraint, but checked once per row, after this transaction's
+        logic cascade has fully settled - not inline on every mid-cascade touch.
+
+        Use for min-cardinality rules (e.g. "Order must have at least one Item")
+        that Rule.constraint cannot express: a Constraint on Order checking
+        row.item_count > 0 fails on Order's own insert, before its Items have been
+        added in the same transaction. Rule.commit_constraint instead checks Order
+        once, after all of this transaction's Item inserts/deletes have chained
+        their count adjustments into it.
+
+        Example
+            Prompt
+                Order must have at least one item
+            Response
+                Rule.count(derive=Order.item_count, as_count_of=OrderDetail)
+                Rule.commit_constraint(validate=Order,
+                                as_condition=lambda row: row.item_count > 0,
+                                error_msg="Order {row.Id} must have at least one item")
+
+        Args:
+            validate: name of mapped <class>
+            as_condition: lambda, passed row (simple constraints)
+            calling: function, passed (row, old_row, logic_row) - same signature as Rule.constraint's calling=
+            error_msg: string, with {row.attribute} replacements
+            error_attributes: list of attributes
+
+        Note: not run for rows deleted this transaction (nothing left to validate).
+        Runs after the flush has been sent to the DB - like Rule.after_flush_row_event,
+        it must not alter the row.
+        """
+        if error_attributes is None:
+            error_attributes = []
+        return CommitConstraint(validate=validate, calling=calling, as_condition=as_condition,
+                                error_attributes=error_attributes, error_msg=error_msg)
 
 
     @staticmethod
