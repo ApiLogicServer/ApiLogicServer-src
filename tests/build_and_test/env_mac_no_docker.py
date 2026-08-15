@@ -34,6 +34,8 @@ class Config:
 
     do_allocation_test = default_setting            # create / run / test allocation project
 
+    do_ai_generated_logic_test = False              # SLOW/costs $: see env_val.py for details
+
     do_budget_app_test = default_setting            # insert_parent test
 
     do_other_sqlite_databases = default_setting     # classic models

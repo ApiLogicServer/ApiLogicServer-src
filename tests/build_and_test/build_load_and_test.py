@@ -1664,22 +1664,223 @@ if Config.do_budget_app_test:
 
 if Config.do_allocation_test:
     def test_allocation():
+        # PORT-LEAK FIX (Aug 2026): same class of bug found and fixed in test_docker_sqlserver
+        # and test_ai_generated_logic — stop_server() must run even if the Behave/test.sh step
+        # below raises. Real case: this exact gap left the Allocation server holding port 5656,
+        # which then made ai_generated_logic_test (the very next test) fail with "port ...
+        # within 30s" — a false failure with no relation to that test's own logic.
         allocation_project_path = install_api_logic_server_path.joinpath('tests/Allocation')
         run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/Allocation --{db_url}=allocation',
                 cwd=install_api_logic_server_path,
-                msg=f'\nCreate Allocation at: {str(install_api_logic_server_path)}')    
+                msg=f'\nCreate Allocation at: {str(install_api_logic_server_path)}')
         start_api_logic_server(project_name="Allocation")
-
-        print("\nProceeding with Allocation tests...\n")
-        allocation_tests_path = allocation_project_path.joinpath('test')
-        run_command(f'sh test.sh',
-            cwd=allocation_tests_path,
-            msg="\nAllocation Test")
-        print("\nAllocation tests - Success...\n")
-        stop_server(msg="*** ALLOCATION TEST COMPLETE ***\n")
+        try:
+            print("\nProceeding with Allocation tests...\n")
+            allocation_tests_path = allocation_project_path.joinpath('test')
+            run_command(f'sh test.sh',
+                cwd=allocation_tests_path,
+                msg="\nAllocation Test")
+            print("\nAllocation tests - Success...\n")
+        finally:
+            stop_server(msg="*** ALLOCATION TEST COMPLETE ***\n")
     
     run_test("allocation_test", "Allocation project creation and testing", test_allocation,
              folders="Allocation")
+
+if Config.do_ai_generated_logic_test:
+    def test_ai_generated_logic():
+        """
+        Confidence test for the rules CE (docs/training/logic_bank_api.md, allocate.md):
+        create a project from allocate_dept_account_demo's known-good schema, withhold
+        ONLY charge_distribution.py (the cascade Allocate logic), have Claude Code write
+        it fresh (headless, `claude -p`) reading the project's own CE the same way a live
+        Method 4 session would, then run the sample's own Behave suite as the pass/fail
+        oracle. Isolates "did the CE produce correct Allocate logic from a prompt" from
+        schema-design risk (schema is pre-built, not AI-designed here) and from AI Rules
+        risk (ai_requests/project_identification.py is copied in unchanged; the Behave
+        suite sets Charge.project_id directly and never exercises it).
+
+        NOTE: earlier version of this test used `genai-logic genai-logic` — WRONG TOOL,
+        do not revert to it. That command is a separate, older, OpenAI-only pipeline
+        (genai_logic_builder.py) that builds its prompt from docs/*.prompt / docs/*.response
+        files at the top of docs/ (a convention from the old `genai`/WebGenAI creation flow)
+        and never reads docs/training/logic_bank_api.md or allocate.md at all. A project
+        created via plain `ApiLogicServer create --db_url=...` (like this one) has none of
+        those docs/*.prompt files, so get_learnings_and_data_model() silently builds an
+        near-empty message list — the command "succeeds" (exit 0) and writes nothing,
+        no error, no exception. First run of this test (Aug 2026) produced an empty
+        logic/logic_discovery/ with no failure reported — this silent-no-op is exactly why.
+        Requires the `claude` CLI to be installed/authenticated wherever BLT runs.
+        """
+        reference_project_path = install_api_logic_server_path.joinpath('samples/allocate_dept_account_demo')
+        target_project_path = install_api_logic_server_path.joinpath('tests/AllocationAI')
+        reference_db_path = reference_project_path.joinpath('database/db.sqlite')
+
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/AllocationAI --{db_url}=sqlite:///{str(reference_db_path)}',
+                cwd=install_api_logic_server_path,
+                msg=f'\nCreate AllocationAI at: {str(install_api_logic_server_path)}')
+
+        # Copy known-good scaffolding (constraints, rollup rules, AI-request handler,
+        # discovery) — withhold only charge_distribution.py, the file under test.
+        logic_discovery_src = reference_project_path.joinpath('logic/logic_discovery')
+        logic_discovery_dst = target_project_path.joinpath('logic/logic_discovery')
+        for scaffold_file in ['definition_rules.py', 'use_case.py']:
+            shutil.copy(logic_discovery_src.joinpath(scaffold_file), logic_discovery_dst.joinpath(scaffold_file))
+        shutil.copytree(logic_discovery_src.joinpath('ai_requests'), logic_discovery_dst.joinpath('ai_requests'),
+                        dirs_exist_ok=True)
+
+        # Copy the Behave suite that will judge the AI-written logic. logs/ IS needed — Behave's
+        # own step code (test_utils.py) writes to test/api_logic_server_behave/logs/
+        # scenario_logic_logs/ via a live server endpoint call, and that directory must already
+        # exist (confirmed: excluding logs/ entirely via ignore_patterns broke this — Behave
+        # crashed before making any API call, zero request traffic in als.log, same symptom as
+        # the stale-log problem this was meant to fix but for the opposite reason). So: copy
+        # logs/ too, then delete just its FILE CONTENTS (not the scenario_logic_logs/ directory
+        # itself) — keeps the skeleton Behave needs, discards the reference project's stale
+        # fixtures that were misread as fresh evidence from this run (real incident, Aug 2026).
+        shutil.copytree(reference_project_path.joinpath('test'), target_project_path.joinpath('test'),
+                        dirs_exist_ok=True)
+        stale_logs_dir = target_project_path.joinpath('test/api_logic_server_behave/logs')
+        for stale_file in stale_logs_dir.rglob('*'):
+            if stale_file.is_file():
+                stale_file.unlink()
+
+        # Claude Code (headless) writes charge_distribution.py from the cascade-allocation
+        # prompt clause only (schema, constraints, and rollups already exist). Runs from
+        # inside the project dir so relative reads (docs/training/logic_bank_api.md,
+        # docs/training/allocate.md) resolve exactly as they would in a live session.
+        allocation_ai_prompt_path = install_api_logic_server_path.joinpath(
+            'system/ApiLogicServer-Internal-Dev/allocation_ai_logic_test.prompt.md')
+        with open(allocation_ai_prompt_path, 'r') as f:
+            allocation_ai_prompt_text = f.read()
+        claude_instructions = (
+            'Read docs/training/logic_bank_api.md and docs/training/allocate.md in full '
+            'before writing any code — allocate.md documents the Allocate extension '
+            '(cascade/two-level variant) this task requires. Then implement the following '
+            'requirement as logic/logic_discovery/charge_distribution.py, following the '
+            'directory/file-naming and rule-authoring conventions in logic_bank_api.md. '
+            'Do not modify any other file.\n\n'
+            f'{allocation_ai_prompt_text}'
+        )
+        # NOTE: this dir is fresh every BLT run (recreated by `create` above), so it has
+        # never been through the interactive workspace-trust dialog. Confirmed by manual
+        # dry run (Aug 2026): `claude -p` still prints a one-line warning ("Ignoring N
+        # permissions.allow entries... workspace has not been trusted") to stderr but
+        # proceeds and writes the file anyway — --allowedTools on the command line is
+        # honored independent of the trust dialog in headless -p mode. Not a blocker;
+        # documented here so the stderr line doesn't look like a failure if seen in BLT
+        # output (check_command() would only fail on returncode != 0 / Traceback / "Error").
+        claude_cmd_file = target_project_path.joinpath('_claude_prompt.txt')
+        with open(claude_cmd_file, 'w') as f:
+            f.write(claude_instructions)
+        claude_cmd = (f'claude -p "$(cat {claude_cmd_file.name})" --output-format json '
+                      f'--allowedTools Read Write Edit Glob Grep')
+        result_claude = run_command(claude_cmd,
+                cwd=target_project_path,
+                msg='\nClaude Code (headless) writing charge_distribution.py from CE + prompt',
+                show_output=True)
+        claude_cmd_file.unlink()
+        # (run_command's check_command() already raises on non-zero exit / Traceback in
+        # stderr — no need to re-check result_claude.returncode here.)
+
+        # A zero exit code does not guarantee the file was written (this is exactly how the
+        # prior genai-logic genai-logic version failed silently — same class of bug, different
+        # tool). Fail loudly here rather than let an empty logic file surface as a confusing
+        # Behave failure several steps later.
+        charge_distribution_path = target_project_path.joinpath(
+            'logic/logic_discovery/charge_distribution.py')
+        if not charge_distribution_path.exists() or charge_distribution_path.stat().st_size == 0:
+            raise Exception(f"claude -p exited 0 but did not write a non-empty "
+                            f"{charge_distribution_path} — inspect the claude output above "
+                            f"to see what it did instead.")
+
+        # PORT-LEAK FIX (Aug 2026): stop_server() must run even when the Behave checks below
+        # raise — same bug just found and fixed in test_docker_sqlserver(). Real case: this
+        # exact gap (start_api_logic_server with no try/finally) is what left port 5656 held
+        # after this test's "Behave never wrote behave.log" failure, cascading into
+        # docker_mysql/docker_sqlserver/docker_postgres all failing with "port ... within 30s"
+        # in the same BLT run (tests/failures.txt, Aug 15 2026 14:06) — none of those three
+        # had a real problem of their own; they inherited this test's leaked server.
+        start_api_logic_server(project_name="AllocationAI")
+        try:
+            print("\nRunning AllocationAI Behave suite (pass/fail oracle for AI-written logic)...\n")
+            behave_path = target_project_path.joinpath('test').joinpath('api_logic_server_behave')
+            behave_run_path = behave_path.joinpath('behave_run.py')
+            behave_log_path = behave_path.joinpath('logs').joinpath('behave.log')
+            # ROOT CAUSE FOUND (Aug 2026): when Config.set_venv is the '!cmd_venv' sentinel
+            # (this user's actual env — confirmed via tests/ai_generated_logic_diagnostic.log),
+            # run_command() special-cases it and shells out to cmd_venv.sh, which ALWAYS runs
+            # the command from the Manager root (INSTALL_DIR) — it ignores the `cwd=` kwarg
+            # passed to run_command entirely; that's cmd_venv.sh's own design, not a bug in it.
+            # A bare relative `behave_run.py` then fails with FileNotFoundError from the wrong
+            # directory — silently, since run_command's '!cmd_venv' branch doesn't route through
+            # check_command()'s failure detection the same way. This is exactly the pattern
+            # validate_nw() already uses correctly (line ~800: `{python} {behave_run_path}`,
+            # an ABSOLUTE path, not a relative filename + cwd=) — copied verbatim here instead
+            # of relying on cwd=, which several manual reproductions (outside cmd_venv.sh) never
+            # exercised, so they never caught this.
+            behave_command = f'{set_venv} && {python} {behave_run_path} --outfile={str(behave_log_path)}'
+
+            # TRUST MODEL (Aug 2026) — matches validate_nw()'s proven pattern (used for months
+            # on the ApiLogicProject/basic_demo Behave suite), NOT result_behave.returncode.
+            # validate_nw has its own comment on this: "# sadly, always is 0 (run_command bug?)"
+            # on a sibling command (behave_logic_report.py) — subprocess returncode from this
+            # harness is not trustworthy for Behave. validate_nw's real gate is
+            # does_file_contain(behave.log, "Traceback") / ("Assertion Failed:") after the run —
+            # reused verbatim here.
+            #
+            # ONE gap validate_nw doesn't have to cover: THIS test copies test/ fresh from a
+            # reference project every run (shutil.copytree above), which drags along that
+            # project's OLD logs/behave.log — validate_nw's project never has a stale log to be
+            # confused by. So: delete any pre-existing behave.log before running, and treat
+            # "file doesn't exist after the run" as an unambiguous failure (Behave never wrote
+            # to it — it didn't run, or died before writing) rather than trying to distinguish a
+            # stale copy from a fresh empty one after the fact.
+            if behave_log_path.exists():
+                behave_log_path.unlink()
+
+            result_behave = run_command(behave_command,
+                                        cwd=str(behave_path),
+                                        msg="\nBehave Test Run", show_output=True)
+
+            if not behave_log_path.exists():
+                # Durable dump (not just print()) — BLT's own console output is not retrievable
+                # after the fact, and two straight BLT runs hit this exact branch (Aug 15 2026,
+                # 14:20 and 14:27) despite a manual reproduction of the identical command,
+                # cwd, and setup working correctly outside BLT. The divergence has to be
+                # something about run_command's actual subprocess result INSIDE the live BLT
+                # process — this writes the real captured stdout/stderr/returncode to a fixed
+                # path so it survives past this run instead of only existing in scrollback.
+                diag_path = install_api_logic_server_path / 'tests' / 'ai_generated_logic_diagnostic.log'
+                with open(diag_path, 'w') as f:
+                    f.write(f"command: {behave_command}\n")
+                    f.write(f"cwd: {behave_path}\n")
+                    f.write(f"returncode: {result_behave.returncode!r}\n\n")
+                    f.write("=== stdout ===\n")
+                    f.write(result_behave.stdout.decode(errors='replace') if result_behave.stdout else '(empty)')
+                    f.write("\n\n=== stderr ===\n")
+                    f.write(result_behave.stderr.decode(errors='replace') if result_behave.stderr else '(empty)')
+                raise Exception(f"Behave never wrote {behave_log_path} — it did not run to "
+                                f"completion (server not ready, import error, etc). "
+                                f"subprocess returncode was {result_behave.returncode} but is not "
+                                f"trusted here (see validate_nw's own '# sadly, always is 0' note). "
+                                f"Full captured stdout/stderr written to: {diag_path}")
+
+            has_traceback = does_file_contain(in_file=str(behave_log_path), search_for="Traceback")
+            has_assertion_failed = does_file_contain(in_file=str(behave_log_path), search_for="Assertion Failed")
+            has_failing_scenarios = does_file_contain(in_file=str(behave_log_path), search_for="Failing scenarios")
+            if has_traceback or has_assertion_failed or has_failing_scenarios:
+                print(f"\n=== {behave_log_path} (fresh this run) — last 3000 chars ===")
+                with open(behave_log_path, 'r', errors='replace') as f:
+                    print(f.read()[-3000:])
+                raise Exception("Behave Run Error - AI-generated allocation logic did not reproduce "
+                                "the reference cascade-allocation behavior. See behave.log above.")
+            print("\nAllocationAI tests - Success (AI-written rules matched reference behavior)...\n")
+        finally:
+            stop_server(msg="*** ALLOCATION AI LOGIC TEST COMPLETE ***\n")
+
+    run_test("ai_generated_logic_test", "AI-authored cascade-allocation logic vs. reference Behave suite",
+             test_ai_generated_logic, folders="AllocationAI")
 
 if Config.do_docker_mysql:
     def test_docker_mysql():
@@ -1752,20 +1953,32 @@ if Config.do_docker_sqlserver:  # CAUTION: see comments below
         print()
 
     def test_docker_sqlserver():
-        check_sqlserver_health()
+        # PORT-LEAK FIX (Aug 2026): stop_server() must run even when validate_sql_server_types()
+        # (or anything else after a successful start) raises — previously it only ran on the
+        # clean-success path, so a failure here left the server holding port 5656 for the rest
+        # of the BLT run. Real case: this exact gap cascaded into docker_postgres AND
+        # docker_postgres_auth both failing on "Address already in use", unrelated to either
+        # test's own logic. server_started tracks whether start_api_logic_server() itself
+        # succeeded — no point calling stop_server() against a server that never came up.
+        server_started = False
         try:
             command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/TVF --{extended_builder}=$ --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
             result_docker_sqlserver = run_command(
                 command,
                 cwd=install_api_logic_server_path,
                 msg=f'\nCreate SqlServer TVF at: {str(install_api_logic_server_path)}')
+            check_sqlserver_health()
             start_api_logic_server(project_name='TVF')
+            server_started = True
             validate_sql_server_types()
-            stop_server(msg="TVF\n")
         except Exception:
             dump_sqlserver_docker_logs()
             raise
+        finally:
+            if server_started:
+                stop_server(msg="TVF\n")
 
+        server_started = False
         try:
             command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/sqlserver --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
             result_docker_sqlserver = run_command(
@@ -1773,10 +1986,13 @@ if Config.do_docker_sqlserver:  # CAUTION: see comments below
                 cwd=install_api_logic_server_path,
                 msg=f'\nCreate SqlServer NORTHWND at: {str(install_api_logic_server_path)}')
             start_api_logic_server(project_name='sqlserver')
-            stop_server(msg="sqlserver\n")
+            server_started = True
         except Exception:
             dump_sqlserver_docker_logs()
             raise
+        finally:
+            if server_started:
+                stop_server(msg="sqlserver\n")
     
     run_test("docker_sqlserver", "Docker SQL Server TVF and NORTHWND tests", test_docker_sqlserver,
              folders="TVF, sqlserver")

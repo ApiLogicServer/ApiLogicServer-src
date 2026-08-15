@@ -1467,6 +1467,34 @@ Three generated report types that together provide full traceability from NL req
 - Audience: QA, compliance, traceability proof
 - Content: requirement → test → rules fired → execution trace
 - Training: `docs/training/testing.md`
+- **Where the logs actually are** (per-project, under `test/api_logic_server_behave/`):
+  - `logs/behave.log` — written only via `python behave_run.py --outfile=logs/behave.log`
+    (omitting `--outfile` leaves it empty — see "Empty behave.log" gotcha in `testing.md`).
+    Its own exit code is the fail-safe of record: `behave_run.py` rescans this file for the
+    literal string `"Assertion Failed"` / `"Failing scenarios"` and forces a non-zero
+    `sys.exit` even when `behave`'s own return value was 0 (behave sometimes "eats"
+    exceptions) — so `sys.exit(behave_result)` from this file, not raw `behave` output, is
+    the authoritative pass/fail signal.
+  - `logs/scenario_logic_logs/<Scenario_Name>.log` — one file per scenario, full Logic Phase
+    trace (ROW LOGIC → COMMIT LOGIC → AFTER_FLUSH LOGIC → rules fired), matched to
+    `behave.log` by scenario name (truncated to ~25 chars) — see "Scenario Name Mismatch"
+    gotcha in `testing.md` if these don't line up.
+  - ⚠️ **Staleness trap, confirmed live (Aug 2026):** both files are plain project content —
+    NOT gitignored (`scenario_logic_logs/` is, `behave.log` is not, per a sample project's own
+    `.gitignore`) — so a fresh clone or a `shutil.copytree()` of a reference project's `test/`
+    directory carries over OLD scenario logs and an old (often 0-byte) `behave.log` from
+    whenever that project last ran its own suite. If the NEW run's Behave invocation then
+    fails early (e.g. server not up yet, connection refused) before writing anything, the
+    stale copied files are still sitting there looking exactly like real evidence — reading
+    `scenario_logic_logs/*.log` timestamps/content without checking they're from *this* run
+    can send debugging in a completely wrong direction. Always check file mtimes match the
+    run under investigation before trusting log content as evidence from that run. Real case:
+    a new BLT confidence test (`do_ai_generated_logic_test`) copied
+    `allocate_dept_account_demo`'s `test/` wholesale; its 3-week-old `scenario_logic_logs/`
+    entries were misread as proof that Behave scenarios executed successfully against the
+    new project, when the new run had actually connection-refused instantly and the real,
+    root-cause bug (why BLT's own run reported PASS despite a real failure) was still
+    unresolved underneath the stale-log red herring.
 
 ### Key Convention: `calling=` Function Docstrings
 

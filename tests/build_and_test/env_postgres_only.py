@@ -29,6 +29,7 @@ class Config:
     do_rebuild_tests = False                # skip rebuild tests
     do_multi_database_test = False          # skip multi-database tests
     do_allocation_test = False              # skip allocation tests (SQLite)
+    do_ai_generated_logic_test = False      # SLOW/costs $: see env_val.py for details
     do_budget_app_test = False              # skip budget app tests (SQLite)
     do_other_sqlite_databases = False       # skip other SQLite databases
     do_include_exclude = False              # skip include/exclude tests

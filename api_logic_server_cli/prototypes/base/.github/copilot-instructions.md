@@ -1,4 +1,13 @@
 ---
+version: 3.37 - 8/15/26 - Added a "Rollup/aggregate columns" bullet to the "Before-you're-done
+scan" (step 8/9 area, Method 4 workflow): scan database/models.py for total_*/*_total/*_count/
+*_amount-shaped columns on any table the just-written logic touches, and confirm each has a
+matching Rule.sum/Rule.count somewhere in logic/logic_discovery/ — a missing rule leaves the
+column silently stuck at its schema default (usually 0), no error. Confirmed real case: two
+independent cascade-Allocate builds from the identical prompt each silently dropped a
+different subset of 3 required rollups (one missed 2 of 3, the next missed all 3) while the
+core Allocate logic itself was correct both times — the omission pattern wasn't consistent
+run-to-run, so this is a genuine self-verification gap, not a one-off.
 version: 3.36 - 7/15/26 - Live-tested the Tree Views guidance (v3.35) end-to-end by building a component from the written CE text alone, blind to Department.js's source. Found and fixed 2 real bugs the guidance let through: (1) useNavigate's import source was unstated, defaulted wrongly to react-admin (fixed in both Map Views and Tree Views); (2) a first pass matching the guidance's literal "valid alternative" (navigate-only) rendered a visibly thinner result than the reference's inline detail panel. Rewrote that bullet: inline detail panel via useGetOne + useGetManyReference (with labeled Tabs showing counts) is now the PRIMARY pattern, navigate-only is the fallback. Also added a new bullet: verify each relationship's real FK field name in models.py before writing useGetManyReference's target= — Employee's FK to Department is WorksForDepartmentId, not DepartmentId, and a wrong guess compiles fine and fails silently (empty list, no error). Second pass re-verified live in the browser: correct 3-level tree, inline detail panel, real Sub-Departments/Employees tab counts and data.
 ---
 
@@ -1375,6 +1384,19 @@ This auto-generates correct `models.py` with all boilerplate intact.
      transcript (e.g. `/export docs/requirements/transcript_creation`), confirm that file
      exists now. This step is easy to skip because it comes after the "real" work feels done —
      check for the file, don't rely on remembering to run the command.
+   - **Rollup/aggregate columns:** scan `database/models.py` for every column whose name reads
+     as an aggregate (`total_*`, `*_total`, `*_count`, `*_amount`, `sum_*`, `num_*`, or similar)
+     on any table the logic file(s) you just wrote touch. For each one, confirm a matching
+     `Rule.sum`/`Rule.count` actually derives it somewhere in `logic/logic_discovery/` — don't
+     assume you wrote it just because the requirement implied it. If a column is missing its
+     rule, the column silently sits at its schema default (usually 0) forever — no error, no
+     crash, just a wrong value returned to every API caller. Confirmed real case (Aug 2026,
+     cascade Allocate build): two independent runs from the identical prompt each silently
+     dropped a different subset of 3 required rollups (`Charge.total_distributed_amount`,
+     `Project.total_charges`, `GlAccount.total_allocated`) — one run missed 2 of 3, the next
+     missed all 3 — while the core Allocate logic itself was correct both times. The omission
+     pattern wasn't consistent, so don't treat "it worked last time" as evidence this time did
+     too — always run this scan.
 
 **Key rules:**
 - Never write `models.py` manually — always `rebuild-from-database` after SQL DDL

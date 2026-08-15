@@ -34,6 +34,13 @@ class Config:
 
     do_allocation_test = default_setting            # create / run / test allocation project
 
+    do_ai_generated_logic_test = True               # SLOW/costs $: AI writes charge_distribution.py
+                                                     # from a prompt, verified against allocate_dept_
+                                                     # account_demo's Behave suite. Confidence check for
+                                                     # the rules CE, not the engine — flip to True when
+                                                     # validating logic_bank_api.md/allocate.md changes.
+                                                     # time: 169->325 (3->5.5 mins. [~2.5 mins])
+
     do_budget_app_test = default_setting            # insert_parent test
 
     do_other_sqlite_databases = default_setting     # classic models
