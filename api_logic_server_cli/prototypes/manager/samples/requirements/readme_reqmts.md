@@ -11,9 +11,15 @@
 
 # Executable Requirements
 
-**Executable Requirements** means the requirements document IS the build spec — not a handoff artifact that gets "interpreted," but a file the AI reads and executes directly, then writes back an audit trail of what it decided.
+**Executable Requirements** — also called **XGR**, *Governed* Executable Requirements — means the requirements document IS the build spec — not a handoff artifact that gets "interpreted," but a file the AI reads and executes directly, then writes back an audit trail of what it decided.
 
 These are typically used to iteratively add requirements to an existing project using `implement reqs`.
+
+**Three ways to arrive at `requirements.md`, and two shapes once you're there:**
+
+- **RFI** — no document at all; AI interviews you conversationally and drafts it for you. Real transcript: [RFI/RFI-transcript.md](RFI/RFI-transcript.md).
+- **File** — hand-written, or an existing `.prompt.md` file used as-is (see `samples/prompts/`). One file, nothing else needed.
+- **Folder** — `requirements.md` plus `message_formats/` (JSON, XML, CSV) for richer, multi-file specs. Simple example: `demo_eai/`. Real enterprise-class example: `customs_demo_clvs/` (full CBSA customs system, 7 XML message variants + a CSV mapping table, simulates an existing database).
 
 For full docs, [click here](https://apilogicserver.github.io/Docs/Exec-Reqmts/).
 
@@ -36,9 +42,11 @@ Say `implement reqs <name>` in Copilot Agent mode. AI reads the spec, builds the
 
 There's no fixed authoring process — `requirements.md` just needs to exist before you say `implement reqs`. Three common ways to get there:
 
-- **Written by a person** — a PM, analyst, or dev drafts it directly from DDL, sample messages, architecture notes, whatever they have on hand.
-- **A prompt file, as-is** — the same `.prompt.md` files used to *create* a project (see `samples/prompts/`) are already requirements prose. Drop one into `docs/requirements/<name>/requirements.md` unchanged and it works.
-- **AI Interview** — no document at all yet. Say something like "create a new project called `<name>`, and let's discuss the system" instead of handing over a written spec; the AI interviews you conversationally (constants, lookups/FKs, integration/judgment calls, type hierarchies), then synthesizes the transcript into a real `requirements.md` and reads it back for confirmation before anything is built. This is the same mechanism Method 4 uses for new-project creation when you don't have a prompt in hand — it works the same way for an existing project's next iteration. See [RFI/RFI-transcript.md](RFI/RFI-transcript.md) for a real transcript (Customer/Order/Item/Product, credit-limit constraint, Kafka shipping notification).
+- **Written by a person** — a PM, analyst, or dev drafts it directly from DDL, sample messages, architecture notes, whatever they have on hand. Usually a single **File**.
+- **A prompt file, as-is** — the same `.prompt.md` files used to *create* a project (see `samples/prompts/`) are already requirements prose. Drop one into `docs/requirements/<name>/requirements.md` unchanged and it works. Also a single **File**.
+- **AI Interview (RFI)** — no document at all yet. Say something like "create a new project called `<name>`, and let's discuss the system" instead of handing over a written spec; the AI interviews you conversationally (constants, lookups/FKs, integration/judgment calls, type hierarchies), then synthesizes the transcript into a real `requirements.md` and reads it back for confirmation before anything is built. This is the same mechanism Method 4 uses for new-project creation when you don't have a prompt in hand — it works the same way for an existing project's next iteration. See [RFI/RFI-transcript.md](RFI/RFI-transcript.md) for a real transcript (Customer/Order/Item/Product, credit-limit constraint, Kafka shipping notification).
+
+**File vs. Folder:** any of the three paths above can land as a single `requirements.md` (**File**) or grow into a **Folder** — `requirements.md` plus `message_formats/`, plus, for larger systems, several named subfolders under `docs/requirements/`, each its own incremental slice. See `demo_eai/` for a clean minimal Folder, or `customs_demo_clvs/` for the real thing at enterprise scale.
 
 Whichever path you took, the loop from there is the same: AI builds, writes `ad-libs.md` with 🔴 items needing review and 🟡 FYIs, you update `requirements.md` to resolve them, run again. Each cycle tightens the spec and narrows the AI's decision space.
 
