@@ -1,4 +1,18 @@
 ---
+version: 3.38 - 8/15/26 - Added two more "Before-you're-done scan" bullets, same session as
+v3.37's rollup scan, found via the same cascade-Allocate build: (1) "Every requirement clause
+has a matching rule" — re-read the requirement text itself (not models.py — a missing
+constraint leaves no schema trace to scan for) and confirm each clause landed as a real Rule.*
+call, with special attention to rejection/validation phrasing ("may only be posted if...")
+that maps to Rule.constraint, not a derived column. Confirmed real case: a THIRD independent
+run of the identical prompt dropped the active-funding-definition constraint entirely — not
+written wrong, just never attempted — while the Allocate logic and all 3 rollups were correct
+that same run. Three runs, three different dropped clauses: evidence of genuine run-to-run
+requirement-coverage inconsistency, not one fixable bug. (2) "Pre-built schema is higher risk"
+— named the mechanism: designing a table yourself keeps the clause→column link live in your
+own reasoning as you write DDL; inheriting an existing schema (create from an existing
+--db_url=) severs that link, since nothing marks a column as "exists because of clause 4" vs.
+"just there" — apply both self-checks more deliberately when the schema predates the session.
 version: 3.37 - 8/15/26 - Added a "Rollup/aggregate columns" bullet to the "Before-you're-done
 scan" (step 8/9 area, Method 4 workflow): scan database/models.py for total_*/*_total/*_count/
 *_amount-shaped columns on any table the just-written logic touches, and confirm each has a
@@ -1397,6 +1411,35 @@ This auto-generates correct `models.py` with all boilerplate intact.
      missed all 3 — while the core Allocate logic itself was correct both times. The omission
      pattern wasn't consistent, so don't treat "it worked last time" as evidence this time did
      too — always run this scan.
+   - **Every requirement clause has a matching rule — re-read the requirement text itself,
+     not the schema.** The rollup scan above works because a missing rollup leaves a
+     suspicious column sitting at its default — something to scan `models.py` *for*. A missing
+     **constraint** leaves no such trace: there is no column, no schema signal, nothing that
+     "should have a rule" to notice is absent. So this check can't be a schema scan — go back
+     to the original requirement text (or `docs/requirements/<use_case_name>/requirements.md`)
+     and walk it clause by clause, confirming each one landed as an actual `Rule.*` call in the
+     logic file, not just the clauses that happened to map onto a `Rule.sum`/`Rule.count`
+     column. Pay special attention to clauses phrased as rejection/validation ("may only be
+     posted if...", "cannot exceed...", "must have an active...") — these map to
+     `Rule.constraint`/`Rule.commit_constraint`, not a derived column, and are the ones most
+     likely to go missing silently. Confirmed real case (Aug 2026, same cascade Allocate build,
+     a THIRD independent run): the "Charge may only be posted if the Project's funding
+     definition is active" clause was dropped entirely — not written incorrectly, simply never
+     attempted — while the Allocate logic and all three rollups were correct in that same run.
+     Three independent runs of the identical prompt each failed a *different* requirement
+     clause; this is evidence of genuine run-to-run inconsistency in requirement coverage, not
+     a single fixable bug — the self-check exists because no single fix closes it.
+   - **This project's schema was pre-built for you, not designed by you in this session —
+     that gap is exactly where coverage slips.** When you design a table yourself from a
+     prompt, you create a column *because* a requirement clause needs it, so the clause→rule
+     link is already live in your own reasoning as you write the DDL. When you're handed an
+     existing schema (a `create` from an existing `--db_url=`, or any project where
+     `database/models.py` predates this conversation), that link has to be reconstructed after
+     the fact — nothing marks `total_charges` as "this column exists because of clause 4"
+     versus "this column is just there." Treat an existing/pre-built schema as higher-risk for
+     dropped requirement coverage than one you just designed, and apply both scans above more
+     deliberately in that case — don't assume the same care you'd naturally apply when
+     designing fresh DDL carries over automatically.
 
 **Key rules:**
 - Never write `models.py` manually — always `rebuild-from-database` after SQL DDL
