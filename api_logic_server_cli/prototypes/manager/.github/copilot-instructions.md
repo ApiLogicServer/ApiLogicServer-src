@@ -23,8 +23,15 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.19
+version: 2.21
 changelog:
+  - 2.21 (Aug 17 2026) - STEP 6: AI starts the server itself instead of telling user to
+    press F5 — Codespaces' cached last-used debug config can make bare F5 skip the
+    runProjectName prompt, confusing first-time users. Hand-off now points to the Debug
+    picker for the first run.
+  - 2.20 (Aug 17 2026) - STEP 4: `logic/declare_logic.py` is explicitly a stub, not the
+    logic target — a model found rule-shaped scaffolding there and treated it as done,
+    skipping `logic/logic_discovery/<use_case_name>.py` entirely.
   - 2.19 (Aug 12 2026) - Method 4 STEP 1 now forks when no domain prompt is provided —
     AI asks whether the user has a prompt file or wants to discuss the system
     conversationally ("AI-as-BA"). "Discuss" branches into a Socratic interview (new
@@ -389,6 +396,16 @@ STEP 3: Read these files SILENTLY (internalize — do NOT display):
 STEP 4: Implement the domain prompt using the project CE's System Creation Services workflow.
         ⛔ DO NOT run `genai-logic create` again — the project already exists from STEP 2.
            The workflow is: DDL → rebuild-from-database → logic files → seed. Not create.
+        ⛔ `<name>/logic/declare_logic.py` is a generated STUB/fallback entry point, NOT
+           where use-case logic belongs. It may already contain rule-shaped scaffolding
+           (imports, an empty `declare_logic()`) that looks superficially "done" — it is
+           not. Real use-case logic is written ONLY to
+           `logic/logic_discovery/<use_case_name>.py` (per file below). Confirmed real
+           case (Codespaces, Aug 2026): a model found `declare_logic.py` already had the
+           needed rule declarations and treated that as the finished implementation —
+           the actual discovery-folder file was never written, and rules silently did not
+           load. Finding logic in `declare_logic.py` is not evidence the task is complete;
+           always verify `logic/logic_discovery/<use_case_name>.py` exists and loads.
         ⚠️ SCHEMA DESIGN IS LAST — complete ALL pre-DDL analysis before writing any SQL:
            4a. Constant extraction  — identify every rate/threshold/date → SysConfig column
            4b. FK inventory         — identify every lookup entity → integer FK column
@@ -431,8 +448,21 @@ STEP 5: ⛔ MANDATORY PROVENANCE — before telling the user the project is done
    project_creation_prompt.md is the complete original text, preserved once at the
    project root.
 
-STEP 6: After F5 is confirmed working, tell the user:
-   "Your project is in <name>/. To work on it further, open it as a workspace."
+STEP 6: Start the server YOURSELF to confirm it runs — do NOT tell the user to press F5 here.
+   Run (from Manager root): cd <name> && python api_logic_server_run.py &
+   Confirm via curl/logs that it started cleanly, then stop it.
+   ⚠️ WHY NOT F5: VS Code caches the last-used debug config per workspace. In a fresh
+   Codespace, bare F5 can silently resolve to a stale/wrong target instead of prompting
+   for the project name — confusing for a first-time user with nothing to compare against.
+   (Confirmed live, Aug 2026: F5 skipped the runProjectName prompt in Codespaces; explicitly
+   picking "API Logic Server Run..." via Cmd/Ctrl+Shift+P → "Debug: Select and Start
+   Debugging" worked immediately and fixed F5 for the rest of that session.) Verifying via
+   a plain run sidesteps this entirely — no debug-config resolution involved.
+   Then tell the user:
+   "Your project is in <name>/. To work on it further, open it as a workspace. To run it
+   with the debugger (breakpoints, step-through), use Cmd/Ctrl+Shift+P → 'Debug: Select and
+   Start Debugging' → 'API Logic Server Run...' the first time — after that, F5 will work
+   directly."
 ```
 
 **✅ What this achieves:** User gives you a prompt → you create, scaffold, and implement the full system without them ever switching workspaces.
