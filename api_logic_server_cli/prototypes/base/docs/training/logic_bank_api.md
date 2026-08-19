@@ -1,9 +1,24 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.23
-# Last Updated: August 15, 2026
+# Version: 1.0.24
+# Last Updated: August 18, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 # Changelog:
+#   1.0.24 (Aug 18 2026) - Added "MISSING LOOKUP MUST NOT SILENTLY PASS A CONSTRAINT" section,
+#     right after the existing early_row_event/relationship-staleness warning whose own ❌ WRONG
+#     example already has this exact bug shape unlabeled. Real case: a live BLT run of the
+#     cascade-Allocate domain (full allocation.prompt.md, AI-designed schema) wrote
+#     `row.project.project_funding_definition is None or row.project.project_funding_definition.is_active == 1`
+#     as a constraint condition — intended as a defensive null-guard, but the `or` makes "no
+#     funding definition assigned at all" PASS the constraint instead of failing it. A Charge was
+#     posted against a Project with project_funding_definition_id=None and accepted (should have
+#     been rejected per "a Charge may only be posted if the Project's Project Funding Definition
+#     is active" — no definition is not active), producing a silent zero-value cascade (no
+#     ChargeDeptAllocation rows, total_distributed_amount stuck at 0, no error). Caught by the
+#     project's own self-verification (curl + als.log rule-fire trace), not by the constraint
+#     itself. Same run also dropped a Rule.sum rollup present in an earlier run of the identical
+#     prompt — consistent with the run-to-run requirement-coverage inconsistency documented at
+#     1.0.20/1.0.21/1.0.22.
 #   1.0.23 (Aug 2026) - Documented Rule.commit_constraint (engine-side since Jul 22 2026, never
 #     added here) as a sibling entry right after Rule.constraint: checked once after the
 #     transaction's cascade settles, for min-cardinality rules ("Order must have at least one
@@ -907,6 +922,62 @@ ALSO APPLIES inside row_event / calling= functions:
 
   The event is now reactive: inserting or updating a ShipmentCommodity re-fires the count,
   which re-fires the row_event, keeping eligibility current on every write path.
+
+CRITICAL — A "MISSING LOOKUP" NULL-GUARD MUST NOT SILENTLY PASS A CONSTRAINT:
+  A common defensive pattern is to guard a constraint condition against a not-yet-set or
+  optional FK: `row.parent is None or row.parent.some_flag == 1`. This is CORRECT when the
+  requirement is "only check the flag if a parent is assigned" (parent genuinely optional).
+  It is WRONG when the requirement actually means "a missing parent fails the check too" —
+  the `or row.parent is None` clause then silently converts "nothing assigned" into a pass,
+  the opposite of the intended constraint.
+
+  Read the requirement's own wording for which case applies. Phrases like "must be active",
+  "may only be posted if X is active/valid/approved", "must have an active Y" describe a
+  condition on X itself — the absence of X is not a degenerate case of "X is active", it's a
+  separate failure. Do not write the null-guard unless the requirement explicitly allows the
+  parent to be absent (e.g. "if a discount code is provided, it must be valid" — no code is
+  fine, an invalid code is not).
+
+  ❌ WRONG — `is None` treated as a free pass, when the requirement means the opposite:
+      Rule.constraint(
+          validate=models.Charge,
+          as_condition=lambda row: (
+              row.project is None
+              or row.project.project_funding_definition is None
+              or row.project.project_funding_definition.is_active == 1
+          ),
+          error_msg="Charges may only be posted to Projects with an active Project Funding Definition"
+      )
+      REAL FAILURE CASE (Aug 2026, cascade-Allocate domain, full-prompt AI build): a Project
+      with `project_funding_definition_id = None` (no funding definition assigned at all) was
+      accepted for Charge posting — the `project.project_funding_definition is None` clause
+      passed it — even though the requirement ("a Charge may only be posted if the Project's
+      Project Funding Definition is active") means no definition is not active, and should
+      reject. The Charge silently cascaded with total_distributed_amount stuck at 0 and no
+      ChargeDeptAllocation rows — no error, no rejection, just a wrong, empty result. Caught
+      only by post-hoc self-verification (curl + reading the als.log rule-fire trace), not by
+      the constraint itself, which is exactly the failure mode a constraint exists to prevent.
+
+  ✅ CORRECT — missing lookup is itself a failure, matching "must have an active X":
+      Rule.constraint(
+          validate=models.Charge,
+          as_condition=lambda row: (
+              row.project is not None
+              and row.project.project_funding_definition is not None
+              and row.project.project_funding_definition.is_active == 1
+          ),
+          error_msg="Charges may only be posted to Projects with an active Project Funding Definition"
+      )
+      Note the flip from `or` (any clause true → pass) to `and` (every clause must hold → pass)
+      — this is the actual mechanical difference between "missing parent is fine" and "missing
+      parent is itself a failure." Getting the requirement's intent right determines which
+      boolean operator is correct; the code shape alone won't tell you.
+
+  This is not limited to `Rule.constraint` — the same silent-pass risk applies anywhere a
+  None-check is combined with `or` inside a condition meant to REJECT: `Rule.commit_constraint`,
+  a `row_event`'s reasons-list append logic, or a `Rule.formula`'s eligibility flag. Whenever
+  you write `X is None or X.<attr> <op> <value>`, stop and ask: does the requirement actually
+  intend "no X" to be acceptable? If not, this is the bug.
 
 =============================================================================
 🚧 Insert-Only Constraints (Grandfather Clauses)

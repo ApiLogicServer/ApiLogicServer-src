@@ -21,7 +21,8 @@ log = logging.getLogger('create_from_model.model_creation_services')
 
 
 def _scaffold_source_lines(project, api_logic_server_dir_str: str) -> str:
-    """ describes where the project's scaffold came from - base, and --from_git overlay if used """
+    """ describes where the project's scaffold came from - base, --from_git overlay,
+        and Project Context Engineering overlay, if used """
     base_dir = Path(api_logic_server_dir_str).joinpath('prototypes/base')
     lines = [f"- **Base template:** `{base_dir}` (always the foundation - every project starts here)"]
     if project.from_git:
@@ -30,6 +31,12 @@ def _scaffold_source_lines(project, api_logic_server_dir_str: str) -> str:
                       f"nw/allocation/BudgetApp sample overlays)")
     else:
         lines.append("- **Overlay:** none - this project is the unmodified base template")
+    pce_source_dir = Path.cwd() / 'system' / 'project_context_engineering'
+    if pce_source_dir.is_dir() and any(pce_source_dir.iterdir()):
+        lines.append(f"- **Overlay (Project Context Engineering):** `{pce_source_dir}` "
+                      f"(training file additions/overrides copied into `docs/training/` - see "
+                      f"this project's `docs/training/$readme.md` for the exact overlay "
+                      f"timestamp/version)")
     return "\n".join(lines)
 
 

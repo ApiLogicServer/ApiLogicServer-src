@@ -1882,25 +1882,310 @@ if Config.do_ai_generated_logic_test:
     run_test("ai_generated_logic_test", "AI-authored cascade-allocation logic vs. reference Behave suite",
              test_ai_generated_logic, folders="AllocationAI")
 
+if Config.do_ai_generated_full_prompt_test:
+    def test_ai_generated_full_prompt():
+        """
+        Whole-project sibling of ai_generated_logic_test (AllocationAI, above). That test
+        isolates ONE file (charge_distribution.py) from a hand-trimmed prompt clause, with
+        schema, constraints, and definition-table rollups pre-seeded — it deliberately removes
+        the broader requirements narrative. Real BLT run (Aug 18 2026) showed that isolation
+        itself makes the task HARDER, not easier: the AI correctly wrote the two-level cascade
+        (exactly what it was asked for) but omitted 3 Rule.sum rollups and 1 constraint that
+        the isolated prompt never mentioned — even though they're implied by the full domain
+        narrative and were the exact thing docs/training's Aug 15 "before-you're-done"
+        self-check (base CE v3.37/3.38) was added to catch. This test checks the opposing
+        hypothesis (Val, Aug 18 2026): does giving the AI the FULL prompt — same narrative
+        breadth as a live Method 4 session, schema included — reinforce the model into
+        deriving rollups/constraints on its own, the way manual runs of
+        "create demo_allo_dept_gl from samples/prompts/allocation.prompt.md" have.
+
+        Unlike AllocationAI: starts from starter.sqlite (empty schema — AI designs DDL per
+        Method 4 STEP 4a-4c), and hands over the COMPLETE samples/prompts/allocation.prompt.md
+        (verbatim — this is the same file that built the gold reference project
+        allocate_dept_account_demo, confirmed byte-identical to its
+        docs/requirements/prompt.md). AI does DDL -> rebuild-from-database -> all logic files,
+        following the Manager CE's Method 4 sequence and the project CE it reads once created.
+
+        Judged by verification the SAME headless run performs on ITS OWN build — NOT by copying
+        in allocate_dept_account_demo's Behave suite (tried first, Aug 18 2026, reverted same
+        day). That approach failed immediately: allocate_dept_account_demo's own Behave suite is
+        itself a distinct, later AI pass that read that project's *already-built* schema and
+        wrote tests against its specific column names (confirmed via its git history — commit
+        12208400 adds the Behave suite in a separate commit after the schema/logic commit
+        655c6793, explicitly described as "generated from the ... rules"; also documented in
+        Manager README.md's "AI read those same rules and wrote a Behave test suite from them —
+        no test written by hand"). There is no canonical schema two independent AI runs converge
+        on — this run named the GL account column `code`, the reference project named it
+        `account_number` — so importing a fixture bound to a DIFFERENT run's naming choices is
+        structurally mismatched, not a real signal. (Confirmed live: 5 of 6 scenarios failed on
+        `NOT NULL constraint failed: gl_account.code` — the reference suite POSTs `account_number`,
+        which doesn't exist in this run's schema.) Verifying against the SAME rules this run
+        just wrote is exactly how allocate_dept_account_demo itself was validated — self-
+        consistent by construction, no cross-run naming assumption.
+
+        Config.do_ai_generated_full_prompt_test_with_behave selects which verification style
+        (default False — see env_val.py):
+          False (default): the build pass itself does lightweight curl-based self-verification
+            against the live API + logs/als.log rule-fire trace — the same ad-hoc sanity check
+            a live Method 4 session naturally does when asked to confirm logic works. Cheap:
+            one headless call total, no second CE-reading pass, no .feature/step authoring.
+          True: a SECOND headless pass reads docs/training/testing.md and writes a full Behave
+            suite from the rules it just built, which is then run as the oracle. This is the
+            only BLT coverage of AI-driven Behave-suite generation itself (a documented
+            capability — "Testing: Create Behave tests with requirements traceability" — that
+            otherwise has no automated test of its own). Much slower (Behave authoring is a
+            second full CE read + generation pass) — opt in when validating that capability
+            specifically, not for routine full-prompt-fidelity runs.
+
+        Requires the `claude` CLI to be installed/authenticated wherever BLT runs. SLOW/costs $
+        either way (full project build; more so with_behave=True) — see env_val.py for the
+        on/off convention shared with do_ai_generated_logic_test.
+        """
+        target_project_path = install_api_logic_server_path.joinpath('tests/AllocationAIFull')
+        starter_db_path = install_api_logic_server_path.joinpath('samples/dbs/starter.sqlite')
+
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/AllocationAIFull --{db_url}=sqlite:///{str(starter_db_path)}',
+                cwd=install_api_logic_server_path,
+                msg=f'\nCreate AllocationAIFull at: {str(install_api_logic_server_path)}')
+
+        # Claude Code (headless) implements the WHOLE domain prompt — DDL, rebuild, all logic
+        # files — the same Method 4 sequence (Manager CE STEP 3/4) a live session would follow,
+        # reading the project's own CE + docs/training the same way a real session would.
+        # Needs Bash (sqlite3, genai-logic rebuild-from-database, seed) in addition to the
+        # file-editing tools AllocationAI's narrower task needed.
+        allocation_prompt_path = install_api_logic_server_path.joinpath('samples/prompts/allocation.prompt.md')
+        with open(allocation_prompt_path, 'r') as f:
+            allocation_prompt_text = f.read()
+        claude_instructions = (
+            'Read .github/copilot-instructions.md (project CE), docs/training/implement_requirements.md, '
+            'docs/training/logic_bank_api.md, docs/training/logic_bank_patterns.md, and '
+            'docs/training/RequestObjectPattern.md in full before writing any code. Then implement the '
+            'following domain requirements end to end: design the schema (DDL), run '
+            'rebuild-from-database, and write all logic files under logic/logic_discovery/ following '
+            'this project\'s System Creation Services workflow (constants -> SysConfig, lookups -> FK, '
+            'schema last). This project was created from an EMPTY starter schema — there is no '
+            'pre-existing schema or logic to preserve.\n\n'
+            'IMPORTANT: do NOT start the API server (no "python api_logic_server_run.py", no F5-equivalent) '
+            '— an automated test harness will start it separately after you finish. If you need to sanity-'
+            'check anything, inspect the code/DDL directly rather than running the server. If you do start '
+            'any background process for any reason, you MUST kill it before finishing.\n\n'
+            f'{allocation_prompt_text}'
+        )
+        claude_cmd_file = target_project_path.joinpath('_claude_prompt.txt')
+        with open(claude_cmd_file, 'w') as f:
+            f.write(claude_instructions)
+        claude_cmd = (f'claude -p "$(cat {claude_cmd_file.name})" --output-format json '
+                      f'--allowedTools Read Write Edit Bash Glob Grep')
+        result_claude = run_command(claude_cmd,
+                cwd=target_project_path,
+                msg='\nClaude Code (headless) implementing full allocation.prompt.md project',
+                show_output=True)
+        claude_cmd_file.unlink()
+
+        logic_discovery_path = target_project_path.joinpath('logic/logic_discovery')
+        if not logic_discovery_path.exists() or not any(logic_discovery_path.glob('*.py')):
+            raise Exception(f"claude -p exited 0 but wrote no logic files under "
+                            f"{logic_discovery_path} — inspect the claude output above "
+                            f"to see what it did instead.")
+
+        # PORT-LEAK FIX (Aug 2026): the headless build pass above has Bash tool access and,
+        # despite being told not to, may start its own dev server to sanity-check its work
+        # (the project's own CE ends Method 4 with "Press F5" — a natural instinct to follow,
+        # with no session boundary in headless -p mode to clean it up after). Real case: a
+        # BLT run left an orphaned `python api_logic_server_run.py` (PPID 1) holding port 5656
+        # for hours after the run, which made start_api_logic_server() below fail with
+        # "Address already in use" — and, same class of bug as test_docker_sqlserver's
+        # documented port leak, cascaded into docker_mysql/docker_sqlserver failing right after
+        # with the identical "failed to start on port 5656 within 30s" symptom, unrelated to
+        # either of those tests' own logic. Force-clear the port unconditionally before
+        # start_api_logic_server() rather than trusting the prompt instruction alone.
+        subprocess.run("lsof -ti:5656 | xargs kill -9 2>/dev/null", shell=True, capture_output=True)
+
+        start_api_logic_server(project_name="AllocationAIFull")
+        try:
+            if Config.do_ai_generated_full_prompt_test_with_behave:
+                # SLOW PATH: second headless pass writes a Behave suite for the rules it just
+                # wrote (docs/training/testing.md, this project's own copy — see class docstring
+                # for why this replaces reusing allocate_dept_account_demo's fixture). This is
+                # the only BLT coverage of AI-driven Behave-suite generation itself.
+                behave_test_instructions = (
+                    'Read docs/training/testing.md in full before writing any code. Then create Behave '
+                    'tests (following that guide\'s conventions exactly) that verify the cascade-allocation '
+                    'logic you just implemented in logic/logic_discovery/ against this requirement:\n\n'
+                    f'{allocation_prompt_text}\n\n'
+                    'The server is already running at http://localhost:5656 — write tests against the '
+                    'live API, matching this project\'s own logic/schema (do not assume any other '
+                    'project\'s column names). Write scenarios under test/api_logic_server_behave/features/.'
+                )
+                behave_prompt_file = target_project_path.joinpath('_claude_behave_prompt.txt')
+                with open(behave_prompt_file, 'w') as f:
+                    f.write(behave_test_instructions)
+                behave_gen_cmd = (f'claude -p "$(cat {behave_prompt_file.name})" --output-format json '
+                                  f'--allowedTools Read Write Edit Bash Glob Grep')
+                run_command(behave_gen_cmd,
+                        cwd=target_project_path,
+                        msg='\nClaude Code (headless) writing Behave tests from its own rules',
+                        show_output=True)
+                behave_prompt_file.unlink()
+
+                features_path = target_project_path.joinpath('test/api_logic_server_behave/features')
+                if not features_path.exists() or not any(features_path.glob('*.feature')):
+                    raise Exception(f"claude -p exited 0 but wrote no .feature files under "
+                                    f"{features_path} — inspect the claude output above to see "
+                                    f"what it did instead.")
+
+                print("\nRunning AllocationAIFull Behave suite (self-authored pass/fail oracle for AI-built project)...\n")
+                behave_path = target_project_path.joinpath('test').joinpath('api_logic_server_behave')
+                behave_run_path = behave_path.joinpath('behave_run.py')
+                behave_log_path = behave_path.joinpath('logs').joinpath('behave.log')
+                # Same '!cmd_venv' absolute-path gotcha as AllocationAI above (cmd_venv.sh ignores
+                # cwd= and always runs from INSTALL_DIR) — reuse the proven absolute-path pattern.
+                behave_command = f'{set_venv} && {python} {behave_run_path} --outfile={str(behave_log_path)}'
+
+                if behave_log_path.exists():
+                    behave_log_path.unlink()
+
+                result_behave = run_command(behave_command,
+                                            cwd=str(behave_path),
+                                            msg="\nBehave Test Run", show_output=True)
+
+                if not behave_log_path.exists():
+                    diag_path = install_api_logic_server_path / 'tests' / 'ai_generated_full_prompt_diagnostic.log'
+                    with open(diag_path, 'w') as f:
+                        f.write(f"command: {behave_command}\n")
+                        f.write(f"cwd: {behave_path}\n")
+                        f.write(f"returncode: {result_behave.returncode!r}\n\n")
+                        f.write("=== stdout ===\n")
+                        f.write(result_behave.stdout.decode(errors='replace') if result_behave.stdout else '(empty)')
+                        f.write("\n\n=== stderr ===\n")
+                        f.write(result_behave.stderr.decode(errors='replace') if result_behave.stderr else '(empty)')
+                    raise Exception(f"Behave never wrote {behave_log_path} — it did not run to "
+                                    f"completion (server not ready, import error, self-authored "
+                                    f"test/step bug, etc). subprocess returncode was "
+                                    f"{result_behave.returncode} but is not trusted here. Full "
+                                    f"captured stdout/stderr written to: {diag_path}")
+
+                has_traceback = does_file_contain(in_file=str(behave_log_path), search_for="Traceback")
+                has_assertion_failed = does_file_contain(in_file=str(behave_log_path), search_for="Assertion Failed")
+                has_failing_scenarios = does_file_contain(in_file=str(behave_log_path), search_for="Failing scenarios")
+                if has_traceback or has_assertion_failed or has_failing_scenarios:
+                    print(f"\n=== {behave_log_path} (fresh this run) — last 3000 chars ===")
+                    with open(behave_log_path, 'r', errors='replace') as f:
+                        print(f.read()[-3000:])
+                    raise Exception("Behave Run Error - AI-built allocation project's OWN Behave suite "
+                                    "(written by the same run, from its own rules) failed against its "
+                                    "own implementation. Since both the logic and the tests came from "
+                                    "this run, a failure here points at an internal inconsistency "
+                                    "(logic doesn't do what the AI itself claims/tested), not a "
+                                    "cross-run naming mismatch. See behave.log above.")
+                print("\nAllocationAIFull tests - Success (AI-built project passed its own self-authored Behave tests)...\n")
+            else:
+                # FAST PATH (default): one headless pass total. The SAME call that built the
+                # project also verifies its own work via curl against the live API + reading
+                # logs/als.log's rule-fire trace — the same lightweight sanity check a live
+                # Method 4 session naturally does when asked to confirm logic works, not a
+                # generated test artifact. Writes a small JSON verdict file that this harness
+                # then checks — cheaper than authoring/running a Behave suite (no .feature/step
+                # files, no second CE-reading pass).
+                verify_result_path = target_project_path.joinpath('_ai_verify_result.json')
+                verify_instructions = (
+                    'The server is already running at http://localhost:5656. Verify the cascade-allocation '
+                    'logic you just implemented against this requirement, using curl against the live API '
+                    '(not a generated test suite) and by reading logs/als.log\'s rule-fire trace to confirm '
+                    'the expected rules actually fired:\n\n'
+                    f'{allocation_prompt_text}\n\n'
+                    'Exercise at minimum: (1) a Charge insert that cascades correctly through both Allocate '
+                    'levels with correct percents/amounts, (2) the rollup columns you added reflect the '
+                    'correct totals after that insert, (3) a Charge against an inactive/missing funding '
+                    'definition is rejected.\n\n'
+                    f'When done, write your verdict to {verify_result_path.name} as JSON: '
+                    '{"passed": true/false, "checks": [{"description": "...", "passed": true/false, '
+                    '"detail": "..."}], "summary": "one paragraph"}. Write this file even if some checks '
+                    'failed — it is the record of what you found, not just a success report.'
+                )
+                verify_prompt_file = target_project_path.joinpath('_claude_verify_prompt.txt')
+                with open(verify_prompt_file, 'w') as f:
+                    f.write(verify_instructions)
+                verify_cmd = (f'claude -p "$(cat {verify_prompt_file.name})" --output-format json '
+                              f'--allowedTools Read Bash Glob Grep')
+                run_command(verify_cmd,
+                        cwd=target_project_path,
+                        msg='\nClaude Code (headless) self-verifying its own build via curl + als.log',
+                        show_output=True)
+                verify_prompt_file.unlink()
+
+                if not verify_result_path.exists():
+                    raise Exception(f"claude -p exited 0 but wrote no verdict file at "
+                                    f"{verify_result_path} — inspect the claude output above "
+                                    f"to see what it did instead.")
+
+                with open(verify_result_path, 'r') as f:
+                    verify_result = json.load(f)
+                # Durable copy (Aug 2026) - previously unlinked in place with no other record,
+                # so a failure's actual verdict (which checks failed, why) only ever existed in
+                # BLT's own console scrollback, unrecoverable after the run ended. Real case: a
+                # run failed here while the SAME run's als.log showed fully correct behavior
+                # (both negative-test rejections fired correctly, the positive cascade computed
+                # the right total) - i.e. the AI likely mis-graded its own passing work, but the
+                # verdict JSON explaining its reasoning was already gone by the time anyone
+                # looked. Keep it on both outcomes (not just failure) so a future "did it pass
+                # for the right reason" check is possible too.
+                verify_results_dir = install_api_logic_server_path / 'tests' / 'ai_verify_results'
+                verify_results_dir.mkdir(parents=True, exist_ok=True)
+                verify_archive_path = verify_results_dir / 'AllocationAIFull.json'
+                shutil.copy(verify_result_path, verify_archive_path)
+                verify_result_path.unlink()
+
+                if not verify_result.get('passed'):
+                    print(f"\n=== AI self-verification result ===\n{json.dumps(verify_result, indent=2)}")
+                    raise Exception("AI self-verification reported failure - AI-built allocation project "
+                                    "(full prompt, own schema) did not pass its own curl/als.log checks "
+                                    "of the cascade-allocation requirement. See verdict JSON above, or "
+                                    f"{verify_archive_path} (persists across runs until overwritten).")
+                print(f"\nAllocationAIFull tests - Success (AI self-verification passed): "
+                      f"{verify_result.get('summary', '')}\n")
+        finally:
+            stop_server(msg="*** ALLOCATION AI FULL PROMPT TEST COMPLETE ***\n")
+
+    run_test("ai_generated_full_prompt_test", "AI-built project from full allocation.prompt.md, self-verified (curl+als.log by default, or self-authored Behave suite if do_ai_generated_full_prompt_test_with_behave)",
+             test_ai_generated_full_prompt, folders="AllocationAIFull")
+
 if Config.do_docker_mysql:
     def test_docker_mysql():
-        result_docker_mysql_classic = run_command(
-            f"{set_venv} && ApiLogicServer create --{project_name}=tests/mysql-northwind --{db_url}=mysql+pymysql://root:p@{db_ip}:3306/Northwind",
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate MySQL northwind at: {str(install_api_logic_server_path)}')
-        check_command(result_docker_mysql_classic) 
-        start_api_logic_server(project_name='mysql-northwind')
-        validate_autoinsert(arg_attr_last_name='LastName', arg_attr_first_name='FirstName', arg_attr_id='EmployeeID')
-        stop_server(msg="mysql-northwind\n")
+        # PORT-LEAK FIX (Aug 2026): same class of bug documented in test_docker_sqlserver and
+        # test_ai_generated_full_prompt — stop_server() must run even if validate_autoinsert()
+        # (or the second create/start block) raises, or a failure here leaves the server
+        # holding port 5656 for every subsequent test (real case: this exact gap meant
+        # mysql-northwind's own stop_server() never ran when it hit an already-leaked port
+        # from a prior test, so the leak wasn't self-healed and propagated further downstream
+        # to docker_sqlserver/docker_postgres/docker_postgres_auth in the same BLT run).
+        server_started = False
+        try:
+            result_docker_mysql_classic = run_command(
+                f"{set_venv} && ApiLogicServer create --{project_name}=tests/mysql-northwind --{db_url}=mysql+pymysql://root:p@{db_ip}:3306/Northwind",
+                cwd=install_api_logic_server_path,
+                msg=f'\nCreate MySQL northwind at: {str(install_api_logic_server_path)}')
+            check_command(result_docker_mysql_classic)
+            start_api_logic_server(project_name='mysql-northwind')
+            server_started = True
+            validate_autoinsert(arg_attr_last_name='LastName', arg_attr_first_name='FirstName', arg_attr_id='EmployeeID')
+        finally:
+            if server_started:
+                stop_server(msg="mysql-northwind\n")
 
-        result_docker_mysql_classic = run_command(
-            f"{set_venv} && ApiLogicServer create --{project_name}=tests/classicmodels --{db_url}=mysql+pymysql://root:p@{db_ip}:3306/classicmodels",
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate MySQL classicmodels at: {str(install_api_logic_server_path)}')
-        check_command(result_docker_mysql_classic) 
-        start_api_logic_server(project_name='classicmodels')
-        stop_server(msg="classicmodels\n")
-    
+        server_started = False
+        try:
+            result_docker_mysql_classic = run_command(
+                f"{set_venv} && ApiLogicServer create --{project_name}=tests/classicmodels --{db_url}=mysql+pymysql://root:p@{db_ip}:3306/classicmodels",
+                cwd=install_api_logic_server_path,
+                msg=f'\nCreate MySQL classicmodels at: {str(install_api_logic_server_path)}')
+            check_command(result_docker_mysql_classic)
+            start_api_logic_server(project_name='classicmodels')
+            server_started = True
+        finally:
+            if server_started:
+                stop_server(msg="classicmodels\n")
+
     run_test("docker_mysql", "Docker MySQL ClassicModels test", test_docker_mysql,
              folders="mysql-northwind, classicmodels")
     

@@ -35,6 +35,9 @@ class Config:
 
     do_ai_generated_logic_test = False              # SLOW/costs $: see env_val.py for details
 
+    do_ai_generated_full_prompt_test = False        # SLOW/costs $: see env_val.py for details
+    do_ai_generated_full_prompt_test_with_behave = False  # see env_val.py for details
+
     do_budget_app_test = default_setting            # insert_parent test
 
     do_other_sqlite_databases = default_setting     # classic models

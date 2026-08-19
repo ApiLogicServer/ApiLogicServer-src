@@ -34,12 +34,31 @@ class Config:
 
     do_allocation_test = default_setting            # create / run / test allocation project
 
-    do_ai_generated_logic_test = True               # SLOW/costs $: AI writes charge_distribution.py
+    do_ai_generated_logic_test = False              # SLOW/costs $: AI writes charge_distribution.py
                                                      # from a prompt, verified against allocate_dept_
                                                      # account_demo's Behave suite. Confidence check for
                                                      # the rules CE, not the engine — flip to True when
                                                      # validating logic_bank_api.md/allocate.md changes.
-                                                     # time: 169->325 (3->5.5 mins. [~2.5 mins])
+                                                     # time: 169->716 (nearly 8 min)
+
+    do_ai_generated_full_prompt_test = False         # SLOW/costs $: AI builds the WHOLE project (DDL +
+                                                     # all logic) from samples/prompts/allocation.prompt.md
+                                                     # (same file that built allocate_dept_account_demo),
+                                                     # self-verified (curl + als.log, or self-authored
+                                                     # Behave suite — see flag below). Sibling of
+                                                     # do_ai_generated_logic_test above — tests whether
+                                                     # full-narrative context (vs. one isolated file/clause)
+                                                     # reinforces the model into deriving rollups/constraints
+                                                     # on its own. Added Aug 18 2026.
+
+    do_ai_generated_full_prompt_test_with_behave = False  # False (default, fast): the build pass
+                                                     # self-verifies via curl + logs/als.log rule-fire
+                                                     # trace — one headless call, no Behave authoring.
+                                                     # True (slow): second headless pass writes a full
+                                                     # Behave suite from its own rules and runs that —
+                                                     # the only BLT coverage of AI-driven Behave-suite
+                                                     # generation itself. Flip to True when validating
+                                                     # that capability specifically.
 
     do_budget_app_test = default_setting            # insert_parent test
 

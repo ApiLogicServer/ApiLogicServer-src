@@ -102,6 +102,32 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
                 log.debug(f'.. ..Overlay --from_git (local dir): {project.from_git}')
                 recursive_overwrite(project.from_git, project.project_directory)
 
+        # Project Context Engineering overlay - same mechanism as --from_git above, but always
+        # checked (no CLI flag) and sourced from the Manager root (cwd), not the pip-installed
+        # package dir (get_api_logic_server_dir()). This is what lets a CE-only tweak reach
+        # already-built Docker/Codespaces environments via a Manager sync (create_codespaces_mgr.py
+        # --push/--release) instead of requiring a docker buildx rebuild+push of the base image -
+        # see that script's module docstring ("CAUTION - this script does NOT cover...") for the
+        # gap this closes. Applied AFTER base and --from_git so it's the final CE word for this
+        # project, same last-one-wins overlay convention as the sample-specific overlays below.
+        # Unlike --from_git (whole-project overwrite), this lands under docs/training/ only -
+        # these are training file additions/overrides, not project scaffold.
+        pce_source_dir = Path.cwd() / 'system' / 'project_context_engineering'
+        if pce_source_dir.is_dir() and any(pce_source_dir.iterdir()):
+            log.debug(f'.. ..Overlay Project Context Engineering: {pce_source_dir}')
+            pce_dest_dir = Path(project.project_directory) / 'docs' / 'training'
+            pce_dest_dir.mkdir(parents=True, exist_ok=True)
+            recursive_overwrite(str(pce_source_dir), str(pce_dest_dir))
+            pce_readme_path = pce_dest_dir / '$readme.md'
+            if pce_readme_path.exists():
+                overlay_note = (
+                    f"\n---\nOverlaid from `{pce_source_dir}` "
+                    f"(genai-logic {__version__}) at project creation, "
+                    f"{datetime.datetime.now().strftime('%B %d, %Y %H:%M:%S')}.\n"
+                )
+                with open(pce_readme_path, 'a') as f:
+                    f.write(overlay_note)
+
         if project.nw_db_status in ["nw", "nw+"]:
             log.debug(".. ..Copying nw customizations: logic, custom api, readme, tests, admin app")
             if project.nw_db_status == 'nw':  # nw gets converted to nw-, so this should not occur

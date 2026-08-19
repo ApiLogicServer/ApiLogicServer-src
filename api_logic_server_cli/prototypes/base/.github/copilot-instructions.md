@@ -1,4 +1,16 @@
 ---
+version: 3.39 - 8/18/26 - Added a fourth "Before-you're-done scan" bullet: a constraint that
+WAS written can still silently pass exactly the case it exists to reject, when a null-guard
+uses `or` instead of `and` — e.g. `row.parent is None or row.parent.flag == 1` treats "no
+parent assigned" as a free pass, correct only if the requirement genuinely allows that.
+Confirmed real case (full-prompt AI build, AI-designed schema): a Charge against a Project
+with no funding definition at all was wrongly accepted (should have been rejected per "may
+only be posted if...active") because the constraint's `project.project_funding_definition is
+None` clause short-circuited to pass — silent zero-value cascade, no rejection, no error;
+caught only by post-hoc self-verification, not the constraint. Full pattern + before/after
+code in docs/training/logic_bank_api.md v1.0.24 ("MISSING LOOKUP MUST NOT SILENTLY PASS A
+CONSTRAINT"), placed right after the existing early_row_event/relationship-staleness section
+whose own ❌ WRONG example already had this exact bug shape, unlabeled as such.
 version: 3.38 - 8/15/26 - Added two more "Before-you're-done scan" bullets, same session as
 v3.37's rollup scan, found via the same cascade-Allocate build: (1) "Every requirement clause
 has a matching rule" — re-read the requirement text itself (not models.py — a missing
@@ -1440,6 +1452,18 @@ This auto-generates correct `models.py` with all boilerplate intact.
      dropped requirement coverage than one you just designed, and apply both scans above more
      deliberately in that case — don't assume the same care you'd naturally apply when
      designing fresh DDL carries over automatically.
+   - **A constraint that WAS written can still silently pass the exact case it exists to
+     reject — check the boolean logic, not just presence.** The scans above catch a clause
+     that was never attempted; they don't catch one attempted incorrectly. The specific
+     pattern to check: any constraint condition combining a null-guard with `or` — e.g.
+     `row.parent is None or row.parent.flag == 1` — silently treats "no parent assigned" as
+     a pass. That's correct only if the requirement genuinely allows the parent to be absent;
+     if the requirement means "must have an active X" (missing X is not active X), the `or`
+     inverts the intent. See `docs/training/logic_bank_api.md`'s "MISSING LOOKUP MUST NOT
+     SILENTLY PASS A CONSTRAINT" section for the fix (`or` → `and`) and the real failure case:
+     a Charge against a Project with no funding definition at all was wrongly accepted because
+     `project.project_funding_definition is None` short-circuited the constraint to pass,
+     silently producing a zero-value cascade with no rejection and no error.
 
 **Key rules:**
 - Never write `models.py` manually — always `rebuild-from-database` after SQL DDL
