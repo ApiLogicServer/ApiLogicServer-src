@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "17.03.19"  # last public release: 17.03.14
+__version__ = "17.03.20"  # last public release: 17.03.19
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/18/2026 - 17.03.19  Vulnerabilibities fixed, Requirements from Interview (RFI) docs \n"\
+    "\t08/23/2026 - 17.03.20  Vulnerabilibities fixed, Requirements from Interview (RFI) docs, LB locking \n"\
     "\t08/07/2026 - 17.03.10  CE for Dashboards & Vibe, LB and CS fixes / examples, no Ont, CLVS, pip-audit \n"\
     "\t07/22/2026 - 17.03.06  Context Engineering for Dashboards & Vibe, LB and CS fixes \n"\
     "\t07/10/2026 - 17.02.08  entity types diagram, LB 1.31.05 evt bug, admin home page fixes, simple browser (mgr), count inits \n"\

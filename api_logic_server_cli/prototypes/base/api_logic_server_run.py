@@ -170,6 +170,13 @@ if __name__ == "__main__":
                 f'..Explore data and API at http_scheme://swagger_host:port {start_up_message}\n'
                 f'.... with flask_host: {args.flask_host}\n'
                 f'.... and  swagger_port: {args.swagger_port}')
+    app_logger.info(f'\nSettings in effect for this run:')
+    app_logger.info(f'.. SECURITY_ENABLED      : {args.security_enabled}')
+    app_logger.info(f'.. OPT_LOCKING           : {args.opt_locking}')
+    app_logger.info(f'.. TRANS_UPDATE_LOCKING  : {os.getenv("TRANS_UPDATE_LOCKING", "ignored")}')
+    app_logger.info(f'.. AGGREGATE_DEFAULTS    : {os.getenv("AGGREGATE_DEFAULTS", "False")}')
+    app_logger.info(f'.. ALL_DEFAULTS          : {os.getenv("ALL_DEFAULTS", "False")}\n')
+
     if logic_alerts:
         app_logger.info(f'\nAlert: These following are **Critical** to unlocking value for project: {project_name}:')
         app_logger.info(f'.. see logic.declare_logic.py       -- {server_setup.declare_logic_message}')
