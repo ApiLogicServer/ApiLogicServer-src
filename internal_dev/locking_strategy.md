@@ -6,7 +6,7 @@
 ## TL;DR
 
 - **Original assumption was wrong.** LogicBank's cascaded aggregate adjustments (`Rule.sum`/`Rule.count`, e.g. `Customer.balance`) are **not** protected today — not by the existing client-facing opt-lock (scoped to `nest_level == 0` only), and not automatically by SQLAlchemy (which offers locking primitives but applies none of them by default). It's a silent lost-update race, not a safe abort.
-- **Proposing:** a new `TRANS_OPT_LOCKING` env var (`ignored` default / `pessimistic`) — parallel to, and independent of, the existing client-facing `OPT_LOCKING`. `pessimistic` wires `with_for_update()` into the single internal LogicBank method every aggregate adjustment already passes through. This is a transaction-internal lock; it does not apply to, and does not change, client-side opt-locking.
+- **Proposing:** a new `TRANS_UPDATE_LOCKING` env var (`ignored` default / `pessimistic`) — parallel to, and independent of, the existing client-facing `OPT_LOCKING`. Named deliberately unlike `OPT_LOCKING`: `TRANS_` marks it as transaction-internal (not client-facing), `UPDATE_` names the moment it applies — LogicBank's own cascaded parent *updates* mid-transaction, not the original client write. If the env var is unset, behavior is `ignored` (today's behavior, unchanged) — same fallback convention as `OPT_LOCKING` itself. `pessimistic` wires `with_for_update()` into the single internal LogicBank method every aggregate adjustment already passes through. This is a transaction-internal lock; it does not apply to, and does not change, client-side opt-locking.
 - **Also designed, deferred:** an optimistic (`trans-optimistic`) alternative. Its bare form makes every caller pay a permanent tax (a write can fail on a row it never touched); a server-side auto-retry variant removes that tax but introduces an unresolved risk of side-effecting rules (Kafka, email) double-firing on retry. Not building either until a real, measured need appears.
 - **Why LogicBank fixes this, not SQLAlchemy:** `with_for_update()` is a per-call-site discipline with no completeness guarantee — someone eventually adds a new write path and misses it, silently. Same structural weakness procedural business logic has vs. declarative rules; same fix applies (enforce once, at the one place all paths already funnel through). See Appendix B.
 
@@ -193,15 +193,26 @@ class OptLocking(ExtendedEnum):
     OPTIONAL = "optional"
     REQUIRED = "required"
 ```
-(`OPT_LOCKING` env var, read once into `Args.opt_locking`.) A new, parallel setting — `CASCADE_OPT_LOCKING` with values `ignored` / `pessimistic` — is the same shape in the same file, not a new mechanism.
+(`OPT_LOCKING` env var, read once into `Args.opt_locking`.) A new, parallel setting — `TRANS_UPDATE_LOCKING` with values `ignored` / `pessimistic` — is the same shape in the same file, not a new mechanism. Deliberately not named `CASCADE_OPT_LOCKING` or any `*_OPT_LOCKING` variant — that family reads as "another flavor of the client-facing check" when this is the opposite: an engine-internal, transaction-scoped lock the client never sees or configures. `TRANS_` signals transaction-internal; `UPDATE_` names the moment (LogicBank's own cascaded parent updates mid-transaction, not the client's original write).
 
 **Scoped down from the original 3-way proposal to 2 values, per the Recommendation below: `optimistic` (Option D) is documented above but not being built.** No `optimistic` value ships until a specific customer produces a measured need for it — see Recommendation.
 
-Plumbing into LB: `LogicBank.activate()` already takes extensible mode kwargs (`aggregate_defaults`, `all_defaults`) alongside `session`/`activator`/`constraint_event` — a `cascade_locking=` kwarg fits directly. `RuleBank` (`rule_bank/rule_bank.py`) is already a singleton LB uses for engine-wide state; `activate()` stashing the mode there, and `aggregate.py`'s `adjust_from_*` methods branching on it before each adjustment, needs no new plumbing concept:
+Plumbing into LB: `LogicBank.activate()` already takes extensible mode kwargs (`aggregate_defaults`, `all_defaults`) alongside `session`/`activator`/`constraint_event` — a `trans_update_locking=` kwarg fits directly. `RuleBank` (`rule_bank/rule_bank.py`) is already a singleton LB uses for engine-wide state; `activate()` stashing the mode there, and `aggregate.py`'s `adjust_from_*` methods branching on it before each adjustment, needs no new plumbing concept:
 - `ignored` → today's plain `setattr` (§2, current behavior, unchanged)
 - `pessimistic` → Option A's `with_for_update()`
 
-Default `ignored` preserves today's behavior and performance for every existing deployment that doesn't opt in — no surprise regression on upgrade.
+**If `TRANS_UPDATE_LOCKING` is unset (not present in the environment at all), behavior is `ignored`** — same fallback convention `OPT_LOCKING` already uses (`os.getenv('OPT_LOCKING')` only overrides when actually set; otherwise the Python-side default in `config.py` stands). Default `ignored` preserves today's behavior and performance for every existing deployment that doesn't opt in — no surprise regression on upgrade.
+
+**`default.env` placement:** unlike `OPT_LOCKING` (which has no line at all in `prototypes/base/config/default.env` — its default lives silently in `config.py` only), `TRANS_UPDATE_LOCKING` should get an explicit, *uncommented* line in `default.env` stating the active default outright — not a commented-out placeholder like `AGGREGATE_DEFAULTS`/`ALL_DEFAULTS` (lines 7–8 of that file), since commented-out reads as "an option you could enable" whereas this should read as "this is the behavior in effect right now" for a setting that changes locking/failure behavior:
+```
+# TRANS_UPDATE_LOCKING controls locking for LogicBank's own cascaded aggregate adjustments
+# (Rule.sum/Rule.count parent updates) during a transaction - distinct from OPT_LOCKING above,
+# which only covers the client's own PATCH. See internal_dev/locking_strategy.md.
+# ignored (default): today's behavior, no locking
+# pessimistic: locks the aggregate root row for the transaction duration (with_for_update)
+TRANS_UPDATE_LOCKING = ignored
+```
+This is a deliberate departure from `OPT_LOCKING`'s own precedent, not an oversight — a project author should be able to discover this knob by opening `default.env`, not only by reading `config.py` source.
 
 ### Recommendation
 
@@ -226,8 +237,8 @@ If a specific customer later produces a measured case where A's blocking is a re
 ## 7. Open questions for Val
 
 - Confirm `ignored` as the shipped default (preserves current behavior on upgrade) with `pessimistic` as the recommended opt-in, per the Recommendation above — or does Val want `pessimistic` as the out-of-the-box default for new projects, accepting the small risk of surprising an existing low-contention deployment that upgrades LB and inherits new blocking behavior?
-- Does this warrant a LogicBank release note / migration guide entry, given `CASCADE_OPT_LOCKING` changes locking or failure behavior for every existing `Rule.sum`/`Rule.count` once a project opts in?
-- Should the opt-locking training doc (`docs/training/logic_bank_api.md`) get a short callout that same-transaction constraint checks over aggregates are only as safe as `CASCADE_OPT_LOCKING`'s setting — so a project author reading the credit-limit example doesn't assume a same-transaction guarantee the engine doesn't provide under the default `ignored` setting?
+- Does this warrant a LogicBank release note / migration guide entry, given `TRANS_UPDATE_LOCKING` changes locking or failure behavior for every existing `Rule.sum`/`Rule.count` once a project opts in?
+- Should the opt-locking training doc (`docs/training/logic_bank_api.md`) get a short callout that same-transaction constraint checks over aggregates are only as safe as `TRANS_UPDATE_LOCKING`'s setting — so a project author reading the credit-limit example doesn't assume a same-transaction guarantee the engine doesn't provide under the default `ignored` setting?
 - Option F's Phase-3c idempotency hazard (side-effecting events potentially double-firing across a retried pass) needs tracing against LB's actual flush-cycle behavior before F is even a safe option to prototype, independent of whether F is ever built — worth a dedicated investigation if F is ever revisited.
 
 ## Appendix A: Cost/Risk Assessment — Option A vs. Option D
