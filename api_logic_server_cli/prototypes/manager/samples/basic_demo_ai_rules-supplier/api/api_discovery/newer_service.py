@@ -1,5 +1,6 @@
 from flask import request, jsonify
 import logging
+from api.system.api_utils import safe_log
 
 app_logger = logging.getLogger("api_logic_server_app")
 
@@ -17,5 +18,5 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 http://localhost:5656/hello_newer_service?user=ApiLogicServer
         """
         user = request.args.get('user')
-        app_logger.info(f'{user}')
+        app_logger.info(f'{safe_log(user)}')
         return jsonify({"result": f'hello from even_newer_service! from {user}'})

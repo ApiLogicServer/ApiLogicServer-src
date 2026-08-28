@@ -4,7 +4,8 @@
 """
 
 import logging, sys, io
-from flask import Flask, redirect, send_from_directory, send_file
+from flask import Flask, redirect, send_from_directory, send_file, abort
+from werkzeug.utils import safe_join
 from config.config import Config
 from config.config import Args
 from pathlib import Path
@@ -117,7 +118,10 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         """
         use_type = "mem"
         if use_type == "mem":
-            with open(f'ui/admin/{path}', "r") as f:  # path is admin.yaml for default url/app
+            safe_path = safe_join('ui/admin', path)
+            if safe_path is None:
+                abort(404)
+            with open(safe_path, "r") as f:  # path is admin.yaml for default url/app
                 content = f.read()
 
             if args.client_uri is not None:
@@ -168,7 +172,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
             data: Employee/janet.jpg
             url:  http://localhost:5656/ui/images/Employee/janet.jpg
         """
-        response = send_file(f'ui/images/{path}', mimetype='image/jpeg')
+        response = send_from_directory("ui/images", path, mimetype='image/jpeg')
         return response
 
 

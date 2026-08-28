@@ -15,6 +15,13 @@ def log(msg: object) -> None:
     # print("TIL==> " + msg)
 
 
+def safe_log(value: object) -> str:
+    """ Strip CR/LF from a value before logging it, to prevent log injection (CWE-117)
+        when the value may come from external/user input (e.g. request args, URL path segments).
+    """
+    return str(value).replace('\r', '').replace('\n', ' ')
+
+
 def connection() -> sqlite3.Connection:
     ROOT: str = path.dirname(path.realpath(__file__))
     log(ROOT)
@@ -128,9 +135,9 @@ def server_log(request, jsonify):
         rules_report()
         logic_logger.info(f'Logic Bank - {rule_count} rules loaded')
     else:
-        app_logger.info(f'{msg}')
+        app_logger.info(f'{safe_log(msg)}')
         if "Server Log: Behave Run Successfully Completed" in msg:
-            logic_logger.info(f'\n\n*** {msg}\n\n***\n\n')
+            logic_logger.info(f'\n\n*** {safe_log(msg)}\n\n***\n\n')
     return jsonify({"result": f'ok'})
 
 

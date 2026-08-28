@@ -56,7 +56,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             return jsonify({ "success": False, "message": "Shutdown not enabled" })
 
         msg = request.args.get('msg')
-        app_logger.info(f'\nStopped server: {msg}\n')
+        app_logger.info(f'\nStopped server: {api_utils.safe_log(msg)}\n')
 
         os.kill(os.getpid(), signal.SIGINT)
         return jsonify({ "success": True, "message": "Server is shutting down..." })

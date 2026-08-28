@@ -29,6 +29,16 @@ from flask import g
 # keycloak auth provider
 # **********************
 
+def safe_log(value: object) -> str:
+    """ Strip CR/LF from a value before logging it, to prevent log injection (CWE-117)
+        when the value may come from external/user input (e.g. request args, URL path segments).
+
+        Duplicated from api/system/api_utils.py: this module is imported by config/config.py
+        during behave test collection, where features/steps/api.py (a behave step-definitions
+        file) shadows the project's api/ package on sys.path, breaking `from api.system...` imports.
+    """
+    return str(value).replace('\r', '').replace('\n', ' ')
+
 db = None
 session = None
 
@@ -177,7 +187,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         
             user = session.query(authentication_models.User).filter(authentication_models.User.id == id).one_or_none()
             if user is None:  #Val - change note to remove try, use 1st user if none (as a temp hack?)
-                logger.info(f'*****\nauth_provider: Create user for: {id}\n*****\n')
+                logger.info(f'*****\nauth_provider: Create user for: {safe_log(id)}\n*****\n')
                 user = session.query(authentication_models.User).first()
                 return user
             logger.info(f'*****\nauth_provider: User: {user}\n*****\n')

@@ -14,6 +14,16 @@ import logging
 # sql auth provider
 # **********************
 
+def safe_log(value: object) -> str:
+    """ Strip CR/LF from a value before logging it, to prevent log injection (CWE-117)
+        when the value may come from external/user input (e.g. request args, URL path segments).
+
+        Duplicated from api/system/api_utils.py: this module is imported by config/config.py
+        during behave test collection, where features/steps/api.py (a behave step-definitions
+        file) shadows the project's api/ package on sys.path, breaking `from api.system...` imports.
+    """
+    return str(value).replace('\r', '').replace('\n', ' ')
+
 db = None
 session = None
 
@@ -91,8 +101,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         try:
             user = session.query(authentication_models.User).filter(authentication_models.User.id == id).one()
         except Exception as e:
-            logger.info(f'*****\nauth_provider FAILED looking for: {id}\n*****\n')
-            logger.info(f'excp: {str(e)}\n')
+            logger.info(f'*****\nauth_provider FAILED looking for: {safe_log(id)}\n*****\n')
+            logger.info(f'excp: {safe_log(e)}\n')
             # raise e
             raise ALSError(f"User {id} is not authorized for this system")
         use_db_row = False

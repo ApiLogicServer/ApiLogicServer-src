@@ -4,12 +4,14 @@
 """
 
 import logging, sys, io
-from flask import Flask, redirect, send_from_directory, send_file
+from flask import Flask, redirect, send_from_directory, send_file, abort
+from werkzeug.utils import safe_join
 from config.config import Config
 from config.config import Args
 from pathlib import Path
 import os, inspect
 from safrs import ValidationError
+from api.system.api_utils import safe_log
 
 admin_logger = logging.getLogger(__name__)  # log levels: critical < error < warning(20) < info(30) < debug
 
@@ -70,7 +72,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         admin_logger.debug(f'API Logic Server - Start Custom App, return minified sra')
         if True or not did_send_spa:  # debug info
             did_send_spa = True
-            admin_logger.info(f'\nStart Custom App ({path}): return spa "ui/safrs-react-admin", "index.html"\n')
+            admin_logger.info(f'\nStart Custom App ({safe_log(path)}): return spa "ui/safrs-react-admin", "index.html"\n')
         directory = get_sra_directory(args)  # e.g, ...venv/lib/python3.11/site-packages/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
         return send_from_directory(directory, 'index.html')  # unsure how admin finds custom url
 
@@ -94,7 +96,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
 
         if not did_send_spa:
             did_send_spa = True
-            admin_logger.debug(f'return_spa - directory = {directory}, path= {path}')
+            admin_logger.debug(f'return_spa - directory = {directory}, path= {safe_log(path)}')
 
         return send_from_directory(directory, path)
 
@@ -119,7 +121,10 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         """
         use_type = "mem"
         if use_type == "mem":
-            with open(f'ui/admin/{path}', "r") as f:  # path is admin.yaml for default url/app
+            safe_path = safe_join('ui/admin', path)
+            if safe_path is None:
+                abort(404)
+            with open(safe_path, "r") as f:  # path is admin.yaml for default url/app
                 content = f.read()
 
             if args.client_uri is not None:
@@ -172,7 +177,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
             data: Employee/janet.jpg
             url:  http://localhost:5656/ui/images/Employee/janet.jpg
         """
-        response = send_file(f'ui/images/{path}', mimetype='image/jpeg')
+        response = send_from_directory("ui/images", path, mimetype='image/jpeg')
         return response
 
 

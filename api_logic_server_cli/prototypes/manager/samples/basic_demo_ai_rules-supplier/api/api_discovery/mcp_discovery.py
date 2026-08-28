@@ -6,6 +6,7 @@ from pathlib import Path
 
 import requests
 from config.config import Args  # circular import error if at top
+from api.system.api_utils import safe_log
 
 app_logger = logging.getLogger("api_logic_server_app")
 
@@ -30,9 +31,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 # openapi: Incoming request: PATCH http://localhost:5656/api/Customer/1/ {'data': {'attributes': {'credit_limit': 5555}, 'type': 'Customer', 'id': '1'}}
                 # openapi: Incoming request: PATCH http://6f6f-2601-644-4900-d6f0-ecc9-6df3-8863-c5b2.ngrok-free.app/api/Customer/1 {'credit_limit': 5555}
 
-                app_logger.info(f"openapi: Incoming request: {request.method} {request.url} {str(request.json)}")
+                app_logger.info(f"openapi: Incoming request: {safe_log(request.method)} {safe_log(request.url)} {safe_log(request.json)}")
             else:
-                app_logger.info(f"openapi: Incoming request: {request.method} {request.url}")
+                app_logger.info(f"openapi: Incoming request: {safe_log(request.method)} {safe_log(request.url)}")
             # app_logger.info(f"openapi: Incoming request headers: {request.headers}")
 
             chatgpt_request_json = {
