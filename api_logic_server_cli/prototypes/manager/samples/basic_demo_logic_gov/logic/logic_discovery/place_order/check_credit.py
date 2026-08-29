@@ -7,22 +7,23 @@ On Placing Orders, Check Credit
     5. The Item unit_price is copied from the Product unit_price
 """
 
-# Same requirements as logic/procedural/credit_service.py — 5 declarative rules here vs ~200 lines there, with 0 bugs vs 2.
-# (This is a pre-built reference copy — see that file for the note on generating your own.)
-
-# Ask your AI Assistant: What are Rules?
-
 from logic_bank.logic_bank import Rule
 from database import models
 
 
 def declare_logic():
-    # TODO: Review parent-value rules below.
-    #   Rule.copy  = snapshot (value frozen at transaction time, no cascade on parent change) ← default
-    #   Rule.formula referencing row.parent.attr = live (re-derives if parent changes)
-    #   Change Rule.copy → Rule.formula where live propagation is required.
-    Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None)
+    Rule.constraint(validate=models.Customer,
+                     as_condition=lambda row: row.balance <= row.credit_limit,
+                     error_msg="balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+
+    Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total,
+             where=lambda row: row.date_shipped is None)
+
     Rule.sum(derive=models.Order.amount_total, as_sum_of=models.Item.amount)
+
     Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+
     Rule.copy(derive=models.Item.unit_price, from_parent=models.Product.unit_price)
-    Rule.constraint(validate=models.Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+
+# See logic/procedural/credit_service.py for the equivalent procedural implementation —
+# 5 declarative rules here vs ~200 lines there, with 0 bugs vs 2.

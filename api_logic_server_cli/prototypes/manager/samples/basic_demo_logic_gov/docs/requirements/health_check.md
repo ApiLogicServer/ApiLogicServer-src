@@ -1,6 +1,6 @@
 # 🩺 Project Governance Report — basic_demo
 
-**Date:** 2026-05-23
+**Date:** 2026-08-28
 
 ## Summary
 
@@ -37,7 +37,7 @@
 | File | Rules |
 |---|---|
 | `logic/logic_discovery/place_order/check_credit.py` | sum×2, formula×1, copy×1, constraint×1 |
-| `logic/logic_discovery/place_order/app_integration.py` | after_flush_row_event×1 (kafka-publish, hall pass) |
+| `logic/logic_discovery/app_integration.py` | after_flush_row_event×1 (kafka-publish, hall pass) |
 | `logic/logic_discovery/use_case.py` | stub only — no rules |
 
 **Tables with no rules:** Product (acts only as a copy source; no rules declared on it)

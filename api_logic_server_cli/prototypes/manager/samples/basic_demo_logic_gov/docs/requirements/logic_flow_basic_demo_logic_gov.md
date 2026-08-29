@@ -1,4 +1,4 @@
-# Logic Flow — samples/basic_demo_logic_gov
+# Logic Flow — /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/manager/samples/basic_demo_logic_gov
 
 <table>
 <tr valign="top">
@@ -15,8 +15,8 @@
 2. `amount = quantity * unit_price`<br>
 3. `amount_total = sum(amount)`<br>
 4. `balance = sum(amount_total where date_shipped)`<br>
-C. constraint: `Customer`<br>
-E. `Order` → `send_row_to_kafka` (after_flush)
+5. constraint: `Customer`<br>
+6. `Order` → `send_row_to_kafka` (after_flush)
 
 </td>
 </tr>
@@ -39,4 +39,4 @@ On Placing Orders, Check Credit
 ```
 
 ---
-_Generated 2026-07-03 07:39_
+_Generated 2026-08-28 18:26_

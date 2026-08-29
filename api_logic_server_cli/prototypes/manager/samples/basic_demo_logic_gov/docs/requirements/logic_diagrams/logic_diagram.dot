@@ -1,6 +1,6 @@
 digraph logic {
   graph [rankdir=TB, fontname="Helvetica", fontsize=13,
-         label=<<B>Logic Diagram — samples/basic_demo_logic_gov</B>>, labelloc=t,
+         label=<<B>Logic Diagram — /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/manager/samples/basic_demo_logic_gov</B>>, labelloc=t,
          pad=0.4, nodesep=0.90, ranksep=1.10, bgcolor="white",
          splines=spline]
   node  [fontname="Helvetica", fontsize=11, shape=plaintext]
@@ -15,7 +15,7 @@ digraph logic {
   Order [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Order </B></FONT></TD></TR><TR><TD PORT="Order_amount_total_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Order_amount_total" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> amount_total </FONT></TD><TD PORT="Order_amount_total_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
   Product [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Product </B></FONT></TD></TR><TR><TD PORT="Product_unit_price_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Product_unit_price" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> unit_price </FONT></TD><TD PORT="Product_unit_price_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
   // ── rank groupings ────────────────────────────────────────────────
-  { rank=min; Product; Customer }
+  { rank=min; Customer; Product }
   { rank=same; Order }
   { rank=max; Item; TRIGGER }
 

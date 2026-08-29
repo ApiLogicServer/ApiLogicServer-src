@@ -2,7 +2,7 @@
     "tool_type": "json-api",
     "schema_version": "1.0",
     "base_url": "http://localhost:5656/api",
-    "description": "API Logic Project: basic_demo",
+    "description": "API Logic Project: basic_demo_logic_gov",
     "resources": [
         {
             "name": "Customer",

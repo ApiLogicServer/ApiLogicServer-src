@@ -1,9 +1,9 @@
 about:
   date: May 23, 2026 07:24:37
   merged:
-    at: May 23, 2026 07:31:03
+    at: August 28, 2026 18:24:04
     new_attributes: ''
-    new_resources: 'Customer Item Order Product '
+    new_resources: ''
     new_tab_groups: ''
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0

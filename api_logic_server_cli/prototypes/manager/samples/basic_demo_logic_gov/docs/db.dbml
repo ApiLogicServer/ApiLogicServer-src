@@ -6,8 +6,8 @@ Table Customer {
     id INTEGER [primary key]
     name TEXT 
     email TEXT 
-    credit_limit FLOAT 
-    balance FLOAT 
+    credit_limit DECIMAL 
+    balance DECIMAL 
     }
 
 Table Item {
@@ -15,8 +15,8 @@ Table Item {
     order_id INTEGER 
     product_id INTEGER 
     quantity INTEGER 
-    unit_price FLOAT 
-    amount FLOAT 
+    unit_price DECIMAL 
+    amount DECIMAL 
     }
 
 Table Order {
@@ -25,13 +25,13 @@ Table Order {
     date_ordered TEXT 
     date_shipped TEXT 
     notes TEXT 
-    amount_total FLOAT 
+    amount_total DECIMAL 
     }
 
 Table Product {
     id INTEGER [primary key]
     name TEXT 
-    unit_price FLOAT 
+    unit_price DECIMAL 
     }
 
 Table SysConfig {

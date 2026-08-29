@@ -870,14 +870,16 @@ def build_logic_flow_md(rules, files, project_name, svg_path, ranks,
             lines.append(f"{seq}. `{short(r['derive'])} = count({r['source']}{where_str(r)})`")
 
     for r in constraints:
-        lines.append(f"C. constraint: `{r['entity']}`")
+        seq += 1
+        lines.append(f"{seq}. constraint: `{r['entity']}`")
 
     for r in events:
+        seq += 1
         fn   = r['calling'].split('.')[-1]
         kind = r['kind'].replace('_row_event','').replace('after_flush','after_flush')
         doc  = _scan_function_docstring(src_by_func.get(fn, ""), fn)
         suffix = f" — {doc}" if doc else ""
-        lines.append(f"E. `{r['on']}` → `{fn}` ({kind}){suffix}")
+        lines.append(f"{seq}. `{r['on']}` → `{fn}` ({kind}){suffix}")
 
     # Assemble markdown
     title = f"Logic Flow — {project_name}"

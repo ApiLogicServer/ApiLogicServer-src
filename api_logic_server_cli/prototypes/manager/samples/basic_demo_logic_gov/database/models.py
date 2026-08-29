@@ -1,6 +1,6 @@
 # coding: utf-8
 from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
-from sqlalchemy import Column, Float, ForeignKey, Integer, Text, text
+from sqlalchemy import Column, DECIMAL, Float, ForeignKey, Integer, Text, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -10,8 +10,8 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  May 23, 2026 07:31:03
-# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/basic_demo/database/db.sqlite
+# Created:  August 28, 2026 18:24:04
+# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/manager/samples/basic_demo_logic_gov/database/db.sqlite
 # Dialect:  sqlite
 #
 # mypy: ignore-errors
@@ -51,8 +51,8 @@ class Customer(Base):  # type: ignore
     id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
     email = Column(Text)
-    credit_limit = Column(Float, server_default=text("1000.0"))
-    balance = Column(Float, server_default=text("0.0"))
+    credit_limit : DECIMAL = Column(DECIMAL(15, 2), server_default=text("1000.0"))
+    balance : DECIMAL = Column(DECIMAL(15, 2), server_default=text("0.0"))
 
     # parent relationships (access parent)
 
@@ -67,7 +67,7 @@ class Product(Base):  # type: ignore
 
     id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
-    unit_price = Column(Float, nullable=False)
+    unit_price : DECIMAL = Column(DECIMAL(15, 2), nullable=False)
 
     # parent relationships (access parent)
 
@@ -101,7 +101,7 @@ class Order(Base):  # type: ignore
     date_ordered = Column(Text)
     date_shipped = Column(Text)
     notes = Column(Text)
-    amount_total = Column(Float, server_default=text("0.0"))
+    amount_total : DECIMAL = Column(DECIMAL(15, 2), server_default=text("0.0"))
 
     # parent relationships (access parent)
     customer : Mapped["Customer"] = relationship(back_populates=("OrderList"))
@@ -119,8 +119,8 @@ class Item(Base):  # type: ignore
     order_id = Column(ForeignKey('order.id'), nullable=False)
     product_id = Column(ForeignKey('product.id'), nullable=False)
     quantity = Column(Integer, server_default=text("1"), nullable=False)
-    unit_price = Column(Float, server_default=text("0.0"))
-    amount = Column(Float, server_default=text("0.0"))
+    unit_price : DECIMAL = Column(DECIMAL(15, 2), server_default=text("0.0"))
+    amount : DECIMAL = Column(DECIMAL(15, 2), server_default=text("0.0"))
 
     # parent relationships (access parent)
     order : Mapped["Order"] = relationship(back_populates=("ItemList"))
