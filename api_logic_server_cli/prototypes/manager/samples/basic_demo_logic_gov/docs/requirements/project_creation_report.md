@@ -42,6 +42,13 @@ See `project_creation_prompt.md` in this folder for the verbatim originating pro
 You can still add business logic at any time — say **"implement requirements"** (or
 "impl req") to an AI assistant, or write rules directly in `logic/logic_discovery/`.
 
+**You can also change a requirement already implemented** — edit the relevant
+`docs/requirements/<use_case>/requirements.md` (e.g. `check_credit/requirements.md`) and
+say "implement reqs `<use_case>`" again. This is not only for adding new use cases; it is
+the supported way to revise one already in the system — e.g. editing check_credit's
+"balance is less than the credit limit" to "less than or equal to" and re-running
+"implement reqs check_credit" re-derives the affected rule from the updated text.
+
 ## Use Cases
 
 - [check_credit](check_credit/requirements.md)

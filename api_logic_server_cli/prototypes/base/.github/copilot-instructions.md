@@ -1,4 +1,19 @@
 ---
+version: 3.40 - 8/29/26 - Executable Requirements CONTEXT section now explicitly states that
+editing an EXISTING docs/requirements/<name>/requirements.md and re-running "implement reqs
+<name>" is the supported way to change a requirement already implemented — not just a
+mechanism for adding new use cases. Real gap found live (basic_demo_logic_gov session): a
+user recalled that some provenance file explained how to alter requirements, but the CE's
+only worked example of "implement reqs" was creation-shaped (copy a new requirements set in,
+implement it) — nothing stated that editing an existing file and re-running the same command
+was equally valid, so a reasonable user would not have discovered this without asking. Added
+a worked example (a constraint's comparison operator changing, e.g. "less than" → "less than
+or equal to") and an explicit instruction to diff the new requirements.md against the current
+logic file rather than regenerating it from scratch, to avoid silently dropping unrelated
+rules or prior ad-lib decisions. Also updated project_creation_report.md's "Next steps"
+section (written by `genai-logic create`, prototypes/manager/samples/basic_demo_logic_gov and
+the equivalent build_and_test project) to mention this directly, since that's the file a user
+actually reads post-creation for "how do I change this later."
 version: 3.39 - 8/18/26 - Added a fourth "Before-you're-done scan" bullet: a constraint that
 WAS written can still silently pass exactly the case it exists to reject, when a null-guard
 uses `or` instead of `and` — e.g. `row.parent is None or row.parent.flag == 1` treats "no
@@ -538,6 +553,8 @@ STEP 3: If building a full dashboard, do NOT stop after the query + /dashboard r
 
 **CONTEXT:**  
 This is Phase 2 of the two-phase Executable Requirements workflow. Phase 1 (infrastructure) is already done — the project is running with swagger and Admin UI confirmed. The user copies requirement sets into named subfolders and implements them one at a time, iteratively.
+
+**This is not only for adding new use cases — editing an EXISTING `docs/requirements/<name>/requirements.md` and re-running "implement reqs `<name>`" is the supported way to change a requirement already in the system.** A user is unlikely to guess this on their own — "implement reqs" reads naturally as a one-time creation step, not an update mechanism, so proactively point it out when relevant (e.g. right after finishing a use case, or whenever the user asks "how do I change this rule later"). Example: editing `check_credit/requirements.md` from "balance is less than the credit limit" to "balance is less than or equal to the credit limit," then saying "implement reqs check_credit," re-derives the affected rule(s) from the updated text — the same STEP 1–7 sequence below runs again, it is not a special "edit mode." Diff the new requirements.md against the current logic file before writing anything, so only the actually-changed rule(s) are touched — do not regenerate the whole file from scratch and risk silently dropping unrelated rules or ad-lib decisions made earlier.
 
 **MANDATORY SEQUENCE:**
 
