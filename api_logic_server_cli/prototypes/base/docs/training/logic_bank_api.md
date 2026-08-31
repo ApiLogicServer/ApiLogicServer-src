@@ -678,6 +678,29 @@ Equivalent expanded example using informal syntax:
                         as_condition=lambda row: row.balance <= row.credit_limit,
                         error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
 
+CRITICAL — BOUNDARY-OPERATOR CONVENTION for constraint prompt wording ("less than",
+"at most", "cannot exceed", "must not exceed", "within the limit", etc.):
+
+Note the example immediately above: the prompt says "is less than the credit limit"
+(strict `<`), but the response uses `<=`. This is a DELIBERATE, STANDING convention,
+not one example's stylistic choice — treat "less than X" / "under X" / "within X"
+phrasing in a business-rule prompt as `<=` unless the prompt gives an EXACT boundary
+value the rule must reject (e.g. "balance must never equal or exceed the limit" or
+"strictly less than $1000" — language that explicitly calls out the boundary case).
+Reason: business constraint language is rarely precise about the boundary itself — the
+author's actual intent is almost always "don't go over the limit," and a value exactly
+AT the limit is normally acceptable (spending your last available dollar of credit is
+not spending over it). Defaulting to strict `<` on ordinary "less than" phrasing rejects
+the boundary case the author almost certainly did not intend to reject.
+    ✅ "balance is less than the credit limit"          → row.balance <= row.credit_limit
+    ✅ "quantity must not exceed the available stock"    → row.quantity <= row.available_stock
+    ✅ "cannot exceed 3300"                               → row.value <= 3300
+    ❌ do NOT silently use strict `<` for any of the above
+    ⚠️ Only use strict `<`/`>` when the prompt itself states the boundary is excluded
+       — do not infer strictness from the English word "less"/"under" alone.
+This applies to every `Rule.constraint`, not just the Check Credit example — same rule
+for `Rule.commit_constraint` and any inline eligibility check with a numeric comparison.
+
 
 PREFER Rule.sum/count OVER CODE — always reactive to child data changes
 

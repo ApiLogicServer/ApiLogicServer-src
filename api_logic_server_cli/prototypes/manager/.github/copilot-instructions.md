@@ -23,8 +23,72 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.21
+version: 2.25
 changelog:
+  - 2.25 (Aug 30 2026) - Added STEP 0: `//`-prefixed lines in a pasted prompt are
+    human-facing comments (notes, alternatives, asides), not spec to execute or a
+    STEP 1b interview flag. Real case: `samples/prompts/basic_demo_rfi.prompt` added a
+    `// or, use an existing db: Create X from samples/dbs/basic_demo.sqlite.` line as
+    documentation for a human choosing how to invoke the prompt — nothing in Method 4's
+    sequence previously said this class of line should be read-but-not-acted-on, so a
+    literal parse could plausibly try to act on it (e.g. asking which database to use,
+    or silently switching databases) instead of treating it as commentary. Explicitly
+    lists the three things a prompt line can be (spec / STEP 1b interview flag /
+    comment) so the distinction is made once, before any fork decision, not re-derived
+    per-line.
+  - 2.24 (Aug 30 2026) - STEP 1b now requires MERGING a flagged clause's interview
+    resolution into the prompt, never silently overwriting the behavior of an
+    already-fully-specified clause — extending an existing rule (new where= condition,
+    new referenced column) is fine; changing what it DOES is not, without surfacing
+    the conflict to the user first. Real failure case (basic_demo_rfi, first live
+    STEP 1b run): the explicit Check Credit clause said Customer.balance excludes
+    shipped orders (ship = settled). The flagged Returns clause's interview correctly
+    noticed a shipped order was already excluded from balance, so "decrease balance
+    on return" would be a no-op under the existing formula — then silently resolved
+    this by changing the SUM's where= from date_shipped is null to date_returned is
+    null. This fixed the returns case but silently discarded the explicit clause's
+    ship-reduces-balance behavior (shipping an order no longer affects balance at
+    all now) — a change the user never asked for or confirmed, even though the
+    two-path choice (keep formula + add adjustment vs. change formula) was already
+    being offered for the FLAGGED clause's resolution; it just wasn't framed as
+    also being a decision about the EXPLICIT clause's fate. Caught only by the user
+    manually tracing balance behavior after the fact, not by the run itself.
+  - 2.23 (Aug 30 2026) - Added STEP 5d: a lightweight, self-reported "CE/Training Files
+    Read" list appended to project_creation_report.md at the end of every Method 4 run
+    — which CE/training files were loaded, in what order, approximate size, no new
+    reads or file-size checks performed to produce it (would defeat the point — added
+    reading to measure reading). Motivated by a live cost/context concern (basic_demo_rfi_1,
+    Aug 2026): a run hit "Credits at 50%" and an autocompact-thrashing error, and there
+    was no artifact to diagnose which files drove it after the fact. Explicitly scoped to
+    file-read tracking only, NOT token/cost/time metrics — this assistant has no reliable
+    access to those numbers (they live in the harness/UI layer, e.g. the credits banner),
+    and estimating them would be fabrication dressed as measurement in a provenance doc,
+    which is exactly where that's most damaging (provenance is the trust artifact).
+  - 2.22 (Aug 30 2026) - Method 4 STEP 1 gains a third fork (new STEP 1b) for prompts
+    that are otherwise complete but explicitly ask for an interview on one clause —
+    e.g. "Also, interview me to work out this general intent: <clause>". Previously
+    ANY supplied prompt (complete or not) fell into "prompt in hand → proceed exactly
+    as today," which has no mechanism to honor an inline interview instruction — it
+    silently executes the whole prompt including the flagged clause, defaulting
+    unstated details instead of asking. Real failure case (basic_demo_rfi_1, Aug 2026):
+    a prompt's 4 fully-specified clauses (check_credit, Kafka publish) executed
+    correctly, but a 5th clause ("customers can return items within a policy window,
+    but only if shipped") — genuinely ambiguous (window length? per-product or global?
+    partial returns? does it interact with the Kafka event?) — was silently resolved
+    with an invented default (`return_policy_days=30`) and only surfaced afterward in
+    ad-libs.md, never asked about. Root cause: the model's own "go mode" vs "interview
+    mode" are mutually exclusive with no blend, and STEP 1's fork evaluates once up
+    front on presence/absence of a prompt, not on whether the prompt itself requests
+    partial clarification. STEP 1b reuses STEP 1a's interview mechanics (one topic at
+    a time, batched not incremental, synthesize + read back for confirmation) but
+    scoped to just the flagged clause(s) — executes every other clause normally, only
+    pausing on the flagged one, then continues into STEP 2 with the clause's resolved
+    text folded into the prompt. Same transcript file as STEP 1a
+    (`docs/requirements/<name>-transcript.md`), appended rather than overwritten if
+    both fire. Not yet independently re-verified live after this fix — the trigger
+    prompt (`samples/prompts/basic_demo_rfi.prompt`, line 17) was updated in the same
+    session to use the explicit "interview me to work out..." phrasing this fork keys
+    off of, but the fork itself has not yet been run against it.
   - 2.21 (Aug 17 2026) - STEP 6: AI starts the server itself instead of telling user to
     press F5 — Codespaces' cached last-used debug config can make bare F5 skip the
     runProjectName prompt, confusing first-time users. Hand-off now points to the Debug
@@ -324,17 +388,101 @@ If you provide a description but want to create the database manually:
 **MANDATORY SEQUENCE:**
 
 ```
+STEP 0: Strip `//`-prefixed lines before parsing the prompt as a spec.
+   A line starting with `//` (optionally indented) is a comment FOR THE HUMAN READER —
+   a note, an alternative, an aside — not part of the domain spec and not an instruction
+   to execute. Read it for context (it may clarify intent), but do not implement it,
+   ask about it, or treat it as a flagged-for-interview clause the way STEP 1b's
+   "interview me..." phrasing is. Distinguish three things a prompt line can be:
+     1. Domain spec (schema/rules/use-cases) → execute directly (STEP 2 onward)
+     2. Explicit interview flag ("interview me to work out...") → STEP 1b, scoped
+     3. `//` comment → read silently, do not act on it, do not mention needing to act
+        on it, and do not carry it into project_creation_prompt.md as if it were part
+        of the requested spec (STEP 5a copies the prompt verbatim including the comment
+        line itself — that's fine, it's provenance of what was literally pasted — but
+        the comment's CONTENT must not become a schema/rule decision on its own).
+   Example: `// or, use an existing db: Create X from samples/dbs/basic_demo.sqlite.`
+   documents an alternative path for a human deciding how to invoke this prompt — it is
+   not an instruction to create the project from that database instead of the one
+   actually specified in the executable lines below it.
+
 STEP 1: Ask user for project name if not provided (short, snake_case, e.g. allo_dept_gl)
 
    🗣️ FORK — no prompt provided yet:
    If the user hasn't supplied a prompt (file, paste, or path), ask: "Do you have a
    domain prompt, or would you like to discuss the system and I'll draft one with
    you?" (AI-as-BA)
-   - Prompt in hand → proceed exactly as today (STEP 2 onward, unchanged).
-   - "Discuss" → go to STEP 1a BEFORE STEP 2. Do not create the project yet — the
-     interview happens first, in this same Manager conversation, with no project
-     directory required (there's no CE to load until the project exists, and none
-     is needed yet: the checklist below is self-contained).
+   - Prompt in hand, fully specified → proceed exactly as today (STEP 2 onward, unchanged).
+   - Prompt in hand, but it explicitly asks for an interview on part of it → go to
+     STEP 1b (partial interview) BEFORE STEP 2. See below.
+   - "Discuss" (no prompt at all) → go to STEP 1a BEFORE STEP 2. Do not create the
+     project yet — the interview happens first, in this same Manager conversation,
+     with no project directory required (there's no CE to load until the project
+     exists, and none is needed yet: the checklist below is self-contained).
+
+STEP 1b: Partial interview (only when a supplied prompt explicitly asks for one)
+   Trigger: the prompt is otherwise a complete, ready-to-execute spec (like STEP 2's
+   default path), but contains an explicit instruction to interview on one part of
+   it — phrasing like "interview me to work out...", "ask me about...", "let's
+   discuss...", or similar, attached to a specific clause or sentence, not the whole
+   prompt. This is distinct from STEP 1a: STEP 1a is triggered by the ABSENCE of a
+   prompt; STEP 1b is triggered by an explicit instruction INSIDE a prompt that is
+   otherwise complete. Do not conflate them — a prompt with a STEP 1b instruction is
+   not "no prompt provided," and must not silently fall through to the unconditional
+   "prompt in hand → proceed as today" branch above, which has no mechanism to honor
+   an inline interview request and will default/guess instead (confirmed real failure,
+   Aug 2026 — see the CE version-history entry for this STEP for the case that forced
+   this fix).
+   - Read the ENTIRE prompt first. Execute every clause that is NOT flagged for
+     interview exactly as STEP 2 onward would — do not hold the whole project hostage
+     to the flagged clause.
+   - For each flagged clause, run a short, SCOPED interview using STEP 1a's mechanics
+     (ask one topic at a time; constants → SysConfig column; lookup nouns → FK
+     inventory; AI/judgment-call phrasing → Request Pattern flag; "different kinds
+     of X" → type hierarchy) — but bounded to that clause's ambiguity, not the whole
+     domain. Do not re-ask about clauses that were already fully specified elsewhere
+     in the prompt.
+   - When the flagged clause's interview feels complete, synthesize its resolved
+     text and read it back for confirmation, same as STEP 1a — then treat the
+     confirmed text as if it had been written into the original prompt at that
+     point, and continue into STEP 2 with the now-complete, fully-specified prompt.
+   - ⚠️ MERGE, NEVER SILENTLY OVERWRITE an already-fully-specified clause. The
+     flagged clause's resolution is allowed to ADD new schema/rules and — when
+     genuinely necessary — EXTEND an existing rule (e.g. add a new condition to a
+     `where=` clause, add a new column an existing formula should also reference).
+     It must NOT replace or invert the semantics of a rule the explicit part of the
+     prompt already fully specified, even if the interview's answers technically
+     imply a simpler-looking replacement. If resolving the flagged clause seems to
+     require changing what an explicit clause DOES (not just adding to it), STOP —
+     surface the conflict explicitly and ask the user to choose, the same way the
+     interview surfaces any other ambiguity; do not resolve it unilaterally just
+     because a plausible-looking fix is available.
+     REAL FAILURE CASE (basic_demo_rfi, Aug 2026): the prompt's explicit Check
+     Credit clause defined `Customer.balance = sum(Order.amount_total where
+     date_shipped is null)` — i.e., shipping an order reduces balance (ship =
+     settled). The flagged Returns clause's interview asked "should balance
+     decrease on return?", the user said yes, and — correctly noticing that a
+     shipped order was already excluded from balance under the existing formula,
+     so a naive "decrease balance" action would be a no-op — the run silently
+     changed the SUM's `where=` from `date_shipped is null` to `date_returned is
+     null` to make the return case work. This fixed the flagged clause but broke
+     the explicit one: shipping an order NO LONGER reduces balance at all now
+     (only a return does), a behavior change the user never asked for and was
+     never asked to confirm. The interview correctly identified a real conflict
+     between the flagged clause and an explicit one, then resolved it by quietly
+     discarding the explicit clause's behavior instead of surfacing the conflict.
+     The two-path choice STEP 1a-style interviews already do (e.g. "keep the
+     original formula and add a separate adjustment action" vs. "change the
+     formula") must be presented to the user as a decision about the EXPLICIT
+     clause's fate, not adjudicated silently in favor of whichever option is
+     less code to write.
+   - Write the scoped Q&A (verbatim, not paraphrased) to
+     `<name>/docs/requirements/<name>-transcript.md`, same file STEP 1a would use —
+     if STEP 1a's full-domain interview never ran, this is the first and only
+     transcript for the project; if it's layered on top of an already-interviewed
+     project, append to the existing transcript rather than overwriting it.
+   - This can happen more than once per prompt if multiple clauses are separately
+     flagged — run STEP 1b once per flagged clause, in the order they appear.
 
 STEP 1a: Socratic interview (only when the user chose "discuss" above)
    Walk the same ground SCS step 4a-4d extracts from written text, but conversationally.
@@ -447,6 +595,19 @@ STEP 5: ⛔ MANDATORY PROVENANCE — before telling the user the project is done
    excerpts already exist (STEP 4) — those are partial, per-rule-file excerpts;
    project_creation_prompt.md is the complete original text, preserved once at the
    project root.
+
+   d. Append a "CE/Training Files Read" list to project_creation_report.md — a
+      lightweight self-report of which CE and training files this run actually
+      loaded, in order, with approximate size (e.g. "docs/training/logic_bank_api.md
+      — read at STEP 4, ~15 KB"). This is a log of files ALREADY READ during this
+      run — do not open, re-open, or measure any file specifically to produce this
+      list; that would add exactly the reading overhead this is meant to make
+      visible, not new overhead of its own. If you don't already know a file's
+      approximate size from having read it, omit the size rather than checking.
+      Purpose: diagnosing excessive CE-reading cost across runs (e.g. comparing
+      whether a small build triggered the same full training-file set as a large
+      one) — not a token/cost/time metric, which this assistant has no reliable
+      access to; do not estimate or invent those numbers.
 
 STEP 6: Start the server YOURSELF to confirm it runs — do NOT tell the user to press F5 here.
    Run (from Manager root): cd <name> && python api_logic_server_run.py &

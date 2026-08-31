@@ -1,0 +1,19 @@
+// paste this into your AI Assistant:
+
+Create a system called basic_demo_rfi, with customers, orders, items and products.
+// or, use an existing db: Create basic_demo_rfi from samples/dbs/basic_demo.sqlite.
+
+Include a notes field for orders.
+
+On Placing Orders, Check Credit    
+    1. The Customer's balance is less than the credit limit
+    2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+    3. The Order's amount_total is the sum of the Item amount
+    4. The Item amount is the quantity * unit_price
+    5. The Item unit_price is copied from the Product unit_price
+
+Use case: App Integration
+    1. Publish the Order to Kafka topic 'order_shipping' when the date_shipped becomes not None.
+
+Also, interview me to work out this general intent:
+Encourage customers to purchase 'green' products with an item discount using a configurable flat percentage.

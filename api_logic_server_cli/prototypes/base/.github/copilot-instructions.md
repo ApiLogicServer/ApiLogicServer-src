@@ -1,4 +1,23 @@
 ---
+version: 3.41 - 8/30/26 - Three fixes found live in basic_demo_rfi's first STEP 1b run
+(Manager CE). (1) logic_bank_api.md: added a "BOUNDARY-OPERATOR CONVENTION" note right
+after the Check Credit worked example — "less than the credit limit" was implemented as
+strict `<` even though the CE's own worked example uses `<=` for the identical wording,
+with no stated rule for why. Now explicit: "less than X"/"at most X"/"cannot exceed X"
+phrasing defaults to `<=` unless the prompt states the boundary is excluded. (2) STEP 6's
+LOGIC FILES checklist ("as_expression=lambda row: my_func(row) is ALWAYS wrong") named
+only Rule.formula's as_expression= — never Rule.constraint's as_condition=, which has the
+identical failure mode (multi-line def where calling= is required). A multi-line
+eligibility function was correctly written with real row.attr dependencies but wired via
+as_condition= instead of calling=, uncaught because the checklist bullet never named
+as_condition= by name. Now both are named explicitly. (3) Added a fifth "Before-you're-done
+scan" bullet: re-check every calling=/as_condition=/as_expression= function's wiring
+parameter AND docstring accuracy against the finished code — a Kafka handler's docstring
+said "fires on null-to-not-null transition" but its actual guard also fired on
+not-null-to-different-not-null; plausibly correct behavior, but undocumented as such.
+Neither (2) nor (3) was a documentation gap in the traditional sense — the underlying rule
+was already stated correctly elsewhere in the CE — so both fixes are about closing a
+naming/re-application gap, not adding new rules.
 version: 3.40 - 8/29/26 - Executable Requirements CONTEXT section now explicitly states that
 editing an EXISTING docs/requirements/<name>/requirements.md and re-running "implement reqs
 <name>" is the supported way to change a requirement already implemented — not just a
@@ -590,8 +609,22 @@ STEP 5: Read docs/training/implement_requirements.md COMPLETELY (silently)
 STEP 6: Implement all steps in requirements.md in sequence.
          Schema is already correct from the assessment above — no DDL surprises mid-implementation.
          LOGIC FILES: before writing each logic file:
-           [ ] Any multi-line logic → write a function, wire with calling=my_func
+           [ ] Any multi-line logic → write a function, wire with calling=my_func — this
+               applies to EVERY Rule.* that accepts calling=, not just Rule.formula. In
+               particular Rule.constraint has BOTH as_condition= (lambda, row only) and
+               calling= (function, row+old_row+logic_row) — a multi-line def passed as
+               as_condition= is the same bug as as_expression=lambda row: my_func(row)
+               below, just on the constraint side; both must become calling=.
            [ ] as_expression=lambda row: my_func(row) is ALWAYS wrong — use calling=my_func
+               (same rule applies to as_condition=lambda row: my_func(row) on
+               Rule.constraint — always wrong for the same reason, use calling=my_func)
+               REAL FAILURE CASE (Aug 2026, basic_demo_rfi): a multi-line eligibility
+               function was correctly written with row.attr references directly in its
+               body (so LB's dependency scan worked) but wired via as_condition= instead
+               of calling= — a pure style/convention violation of this exact rule, not a
+               dependency-tracking bug, that nonetheless went uncaught because this
+               checklist item's wording only named Rule.formula's as_expression=, never
+               Rule.constraint's as_condition= by name.
            ⛔ MANDATORY, NO EXCEPTIONS — immediately after writing
                `logic/logic_discovery/<use_case_name>.py`, also create
                `docs/requirements/<use_case_name>/requirements.md` (verbatim excerpt of the
@@ -1395,6 +1428,23 @@ This auto-generates correct `models.py` with all boilerplate intact.
 
    When seed data IS needed: use `database/test_data/alp_init.py` (Flask context + LogicBank active → all computed fields auto-populated on insert). See `docs/training/implement_requirements.md` Part 5 for the canonical pattern and common failure/fix pairs. Do **not** run seed scripts outside Flask context (`APILOGICPROJECT_NO_FLASK=1`) — LogicBank is suppressed and all derived fields will be zero.
 
+   ⛔ MANDATORY — ACTUALLY RUN the seed script and confirm it succeeds before moving on;
+   writing the file's content is not the deliverable, populated data is:
+   ```bash
+   cd <name> && PROJECT_DIR=$(pwd) python database/test_data/alp_init.py && cd ..
+   ```
+   Check for a clean exit — a traceback means seed data was NOT loaded, even if the script
+   file itself looks correct. Do not assume success from having written correct-looking
+   code. CONFIRMED REAL FAILURE (Aug 2026, basic_demo_rfi): a freshly-generated
+   `alp_init.py` was missing the project-root `sys.path` fix documented in
+   `implement_requirements.md`'s Part 5 failure table (`ModuleNotFoundError: No module
+   named 'config'`, crashing before Flask context is ever entered) — the script was
+   never actually executed this run, so the API came up with zero rows in every table
+   and nothing in this run's own output caught or reported it. If the run crashes with
+   this error, apply the fix from that table (`sys.path.insert(0,
+   str(Path(__file__).parent.parent.parent))` as the first lines) and re-run — do not
+   skip verification and move on to STEP 6 with an unseeded database.
+
    **⚠️ Seed ordering — commit lookup/parent rows before constructing children that FK-reference them:**
    `Rule.formula` functions read `row.<fk_col>` directly at Row Logic time (Phase 3a). If a child row
    is constructed with `parent=unflushed_object` (SQLAlchemy relationship assignment) rather than
@@ -1481,6 +1531,29 @@ This auto-generates correct `models.py` with all boilerplate intact.
      a Charge against a Project with no funding definition at all was wrongly accepted because
      `project.project_funding_definition is None` short-circuited the constraint to pass,
      silently producing a zero-value cascade with no rejection and no error.
+   - **Re-read every `calling=`/`as_condition=`/`as_expression=` function you just wrote —
+     both its wiring parameter and its docstring — against what the code actually does.**
+     Two specific, cheap checks, done for every logic file just written, not sampled:
+     (a) *Wiring parameter*: any multi-line `def` passed to `Rule.constraint` must use
+     `calling=`, never `as_condition=` — `as_condition=` is for one-line lambdas only.
+     This is the same rule as `as_expression=lambda row: my_func(row)` (STEP 6's LOGIC
+     FILES checklist), just easy to miss because that checklist bullet historically named
+     only `Rule.formula`'s `as_expression=`, not `Rule.constraint`'s `as_condition=` — check
+     both. (b) *Docstring accuracy*: read the docstring's description of when/why the
+     function fires, then read the actual condition, and confirm they describe the same
+     set of cases — not just "close enough." A docstring that says "fires on transition
+     from X to Y" but a condition that also fires on "Y changes to a different Y" is a
+     silent behavior a future reader (or a governance report) will trust incorrectly.
+     REAL FAILURE CASE (Aug 2026, basic_demo_rfi, first live STEP 1b run): a `Rule.constraint`
+     eligibility function was wired via `as_condition=` despite being multi-line (violates
+     (a) — should have been `calling=`), and a `Rule.after_flush_row_event` Kafka handler's
+     docstring said it fires "when X transitions from null to not-null" while its actual
+     guard also fired on "X changes from one non-null value to a different non-null value"
+     (violates (b) — plausibly correct behavior, but undocumented as such). Neither was
+     caught by STEP 6's own checklist or this scan's predecessor bullets, because both
+     already existed and looked complete — they just weren't re-applied to the finished
+     file. This bullet exists because "the checklist item exists" and "the checklist item
+     was actually re-run against the finished code" are not the same thing.
 
 **Key rules:**
 - Never write `models.py` manually — always `rebuild-from-database` after SQL DDL
@@ -1697,8 +1770,18 @@ STEP 2.6: Check for EAI Publish pattern:
         BY-EXAMPLE (with mapper): publish_kafka_message(topic="order_shipping", logic_row=logic_row, mapper=order_shipping)
           → mapper file lives in integration/kafka/kafka_publish_discovery/<topic>.py
           → mapper imports from integration.system.EaiPublishMapper import serialize_row
-      Guard condition: `if row.date_shipped is not None and row.date_shipped != old_row.date_shipped:`
+      Guard condition: `if row.date_shipped is not None and (old_row is None or row.date_shipped != old_row.date_shipped):`
         → fires on insert-with-value OR update-where-value-changed; NOT on every save
+        ⚠️ The `old_row is None or` clause is MANDATORY, not optional style — on INSERT,
+        `old_row` is `None` (not a stub object with `None` attributes), so
+        `old_row.date_shipped` without the guard raises
+        `AttributeError: 'NoneType' object has no attribute 'date_shipped'`. This is not
+        a rare case: it fires on the FIRST insert of a row that already has the tracked
+        column set (e.g. importing an already-shipped historical Order) — exactly the
+        insert-with-value half of the guard's own stated purpose. CONFIRMED REAL FAILURE
+        (Aug 2026): this exact guard, missing the `old_row is None or` clause, crashed a
+        live API with `POST /api/Order/` setting `date_shipped` on insert — reproduced
+        across independent project builds that copied this example verbatim.
       Rule type: Rule.after_flush_row_event (Phase 3c — DB-assigned PKs available)
       Generated file: logic/logic_discovery/<use_case>.py (e.g., app_integration.py)
 
@@ -1710,7 +1793,9 @@ STEP 2.6: Check for EAI Publish pattern:
 
         def declare_logic():
             def send_order_to_kafka(row: models.Order, old_row: models.Order, logic_row: LogicRow):
-                if row.date_shipped is not None and row.date_shipped != old_row.date_shipped:
+                """Order event: publish to Kafka topic 'order_shipping' when date_shipped is set
+                and differs from its prior value (old_row is None on insert)."""
+                if row.date_shipped is not None and (old_row is None or row.date_shipped != old_row.date_shipped):
                     kafka_producer.publish_kafka_message(
                         topic="order_shipping",
                         logic_row=logic_row)
