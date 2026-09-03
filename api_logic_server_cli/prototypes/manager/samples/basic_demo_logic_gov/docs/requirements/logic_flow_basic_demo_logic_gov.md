@@ -1,4 +1,4 @@
-# Logic Flow — /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/manager/samples/basic_demo_logic_gov
+# Logic Flow — basic_demo_logic_gov
 
 <table>
 <tr valign="top">
@@ -39,4 +39,4 @@ On Placing Orders, Check Credit
 ```
 
 ---
-_Generated 2026-08-28 18:26_
+_Generated 2026-09-03 10:08_

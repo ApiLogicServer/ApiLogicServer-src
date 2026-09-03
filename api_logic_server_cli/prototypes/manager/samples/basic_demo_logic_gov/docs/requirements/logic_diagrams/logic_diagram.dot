@@ -1,6 +1,6 @@
 digraph logic {
   graph [rankdir=TB, fontname="Helvetica", fontsize=13,
-         label=<<B>Logic Diagram — /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/manager/samples/basic_demo_logic_gov</B>>, labelloc=t,
+         label=<<B>Logic Diagram — basic_demo_logic_gov</B>>, labelloc=t,
          pad=0.4, nodesep=0.90, ranksep=1.10, bgcolor="white",
          splines=spline]
   node  [fontname="Helvetica", fontsize=11, shape=plaintext]
