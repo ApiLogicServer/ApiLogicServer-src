@@ -23,8 +23,20 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.25
+version: 2.26
 changelog:
+  - 2.26 (Sep 4 2026) - Extracted STEP 1a/1b's transcript-format instructions into a new
+    on-demand file, `.github/rfi_transcript_format.md`, read only when a transcript is
+    about to be written — not on every Manager CE activation. The old inline instruction
+    ("verbatim, human/AI turns, not paraphrased") was vague enough that a live run
+    (library_rfi) produced a transcript with `(batched — see below)` placeholders under
+    several questions and a separate cross-referenced answer list — flagged by a human
+    reviewer as hard to follow, fixed live, then generalized into the new file's concrete
+    Question/Options/Answered structure (matching what `AskUserQuestion` itself renders).
+    Both STEP 1a and STEP 1b's transcript bullets now point to the new file instead of
+    carrying the format inline, keeping this file's per-session read cost unchanged for
+    the common case (no interview) while making the format correct and reusable for the
+    STEP 1a/1b case.
   - 2.25 (Aug 30 2026) - Added STEP 0: `//`-prefixed lines in a pasted prompt are
     human-facing comments (notes, alternatives, asides), not spec to execute or a
     STEP 1b interview flag. Real case: `samples/prompts/basic_demo_rfi.prompt` added a
@@ -476,11 +488,11 @@ STEP 1b: Partial interview (only when a supplied prompt explicitly asks for one)
      formula") must be presented to the user as a decision about the EXPLICIT
      clause's fate, not adjudicated silently in favor of whichever option is
      less code to write.
-   - Write the scoped Q&A (verbatim, not paraphrased) to
-     `<name>/docs/requirements/<name>-transcript.md`, same file STEP 1a would use —
-     if STEP 1a's full-domain interview never ran, this is the first and only
-     transcript for the project; if it's layered on top of an already-interviewed
-     project, append to the existing transcript rather than overwriting it.
+   - Write the scoped Q&A to `<name>/docs/requirements/<name>-transcript.md`, same file
+     STEP 1a would use — if STEP 1a's full-domain interview never ran, this is the first
+     and only transcript for the project; if it's layered on top of an already-interviewed
+     project, append to the existing transcript rather than overwriting it. Format: read
+     `.github/rfi_transcript_format.md` now, first time this file is written this session.
    - This can happen more than once per prompt if multiple clauses are separately
      flagged — run STEP 1b once per flagged clause, in the order they appear.
 
@@ -503,12 +515,13 @@ STEP 1a: Socratic interview (only when the user chose "discuss" above)
    it as the prompt. Once confirmed, this synthesized text IS the domain prompt —
    proceed to STEP 2, and it becomes the verbatim content STEP 5a writes to
    project_creation_prompt.md.
-   ⛔ ALSO write the raw Q&A transcript (verbatim, human/AI turns, not paraphrased)
-      to <name>/docs/requirements/<name>-transcript.md — once, at the end, after
-      the interview is confirmed (not incrementally per turn). This is a companion
-      record showing HOW the requirements were derived (which answer surfaced which
-      rule) — do not skip it on the assumption that requirements.md alone suffices;
-      a live run showed the transcript itself is something the user wants back.
+   ⛔ ALSO write the raw Q&A transcript to <name>/docs/requirements/<name>-transcript.md
+      — once, at the end, after the interview is confirmed (not incrementally per turn).
+      This is a companion record showing HOW the requirements were derived (which answer
+      surfaced which rule) — do not skip it on the assumption that requirements.md alone
+      suffices; a live run showed the transcript itself is something the user wants back.
+      Format: read `.github/rfi_transcript_format.md` now, first time this file is
+      written this session — do not freelance the format from memory.
 
    🚨 NAME-COLLISION GUARD — the ONLY collision that matters is the actual create
    target: `<name>/` at the Manager root. Before proceeding:

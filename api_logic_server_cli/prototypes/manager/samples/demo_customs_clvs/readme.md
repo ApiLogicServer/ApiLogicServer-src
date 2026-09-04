@@ -11,6 +11,17 @@ version: 1.3 from docsite, for readme, for readme 8/6/2016
   }
 </style>
 
+!!! pied-piper ":bulb: TL;DR - Governed business system, built from Gherkin requirements"
+
+    Created by: › genai-logic create --project_name=demo_customs_clvs --db_url=sqlite:///samples/dbs/customs.sqlite
+
+    * Governed Business Systems: rules enforce actual CBSA CLVS eligibility regulations
+    * EAI (XML): incoming shipment messages mapped and matched to internal tables
+    * Requirements expressed in Gherkin, not prose — see `docs/requirements/customs_demo/requirements.md`
+    * A complex example of Executable Requirements — sample XML message formats, multiple requirements formats, full traceability from spec to rule to test
+
+    Status: Reference implementation
+
 # Customs Demo
 
 ![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/customs_demo/summary.png?raw=true)

@@ -5,6 +5,16 @@ source: docs/Customs-readme-surtax
 version: 1.0 from docsite, for readme, for readme 6/13/2026
 ---
 
+!!! pied-piper ":bulb: TL;DR - A new business system, derived straight from a government regulation"
+
+    Created by: 💬 *create project demo_customs_surtax from samples/prompts/customs_cbsa.prompt.md*
+
+    * The prompt reads actual CBSA steel-surtax regulations off the web
+    * AI distills that regulatory text directly into declarative rules
+    * The [ad-libs report](docs/requirements/ad-libs.md) lists every low-confidence decision, so you know exactly where it guessed
+
+    Status: Reference implementation
+
 # CBSA Steel Derivative Goods Surtax
 
 **Audience:** Technical GenAI-Logic evaluators

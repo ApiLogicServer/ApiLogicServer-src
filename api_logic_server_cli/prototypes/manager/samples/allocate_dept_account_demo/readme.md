@@ -5,6 +5,17 @@ source: docs/Sample_Allo_Dept_GL_readme
 version: 1.0 from docsite, for readme, for readme 3/10/26
 ---
 
+!!! pied-piper ":bulb: TL;DR - Cascade Allocation, with AI Rules for fuzzy matching"
+
+    Created by: 💬 *create demo_allo_dept_gl from samples/prompts/allocation.prompt.md*
+
+    * Cascade Allocation: a Charge automatically distributes to Departments, then to GL Accounts
+    * AI Rules: fuzzy-matches informal project/contractor descriptions to the right Project
+    * A good stress test for NL-to-declarative-logic creation — cascade allocation and AI fuzzy-matching from one prompt
+    * [Full writeup](https://apilogicserver.github.io/Docs/Sample_Allo_Dept_GL_full)
+
+    Status: Reference implementation
+
 # Allocate Project Payments to configured Departments/Accounts
 
 **Audience:** Technical GenAI-Logic evaluators

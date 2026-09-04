@@ -1,11 +1,13 @@
 ---
 title: Entity Subtypes — Single Table Inheritance Pattern
 notes: background and design rationale for entity_subtypes sample project
-source: docs/Sample-Yypes.md
-version: 1.0 (Jul 2026)
+source: docs/Sample-Types.md
+version: 1.1 (Sep 2026)
 ---
 
 !!! pied-piper ":bulb: TL;DR - Type-specific attributes, relationships, rules, and display"
+
+    Created by: Method 4 (System Creation Services) — a prompt describing Hourly, Commissioned, and Military employee types, sharing one table
 
     The sample below illustrates how your project creation prompts can identify types (eg, Hourly vs Salaried), with
 

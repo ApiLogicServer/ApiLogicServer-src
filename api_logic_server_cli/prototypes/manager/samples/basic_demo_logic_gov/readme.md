@@ -7,6 +7,16 @@ copy to gold source: cp -r ApiLogicServer-dev/org_git/basic_demo/. api_logic_ser
 version info: 17.00.27 (05/24/2026)
 ---
 
+!!! pied-piper ":bulb: TL;DR - Declarative rules vs. procedural code, same requirements"
+
+    Created by: › genai-logic create --project_name=basic_demo --db_url=sqlite:///samples/dbs/basic_demo.sqlite, then the 5-rule logic prompt below ("The Prompt")
+
+    * 5 declarative rules replace ~220 lines of AI-generated procedural code — full A/B comparison in `logic/procedural/declarative-vs-procedural-comparison.md`
+    * The procedural version has 2 real bugs (missed change paths); the rules have 0
+    * Full governance package included: logic diagram, health check, ad-libs report
+
+    Status: Reference implementation
+
 # GenAI-Logic Basic Demo
 
 A working system — API, admin UI, and business rules — generated from a short prompt. The goal is to show how **declarative rules** address the governance problem at the core of enterprise logic.

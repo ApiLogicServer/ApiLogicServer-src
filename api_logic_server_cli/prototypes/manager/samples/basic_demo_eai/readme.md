@@ -13,9 +13,9 @@ Propagation: see api_logic_server_cli/clone_and_overlay_prototypes/create_readme
 </style>
 
 
-&nbsp;
-**Key Takeways - TL;DR - Kafka Integration: Async Messaging**
-&nbsp;
+!!! pied-piper ":bulb: TL;DR - Kafka Integration: Async Messaging"
+
+    Created by: › genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite, then Executable Requirements ("implement reqs")
 
     APIs are useful to application integration, but do not deal with the reality that the receiving system might be down.
 

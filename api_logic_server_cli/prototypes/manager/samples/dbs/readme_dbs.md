@@ -2,7 +2,7 @@ See https://apilogicserver.github.io/Docs/Data-Model-Examples/
 
 These are pre-installed sqlite databases.  These allow you to explore creating projects from existing databases.
 
-For example, create Northwind and basic_demo like this (more connectivity shown in [../readme_samples.md](../readme_samples.md)):
+For example, create Northwind and basic_demo like this (more connectivity shown in [../$readme_samples.md](../$readme_samples.md)):
 
 ```bash
 genai-logic create  --project_name=nw --db_url=sqlite:///samples/dbs/nw.sqlite

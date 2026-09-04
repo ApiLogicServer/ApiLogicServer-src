@@ -1,3 +1,5 @@
+> 💡 **New here?** Ask your AI assistant: *"show me a table of all samples and their TL;DRs"* — a one-screen overview of every sample below, before you dive into any one of them.
+
 ## Pre-built samples
 
 See https://apilogicserver.github.io/Docs/Data-Model-Examples/.  The Manager includes the following pre-built samples:
