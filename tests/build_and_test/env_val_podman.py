@@ -2,9 +2,15 @@
 
 Val's Podman machine (no Docker installed) — copy this over env.py to activate.
 Sibling of env_val.py, which is Val's Docker machine. Differences: all do_docker_*
-flags are False here (no docker binary at all), do_run_nw_kafka/do_test_nw_kafka
-are True (Kafka runs fine via `podman compose` against the unchanged compose files
-— see docs/DevOps-Podman.md), do_test_genai is False (unrelated to podman/docker).
+flags are False here (no docker binary at all) EXCEPT do_docker_postgres/
+do_docker_postgres_auth, which run fine via `podman run` against the same
+apilogicserver/postgres:latest image Docker would use — that image already has
+authdb (and every other test db: aniot, autonum, conference, dummy, genai_demo,
+northwind, postgres_bpchar, stress) preloaded, confirmed live. do_docker_mysql/
+do_docker_sqlserver remain False (not yet verified under Podman). do_run_nw_kafka/
+do_test_nw_kafka are True (Kafka runs fine via `podman compose` against the
+unchanged compose files — see docs/DevOps-Podman.md). do_test_genai is False,
+unrelated to podman/docker.
 """
 
 
@@ -74,8 +80,8 @@ class Config:
     do_include_exclude = default_setting            # --db_url=table_filters_tests
 
     do_docker_mysql = False               # requires docker database be running
-    do_docker_postgres =  False           # requires docker database be running
-    do_docker_postgres_auth = False       # requires docker database be running
+    do_docker_postgres = True             # runs via podman on this machine — apilogicserver/postgres:latest
+    do_docker_postgres_auth = True        # same container has authdb preloaded
     do_docker_sqlserver = False           # requires docker database be running
 
     do_docker_creation_tests = False      # build docker image, start it and create projects
