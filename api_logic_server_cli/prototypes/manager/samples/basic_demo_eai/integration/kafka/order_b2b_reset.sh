@@ -4,19 +4,23 @@
 
 set -e
 
+# Docker or Podman -- whichever is installed (same broker1 container either way)
+CONTAINER_CLI=$(command -v docker >/dev/null 2>&1 && echo docker || echo podman)
+
 # Truncate log
 if [ -f logs/als.log ]; then > logs/als.log && echo "Log cleared."; fi
 
 # Delete + recreate topics so consumer offsets start fresh
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic order_b2b --delete --if-exists || true
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic order_b2b_processed --delete --if-exists || true
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic order_b2b --delete --if-exists || true
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic order_b2b_processed --delete --if-exists || true
 sleep 2
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic order_b2b
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic order_b2b_processed
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic order_b2b
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic order_b2b_processed
 echo "Kafka topics reset."
 
 # ---------------------------------------------------------------------------
-# Useful inspection commands (run manually):
+# Useful inspection commands (run manually — substitute `podman` for `docker` if
+# that's what's installed):
 # ---------------------------------------------------------------------------
 # List all topics:
 #   docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list

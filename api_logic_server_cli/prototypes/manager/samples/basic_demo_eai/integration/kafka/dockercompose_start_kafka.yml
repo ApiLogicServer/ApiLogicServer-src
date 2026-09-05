@@ -17,6 +17,10 @@
 #     --bootstrap-server localhost:9092 --topic <topic> --from-beginning --group fresh-group-1
 #   (increment group number each time to re-read from beginning)
 #
+# Using Podman instead of Docker? Substitute `podman compose` for `docker compose` and
+# `podman exec` for `docker exec` in every command above — this file works unchanged.
+# One-time Podman setup: https://apilogicserver.github.io/Docs/DevOps-Podman/
+#
 
 services:
 

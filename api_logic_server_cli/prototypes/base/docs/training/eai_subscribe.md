@@ -575,6 +575,9 @@ the commit happens in a fresh transaction (not inside a `row_event` `before_flus
     ```
     Edit a key field (e.g. Account) to a different valid value between runs so each run creates a distinct row. Verify DB as above.
 
+    Using Podman instead of Docker? Substitute `podman exec` for `docker exec` — same
+    `broker1` container name either way (see `dockercompose_start_kafka.yml`).
+
 **Cardinality sanity check:**
 - After one successful run, validate expected parent/child counts derived from the sample payload and any declarative enrichment/matching rules.
 - Put exact counts in the project requirements or regression test for that pipeline; do not hardcode domain-specific counts in generic training.
@@ -600,19 +603,26 @@ The script resets Kafka topics and the log file only; it does **not** clear the 
 
 set -e
 
+# Docker or Podman — whichever is installed. Same broker1 container either way
+# (dockercompose_start_kafka.yml works unchanged under `podman compose`), so this
+# script must not hardcode `docker exec` — that fails outright on a Podman-only
+# machine (no `docker` binary at all, not just a different runtime under the hood).
+CONTAINER_CLI=$(command -v docker >/dev/null 2>&1 && echo docker || echo podman)
+
 # Truncate log
 if [ -f logs/als.log ]; then > logs/als.log && echo "Log cleared."; fi
 
 # Delete + recreate topics so consumer offsets start fresh
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz --delete --if-exists || true
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz_processed --delete --if-exists || true
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz --delete --if-exists || true
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz_processed --delete --if-exists || true
 sleep 2
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz_processed
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz_processed
 echo "Kafka topics reset."
 
 # ---------------------------------------------------------------------------
-# Useful inspection commands (run manually):
+# Useful inspection commands (run manually — substitute `podman` for `docker` if
+# that's what's installed):
 # ---------------------------------------------------------------------------
 # List all topics:
 #   docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list

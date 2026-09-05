@@ -41,6 +41,10 @@ genai-logic add-auth --provider-type=None
 
 After `add-auth`, `config/default.env` will contain `SECURITY_ENABLED = True`.
 
+**Using Podman instead of Docker?** Substitute `podman compose up` for `docker compose up` in
+step 1 — `devops/keycloak/docker-compose.yml` works unchanged. One-time setup (Podman machine
+init, compose plugin wiring): [DevOps-Podman](https://apilogicserver.github.io/Docs/DevOps-Podman/).
+
 ---
 
 ## Declaration DSL — `security/declare_security.py`

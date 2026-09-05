@@ -100,6 +100,10 @@ docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d
 python test/send_<topic>.py
 ```
 
+**Using Podman instead of Docker?** Substitute `podman compose` for `docker compose` — the
+compose file works unchanged. One-time setup (Podman machine init, compose plugin wiring):
+[DevOps-Podman](https://apilogicserver.github.io/Docs/DevOps-Podman/).
+
 Runtime reminders:
 
 - Run exactly **one** server process during Kafka consume testing.
