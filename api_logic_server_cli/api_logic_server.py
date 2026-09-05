@@ -15,7 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "17.03.25"  # last public release: 17.03.24
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/04/2026 - 17.03.24  RFI declared & mixed, CE usage reduction, samples readmes \n"\
+    "\t09/04/2026 - 17.03.25  RFI declared & mixed, CE usage reduction, samples readmes \n"\
     "\t08/23/2026 - 17.03.20  Vulnerabilities fixed, Requirements from Interview (RFI) docs, LB locking \n"\
     "\t08/07/2026 - 17.03.10  CE for Dashboards & Vibe, LB and CS fixes / examples, no Ont, CLVS, pip-audit \n"\
     "\t07/22/2026 - 17.03.06  Context Engineering for Dashboards & Vibe, LB and CS fixes \n"\
