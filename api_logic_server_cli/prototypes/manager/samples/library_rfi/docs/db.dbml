@@ -1,0 +1,69 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Table Book {
+    id INTEGER [primary key]
+    title TEXT 
+    author TEXT 
+    active_loan_count INTEGER 
+    hold_count INTEGER 
+    available INTEGER 
+    }
+
+Table Hold {
+    id INTEGER [primary key]
+    member_id INTEGER 
+    book_id INTEGER 
+    requested_date TEXT 
+    status TEXT 
+    }
+
+Table Member {
+    id INTEGER [primary key]
+    name TEXT 
+    email TEXT 
+    sys_config_id INTEGER 
+    fine_block_threshold FLOAT 
+    fine_balance FLOAT 
+    blocked INTEGER 
+    }
+
+Table Loan {
+    id INTEGER [primary key]
+    member_id INTEGER 
+    book_id INTEGER 
+    checkout_date TEXT 
+    due_date TEXT 
+    return_date TEXT 
+    renewed INTEGER 
+    sys_config_id INTEGER 
+    fine_rate_per_day FLOAT 
+    fine_cap_per_book FLOAT 
+    loan_period_days INTEGER 
+    fine_amount FLOAT 
+    fine_paid FLOAT 
+    fine_balance FLOAT 
+    }
+
+Table SysConfig {
+    id INTEGER [primary key]
+    name TEXT 
+    discount_rate FLOAT 
+    tax_rate FLOAT 
+    notes TEXT 
+    fine_rate_per_day FLOAT 
+    fine_cap_per_book FLOAT 
+    fine_block_threshold FLOAT 
+    loan_period_days INTEGER 
+    }
+
+
+
+// Relationships
+    Ref: Hold.(book_id) > Book.(id)
+    Ref: Hold.(member_id) > Member.(id)
+    Ref: Member.(sys_config_id) > SysConfig.(id)
+    Ref: Loan.(book_id) > Book.(id)
+    Ref: Loan.(member_id) > Member.(id)
+    Ref: Loan.(sys_config_id) > SysConfig.(id)

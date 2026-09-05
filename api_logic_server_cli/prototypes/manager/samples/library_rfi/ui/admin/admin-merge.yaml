@@ -1,0 +1,198 @@
+about:
+  date: September 03, 2026 18:46:21
+  merged:
+    at: September 03, 2026 18:55:00
+    new_attributes: 'SysConfig.fine_rate_per_day SysConfig.fine_cap_per_book SysConfig.loan_period_days
+      SysConfig.fine_block_threshold '
+    new_resources: 'Book Hold Member Loan '
+    new_tab_groups: 'SysConfig.LoanList SysConfig.MemberList '
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 0
+  number_tables: 1
+info_toggle_checked: true
+resources:
+  Book:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: title
+      required: true
+    - name: author
+    - name: active_loan_count
+    - name: hold_count
+    - name: available
+    tab_groups:
+    - direction: tomany
+      fks:
+      - book_id
+      name: HoldList
+      resource: Hold
+    - direction: tomany
+      fks:
+      - book_id
+      name: LoanList
+      resource: Loan
+    type: Book
+    user_key: id
+  Hold:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: book_id
+      required: true
+    - name: member_id
+      required: true
+    - name: requested_date
+      required: true
+    - name: status
+    tab_groups:
+    - direction: toone
+      fks:
+      - book_id
+      name: book
+      resource: Book
+    - direction: toone
+      fks:
+      - member_id
+      name: member
+      resource: Member
+    type: Hold
+    user_key: id
+  Loan:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: book_id
+      required: true
+    - name: member_id
+      required: true
+    - name: sys_config_id
+    - name: checkout_date
+      required: true
+    - name: due_date
+    - name: return_date
+    - name: fine_rate_per_day
+    - name: fine_cap_per_book
+    - name: loan_period_days
+    - name: fine_amount
+    - name: fine_balance
+    - name: renewed
+    - name: fine_paid
+    tab_groups:
+    - direction: toone
+      fks:
+      - book_id
+      name: book
+      resource: Book
+    - direction: toone
+      fks:
+      - member_id
+      name: member
+      resource: Member
+    - direction: toone
+      fks:
+      - sys_config_id
+      name: sys_config
+      resource: SysConfig
+    type: Loan
+    user_key: id
+  Member:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: sys_config_id
+    - name: email
+    - name: fine_balance
+    - name: id
+    - name: fine_block_threshold
+    - name: blocked
+    tab_groups:
+    - direction: tomany
+      fks:
+      - member_id
+      name: HoldList
+      resource: Hold
+    - direction: tomany
+      fks:
+      - member_id
+      name: LoanList
+      resource: Loan
+    - direction: toone
+      fks:
+      - sys_config_id
+      name: sys_config
+      resource: SysConfig
+    type: Member
+    user_key: name
+  SysConfig:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: discount_rate
+    - name: tax_rate
+    - name: notes
+    - name: id
+    - name: fine_rate_per_day
+    - name: fine_cap_per_book
+    - name: loan_period_days
+    - name: fine_block_threshold
+    tab_groups:
+    - direction: tomany
+      fks:
+      - sys_config_id
+      name: LoanList
+      resource: Loan
+    - direction: tomany
+      fks:
+      - sys_config_id
+      name: MemberList
+      resource: Member
+    type: SysConfig
+    user_key: name
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '2'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

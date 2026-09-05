@@ -1,0 +1,160 @@
+{
+    "tool_type": "json-api",
+    "schema_version": "1.0",
+    "base_url": "http://localhost:5656/api",
+    "description": "API Logic Project: library_rfi",
+    "resources": [
+        {
+            "name": "Book",
+            "path": "/Book",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "title",
+                "author",
+                "active_loan_count",
+                "hold_count",
+                "available"
+            ],
+            "filterable": [
+                "id",
+                "title",
+                "author",
+                "active_loan_count",
+                "hold_count",
+                "available"
+            ]
+        },
+        {
+            "name": "Hold",
+            "path": "/Hold",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "member_id",
+                "book_id",
+                "requested_date",
+                "status"
+            ],
+            "filterable": [
+                "id",
+                "member_id",
+                "book_id",
+                "requested_date",
+                "status"
+            ]
+        },
+        {
+            "name": "Member",
+            "path": "/Member",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "email",
+                "sys_config_id",
+                "fine_block_threshold",
+                "fine_balance",
+                "blocked"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "email",
+                "sys_config_id",
+                "fine_block_threshold",
+                "fine_balance",
+                "blocked"
+            ]
+        },
+        {
+            "name": "Loan",
+            "path": "/Loan",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "member_id",
+                "book_id",
+                "checkout_date",
+                "due_date",
+                "return_date",
+                "renewed",
+                "sys_config_id",
+                "fine_rate_per_day",
+                "fine_cap_per_book",
+                "loan_period_days",
+                "fine_amount",
+                "fine_paid",
+                "fine_balance"
+            ],
+            "filterable": [
+                "id",
+                "member_id",
+                "book_id",
+                "checkout_date",
+                "due_date",
+                "return_date",
+                "renewed",
+                "sys_config_id",
+                "fine_rate_per_day",
+                "fine_cap_per_book",
+                "loan_period_days",
+                "fine_amount",
+                "fine_paid",
+                "fine_balance"
+            ]
+        },
+        {
+            "name": "SysConfig",
+            "path": "/SysConfig",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "fine_rate_per_day",
+                "fine_cap_per_book",
+                "fine_block_threshold",
+                "loan_period_days"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "fine_rate_per_day",
+                "fine_cap_per_book",
+                "fine_block_threshold",
+                "loan_period_days"
+            ]
+        }
+    ]
+}
