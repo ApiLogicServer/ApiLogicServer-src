@@ -87,9 +87,19 @@ COPY_EXCLUDES = {
     ".git", "venv", ".venv", "__pycache__", "logs", ".DS_Store", ".devcontainer", ".obsidian",
 }
 
-# Curated files that live inside an otherwise-excluded directory (e.g. logs/) — copied
-# individually after the main sync since COPY_EXCLUDES skips their parent wholesale.
+# logs/ is in COPY_EXCLUDES (log files themselves shouldn't be committed to cs-mgr), but
+# logs/readme.md is a git-tracked placeholder in gold source — its own content says "this
+# directory must exist at startup" (RotatingFileHandler can't create its target dir
+# otherwise). Every samples/*/logs/readme.md found in local-mgr is copied individually,
+# discovered fresh each run rather than hand-listed, so a new sample project's logs/
+# placeholder is never silently missed the way a static list would drift out of sync.
 EXTRA_FILES = [
+    str(p.relative_to(SRC_ROOT))
+    for p in (SRC_ROOT / "samples").glob("*/logs/readme.md")
+] + [
+    # Curated files README.md links to directly (e.g. a sample rule-chain trace) —
+    # genuinely need to exist alongside the readme.md placeholder above, so hand-listed
+    # here rather than discovered: unlike readme.md, there's no fixed name/pattern to glob.
     "samples/basic_demo_logic_gov/logs/als-sample.log",
 ]
 
