@@ -5,7 +5,6 @@ Invokes MCP client executor to process MCP requests when a new SysMcp row is ins
 import json
 import os, logging
 from typing import Dict, List
-import openai
 import requests
 from logic_bank.logic_bank import Rule
 from logic_bank.exec_row_logic.logic_row import LogicRow

@@ -10,3 +10,4 @@ devops/docker-compose-dev-azure-nginx/www
 .vscode/settings.json
 logs/*
 !logs/als-sample.log
+!logs/readme.md

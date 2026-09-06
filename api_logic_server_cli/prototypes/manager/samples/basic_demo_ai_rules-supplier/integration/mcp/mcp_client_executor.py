@@ -34,8 +34,15 @@ sys.path.append(str(project_path))  # add project root to sys.path
 
 import re
 import json
-from openai import OpenAIError
-import openai
+try:
+    from openai import OpenAIError
+    import openai
+    openai.api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")  # Set your OpenAI API key
+except ImportError:
+    # openai is an optional dependency (pip install apilogicserver[ai-rules]) - not present
+    # in a stock install. Only raises if this file's actual OpenAI call paths are exercised.
+    OpenAIError = Exception
+    openai = None
 import requests
 from flask import Flask, request, has_request_context
 
@@ -43,9 +50,6 @@ from logic_bank.logic_bank import Rule
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from database import models
 from logic_bank.util import ConstraintException
-
-# Set your OpenAI API key
-openai.api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
 
 log = logging.getLogger('integration.mcp')
 
