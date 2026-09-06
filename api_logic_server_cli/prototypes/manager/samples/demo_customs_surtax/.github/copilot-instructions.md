@@ -1712,12 +1712,19 @@ THEN implement security/declare_security.py
 cd devops/keycloak && docker compose up
 genai-logic add-auth --provider-type=keycloak --db-url=localhost
 
-# SQL (no Keycloak)
-genai-logic add-auth --provider-type=sql --db-url=sqlite:///database/db.sqlite
+# SQL (no Keycloak) — uses the project's own pre-built User/Role/UserRole schema; omit --db-url
+genai-logic add-auth --provider-type=sql
 
 # Disable
 genai-logic add-auth --provider-type=None
 ```
+🚨 For `--provider-type=sql`, never pass `--db-url=sqlite:///database/db.sqlite` (or any URL
+pointing at the project's own domain database) — `--db-url` means "where's the *auth* db,"
+not "which project db." Pointing it at your domain db overwrites the correct pre-built
+`authentication_db.sqlite` with your domain schema and crashes (confirmed live, 100%
+reproducible). Only pass `--db-url` for a genuinely separate auth database (e.g. a real
+Postgres `authdb`).
+
 For more on Keycloak: https://apilogicserver.github.io/Docs/Security-Keycloak/
 
 **Declaration example (see `docs/training/security.md` for full DSL):**

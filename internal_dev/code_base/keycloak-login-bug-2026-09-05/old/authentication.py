@@ -108,16 +108,9 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
         user = authentication_provider.get_user(username, password)
         if not user or not authentication_provider.check_password(user = user, password = password):
             return jsonify("Wrong username or password"), 401
-
+        
+        access_token = create_access_token(identity=user)  # serialize and encode
         from flask import g  # see https://www.geeksforgeeks.org/when-should-flask-g-be-used/
-        # Some providers (e.g. Keycloak) already obtained a real, externally-signed token
-        # while authenticating in get_user() above, and stash it on `g` (request-scoped —
-        # see get_user()'s own comment) because they have no private key to mint a NEW
-        # token here: create_access_token() below requires JWT_PRIVATE_KEY, which such
-        # providers deliberately never set (they only hold the issuer's PUBLIC key, used
-        # to verify incoming tokens in user_lookup_callback, not to sign new ones).
-        # Providers with nothing on `g` (e.g. SQL) fall through to minting one as before.
-        access_token = getattr(g, 'access_token', None) or create_access_token(identity=user)  # serialize and encode
         g.access_token = access_token
         return jsonify(access_token=access_token)
     

@@ -32,12 +32,27 @@ docker compose up
 # 2. Activate security in the project
 genai-logic add-auth --provider-type=keycloak --db-url=localhost
 
-# Alternative: SQL-based auth (no Keycloak needed)
-genai-logic add-auth --provider-type=sql --db-url=sqlite:///database/db.sqlite
+# Alternative: SQL-based auth (no Keycloak needed) — uses the project's own pre-built
+# User/Role/UserRole schema (database/authentication_db.sqlite), created automatically
+# by `genai-logic create`. Omit --db-url for this default case.
+genai-logic add-auth --provider-type=sql
 
 # To disable
 genai-logic add-auth --provider-type=None
 ```
+
+**🚨 CRITICAL — for `--provider-type=sql`, do NOT pass `--db-url=sqlite:///database/db.sqlite`
+(or any URL pointing at the project's own domain database).** For `add-auth`, `--db-url` means
+"where is the *auth* database" — not "which project database to use." Pointing it at your
+domain db (which has no `User`/`Role`/`UserRole` tables) makes the CLI regenerate
+`authentication_db.sqlite` **from your domain data**, silently overwriting the correct
+pre-built auth schema, then crashing (`insert_lines_at`: can't find `UserRoleList` — because
+your domain db was never given one) before authentication is ever wired in. Confirmed live,
+100% reproducible on a completely fresh project (Sep 2026) — this is a real trap, not a
+hypothetical one; the earlier version of this doc's own example was exactly this bug.
+Only pass `--db-url` when you have a genuinely separate auth database (e.g.
+`--db-url=postgresql://postgres:p@localhost/authdb`, a real database with the User/Role
+schema already in it) — never your project's own `database/db.sqlite`.
 
 After `add-auth`, `config/default.env` will contain `SECURITY_ENABLED = True`.
 

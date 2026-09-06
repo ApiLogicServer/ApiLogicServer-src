@@ -18,6 +18,7 @@ import requests  # not working - 404
 import json
 import sys
 import time
+import jwt
 try:
     from jwt.algorithms import RSAAlgorithm
 except ImportError:
@@ -203,49 +204,69 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                     each_user_role = row_to_dotmap(each_row, authentication_models.UserRole)
                     rtn_user.UserRoleList.append(each_user_role)
                 return rtn_user  # returning user fails per caution above
-        # get user / roles  from kc
-        try_kc = 'authentication#user_lookup_callback'  # activate favorite experiment
-        if try_kc == 'jwt_create':
-            """ To retrieve user info from the jwt, you may want to look into these functions:
-            https://flask-jwt-extended.readthedocs.io/en/stable/automatic_user_loading.html
-            as used in security/system/authentication.py 
-            """
-            user = {"id": id, "password": password}  # is this == kwargs?
-            user_identity = DotMapX()
-            user_identity.id = id
-            user_identity.password = password
-            # JWT_PRIVATE_KEY must be set to use asymmetric cryptography algorithm "RS256"
-            access_token = create_access_token(identity=user_identity)
-            # now decode for user/roles info; also see jwt.io
-            jswon_jwt = jsonify(access_token=user)  # this returns something with SQLAlchemy row
-            pass 
+        # get user / roles from kc.
+        #
+        # get_user() is called from two different places in security/system/authentication.py,
+        # with two different meanings for `password` — dispatch on its actual type rather than
+        # a hardcoded switch (a fixed switch here previously forced every call down the
+        # user_lookup_callback branch below, crashing login() with a real password: see
+        # basic_demo_eai session notes, Sep 2026, TypeError: string indices must be integers):
+        #
+        #   1. login()'s POST /api/auth/login: `password` is the real, plaintext password.
+        #      Nothing has been verified yet — authenticate it against Keycloak's own token
+        #      endpoint, below.
+        #   2. user_lookup_callback (runs on every subsequent @jwt_required() request, to
+        #      reload the user from the token already presented): `password` is actually
+        #      jwt_data, the already-decoded, already-verified JWT claims dict for this
+        #      request — nothing to authenticate, just build the User+Roles object.
+        if isinstance(password, dict):
+            jwt_data: dict = password
+            return Authentication_Provider.get_user_from_jwt(jwt_data)
 
-            # jwt = JWTManager(g_flask_app)  # can't use this...
-            # fails with: AssertionError: The setup method 'errorhandler' can no longer be called on the application. It has already handled its first request, any changes will not be applied consistently.
-            # Make sure all imports, decorators, functions, etc. needed to set up the application are done before running it.
-        elif try_kc == "jwt_get_raw_jwt":  # https://flask-jwt-extended.readthedocs.io/en/3.0.0_release/api/
-            # verified_jwt = flask_jwt_extended.verify_jwt_in_request()  # blows stack
-            # raw_jwt = flask_jwt_extended.get_jwt()  # You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-            Authentication_Provider.get_jwt_user(id=id)
-            pass
-        elif try_kc == 'api':  # get jwt for user info & roles
-            KC_BASE = Args.instance.keycloak_base
-            data = {
-                "grant_type": "password",
-                "client_id": "alsclient",
-                "username" :f"{id}",
-                "password": f"{password}"
-            }
-            msg_url = f'{KC_BASE}/.well-known/openid-configuration'
-            resp = requests.post(msg_url, data)
-            if resp.status_code == 200:
-                resp_data = json.loads(resp.text)
-                # no no access_token = resp_data["access_token"]
-                # instead, create user/roles UserRoleList, caller will create jwt
-                return jsonify(access_token=access_token)
-        elif try_kc == 'authentication#user_lookup_callback':
-            # from flask import g
-            # jwt_data = g.jwt_data  # saved in authentication#user_lookup_callback()
-            jwt_data : dict = password
-            rtn_user = Authentication_Provider.get_user_from_jwt(jwt_data)
-            return rtn_user
+        # Real login: exchange id/password for a token via Keycloak's password grant. A 200
+        # response IS the password check — see check_password() below, which trusts this
+        # result instead of comparing against a local hash Keycloak never gives us.
+        kc_base_url = Args.instance.keycloak_base_url  # e.g. http://localhost:8080/realms/kcals
+        client_id = Args.instance.keycloak_client_id
+        token_url = f'{kc_base_url}/protocol/openid-connect/token'
+        resp = requests.post(token_url, data={
+            "grant_type": "password",
+            "client_id": client_id,
+            "username": id,
+            "password": password,
+        })
+        if resp.status_code != 200:
+            logger.info(f"Keycloak login failed for user {safe_log(id)}: {resp.status_code}")
+            return None
+        access_token = resp.json()["access_token"]
+        # Keycloak already verified the credentials (that's what the 200 above means) —
+        # decode the claims without re-verifying the signature a second time here.
+        claims = jwt.decode(access_token, options={"verify_signature": False})
+
+        # Hand the REAL Keycloak-issued token back to login() (security/system/authentication.py)
+        # via request-scoped `g`, instead of it minting a new one with create_access_token():
+        # this provider's JWTManager is configured with Keycloak's PUBLIC key only (see
+        # configure_auth() above) so it can verify incoming Keycloak tokens, but has no
+        # private key to sign a new RS256 token with — create_access_token() would raise
+        # RuntimeError: JWT_PRIVATE_KEY must be set. Returning Keycloak's own token is also
+        # the more correct design: it's the token user_lookup_callback will verify on every
+        # subsequent request anyway.
+        g.access_token = access_token
+        return Authentication_Provider.get_user_from_jwt(claims)
+
+    @staticmethod
+    def check_password(user: object, password) -> bool:
+        """checks whether user-supplied password matches
+
+        Keycloak already authenticated the credentials inside get_user() above (a real
+        password there means a live call to Keycloak's token endpoint, not a local hash
+        compare) — a resolved, truthy user here already proves the login succeeded.
+
+        Args:
+            user (object): DotMapX returned by get_user(), or None if Keycloak rejected the login
+            password: unused — kept for signature parity with the abstract/SQL providers
+
+        Returns:
+            bool: whether the login succeeded
+        """
+        return user is not None
