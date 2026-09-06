@@ -4,8 +4,77 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.34
+version: 2.36
 changelog:
+  - 2.36 (Sep 5 2026) - Two real startup bugs found live via F5 in `codespaces_mgr`'s
+    `samples/basic_demo_sample` (Val: "it has 2 serious issues"), both fixed in gold source
+    same session:
+    1. **Unconditional `import openai` crashes server startup.** `openai` became an optional
+       `ai-rules` extra in v2.33 (Aug 2026), but `logic/logic_discovery/mcp_client_executor_request.py`
+       still had a bare `import openai` at module scope — and `logic_discovery/auto_discovery.py`
+       auto-imports every `.py` file in that folder on every server startup, so any project
+       without the extra installed crashed immediately on F5, not just on first MCP use. The
+       import was dead code in that file (never referenced `openai.` anywhere) — deleted
+       outright. `integration/mcp/mcp_client_executor.py` has the same unconditional import,
+       genuinely used (`OpenAIError`, `openai.api_key`, `openai.chat.completions.create`) but
+       gated behind an existing `create_tool_context_from_llm` debug flag (default `False`) —
+       guarded with `try/except ImportError` so the module still loads without the extra;
+       only breaks if a user explicitly flips that flag without installing `ai-rules`. Fixed
+       across `prototypes/base`, `api_logic_server_cli/templates/`, and all 9 sample-project
+       snapshots carrying either file (`allocate_dept_account_demo`, `basic_demo_ai_rules-supplier`,
+       `basic_demo_eai`, `basic_demo_logic_gov`, `basic_demo_sample`, `demo_customs_clvs`,
+       `demo_customs_surtax`, `demo_emp_types`, `library_rfi`).
+    2. **`logs/` directory missing at startup — `RotatingFileHandler` can't create its target
+       dir.** `prototypes/base/.gitignore` (and 6 sample-project copies) had a bare `logs/`
+       rule, which recursively ignores everything under it — including the
+       `prototypes/base/logs/readme.md` placeholder whose own text says "This directory must
+       exist at startup... included in the prototype so generated projects have it from the
+       start." Git doesn't track empty directories, so the ignore rule silently defeated the
+       one file meant to guarantee the directory ships: `git ls-files` confirmed
+       `prototypes/base/logs/readme.md` had *never* been committed. Any project generated from
+       `prototypes/base` (not a static sample snapshot) got no `logs/` dir in a fresh checkout
+       at all — exactly the crash reproduced live in cs-mgr. Fixed by narrowing the rule to
+       `logs/*` + `!logs/readme.md` (keeps `als.log`/rotated backups ignored, un-ignores just
+       the placeholder) in `prototypes/base` and the 5 sample copies with the same bare-`logs/`
+       bug (`demo_customs_surtax`, `demo_customs_clvs`, `demo_emp_types`, `basic_demo_eai`,
+       `library_rfi` — 2 of these, `demo_customs_clvs`/`library_rfi`, were missing `logs/`
+       entirely even on Val's local disk; recreated `readme.md` for both from the canonical
+       text). **Distinct pre-existing pattern found in `basic_demo_logic_gov`:** already had
+       `logs/*` + `!logs/als-sample.log` (a committed teaching artifact, correctly preserved) —
+       added `!logs/readme.md` alongside it rather than reworking the existing exception.
+    Propagated to gold source (committed, not pushed), venv, and this workspace's own
+    `samples/basic_demo_sample` (which had the openai bug but not the logs bug — its `logs/`
+    happened to already exist on local disk). **Not yet re-verified live via F5 in cs-mgr**
+    after the fix — the bugs were caught there but the fix was applied and tested against gold
+    source / venv / local-mgr in this session, not re-run against an actual cs-mgr Codespaces
+    session.
+  - 2.35 (Sep 5 2026) - Verification audit: re-checked every bug/fix entry in this changelog
+    against current gold source (`org_git/ApiLogicServer-src`) and GitHub releases, prompted by
+    Val's recollection that "a number of these were fixed, several in the last 6 weeks." Verified
+    fixed, all confirmed present in gold source: #113 (non-deterministic checksum, now `sha256`)
+    and #114 (`S_CheckSum` null on POST, `after_flush` listener) in `opt_locking.py`; the
+    Decimal/float checksum mismatch fix (same file); the LogicBank multi-relationship /
+    `child_role_name` fix (pin now `>=1.33.00`, venv installed `1.33.0`, exceeds the `1.31.04`
+    floor this changelog originally cited; CE docs carry 17 `child_role_name` mentions); the npm
+    `overrides` fix across all 14 React app skeletons with corrected floors (`lodash^4.18.1`,
+    `nanoid^3.3.18`, `serialize-javascript^7.0.5`, `underscore^1.13.8`); `openai` as an optional
+    `ai-rules` extra with `pydantic` promoted to a base dependency; `Flask-Cors>=6.0.0`;
+    `create_codespaces_mgr.py`'s `check_broken_links()` + `CODESPACES-INSERT-POINT` sentinel fix;
+    and the `.env` `VIRTUAL_ENV`/`PATH`/`PYTHONPATH` generation gate (`create_env_file := False`
+    in `api_logic_server.py`) — Val pointed at this last file mid-audit and it confirmed the fix.
+    Also confirmed the welcome.md/CE capability-list drift (v2.26) is currently in sync (14 items
+    on both sides). **One correction, not a fix:** the `serverReadyAction` F5/Simple-Browser
+    removal documented under "F5 Simple Browser auto-open" below did not survive — commit
+    `4ca24d94` (2026-07-12) re-added it to all 5 `prototypes/base/.vscode/launch.json` server
+    configs one day before that entry's dating, bundled with an unrelated devcontainer
+    python-path fix, and nothing since removed it again. Attempted to re-remove it live during
+    this audit; Val's recollection was that the original "unreliable" symptom may have been
+    Codespaces-specific rather than universal, and no alternate fix mechanism was found in code
+    to contradict that — **decision: keep `serverReadyAction` re-added, do not re-remove.** See
+    the correction note inline under that section. Not independently re-verified live in this
+    pass (documented in their own entries as already needing that): STEP 1b's merge-not-overwrite
+    fix (v2.24) and Flask-Cors's Sonatype-scan discrepancy (v2.34 point 3) — both are CE-text/pin
+    fixes already in gold source, just not re-run against a fresh live trigger since being fixed.
   - 2.34 (Aug 14 2026) - Sonatype/InfoSec follow-up to v2.33's openai-extras fix, prompted by a
     second scan (`Infosec_GenAI-Logic_17.3.14`) coming back WORSE (16 violations vs. 15) after a
     rebuild/re-release. Two real bugs in the original fix, plus one clarification:
@@ -1623,6 +1692,8 @@ Placed as the first branch in the existing `isinstance` chain (before `list`/`se
 **Not fixable from this codebase's side** — Werkzeug already prints "Running on" only once genuinely bound with full app init done first. Any future fix would have to live in VS Code's `serverReadyAction` retry behavior, not here.
 
 **Codespaces confirmed same failure mode (Jul 2026):** `codespaces_mgr`'s `.devcontainer-codespaces/launch.json` override (synced to cs-mgr's `.vscode/launch.json` by `create_codespaces_mgr.py`) has never included `serverReadyAction` on its "API Logic Server Run" config. Val tested live in Codespaces with `serverReadyAction` added and confirmed it fails the same way as a fresh local project window — expected, since every Codespaces session is by definition a freshly opened window, so it never gets the Manager's warm-window exemption. **Verdict: leave cs-mgr's launch.json without `serverReadyAction` — this is confirmed-correct, not an oversight.** Do not add it there even though the Manager-root local launch.json keeps it.
+
+**⚠️ CORRECTION (Sep 2026 audit):** the "Fix" above (removal from `prototypes/base`) did not survive. Commit `4ca24d94` (2026-07-12 — one day *before* this entry's Jul 2026 dating, bundled with an unrelated devcontainer python-path fix) re-added `serverReadyAction` to all 5 `prototypes/base/.vscode/launch.json` server configs. No subsequent commit removed it again, and no code path anywhere patches or strips it at project-creation time — verified by full-repo grep, Sep 2026. Gold source has carried it, unconditionally, on every created project since. **Disposition: keep it re-added, do not re-remove.** Asked live (Sep 2026): Val's instinct is the original "unreliable" symptom may have been Codespaces-specific rather than true of every fresh local project window, and no alternate fix mechanism was found to contradict keeping it. Treat the "Fix" description above as historical (what was tried once) — current gold source intentionally does NOT match it.
 
 &nbsp;
 
