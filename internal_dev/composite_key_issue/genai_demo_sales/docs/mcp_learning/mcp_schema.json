@@ -1,0 +1,170 @@
+{
+    "tool_type": "json-api",
+    "schema_version": "1.0",
+    "base_url": "http://localhost:5656/api",
+    "description": "API Logic Project: genai_demo_sales",
+    "resources": [
+        {
+            "name": "Customer",
+            "path": "/Customer",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "balance",
+                "credit_limit"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "balance",
+                "credit_limit"
+            ]
+        },
+        {
+            "name": "Item",
+            "path": "/Item",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "order_id",
+                "product_id",
+                "quantity",
+                "unit_price",
+                "amount"
+            ],
+            "filterable": [
+                "id",
+                "order_id",
+                "product_id",
+                "quantity",
+                "unit_price",
+                "amount"
+            ]
+        },
+        {
+            "name": "Order",
+            "path": "/Order",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "customer_id",
+                "sales_rep_id",
+                "year_month",
+                "notes",
+                "order_date",
+                "amount_total",
+                "date_shipped"
+            ],
+            "filterable": [
+                "id",
+                "customer_id",
+                "sales_rep_id",
+                "year_month",
+                "notes",
+                "order_date",
+                "amount_total",
+                "date_shipped"
+            ]
+        },
+        {
+            "name": "Product",
+            "path": "/Product",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "unit_price"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "unit_price"
+            ]
+        },
+        {
+            "name": "SalesRepTotal",
+            "path": "/SalesRepTotal",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "sales_rep_id",
+                "year_month",
+                "total_amount",
+                "order_count"
+            ],
+            "filterable": [
+                "sales_rep_id",
+                "year_month",
+                "total_amount",
+                "order_count"
+            ]
+        },
+        {
+            "name": "SalesRep",
+            "path": "/SalesRep",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name"
+            ],
+            "filterable": [
+                "id",
+                "name"
+            ]
+        },
+        {
+            "name": "SysConfig",
+            "path": "/SysConfig",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes"
+            ]
+        }
+    ]
+}

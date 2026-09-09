@@ -1,0 +1,12 @@
+---
+created: 2026-09-09T18:13:00
+created_by: claude-sonnet-5 (valjhuber@gmail.com)
+use_case: check_credit
+---
+
+On Placing Orders, Check Credit
+    1. The Customer's balance is less than the credit limit
+    2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+    3. The Order's amount_total is the sum of the Item amount
+    4. The Item amount is the quantity * unit_price
+    5. The Item unit_price is copied from the Product unit_price
