@@ -4,8 +4,62 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.36
+version: 2.39
 changelog:
+  - 2.39 (Sep 10 2026) - Val moved and renamed the `genai_demo_sales` project referenced in
+    v2.37/v2.38 below: it's now `samples/basic_demo_sales_by_month` (a `basic_demo`-family ref
+    impl, matching how other reference implementations live under `samples/`) — the earlier
+    root-level workspace name is retired. Renamed the business-capability way, not after the
+    LogicBank mechanism (`insert_parent`) it happens to exercise — with AI increasingly doing
+    the reading, a name that routes "I need a monthly sales rollup" to the right sample matters
+    more than one only meaningful to someone who already knows to look up `insert_parent` by
+    name. All internal references (run configs, alembic.ini, mcp_schema.json, generated logic
+    diagrams, readme.md) updated to the new path; verified server starts and the Behave suite
+    (4/4 scenarios) still passes from the new location. The v2.37/v2.38 entries below are left
+    as-written (accurate history of what the project was called when that work happened) rather
+    than rewritten.
+  - 2.38 (Sep 10 2026) - **LogicBank 1.34.00 released** (Val), closing out v2.37's "NOT yet
+    released" caveat — `pyproject.toml` bumped to `LogicBank>=1.34.00` in gold source
+    (`org_git/ApiLogicServer-src`). Upgraded this workspace's venv from the hand-patched
+    1.33.0 to the real PyPI release (`pip install --upgrade logicbank==1.34.0`); diffed
+    the installed package against `org_git/LogicBank` gold source — `exec_row_logic/logic_row.py`
+    and `rule_type/aggregate.py` are byte-identical, confirming the release genuinely shipped
+    the fix as committed, not just a version bump. Re-ran `genai_demo_sales`'s Behave suite
+    (`test/api_logic_server_behave`, `Feature: Maintain Sales Totals`) against the real
+    release: 4/4 scenarios pass. The hand-patch note in v2.37 is now historical — no venv
+    stands ahead of a real release anymore.
+  - 2.37 (Sep 9 2026) - **LogicBank engine bug fixed: `insert_parent` (Rule.sum/Rule.count)
+    against a composite-natural-key parent silently failed — and silently nulled the child's
+    own composite-FK columns — whenever a component of that key was set LATE (by an
+    `early_row_event`, e.g. a computed year_month bucket key) rather than at row construction
+    time.** Found live building a `SalesRepTotal` monthly-rollup sample (`genai_demo_sales`)
+    to validate exposing `insert_parent` as a documented CE pattern. Initially misdiagnosed as
+    a SAFRS bug (POST silently dropping a composite-FK attribute) — a pure SQLAlchemy +
+    LogicBank insert with zero SAFRS/Flask involved reproduced the identical symptom, isolating
+    it to LogicBank itself. Two real bugs, both now fixed in `org_git/LogicBank` gold source:
+    (1) `LogicRow._get_parent_logic_row()` (`exec_row_logic/logic_row.py`) nulled the child's
+    composite-FK columns as a side effect of `setattr(row, relationship_name, None)` when no
+    parent existed yet — SQLAlchemy's relationship setter syncs FK columns to match; (2)
+    `Aggregate.adjust_from_inserted_child()` (`rule_type/aggregate.py`) — the actual runtime
+    path exercised once the FK is fully known — silently gave up when no parent was found,
+    never calling `_is_inserted_parent()` at all, regardless of `insert_parent=True`. Why the
+    pre-existing `examples/insert_parent` test never caught this: its `Child(parent_1=...,
+    parent_2=...)` sets both composite-key columns directly at construction, so
+    `_load_parents_on_insert()`'s own insert_parent handling succeeds in a single pass before
+    Bug 2's code path is ever reached — the test's own child-construction shape structurally
+    avoided the broken path. New regression test added,
+    `org_git/LogicBank/examples/insert_parent_late_key` (3 tests: create, adjust-not-recreate,
+    separate-bucket-for-different-key) — fails without the fix (confirmed), passes with it.
+    Full LogicBank suite re-run clean (`run_tests.py`, all 15 example dirs incl. 16+ NW tests,
+    ALL PASSED, no regressions). Fixed in `org_git/LogicBank` gold source AND hand-patched into
+    this workspace's venv (`venv/lib/python3.13/site-packages/logic_bank/`) for live testing —
+    **NOT yet released/repackaged**: the pip-installed `logicbank` version is still `1.33.0`
+    with the bug; the venv copy is a direct file-level patch matching gold, ahead of the next
+    real LogicBank release. Full writeup:
+    `internal_dev/composite_key_issue/composite_key_issue.md` (v1.2) in `ApiLogicServer-src`,
+    including the corrected root-cause analysis and reproduction steps
+    (`internal_dev/composite_key_issue/genai_demo_sales/`). Practical effect: `insert_parent` +
+    composite PK is now safe to recommend as a CE pattern — previously blocked pending this fix.
   - 2.36 (Sep 5 2026) - Two real startup bugs found live via F5 in `codespaces_mgr`'s
     `samples/basic_demo_sample` (Val: "it has 2 serious issues"), both fixed in gold source
     same session:
