@@ -1,0 +1,18 @@
+
+The following rules have been activated
+ - 2026-09-10 18:08:41,821 - logic_logger - DEBUG
+Rule Bank[0x109a6d940] (loaded 2026-09-10 18:08:30.208711)		##   - 2026-09-10 18:08:41,821 - logic_logger - INFO
+Mapped Class[Order] rules:		##   - 2026-09-10 18:08:41,821 - logic_logger - INFO
+  RowEvent Order.send_order_to_kafka() 		##   - 2026-09-10 18:08:41,821 - logic_logger - INFO
+  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		##   - 2026-09-10 18:08:41,821 - logic_logger - INFO
+Mapped Class[Customer] rules:		##   - 2026-09-10 18:08:41,821 - logic_logger - INFO
+  Constraint Function: None 		##   - 2026-09-10 18:08:41,821 - logic_logger - INFO
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a244fe0>)		##   - 2026-09-10 18:08:41,821 - logic_logger - INFO
+Mapped Class[Item] rules:		##   - 2026-09-10 18:08:41,821 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		##   - 2026-09-10 18:08:41,822 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		##   - 2026-09-10 18:08:41,822 - logic_logger - INFO
+Mapped Class[SalesRepTotal] rules:		##   - 2026-09-10 18:08:41,822 - logic_logger - INFO
+  Derive <class 'database.models.SalesRepTotal'>.total_amount as Sum(Order.amount_total Where  - None, insert_parent)		##   - 2026-09-10 18:08:41,822 - logic_logger - INFO
+  Derive <class 'database.models.SalesRepTotal'>.order_count as Count(<class 'database.models.Order'> Where  - None, insert_parent)		##   - 2026-09-10 18:08:41,822 - logic_logger - INFO
+Logic Bank - 13 rules loaded - 2026-09-10 18:08:41,822 - logic_logger - INFO
+Logic Bank - 13 rules loaded - 2026-09-10 18:08:41,822 - logic_logger - INFO

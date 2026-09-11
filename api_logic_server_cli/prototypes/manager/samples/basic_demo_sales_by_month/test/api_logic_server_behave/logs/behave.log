@@ -1,0 +1,27 @@
+Feature: About Sample # features/about.feature:6
+
+  Scenario: Transaction Processing                           # features/about.feature:8
+    Given Sample Database                                    # features/steps/about.py:8
+    When Transactions are submitted                          # features/steps/about.py:12
+    Then Enforce business policies with Logic (rules + code) # features/steps/about.py:16
+
+Feature: Maintain Sales Totals # features/sales_rep_totals.feature:6
+
+  Scenario: First Order for a New Sales Rep Creates the Sales Total Bucket  # features/sales_rep_totals.feature:22
+    Given A new Sales Rep with no prior orders                              # features/steps/sales_rep_totals.py:73
+    When An Order is placed for that Sales Rep                              # features/steps/sales_rep_totals.py:80
+    Then A SalesRepTotal bucket is auto-created with order_count 1          # features/steps/sales_rep_totals.py:95
+
+  Scenario: Second Order for the Same Sales Rep Adjusts the Bucket                    # features/sales_rep_totals.feature:27
+    Given A new Sales Rep with no prior orders                                        # features/steps/sales_rep_totals.py:73
+    And An Order is placed for that Sales Rep                                         # features/steps/sales_rep_totals.py:90
+    When A second Order is placed for the same Sales Rep                              # features/steps/sales_rep_totals.py:85
+    Then The same SalesRepTotal bucket is adjusted, not recreated, with order_count 2 # features/steps/sales_rep_totals.py:110
+
+  Scenario: Order Retains its Sales Rep Assignment                    # features/sales_rep_totals.feature:33
+    Given A new Sales Rep with no prior orders                        # features/steps/sales_rep_totals.py:73
+    When An Order is placed for that Sales Rep                        # features/steps/sales_rep_totals.py:80
+    Then The Order's sales_rep_id and CreatedOnYearMonth are not null # features/steps/sales_rep_totals.py:125
+
+&nbsp;&nbsp;
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/samples/basic_demo_sales_by_month/test/api_logic_server_behave/behave_run.py completed at September 10, 2026 18:08:41

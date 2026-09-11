@@ -1,0 +1,72 @@
+
+The following rules have been activated
+ - 2026-09-10 18:08:41,762 - logic_logger - DEBUG
+Rule Bank[0x109a6d940] (loaded 2026-09-10 18:08:30.208711)		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+Mapped Class[Order] rules:		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+  RowEvent Order.send_order_to_kafka() 		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+Mapped Class[Customer] rules:		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+  Constraint Function: None 		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a244fe0>)		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+Mapped Class[Item] rules:		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+Mapped Class[SalesRepTotal] rules:		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+  Derive <class 'database.models.SalesRepTotal'>.total_amount as Sum(Order.amount_total Where  - None, insert_parent)		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+  Derive <class 'database.models.SalesRepTotal'>.order_count as Count(<class 'database.models.Order'> Where  - None, insert_parent)		##   - 2026-09-10 18:08:41,763 - logic_logger - INFO
+Logic Bank - 13 rules loaded - 2026-09-10 18:08:41,763 - logic_logger - INFO
+Logic Bank - 13 rules loaded - 2026-09-10 18:08:41,763 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10a31d590) (sqlalchemy before_flush)			 - 2026-09-10 18:08:41,765 - logic_logger - INFO
+..SalesRep[None] {Insert - client} id: None, name: Test SalesRep 1789088921763  row: 0x10a40b110  session: 0x10a31d590  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,765 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a31d590)   										 - 2026-09-10 18:08:41,765 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a31d590)   										 - 2026-09-10 18:08:41,766 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-09-10 18:08:41,766 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a31d590))       	 - 2026-09-10 18:08:41,766 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10a31e210) (sqlalchemy before_flush)			 - 2026-09-10 18:08:41,769 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: SalesRepTotals Customer 1789088921768, balance: None, credit_limit: 1000.0  row: 0x10a4584b0  session: 0x10a31e210  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,769 - logic_logger - INFO
+..Customer[None] {server_defaults: balance } id: None, name: SalesRepTotals Customer 1789088921768, balance: 0.0, credit_limit: 1000.0  row: 0x10a4584b0  session: 0x10a31e210  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,769 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: SalesRepTotals Customer 1789088921768, balance: 0.0, credit_limit: 1000.0  row: 0x10a4584b0  session: 0x10a31e210  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,769 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a31e210)   										 - 2026-09-10 18:08:41,770 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a31e210)   										 - 2026-09-10 18:08:41,770 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-09-10 18:08:41,770 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a31e210))       	 - 2026-09-10 18:08:41,770 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10a445350) (sqlalchemy before_flush)			 - 2026-09-10 18:08:41,776 - logic_logger - INFO
+..Product[5] {Update - client} id: 5, name: SalesRepTotals Product, unit_price: 25.0  row: 0x10a458d70  session: 0x10a445350  ins_upd_dlt: upd, initial: upd - 2026-09-10 18:08:41,777 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a445350)   										 - 2026-09-10 18:08:41,777 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a445350)   										 - 2026-09-10 18:08:41,777 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-09-10 18:08:41,777 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a445350))       	 - 2026-09-10 18:08:41,777 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10a4a0950) (sqlalchemy before_flush)			 - 2026-09-10 18:08:41,779 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, customer_id: 21, sales_rep_id: 24, CreatedOnYearMonth: None, notes: sales_rep_totals.feature test order, CreatedOn: None, amount_total: None, date_shipped: None  row: 0x1016f2c10  session: 0x10a4a0950  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,779 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, customer_id: 21, sales_rep_id: 24, CreatedOnYearMonth: 2026-09, notes: sales_rep_totals.feature test order, CreatedOn: 2026-09-10 18:08:41.779683, amount_total: None, date_shipped: None  row: 0x1016f2c10  session: 0x10a4a0950  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,779 - logic_logger - INFO
+..Order[None] {server_defaults: amount_total } id: None, customer_id: 21, sales_rep_id: 24, CreatedOnYearMonth: 2026-09, notes: sales_rep_totals.feature test order, CreatedOn: 2026-09-10 18:08:41.779683, amount_total: 0.0, date_shipped: None  row: 0x1016f2c10  session: 0x10a4a0950  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,779 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, customer_id: 21, sales_rep_id: 24, CreatedOnYearMonth: 2026-09, notes: sales_rep_totals.feature test order, CreatedOn: 2026-09-10 18:08:41.779683, amount_total: 0.0, date_shipped: None  row: 0x1016f2c10  session: 0x10a4a0950  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,779 - logic_logger - INFO
+..Order[None] {Insert Parent: sales_rep_total} id: None, customer_id: 21, sales_rep_id: 24, CreatedOnYearMonth: 2026-09, notes: sales_rep_totals.feature test order, CreatedOn: 2026-09-10 18:08:41.779683, amount_total: 0.0, date_shipped: None  row: 0x1016f2c10  session: 0x10a4a0950  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,780 - logic_logger - INFO
+....SalesRepTotal[24 | 2026-09] {Insert - Insert Parent from Order} sales_rep_id:  [None-->] 24, year_month:  [None-->] 2026-09, total_amount: None, order_count: None  row: 0x10a459be0  session: 0x10a4a0950  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,780 - logic_logger - INFO
+....SalesRepTotal[24 | 2026-09] {server_defaults: total_amount order_count } sales_rep_id:  [None-->] 24, year_month:  [None-->] 2026-09, total_amount:  [None-->] 0.0, order_count:  [None-->] 0  row: 0x10a459be0  session: 0x10a4a0950  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,781 - logic_logger - INFO
+....SalesRepTotal[24 | 2026-09] {server aggregate_defaults: total_amount order_count } sales_rep_id:  [None-->] 24, year_month:  [None-->] 2026-09, total_amount:  [None-->] 0.0, order_count:  [None-->] 0  row: 0x10a459be0  session: 0x10a4a0950  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,781 - logic_logger - INFO
+....SalesRepTotal[24 | 2026-09] {Update - Adjusting sales_rep_total: order_count} sales_rep_id: 24, year_month: 2026-09, total_amount: 0.0, order_count:  [0-->] 1  row: 0x10a459be0  session: 0x10a4a0950  ins_upd_dlt: upd, initial: upd - 2026-09-10 18:08:41,781 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a4a0950)   										 - 2026-09-10 18:08:41,781 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a4a0950)   										 - 2026-09-10 18:08:41,782 - logic_logger - INFO
+..Order[53] {AfterFlush Event} id: 53, customer_id: 21, sales_rep_id: 24, CreatedOnYearMonth: 2026-09, notes: sales_rep_totals.feature test order, CreatedOn: 2026-09-10 18:08:41.779683, amount_total: 0.0, date_shipped: None  row: 0x1016f2c10  session: 0x10a4a0950  ins_upd_dlt: ins, initial: ins - 2026-09-10 18:08:41,782 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-09-10 18:08:41,782 - logic_logger - INFO
+  Customer		## - 2026-09-10 18:08:41,782 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a244fe0>)		## - 2026-09-10 18:08:41,782 - logic_logger - INFO
+  Order		## - 2026-09-10 18:08:41,782 - logic_logger - INFO
+    2. RowEvent Order.send_order_to_kafka() 		## - 2026-09-10 18:08:41,782 - logic_logger - INFO
+  SalesRepTotal		## - 2026-09-10 18:08:41,782 - logic_logger - INFO
+    3. Derive <class 'database.models.SalesRepTotal'>.total_amount as Sum(Order.amount_total Where  - None, insert_parent)		## - 2026-09-10 18:08:41,782 - logic_logger - INFO
+    4. Derive <class 'database.models.SalesRepTotal'>.order_count as Count(<class 'database.models.Order'> Where  - None, insert_parent)		## - 2026-09-10 18:08:41,782 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a4a0950))       	 - 2026-09-10 18:08:41,782 - logic_logger - INFO
