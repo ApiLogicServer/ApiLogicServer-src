@@ -54,6 +54,39 @@ cd ApiLogicServer-dev
 mkdir servers    # good place to create ApiLogicProjects
 mkdir build_and_test
 mkdir org_git  # git clones from org ApiLogicServer here
+
+# persistent home for any docker/podman bind-mount volumes (Kafka data, etc.) that
+# must survive Manager workspace rebuilds - nothing under build_and_test/ is safe for
+# this, since a clean Manager rebuild (or a fresh BLT-created workspace) wipes it.
+mkdir podman
+@"
+# podman/
+
+Persistent host directory for docker/podman bind-mount volumes that need to
+survive a Manager workspace rebuild (e.g. ``genai-logic create-manager --clean``,
+or a fresh ``build_and_test``/``clean`` BLT output).
+
+Sibling of ``org_git/``, ``build_and_test/``, ``servers/`` - nothing here is
+touched by BLT or Manager rebuilds.
+
+Not tied to any one sample or technology - only use it when a sample's own
+compose file default (typically project-relative, e.g. ``./.volumes/...``)
+would otherwise be wiped by a workspace rebuild. Point that compose file's
+``volumes:`` entry here instead, e.g.:
+
+  volumes:
+    - `${HOME}/dev/genai-logic/ApiLogicServer-dev/podman/kafka/data:/integration/kafka/volume
+
+Organize by service as needed:
+
+  podman/kafka/data
+  podman/<other-service>/...
+
+This only matters for this internal dev checkout - general end-user Manager
+workspaces aren't repeatedly rebuilt, so their sample compose files keep the
+simpler, self-contained project-relative default.
+"@ | Out-File -FilePath podman/readme.md -Encoding utf8
+
 cd org_git
 
 if ($clonedocs -eq $true) {
@@ -100,5 +133,8 @@ if ($IDE -eq "vscode") {
 }
 Write-Output ""
 Write-Output "IDEs are preconfigured with run/launch commands to create and run the sample"
+Write-Output ""
+Write-Output "If a sample uses docker/podman (e.g. Kafka), see podman/readme.md - it's a"
+Write-Output "rebuild-safe place for volumes that must survive a Manager/BLT rebuild"
 Write-Output ""
 exit 0
