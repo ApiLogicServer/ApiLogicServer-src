@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}New Order{% endblock %}
+{% block content %}
+<h1>New Order</h1>
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/orders/new" id="order-form">
+    <p>
+        <label for="customer_id">Customer</label><br>
+        <select name="customer_id" id="customer_id" required>
+            <option value="">-- select customer --</option>
+            {% for c in customers %}
+            <option value="{{ c.id }}">{{ c.name }} (balance {{ "%.2f"|format(c.balance) }} / limit {{ "%.2f"|format(c.credit_limit) }})</option>
+            {% endfor %}
+        </select>
+    </p>
+
+    <p>
+        <label for="notes">Notes</label><br>
+        <input type="text" name="notes" id="notes" style="width: 100%;">
+    </p>
+
+    <h3>Line Items</h3>
+    <div id="line-items">
+        <div class="line-item-row">
+            <select name="product_id" required>
+                <option value="">-- product --</option>
+                {% for p in products %}
+                <option value="{{ p.id }}" data-price="{{ p.unit_price }}">{{ p.name }} ({{ "%.2f"|format(p.unit_price) }})</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="quantity" min="1" value="1" style="width: 5rem;" required>
+        </div>
+    </div>
+    <p><button type="button" id="add-line-item">+ Add line item</button></p>
+
+    <p><button class="btn" type="submit">Place Order</button></p>
+</form>
+
+<script>
+    const productOptionsHtml = document.querySelector('#line-items select[name="product_id"]').innerHTML;
+
+    document.getElementById('add-line-item').addEventListener('click', () => {
+        const row = document.createElement('div');
+        row.className = 'line-item-row';
+        row.innerHTML = `
+            <select name="product_id" required>${productOptionsHtml}</select>
+            <input type="number" name="quantity" min="1" value="1" style="width: 5rem;" required>
+        `;
+        document.getElementById('line-items').appendChild(row);
+    });
+</script>
+{% endblock %}

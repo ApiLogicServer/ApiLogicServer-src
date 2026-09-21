@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+{% block content %}
+<h1>Order #{{ order.id }}</h1>
+<p><strong>Customer:</strong> {{ order.customer.name }} (balance: {{ "%.2f"|format(order.customer.balance) }}, credit limit: {{ "%.2f"|format(order.customer.credit_limit) }})</p>
+<p><strong>Notes:</strong> {{ order.notes or "" }}</p>
+<p><strong>Created:</strong> {{ order.CreatedOn }}</p>
+
+<table>
+    <thead>
+        <tr><th>Product</th><th>Quantity</th><th>Unit Price</th><th>Amount</th></tr>
+    </thead>
+    <tbody>
+        {% for item in order.items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ "%.2f"|format(item.unit_price) }}</td>
+            <td>{{ "%.2f"|format(item.amount) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr><th colspan="3">Order Total</th><th>{{ "%.2f"|format(order.amount_total) }}</th></tr>
+    </tfoot>
+</table>
+{% endblock %}

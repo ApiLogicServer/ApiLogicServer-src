@@ -1,0 +1,8 @@
+# GitHub Pages / Jekyll Configuration
+# Enable processing of markdown files
+markdown: kramdown
+highlighter: rouge
+
+# Include the _layouts directory
+include:
+  - _layouts

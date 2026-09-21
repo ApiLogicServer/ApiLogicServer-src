@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<h1>Orders</h1>
+<p><a class="btn" href="/orders/new">+ New Order</a></p>
+<table>
+    <thead>
+        <tr><th>ID</th><th>Customer</th><th>Notes</th><th>Total</th><th>Created</th></tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td><a href="/orders/{{ order.id }}">{{ order.id }}</a></td>
+            <td>{{ order.customer.name }}</td>
+            <td>{{ order.notes or "" }}</td>
+            <td>{{ "%.2f"|format(order.amount_total) }}</td>
+            <td>{{ order.CreatedOn }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5">No orders yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

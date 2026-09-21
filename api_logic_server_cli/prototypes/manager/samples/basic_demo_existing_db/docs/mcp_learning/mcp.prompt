@@ -1,0 +1,39 @@
+To issue one request per row from a prior step (fan-out), use the syntax:
+
+"$<stepIndex>[*].<fieldName>"
+
+For example, if step 0 returns orders, and you want to send a POST per customer:
+
+Before (incorrect):
+    "customer_id": "{customer_id}"
+
+After (correct):
+    "customer_id": "$0[*].customer_id"
+    
+Only if 'email' is in the Natural language query, send email by issing a POST request to the SysEmail endpoint, setting the subject, message and customer_id in the body.   DO NOT include a POST unless the word ‘email’ appears in the user query.
+
+Format response as mcp_responseFormat.
+
+<mcp_responseFormat>
+class QueryParam(BaseModel):
+    name: str  # attribute name
+    op: str  # eq, lt, gt
+    val: str
+
+class JsonValues(BaseMopdel):
+    name: str  # name of attribute
+    value: str # value of attribute
+
+class Resource(BaseModel):
+    tool_type: str
+    base_url: str
+    path: str # specified use case or requirement name (use 'General' if missing)
+    method: str # GET, PATCH, POST or DELETE
+    body: json # data for PATCH or POST
+    query_params: List(QueryParam) # filter for GET
+
+class MCPResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+    schema_version: str
+    resources : List[Resource] # list resources
+
+<mcp_responseFormat/>
