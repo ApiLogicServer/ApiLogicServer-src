@@ -78,6 +78,7 @@ SYNC_PATHS = [
     "CodeSpaces.md",
     "README.md",
     "readme_vibe.md",
+    "images",
     "samples",
     "system",
     "webgenai",
