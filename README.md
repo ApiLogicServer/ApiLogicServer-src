@@ -4,11 +4,11 @@
 [![Latest Version](https://img.shields.io/pypi/v/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 
-One prompt — or your existing database — builds a working API and Admin App, then you declare business logic in **5 readable rules instead of 200 lines of AI-generated code** to enforce it.
+One prompt — or your existing database — builds a working API and Admin App, then you declare business logic in **5 readable rules instead of 200 lines of AI-generated code**, **governed** by **no-bypass rules**: those rules run at **one commit point**, no matter which path the transaction came in on — API, MCP, agent, Kafka.
 
-On opening the project (or using Codespaces, below), the readme provides a First Time tour.  You'll see that enforcement yourself in a few minutes: those rules run at **one commit point**, no matter which path the transaction came in on — API, MCP, agent, Kafka. **No bypass.**
+It reads whatever form your requirements are already in — **plain English, Gherkin, actual regulation text** — or, you can request an **interview** to discover the requirements.
 
-And you're not reading alone: your AI assistant is a partner throughout. Ask it anything — architecture, rules, debugging, deployment, or how the system works.
+And it **fits what you already use**: your methodology, standard tools, and shared artifacts, **fostering collaboration** between Business Users and Developers. On opening the project (or using Codespaces, below), the readme provides a First Time tour — you'll see the enforcement yourself in a few minutes. And you're not reading alone: your AI assistant is a partner throughout. Ask it anything — architecture, rules, debugging, deployment, or how the system works.
 
 ## See it work — no install
 

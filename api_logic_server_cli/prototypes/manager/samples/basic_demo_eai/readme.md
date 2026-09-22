@@ -39,13 +39,14 @@ Propagation: see api_logic_server_cli/clone_and_overlay_prototypes/create_readme
 
 <br>
 
-**🤖 Bootstrap Copilot by pasting the following into the chat:**
-```bash title="🤖 Bootstrap Copilot by pasting the following into the chat"
-Please load `.github/.copilot-instructions.md`
-```
+<details markdown>
+<summary><strong>Say "hi" to your coding assistant</strong> — click to see important notes on models</summary>
 
+<br>Using a lighter or auto-selected model? Fine for exploring — for real logic you intend to keep, pick a frontier model (Claude Sonnet 5, GPT-5, etc.) if your plan allows it, and review the AI's output either way, the same as you would any other engineer's.
 
-> **Important:** be sure CoPilot is in "Agent" Mode.  "Ask" will not work.  Also, we get consistently good results with `Claude Sonnet 4.6`.
+*Why this matters: [AI-Enabled Projects](https://apilogicserver.github.io/Docs/Project-AI-Enabled/).*
+
+</details>
 
 &nbsp;
 
@@ -135,9 +136,9 @@ Create a database project named basic_demo_vibe from samples/dbs/basic_demo.sqli
 
 The project should automatically open a new window in VSCode. <br>
 
-**🤖 Again, bootstrap Copilot by pasting the following into the chat:**
-``` bash title='🤖 Again, bootstrap Copilot by pasting the following into the chat'
-Please load `.github/.copilot-instructions.md`.
+**🤖 Again, in your Coding Assistant, just say:**
+``` bash title='🤖 In your Coding Assistant, just say'
+hi
 ```
 
 Run it as follows:

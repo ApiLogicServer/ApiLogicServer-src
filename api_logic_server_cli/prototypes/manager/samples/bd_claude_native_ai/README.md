@@ -1,3 +1,19 @@
+---
+title: bd_claude_native_ai
+Description: Control group — native AI, no rules engine, same prompt as basic_demo_genai_logic
+version: 17.04.01 (09/22/2026)
+---
+
+!!! pied-piper ":bulb: TL;DR - Native AI alone, no rules engine — the control group"
+
+    Created by: Claude, given the same procedural prompt as [basic_demo_genai_logic](../basic_demo_genai_logic), told explicitly not to use ApiLogicServer/GenAI-Logic/LogicBank
+
+    * Hand-written Python (FastAPI + SQLAlchemy) — no declarative rules
+    * Insert path works; update/delete paths were never written — `Customer.balance` silently goes stale
+    * The exact evidence cited in [the insert-only experiment](https://apilogicserver.github.io/Docs/Tech-Standard-Reqs/)
+
+    Status: Control group (evidence)
+
 # Native AI, No ApiLogicServer — Order Entry
 
 This is the control group for [the insert-only experiment](https://apilogicserver.github.io/Docs/Tech-Standard-Reqs/). Claude was given a typical, natural-language spec — the way a developer actually describes requirements — and told explicitly **not** to use ApiLogicServer, GenAI-Logic, LogicBank, or any rules engine. Just plain hand-written Python (FastAPI + SQLAlchemy, Jinja2 templates) over `basic_demo.sqlite`.

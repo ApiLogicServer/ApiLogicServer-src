@@ -17,10 +17,14 @@ This illustrates [GenAI-Logic](https://apilogicserver.github.io/Docs/Sample-Basi
 
 <br>
 
-**🤖 Bootstrap Copilot by pasting the following into the chat:**
-``` bash title='🤖 Bootstrap Copilot by pasting the following into the chat'
-Please load `.github/.copilot-instructions.md`.
-```
+<details markdown>
+<summary><strong>Say "hi" to your coding assistant</strong> — click to see important notes on models</summary>
+
+<br>Using a lighter or auto-selected model? Fine for exploring — for real logic you intend to keep, pick a frontier model (Claude Sonnet 5, GPT-5, etc.) if your plan allows it, and review the AI's output either way, the same as you would any other engineer's.
+
+*Why this matters: [AI-Enabled Projects](https://apilogicserver.github.io/Docs/Project-AI-Enabled/).*
+
+</details>
 
 <br>
 
@@ -100,9 +104,9 @@ In either case, the database model is customer, orders and items:
 
 The project should automatically open a new window in VSCode. <br>
 
-**🤖 Again, bootstrap Copilot by pasting the following into the chat:**
-``` bash title='🤖 Again, bootstrap Copilot by pasting the following into the chat'
-Please load `.github/.copilot-instructions.md`.
+**🤖 Again, in your Coding Assistant, just say:**
+``` bash title='🤖 In your Coding Assistant, just say'
+hi
 ```
 
 Run it as follows:

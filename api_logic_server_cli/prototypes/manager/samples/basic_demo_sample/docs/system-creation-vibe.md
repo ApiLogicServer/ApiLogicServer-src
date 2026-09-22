@@ -28,9 +28,14 @@ This is a record of how we created the system using CoPilot Chat (*Vibe*).
 
 ## Initialize CoPilot
 
-```
-Please load `.github/.copilot-instructions.md`.
-```
+<details markdown>
+<summary><strong>Say "hi" to your coding assistant</strong> — click to see important notes on models</summary>
+
+<br>Using a lighter or auto-selected model? Fine for exploring — for real logic you intend to keep, pick a frontier model (Claude Sonnet 5, GPT-5, etc.) if your plan allows it, and review the AI's output either way, the same as you would any other engineer's.
+
+*Why this matters: [AI-Enabled Projects](https://apilogicserver.github.io/Docs/Project-AI-Enabled/).*
+
+</details>
 
 <br>
 
@@ -45,10 +50,10 @@ Create a database project from samples/dbs/basic_demo.sqlite
 
 ## Verify the API and Admin App
 
-The project should automatically open a new window in VSCode.  Again, open CoPilot and bootstrap it with: <br>
+The project should automatically open a new window in VSCode.  Again, open CoPilot and say: <br>
 
 ```bash title="Initialize CoPilot"
-Please load `.github/.copilot-instructions.md`**.
+hi
 ```
 
 Verify it as follows:

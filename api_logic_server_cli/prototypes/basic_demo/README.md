@@ -1,8 +1,9 @@
 ---
 title: Instant Microservices - with Logic and Security
+source: docs/Sample-Basic-Demo.md
 notes: gold is proto (-- doc); alert for apostrophe
 do_process_code_block_titles: True
-version: 0.23 from docsite, for readme 7/11/2025
+version: 1.0 from docsite, for readme 2/16/2026
 ---
 <style>
   -typeset h1,
@@ -10,6 +11,16 @@ version: 0.23 from docsite, for readme 7/11/2025
     display: none;
   }
 </style>
+
+!!! pied-piper ":bulb: TL;DR - The main tutorial project: start here"
+
+    Created by: › genai-logic create --project_name=basic_demo --db_url=sqlite:///samples/dbs/basic_demo.sqlite
+
+    * Instant microservice — JSON:API + Admin UI + declarative logic + security, from one command
+    * Rebuild it yourself via this readme (CLI) or `readme_vibe.md` (natural language)
+    * The reference project most other samples and docs build on
+
+    Status: Primary tutorial
 
 # Product Tour (Start Here)
 
@@ -19,20 +30,20 @@ This illustrates basic [GenAI-Logic](https://www.genai-logic.com/product/key-fea
 2. Adding declarative logic and security, and 
 3. Customizing your project using your IDE and Python<br><br>
 
-**🤖 Two Ways to Explore:**
+<br>
 
-* **Self-Paced:** Follow the sections below at your own speed
-* **AI-Guided Tour:** Say to Copilot: *"Guide me through basic_demo"*
+<details markdown>
+<summary><strong>Say "hi" to your coding assistant</strong> — click to see important notes on models</summary>
 
-**🤖 Bootstrap your AI assistant:**
-```bash title='🤖 Bootstrap your AI assistant by pasting the following into the chat'
-Please load `.github/.copilot-instructions.md`.
-```
-> Use Agent mode (not Ask). Works with GitHub Copilot or Claude Code extension — we get consistently good results with Claude Sonnet 4.6.
+<br>Using a lighter or auto-selected model? Fine for exploring — for real logic you intend to keep, pick a frontier model (Claude Sonnet 5, GPT-5, etc.) if your plan allows it, and review the AI's output either way, the same as you would any other engineer's.
+
+*Why this matters: [AI-Enabled Projects](https://apilogicserver.github.io/Docs/Project-AI-Enabled/).*
+
+</details>
 
 <br>
 
-The entire process takes 45 minutes; usage notes:
+The entire process takes 20 minutes; usage notes:
 
 * Important: look for **readme files** in created projects
 * You may find it more convenient to view this [in your Browser](https://apilogicserver.github.io/Docs/Sample-Basic-Tour)
@@ -65,7 +76,7 @@ genai-logic create --project_name=basic_demo --db_url=sqlite:///samples/dbs/basi
 
 <summary> The database is Customer, Orders, Items and Product</summary>
 
-![basic_demo_data_model](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/basic_demo_data_model.jpeg?raw=true)
+![basic_demo_data_model](images/basic_demo/basic_demo_data_model.png)
 
 </details>
 <br>
@@ -144,28 +155,13 @@ You can click Customer Alice, and see their Orders, and Items.
 
 The app above is suitable for collaborative iteration to nail down the requirements, and back office data maintenance.  It's also easy to make simple customizations, using the yaml file.
 
-For more custom apps, you get complete control by generating app source code, which you can then customize in your IDE, e.g. using Vibe Natural Language:
-
-```bash
-# create react source (requires OpenAI key)
-genai-logic genai-add-app --vibe
-cd ui/react-app
-npm install
-npm start
-```
-
-And you are ready to Vibe:
+For more custom apps, you get complete control by generating app source code, which you can then customize in your IDE, e.g. using Vibe Natural Language.  In the Manager, see the Sample: **Vibe Development Backend**.
 
 * Instead of creating data mockups, you have a **running API server with real data**
 * Instead of starting from scratch, you have a **running multi-page app** 
 * And, you'll have projects that are **architecturally correct:** shared logic, enforced in the server, available for both User Interfaces and services.
 * Then, use you favorite Vibe tools with your running API:
 
-
-**Customize using Natural Language:**
-```txt title='Customize using Natural Language'
-In the ui/react app, Update the Product list to provide users an option to see results in a list, or in cards.
-```
 <br>
 
 > Below is an example from Northwind: [click here](https://apilogicserver.github.io/Docs/Admin-Vibe-Sample)
@@ -176,24 +172,7 @@ In the ui/react app, Update the Product list to provide users an option to see r
 
 ## 3. MCP-Ready APIs
 
-Your project is MCP-ready - this will run a simple query *List customers with credit_limit > 1000* (we'll explore more interesting examples below, including provisions for user input):
-
-```bash
-Create a table SysEmail in `database/db.sqlite` as a child of customer, 
-with columns id, message, subject, customer_id and CreatedOn.
-```
-
-Follow the suggestions to update the admin app.
-
-TODO: add mcp client  here, and test
-
-TODO: test the service
-
-```bash
-List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: 'Discount Offer') to the customer for each one.
-```
-
-![mcp-retrieval](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/mcp-retrieval.png?raw=true)
+Your project is MCP-ready - enter this in your AI Assistant to run a simple query: *List customers with credit_limit > 1000*.  For more on MCP, in the Manager, try the sample: **Govererned MCP Server**.
 
 <br>
 

@@ -98,11 +98,16 @@ cp -r ../samples/requirements/demo_eai  docs/requirements/demo_eai
 
 > `docs/requirements/` already exists in every created project — no need to create it.
 
-**Step 3 — Load context, then run** in Copilot **Agent** mode (not Ask):
+**Step 3 — In Copilot, Agent mode** (not Ask), **just say:**
 
-```
-Please load `.github/.copilot-instructions.md`.
-```
+<details markdown>
+<summary><strong>Say "hi" to your coding assistant</strong> — click to see important notes on models</summary>
+
+<br>Using a lighter or auto-selected model? Fine for exploring — for real logic you intend to keep, pick a frontier model (Claude Sonnet 5, GPT-5, etc.) if your plan allows it, and review the AI's output either way, the same as you would any other engineer's.
+
+*Why this matters: [AI-Enabled Projects](https://apilogicserver.github.io/Docs/Project-AI-Enabled/).*
+
+</details>
 
 Then:
 

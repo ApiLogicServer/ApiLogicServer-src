@@ -32,11 +32,14 @@ See readme files under api, logic and security.
 
 # 🚀 Quick Start
 
-**🤖 Bootstrap your AI assistant** by pasting the following into the chat:
-```
-Please load `.github/.copilot-instructions.md`.
-```
-> Use Agent mode (not Ask). Works with GitHub Copilot or Claude Code extension — we get consistently good results with Claude Sonnet 4.6.
+<details markdown>
+<summary><strong>Say "hi" to your coding assistant</strong> — click to see important notes on models</summary>
+
+<br>Using a lighter or auto-selected model? Fine for exploring — for real logic you intend to keep, pick a frontier model (Claude Sonnet 5, GPT-5, etc.) if your plan allows it, and review the AI's output either way, the same as you would any other engineer's.
+
+*Why this matters: [AI-Enabled Projects](https://apilogicserver.github.io/Docs/Project-AI-Enabled/).*
+
+</details>
 
 <br>
 

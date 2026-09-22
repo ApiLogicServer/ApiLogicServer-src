@@ -1,8 +1,7 @@
 ---
-title: Instant Microservices - with Logic and Security
-notes: gold is proto (-- doc); alert for apostrophe
-do_process_code_block_titles: True
-version: 0.23 from docsite, for readme 7/11/2025
+title: basic_demo_existing_db
+Description: The Ideal — existing database, executable business prompt, held to an enterprise standard
+version: 17.04.01 (09/22/2026)
 ---
 <style>
   -typeset h1,
@@ -10,6 +9,16 @@ version: 0.23 from docsite, for readme 7/11/2025
     display: none;
   }
 </style>
+
+!!! pied-piper ":bulb: TL;DR - Existing database, executable business prompt"
+
+    Created by: › genai-logic create --project_name=basic_demo_existing_db --db_url=sqlite:///samples/dbs/basic_demo.sqlite, then the check-credit prompt below
+
+    * Starts from an existing database — no schema design needed
+    * A short, procedurally-phrased prompt ("check credit," Kafka on ship) produces 5 governed rules, not code
+    * The exact sample used in the Manager readme's "The Ideal" walkthrough
+
+    Status: Reference implementation
 
 # Product Tour (Start Here)
 
@@ -19,16 +28,14 @@ This illustrates basic [GenAI-Logic](https://www.genai-logic.com/product/key-fea
 2. Adding declarative logic and security, and 
 3. Customizing your project using your IDE and Python<br><br>
 
-**🤖 Two Ways to Explore:**
+<details markdown>
+<summary><strong>Say "hi" to your coding assistant</strong> — click to see important notes on models</summary>
 
-* **Self-Paced:** Follow the sections below at your own speed
-* **AI-Guided Tour:** Say to Copilot: *"Guide me through basic_demo"*
+<br>Using a lighter or auto-selected model? Fine for exploring — for real logic you intend to keep, pick a frontier model (Claude Sonnet 5, GPT-5, etc.) if your plan allows it, and review the AI's output either way, the same as you would any other engineer's.
 
-**🤖 Bootstrap your AI assistant:**
-```bash title='🤖 Bootstrap your AI assistant by pasting the following into the chat'
-Please load `.github/.copilot-instructions.md`.
-```
-> Use Agent mode (not Ask). Works with GitHub Copilot or Claude Code extension — we get consistently good results with Claude Sonnet 4.6.
+*Why this matters: [AI-Enabled Projects](https://apilogicserver.github.io/Docs/Project-AI-Enabled/).*
+
+</details>
 
 <br>
 
