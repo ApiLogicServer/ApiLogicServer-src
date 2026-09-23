@@ -156,7 +156,7 @@ The save fails — note the dialog. That's 5 rules — not ~200 lines of code �
 &nbsp;
 
 <details markdown>
-<summary>AI Alone Writes Code You Can't Trust — Here's the Evidence</summary>
+<summary>AI Alone Writes Code You Can't Read or Trust — Here's the Evidence</summary>
 
 <br>AI is genuinely good at UI, data mapping, boilerplate, etc — no argument there. **Business logic is the exception.**
 
@@ -354,7 +354,7 @@ A compliance reviewer can check the implementation in minutes, not by reading co
 &nbsp;
 
 <details markdown>
-<summary>Pre-Built Enterprise Architecture — API, MCP, Messages, Rules, RBAC</summary>
+<summary>Pre-Built Enterprise Architecture — API, MCP, Messages, Rules, RBAC (via Context Engineering)</summary>
 
 &nbsp;
 
@@ -458,7 +458,7 @@ The native-AI side, in full: [samples/bd_claude_native_ai](samples/bd_claude_nat
 &nbsp;
 
 <details markdown>
-<summary>Business Users, Empowered — NL requirements, AI assistance</summary>
+<summary>Business Users Empowered — a Friendly IDE, Guided by AI (via Context Engineering)</summary>
 
 &nbsp;
 
@@ -504,7 +504,9 @@ The native-AI side, in full: [samples/bd_claude_native_ai](samples/bd_claude_nat
 <details markdown>
 <summary>Promotes Business User and Developer Collaboration — One Artifact, One Toolset</summary>
 
-<br>The rule a business user reads and the rule a developer debugs are the same five lines, in the same file, in the same IDE. No hand-off where intent gets lost, or start-over to utilize enterprise-standard languages, tooling, and deployment. A policy change — "or equal to," not just "less than" — is one line of English, then one line of rule. Not a re-spec, not a re-build.
+<br>The rule a business user reads and the rule a developer debugs are the same lines, in the same file, in the same IDE — standard Python, standard tooling, your infrastructure, not a proprietary one.
+
+No paying twice: once for the BU-built version, again when it hits its limit and a developer has to rebuild it to meet corporate standards. No finger-pointing between departments over whose fault the gap was — there's one artifact, one team owns it, from day one.
 
 ![collaboration](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/exec_reqmts/collaboration.png?raw=true)
 
