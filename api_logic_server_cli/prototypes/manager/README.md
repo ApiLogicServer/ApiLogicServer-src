@@ -213,7 +213,7 @@ That's not (only) a capability gap — it's a representation problem: procedural
 &nbsp;
 
 <details markdown>
-<summary>Easy to Read, Trust, and Maintain — Augment AI with Rules</summary>
+<summary>Governed Systems You Can Read, Trust, and Maintain — Augment AI with Rules</summary>
 
 &nbsp;
 
