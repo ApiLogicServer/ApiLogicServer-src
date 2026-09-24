@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ApiLogicServer",
+            "name": "Run Project (start server)",
             "type": "debugpy",
             "python": "${command:python.interpreterPath}",
             "cwd": "${workspaceFolder}",
@@ -21,10 +21,14 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
-            "name": "ApiLogicServer DEBUG",
+            "name": "Run Project DEBUG",
             "type": "debugpy",
             "python": "${command:python.interpreterPath}",
             "cwd": "${workspaceFolder}",
@@ -34,14 +38,18 @@
                 "PYTHONHASHSEED": "0", 
                 "APILOGICPROJECT_LOGGING_CONFIG": "config/logging.yml",
                 "APILOGICPROJECT_STOP_OK": "True",
-                "APILOGICPROJECT_DEBUG": "False"},
+                "APILOGICPROJECT_DEBUG": "True"},
             "request": "launch",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "  - API Logic Server - VERBOSE",
@@ -60,7 +68,11 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=True"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "  - No Security ApiLogicServer (e.g., simpler swagger)",
@@ -78,7 +90,11 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "  - No Security ApiLogicServer VERBOSE",
@@ -97,7 +113,11 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "Test - test/basic/server_test.py",

@@ -3,7 +3,7 @@ title: Sample_Basic_EAI
 do_process_code_block_titles: True
 version: 1.8 from docsite, for readme, for readme 4/21/2026 - message_formats auto-included in prototype, xr
 source: docs/Sample-Basic-EAI
-Propagation: see api_logic_server_cli/clone_and_overlay_prototypes/create_readme.py
+Propagation: see api_logic_server_cli/sample_mgr/create_readme.py
 ---
 <style>
   -typeset h1,
@@ -13,9 +13,9 @@ Propagation: see api_logic_server_cli/clone_and_overlay_prototypes/create_readme
 </style>
 
 
-!!! pied-piper ":bulb: TL;DR - Kafka Integration: Async Messaging"
-
-    Created by: › genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite, then Executable Requirements ("implement reqs")
+&nbsp;
+**Key Takeways - TL;DR - Kafka Integration: Async Messaging**
+&nbsp;
 
     APIs are useful to application integration, but do not deal with the reality that the receiving system might be down.
 
@@ -25,100 +25,108 @@ Propagation: see api_logic_server_cli/clone_and_overlay_prototypes/create_readme
 
     This sample presumes you are familiar with basic GenAI-Logic services, as illustrated in the Basic Demo tutorial.
 
-    These prompts are **Executable Requirements** — AI can build a *running system* you can use to confirm the requirements, and kick-start development.  As you will observe in the `requirements` (loaded later, below), this project includes
-
-    * **Core Creation Services:** JSON:API, Admin App, standard project (customize in your IDE), standard container deployment
-    * **Executable Requirements:** NL creation of multi-table logic, custom APIs, EAI Subscribers and Publishers, and Role Based Access Control
-
     > This is the same system used in [Executable Requirements](https://apilogicserver.github.io/Docs/Exec-Reqmts), which focuses on how these prompts serve as the living spec — readable by business and IT, executable by AI.
 
 &nbsp;
 
 ## Overview
 
-
-<br>
-
-<details markdown>
-<summary><strong>Say "hi" to your coding assistant</strong> — click to see important notes on models</summary>
-
-<br>Using a lighter or auto-selected model? Fine for exploring — for real logic you intend to keep, pick a frontier model (Claude Sonnet 5, GPT-5, etc.) if your plan allows it, and review the AI's output either way, the same as you would any other engineer's.
-
-*Why this matters: [AI-Enabled Projects](https://apilogicserver.github.io/Docs/Project-AI-Enabled/).*
-
-</details>
+This app illustrates using IntegrationServices for B2B push-style integrations with APIs, and internal integration with messages.
 
 &nbsp;
 
-**Executable Requirements - a new option for your organization**
+![demo-eai](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/demo-eai.png?raw=true)
 
+**basic_demo_eai** is a single API Logic Server providing APIs *and logic* — it both
+subscribes and publishes, so there's no second project to stand up:
+
+1. **Order Logic:** enforcing database integrity (Check Credit) and application
+   integration (notify shipping)
+
+2. A **Custom API** (`OrderB2B`), matching an agreed-upon format for B2B partners
+
+3. **Kafka Subscribe:** listens on topic `order_b2b` for inbound orders from a
+   message broker
+
+4. **Kafka Publish:** publishes to topic `order_shipping` when an order ships —
+   consumed by whatever downstream shipping system you plug in (not part of this
+   demo)
+
+5. **Standard APIs** for ad-hoc integration, user interfaces, etc
+
+&nbsp;
+
+## Setup
+
+**No Kafka installed? No Docker?** Not required for any of this. The Kafka client
+library installs with the project either way; you only need an actual broker
+running if you want to see live message delivery (Section 6, Step 6 — optional).
+Everything else — building, running, Check Credit, the Custom API, and even the
+Kafka Subscribe/Publish logic itself — works and is fully testable without one.
+If/when you do want live Kafka, the project includes everything to stand one up —
+see `integration/kafka/kafka_readme`'s **Live Kafka Test** section
+(`docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`, Podman
+alternative included).
+
+&nbsp;
+
+**Just want to run it, skip building?** The Manager already has a pre-built
+`basic_demo_eai` — jump straight to [Section 1, Run and Verify](#1-run-and-verify).
+Everyone — whether you just built it or you're using the pre-built copy — starts
+there.
+
+&nbsp;
+
+## Build It
+
+One command creates the project; one command executes **every** requirement below
+(Check Credit, B2B API, Kafka Subscribe, Kafka Publish, Security) — this is the
+**entire build**, not the first of several steps:
+
+**🤖 Bootstrap your AI assistant — paste into chat (Agent mode, Claude Sonnet 4.6 recommended):**
+```bash title="🤖 Bootstrap your AI assistant — paste into chat (Agent mode, Claude Sonnet 4.6 recommended)"
+Please load `.github/.copilot-instructions.md`
+```
+
+> **Important:** be sure CoPilot is in "Agent" Mode.  "Ask" will not work.  Also, we get consistently good results with `Claude Sonnet 4.6`.
 
 **Establish Initial State, Execute Requirements:**
 ```bash title="Establish Initial State, Execute Requirements"
 # A - Create project from existing database
 genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite
 
-# B - in created project, get these requirements
+# B - In created project, get these requirements
 $ cp -r ../samples/requirements/demo_eai/ .
 
-# C - optionally, configure security
+# C - Optionally, configure security
 $ (cd devops/keycloak; docker compose up -d)
 $ genai-logic add-auth --provider-type=keycloak --db-url=localhost
 
-# D - create system from requirements
+# D - Create system from requirements
 implement requirements docs/requirements/demo_eai
 ```
 
 **Using Podman instead of Docker?** Step C's `docker compose up -d` can be `podman compose up -d`
 instead — `devops/keycloak/docker-compose.yml` works unchanged. One-time setup: see
-[DevOps-Podman](https://apilogicserver.github.io/Docs/DevOps-Podman/).
+[DevOps-Podman](https://apilogicserver.github.io/Docs/DevOps-Podman).
 
-The prompts on this page are the requirements for this system. Execute the steps above to build it.  Thse requirements are not just a description of the system - AI can execute them, directly.
+The full requirements spec that step D executes is
+[docs/requirements/demo_eai/requirements.md](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/requirements/demo_eai/docs/requirements/demo_eai/requirements.md)
+— 5 Gherkin features. **Sections 2-5b and 7 below are a tour of what that one command
+built** — each maps back to the requirement that produced it. They are not
+additional steps to run.
 
-This is a real project: your IDE, your Python, your source control. The prompts create it in minutes — but you own it fully and iterate from there. Change a rule; the engine determines execution order automatically. Add an endpoint; the rules are already there waiting for it.
+This is a real project: your IDE, your Python, your source control. The prompt creates it in minutes — but you own it fully and iterate from there. Change a rule; the engine determines execution order automatically. Add an endpoint; the rules are already there waiting for it.
 
 This suggests a different way to think about requirements gathering. Instead of Word documents that describe a system and then drift from it, requirements can be structured prompts — precise enough for AI to execute, readable enough for business and IT to agree on. The spec and the running system are the same artifact.
 
-
 &nbsp;
 
-**Enterprise Application Integration - System Requirements**
+## 1. Run and Verify
 
-This app illustrates using IntegrationServices for B2B push-style integrations with APIs, and internal integration with messages.  
-
-&nbsp;
-
-![demp_kafka](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/demo_kafka.png?raw=true)
-
-The **demo_kafka API Logic Server** provides APIs *and logic*:
-
-1. **Order Logic:** enforcing database integrity and application Integration (alert shipping)
-
-2. A **Custom API**, to match an agreed-upon format for B2B partners
-
-3. **Standard APIs** for ad-hoc integration, user interfaces, etc
-
-The **Shipping API Logic Server** listens on kafka, and processes the message.<br><br>
-
-<br>
-
-## 1. Create From Existing DB
-
-<br>
-
-<details markdown>
-
-<summary> Create the Customer, Orders and Product Project [typically already done using Manager]</summary>
-
-<br>
-
-
-**In the Manager: Create a project from an existing database (probably already done):**
-```bash title="In the Manager: Create a project from an existing database (probably already done)"
-Create a database project named basic_demo_vibe from samples/dbs/basic_demo.sqlite
-```
-
-<br>
+1. **Start the Server:** F5 (or `python api_logic_server_run.py`)
+2. **Start the Admin App:** browse to [http://localhost:5656/](http://localhost:5656/).  The Admin App screen shown below should appear in your Browser.
+3. **Verify as shown below**
 
 <details markdown>
 
@@ -131,21 +139,6 @@ Create a database project named basic_demo_vibe from samples/dbs/basic_demo.sqli
 </details markdown>
 
 &nbsp;
-
-### 1a. Project Opens: Run
-
-The project should automatically open a new window in VSCode. <br>
-
-**🤖 Again, in your Coding Assistant, just say:**
-``` bash title='🤖 In your Coding Assistant, just say'
-hi
-```
-
-Run it as follows:
-
-1. **Start the Server:** F5 
-2. **Start the Admin App:** browse to [http://localhost:5656/](http://localhost:5656/).  The Admin App screen shown below should appear in your Browser.
-3. **Verify as shown below**
 
 <details markdown>
 
@@ -171,20 +164,17 @@ Explore the app - click Customer Alice, and see their Orders, and Items.
 ![admin-app-initial](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/admin-app-initial.jpeg?raw=true)
 </details>
 
-</details>
+Now go to [Section 6, How to Test](#6-how-to-test) to exercise the EAI features
+(Check Credit, Kafka Subscribe, Kafka Publish) — or continue reading below for a
+tour of how each requirement became the running system you just verified.
 
+<br>
 
-<br><br>
-
-## 2. Declare Business Logic
+## 2. Requirement §1 — Check Credit Logic
 
 Logic (multi-table derivations and constraints) is a significant portion of a system, typically nearly half.  GenAI-Logic provides **spreadsheet-like rules** that dramatically simplify and accelerate logic development.
 
-Rules are declared in Copilot using Natural Language, or directly in Python with IDE code completion.  The screen below shows the 5 rules for **Check Credit Logic.**
-
-**1. Stop the Server** (Red Stop button, or Shift-F5 -- see Appendix)
-
-**2. Add Business Logic**
+`implement requirements` turned this Gherkin feature (requirements §1) into the 5 rules below — no procedural code to write or maintain:
 
 **Check Credit Logic (instead of 220 lines of code):**
 ```bash title="Check Credit Logic (instead of 220 lines of code)"
@@ -207,7 +197,8 @@ Use case: App Integration
 
 AI generates integrations **by example** — provide a sample message shape and it auto-maps obvious field names silently, lists exceptions you specify, and blocks server start on anything unresolvable.  They double as test fixtures.
 
-The project already includes sample message formats in `integration/kafka/message_formats/`:
+`implement requirements` already produced these in `integration/kafka/message_formats/`
+(referenced by requirements §2-4):
 
 - `order_b2b.json` — inbound B2B order format
 - `order_shipping.json` — outbound shipping notification format
@@ -220,52 +211,55 @@ The project already includes sample message formats in `integration/kafka/messag
 
 <br>
 
-## 4. Custom API - B2B Orders
+## 4. Requirement §2 — Custom API for B2B Orders
 
-To fit our system into the Value Chain,
-we need a **Custom API** to accept orders from B2B partners, and forward paid orders to shipping via Kafka.
+To fit our system into the Value Chain, requirements §2 asked for a **Custom API**
+to accept orders from B2B partners. `implement requirements` built the endpoint below
+from this Gherkin feature:
 
-**Create the Custom B2B API Endpoint:**
-``` bash title="Create the Custom B2B API Endpoint"
-Create a B2B order API called 'OrderB2B' that accepts orders from external partners.
+**Requirement §2 — B2B Order Integration:**
+``` bash title="Requirement §2 — B2B Order Integration"
+Feature: B2B Order Integration
 
-The external message format is in `integration/kafka/message_formats/order_b2b.json`.
-
-Field mappings:
-- 'Account' → lookup Customer by name, set customer_id
-- 'Notes' → order notes
-- 'Items' array → Item rows: 'Name' → lookup Product, 'QuantityOrdered' → item quantity
-
-The API should create complete orders.
+  Scenario: Accept order from external partner
+    Given an inbound B2B order in partner format (message_formats/order_b2b.json)
+    When the order is received via a Custom API endpoint named OrderB2B
+    Then map Account to Customer by name
+    And map Items.Name to Product by name
+    And map Items.QuantityOrdered to Item.quantity
+    And create the order with all Check Credit rules enforced
 ```
 
-The Kafka logic was created earlier, so we are ready to test — see Section 6.
+Result: `POST /api/OrderB2B` — see Section 6 to test it.
 
 <br>
 
-## 5. EAI Subscribe — Inbound Kafka Message
+## 5. Requirement §3 — EAI Subscribe (Inbound Kafka Message)
 
-The format file was already saved in Section 3.  Now prompt AI, referencing it:
+requirements §3 asked for the same B2B order shape, but arriving via Kafka instead
+of a direct API call — reusing the message format from Section 3:
 
-**Subscribe to sales message - Kafka Enterprise Application Integration:**
-```text title="Subscribe to sales message - Kafka Enterprise Application Integration"
-Subscribe to Kafka topic `order_b2b` (JSON format).
+**Requirement §3 — Kafka Subscribe Order Integration:**
+```text title="Requirement §3 — Kafka Subscribe Order Integration"
+Feature: Kafka Subscribe Order Integration
 
-The message format is in `integration/kafka/message_formats/order_b2b.json`.
-
-Target tables: Order, Item (from models.py).
-
-Field mappings:
-- `Account` → look up Customer by Customer.name, set Order.customer_id
-- `Notes` → Order.notes
-- `Items` array → Item rows: `Name` → look up Product by Product.name, set Item.product_id; `QuantityOrdered` → Item.quantity
+  Scenario: Accept inbound orders from sales channel
+    Given an inbound order message in JSON format (message_formats/order_b2b.json)
+    When the message is received from Kafka topic order_b2b
+    Then use the 2-message pattern
+    And save the raw payload as a blob in the first transaction
+    And parse and persist the order in the second transaction
+    And map Account to Customer by name
+    And map Items.Name to Product by name
+    And map Items.QuantityOrdered to Item.quantity
+    And create the order with all Check Credit rules enforced
 ```
 
+&nbsp;
 
-&nbsp;
-**ppings here but not in Section 7?**
-&nbsp;
-    These mappings are **FK lookups** — `Account` isn't a column, it's a search key to find the right `Customer` row.  AI can't infer that from field names alone.  For publish (Section 7), the mappings are purely name-matching between the format file and `models.py` — something AI can do itself.
+## 5a. Lookups
+
+These mappings include **FK lookups** — `Account` isn't a column, it's a search key to find the right `Customer` row.  AI can't infer that from field names alone.  For publish (Section 7), the mappings are purely name-matching between the format file and `models.py` — something AI can do itself.
 
 &nbsp;
 
@@ -308,49 +302,105 @@ curl 'http://localhost:5656/consume_debug/order_b2b?file=integration/kafka/messa
 
 <br>
 
-## 6. Test
+## 5b. Requirement §5 — Security
 
-Observe that the API and message listener use the same underlying logic.
+requirements also includes a row-level security requirement, applied the same way
+as any other:
 
-`integration/kafka/kafka_subscribe_discovery/order_b2b.py` illustrates unit testing:
-
-**Test stand-alone, and with Kafka:**
-```bash title="Test stand-alone, and with Kafka"
-Debug / test (no Kafka required):
-  APILOGICPROJECT_CONSUME_DEBUG=true is set in config/default.env
-  1. Start server: python api_logic_server_run.py
-  2. curl 'http://localhost:5656/consume_debug/order_b2b?file=integration/kafka/message_formats/order_b2b.json'
-  3. Verify DB: sqlite3 database/db.sqlite "SELECT * FROM order_b2b_message; SELECT * FROM 'order'; SELECT * FROM item;"
-
-Live Kafka:
-  1. docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d
-     (Podman instead of Docker? Use `podman compose` — same file, unchanged.
-      See https://apilogicserver.github.io/Docs/DevOps-Podman/)
-  2. Enable KAFKA_CONSUMER + KAFKA_PRODUCER in config/default.env
-  3. bash integration/kafka/order_b2b_reset.sh       # recreates topics + clears log
-  4. Start server; publish sample JSON to order_b2b topic
+**Requirement §5 — Row-Level Security:**
+```text title="Requirement §5 — Row-Level Security"
+Feature: Row-Level Security
+  Scenario: Sales role sees limited customers
+    Given a user with the sales role
+    When querying the Customer list
+    Then only return customers where credit_limit >= 3000 or balance > 0
 ```
+
+This is why the requirements above included an *optional* `add-auth` step — security
+only activates once auth is configured; skip it and the rest of the system still runs.
+
+<br>
+
+## 6. How to Test
+
+> **Kafka is optional during development.** The server doesn't require a broker to
+> start or run — this is deliberate, so you can build and test the full system with
+> zero infrastructure.
+>
+> * **Subscribe side:** exercised with no broker at all via the `consume_debug`
+>   endpoint (`APILOGICPROJECT_CONSUME_DEBUG=true`, on by default) — same code path
+>   as live Kafka, just triggered by a curl instead of a topic message.
+> * **Publish side:** if no broker is reachable at `localhost:9092`, the publish
+>   call still completes the underlying transaction — it buffers the message, waits
+>   up to ~10s for the broker, then logs a delivery failure. Nothing crashes; that
+>   PATCH will just feel a little slow. That's the timeout you're seeing, not a bug.
+>
+> Bring up Kafka only when you want to verify the wire-level integration (Step 3
+> below).
+
+**1. Start the server:** F5 (or `python api_logic_server_run.py`)
+
+**2. Admin App:** browse to [http://localhost:5656/](http://localhost:5656/) — click
+Customer Alice, see Orders and Items.
+
+**3. Check Credit — no Kafka needed:**
+**Check Credit — no Kafka needed:**
+```bash title="Check Credit — no Kafka needed"
+# Good order
+curl -X POST http://localhost:5656/api/OrderB2B \
+  -H "Content-Type: application/json" \
+  -d '{"Account":"Alice","Notes":"test","Items":[{"Name":"Widget","QuantityOrdered":1}]}'
+
+# Over-limit order — expect 400, "balance exceeds credit limit"
+curl -X POST http://localhost:5656/api/OrderB2B \
+  -H "Content-Type: application/json" \
+  -d '{"Account":"Alice","Notes":"over limit","Items":[{"Name":"Widget","QuantityOrdered":50}]}'
+```
+
+**4. Kafka Subscribe — no live Kafka needed:**
+**Kafka Subscribe — no live Kafka needed:**
+```bash title="Kafka Subscribe — no live Kafka needed"
+curl "http://localhost:5656/consume_debug/order_b2b?file=integration/kafka/message_formats/order_b2b.json"
+```
+Verify: `sqlite3 database/db.sqlite "SELECT * FROM 'order' ORDER BY id DESC LIMIT 1; SELECT * FROM item ORDER BY id DESC LIMIT 3;"`
+
+**5. Kafka Publish:** PATCH an order's `date_shipped` (e.g. via the Admin App, or
+the API) and watch the log — `publish_kafka_message: delivered to topic
+'order_shipping'` if a broker is up, or a delivery-failure log after ~10s if not
+(see callout above — expected either way).
+
+**6. (Optional) Live Kafka, end-to-end:**
+
+  1. Start Docker: `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
+     (https://apilogicserver.github.io/Docs/Podman instead of Docker? Use `podman compose` — same file, unchanged. See [DevOps-Podman](DevOps-Podman).)
+  2. Reset topics: `bash integration/kafka/order_b2b_reset.sh`
+  3. Restart the server (after Docker/Podman is up, so it picks up Kafka env vars and subscribes to topics)
+  4. Publish a real message to `order_b2b` and confirm it's consumed — same
+     verification query as Step 4.
 
 
 <br>
 
-## 7. Publish — Outbound Kafka Messages (By-Example)
+## 7. Requirement §4 — Publish (By-Example, Outbound Kafka)
 
-In Section 2, the logic prompt already generated a **key-only** publish rule: when `date_shipped` is set, it sends `{"id": 42}` — a notification that tells the consumer to call back for the current data.
+A **key-only** publish rule sends just `{"id": 42}` — a notification that tells the
+consumer to call back for current data. requirements §4 asked for more: a
+**by-example** publish that carries the full shape the consumer needs, so it never
+has to call back. `implement requirements` built this directly — no separate
+"upgrade" step:
 
-Now let's upgrade that to **by-example**: a shaped message that carries all the data the consumer needs, so it never has to call back.  AI will replace the key-only rule in `app_integration.py` with the mapper-based version.  The outbound format was saved in Section 3 — just reference it:
+**Requirement §4 — Kafka Publish Shipping Notification:**
+```text title="Requirement §4 — Kafka Publish Shipping Notification"
+Feature: Kafka Publish Shipping Notification
 
-**Prompt for by-example publish:**
-```text title="Prompt for by-example publish"
-Upgrade the order_shipping publish to by-example.
-
-The desired outbound message format is in `integration/kafka/message_formats/order_shipping.json`.
+  Scenario: Notify shipping when an order is dispatched
+    Given an Order exists
+    When date_shipped is set
+    Then publish to Kafka topic order_shipping
+    And use message_formats/order_shipping.json as the message shape
+    And use by-example publish rather than key-only publish
 ```
 
-
-&nbsp;
-**pings needed in the prompt**
-&nbsp;
-    AI reads the format file and `models.py` and maps by name.  Direct matches are silent; uncertain ones get `# TODO: verify` in `FIELD_EXCEPTIONS`; anything unresolvable is added to `_unresolved` and **blocks server start** — reported to you in chat immediately.  Only add exceptions to the prompt if you want to override AI's inference.
+AI reads the format file and `models.py` and maps by name.  Direct matches are silent; uncertain ones get `# TODO: verify` in `FIELD_EXCEPTIONS`; anything unresolvable is added to `_unresolved` and **blocks server start** — reported to you in chat immediately.
 
 For full details and generated code examples, see [Integration EAI — Publish](Integration-EAI#publish--outbound-kafka-messages).

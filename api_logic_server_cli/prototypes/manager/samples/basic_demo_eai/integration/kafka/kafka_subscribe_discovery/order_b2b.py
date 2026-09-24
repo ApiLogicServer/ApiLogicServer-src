@@ -1,15 +1,27 @@
 """
-Kafka Subscribe — order_b2b topic
-===================================
-Req §3: 2-message pattern for inbound orders from the sales channel.
+Kafka Subscribe — order_b2b (Req §3)
+=====================================
+Feature: Kafka Subscribe Order Integration
 
-Pipeline:
-  Consumer 1  ('order_b2b')          → save raw blob to OrderB2bMessage, commit (Tx 1)
-  after_flush_row_event               → publish blob to 'order_b2b_processed' topic
-  Consumer 2  ('order_b2b_processed') → parse + persist Order+Items, mark blob (Tx 2)
+  Scenario: Accept inbound orders from sales channel
+    Given an inbound order message in JSON format (message_formats/order_b2b.json)
+    When the message is received from Kafka topic order_b2b
+    Then map Account to Customer by name
+    And map Items.Name to Product by name
+    And map Items.QuantityOrdered to Item.quantity
 
-Debug (no Kafka):
-  curl 'http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/demo_eai/message_formats/order_b2b.json'
+Basic Design (2-message pattern — mandatory, see docs/training/eai_subscribe.md):
+  1. integration/kafka/kafka_subscribe_discovery/order_b2b.py  - order_b2b
+       reads message, inserts raw payload into OrderB2bMessage blob (Tx 1)
+  2. logic/logic_discovery/order_b2b_consume.py
+       insert → publishes payload to topic: order_b2b_processed
+  3. integration/kafka/kafka_subscribe_discovery/order_b2b.py  - order_b2b_processed
+       parses payload → domain rows (lookups + LogicBank rules) (Tx 2)
+  4. api/api_discovery/order_b2b_consume_debug.py
+       /consume_debug/order_b2b bypasses Kafka, calls same parse function directly
+
+Quick Test (no Kafka needed):
+  curl 'http://localhost:5656/consume_debug/order_b2b?file=integration/kafka/message_formats/order_b2b.json'
 """
 import json
 import logging
@@ -19,25 +31,32 @@ from integration.system.EaiSubscribeMapper import resolve_lookups
 
 logger = logging.getLogger('integration.kafka')
 
-# ─── Lookup configuration ────────────────────────────────────────────────────
-
-# Parent-level: Account (customer name) → customer_id
 ORDER_B2B_PARENT_LOOKUPS = [
     (models.Customer, models.Customer.name, 'Account', 'customer_id'),
 ]
-
-# Child-level: Name (product name) → product_id
 ORDER_B2B_CHILD_LOOKUPS = [
     (models.Product, models.Product.name, 'Name', 'product_id'),
 ]
-
 ORDER_B2B_CHILD_KEY = 'Items'
 
 
-# ─── Shared parse + persist function ─────────────────────────────────────────
+def _record_error_text(blob_id: int, error_text: str):
+    """Persist a Tx 2 failure reason onto its blob row, in its own clean transaction.
+
+    Called from the except block of a Kafka consumer — never call session.rollback()
+    there; use a fresh session scope so this write can't be poisoned by the failed Tx 2
+    it's reporting on.
+    """
+    fresh_session = safrs.DB.session
+    blob = fresh_session.get(models.OrderB2bMessage, blob_id)
+    if blob:
+        blob.error_text = error_text
+        fresh_session.commit()
+
 
 def process_order_b2b_payload(payload: str, session, blob_id: int = None):
-    """Parse payload, resolve lookups, persist domain rows, mark blob processed.
+    """
+    Parse payload, resolve lookups, persist domain rows, mark blob processed.
 
     Called by both Consumer 2 (Kafka path) and /consume_debug/order_b2b (no-Kafka path).
     blob_id=None (debug path): blob created inside this function with is_processed=True.
@@ -89,4 +108,6 @@ def register(bus):
             try:
                 process_order_b2b_payload(msg.value().decode('utf-8'), session, blob_id=blob_id)
             except Exception as e:
-                logger.exception("order_b2b_processed parse error")   # blob stays is_processed=False
+                logger.exception(f"order_b2b_processed parse error (blob_id={blob_id})")
+                if blob_id:
+                    _record_error_text(blob_id, str(e))

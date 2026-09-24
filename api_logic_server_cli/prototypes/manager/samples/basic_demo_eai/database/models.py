@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  April 22, 2026 10:30:28
+# Created:  September 23, 2026 17:59:30
 # Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -70,6 +70,7 @@ class OrderB2bMessage(Base):  # type: ignore
     received_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
     payload = Column(Text, nullable=False)
     is_processed = Column(Boolean, default=False)
+    error_text = Column(Text)
 
     # parent relationships (access parent)
 

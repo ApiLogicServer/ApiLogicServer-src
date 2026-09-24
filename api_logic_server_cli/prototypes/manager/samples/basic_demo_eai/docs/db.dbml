@@ -41,6 +41,7 @@ Table OrderB2bMessage {
     received_at DATETIME 
     payload TEXT 
     is_processed BOOLEAN 
+    error_text TEXT 
     }
 
 Table ProductSupplier {

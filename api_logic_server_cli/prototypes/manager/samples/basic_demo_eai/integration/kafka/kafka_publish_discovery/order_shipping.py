@@ -1,51 +1,38 @@
 """
-Kafka Publish Mapper — order_shipping topic
-============================================
-Req §4: By-example publish mapper for the order_shipping topic.
+By-example publish mapper for Kafka topic order_shipping (Req §4).
 
-Message shape (message_formats/order_shipping.json):
-    {
-      "order_id": 1,
-      "order_date": "2026-04-06",
-      "customer_name": "Alfreds Futterkiste",
-      "total": 100.00,
-      "items": [
-        { "quantity": 2, "product_name": "Chai", "unit_price": 25.00 }
-      ]
-    }
-
-FIELD_EXCEPTIONS resolution (see EaiPublishMapper.serialize_row docstring):
-  order_id      → simple rename → Order.id
-  order_date    → simple rename → Order.CreatedOn
-  customer_name → dot-notation  → Order.customer.name  (via SQLAlchemy relationship)
-  total         → simple rename → Order.amount_total
-  items         → child list    → Order.ItemList        (relationship name on Order)
-  product_name  → dot-notation  → Item.product.name    (same exceptions dict reused for children)
-  quantity      → auto-match    → Item.quantity
-  unit_price    → auto-match    → Item.unit_price
+Output shape driven by message_formats/order_shipping.json:
+  order_id       ← Order.id                    (auto-match, renamed via FIELD_EXCEPTIONS)
+  order_date     ← Order.CreatedOn              (dot-notation not needed, simple rename)
+  customer_name  ← Order.customer.name          (dot-notation join)
+  total          ← Order.amount_total           (rename)
+  items          ← Order.ItemList (child list)
+    quantity     ← Item.quantity                (auto-match)
+    product_name ← Item.product.name            (dot-notation join)
+    unit_price   ← Item.unit_price               (auto-match)
 """
+
 from integration.system.EaiPublishMapper import serialize_row
 
 SAMPLE = {
-    "order_id":      1,
-    "order_date":    "2026-04-06",
+    "order_id": 1,
+    "order_date": "2026-04-06",
     "customer_name": "Alfreds Futterkiste",
-    "total":         100.00,
+    "total": 100.00,
     "items": [
         {"quantity": 2, "product_name": "Chai", "unit_price": 25.00}
     ],
 }
 
 FIELD_EXCEPTIONS = {
-    "order_id":      "id",
-    "order_date":    "CreatedOn",
+    "order_id": "id",
+    "order_date": "CreatedOn",
     "customer_name": "customer.name",
-    "total":         "amount_total",
-    "items":         "ItemList",      # child collection → SQLAlchemy relationship name
-    "product_name":  "product.name",  # also used when serializing child Item rows
+    "total": "amount_total",
+    "items": "ItemList",
+    "product_name": "product.name",
 }
 
 
-def row_to_dict(row) -> dict:
-    """Serialize an Order row to the order_shipping message shape."""
+def row_to_dict(row):
     return serialize_row(row, sample=SAMPLE, exceptions=FIELD_EXCEPTIONS)

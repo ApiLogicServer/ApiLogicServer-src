@@ -117,13 +117,15 @@
                 "id",
                 "received_at",
                 "payload",
-                "is_processed"
+                "is_processed",
+                "error_text"
             ],
             "filterable": [
                 "id",
                 "received_at",
                 "payload",
-                "is_processed"
+                "is_processed",
+                "error_text"
             ]
         },
         {

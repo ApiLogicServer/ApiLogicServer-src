@@ -1,7 +1,7 @@
 about:
-  date: April 22, 2026 10:22:49
+  date: September 23, 2026 17:58:57
   merged:
-    at: April 22, 2026 10:30:28
+    at: September 23, 2026 17:59:30
     new_attributes: ''
     new_resources: 'OrderB2bMessage '
     new_tab_groups: ''
@@ -100,6 +100,7 @@ resources:
       sort: true
     - name: received_at
       type: DATETIME
+    - name: error_text
     - name: payload
       required: true
     - name: is_processed

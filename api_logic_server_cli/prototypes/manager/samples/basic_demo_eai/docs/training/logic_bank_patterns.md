@@ -6,8 +6,8 @@ usage: AI assistants read this for general LogicBank patterns across ALL rule ty
 version: 1.0
 date: Nov 14, 2025
 related: 
-  - logic_bank_api.prompt (deterministic rule API)
-  - logic_bank_api_probabilistic.prompt (AI/probabilistic rule API)
+  - logic_bank_api.md (deterministic rule API)
+  - probabilistic_logic.md (AI/probabilistic rule API)
 changelog:
   - 1.0 (Nov 14, 2025): Extracted general patterns from probabilistic prompt for reuse
   - 1.1 (Feb 16, 2026): Request Object Pattern
@@ -19,8 +19,8 @@ This document contains general patterns for working with LogicBank rules.
 These patterns apply to ALL rule types (deterministic and probabilistic).
 
 For specific rule APIs, see:
-- `docs/training/logic_bank_api.prompt` - Deterministic rules (sum, count, formula, constraint, etc.)
-- `docs/training/logic_bank_api_probabilistic.prompt` - Probabilistic rules (AI value computation)
+- `docs/training/logic_bank_api.md` - Deterministic rules (sum, count, formula, constraint, etc.)
+- `docs/training/probabilistic_logic.md` - Probabilistic rules (AI value computation)
 
 ---
 
@@ -237,7 +237,7 @@ COMMON USE CASES:
 PATTERN 4: Rule API Syntax Reference
 =============================================================================
 
-Always consult docs/training/logic_bank_api.prompt for complete API details.
+Always consult docs/training/logic_bank_api.md for complete API details.
 
 COMMON PARAMETERS BY RULE TYPE:
 
@@ -490,21 +490,55 @@ python api_logic_server_run.py
 ---
 
 =============================================================================
-PATTERN 8: Event Dependency Awareness
+PATTERN 8: Rules vs Events — Rules Are ALWAYS Preferred
 =============================================================================
 
-Before writing any event that sets a value, ask: **"Does any rule depend on this value?"
+**ALWAYS use declarative rules (Rule.formula, Rule.sum, Rule.count, Rule.constraint)
+in preference to events. Events are for side effects only.**
 
-| Answer | Use |
-|--------|-----|
-| YES — a formula/sum/constraint depends on it | `Rule.early_row_event` (fires before derivations) |
-| NO — pure side effect (Kafka, email, audit) | `Rule.after_flush_row_event` or `Rule.commit_row_event` |
+LogicBank formulas order themselves automatically — you do not need an event to
+control ordering. If a value is derived from other attributes or child rows, use a rule.
 
-**Valid Rule event methods (complete list):**
+| Value source | Use |
+|---|---|
+| Derived from row attributes or child rows | `Rule.formula`, `Rule.sum`, `Rule.count` |
+| Looked up from a FK parent (external to this row) | `Rule.early_row_event` — only when no rule can express it |
+| External module returns multiple output fields (AI response, external API, Request Pattern) | `Rule.early_row_event` — handler sets all response fields; downstream `Rule.formula` rules consume them |
+| Pure side effect (Kafka, email, audit, insert child rows) | `Rule.row_event`, `Rule.after_flush_row_event`, `Rule.commit_row_event` |
+
+**External module exception — when `early_row_event` legitimately sets multiple row attributes:**
+When an event calls an opaque external computation (AI model, third-party API, Kafka-reply handler
+via the Request Pattern), the handler writes back several response fields (e.g. `matched_project_id`,
+`confidence`, `reason`, `chosen_unit_price`). This is correct and by design: the external call is a
+single atomic operation whose outputs are all response columns on a `Sys*` request table. Downstream
+`Rule.formula` rules then consume those output columns as inputs. This is NOT the same as a `Rule.formula`
+function setting multiple `row.` attributes as side-effects — that remains wrong (see logic_bank_api.md
+"ONE VALUE PER FORMULA"). The distinction:
+- `early_row_event` handler setting multiple fields = ✅ external module pattern (opaque computation, all fields are outputs)
+- `Rule.formula` calling function setting multiple fields = ❌ side-effect anti-pattern (only the `derive=` column is tracked)
+
+❌ WRONG — using an event to derive a value that Rule.formula/count could express:
+```python
+def _evaluate(row, old_row, logic_row):
+    row.clvs_eligible = 1 if not any(c.is_prohibited for c in row.ShipmentCommodityList) else 0
+Rule.commit_row_event(on_class=models.Shipment, calling=_evaluate)
+```
+This fires once on commit, never re-fires when child rows change, and bypasses all
+LogicBank dependency tracking. It is always wrong for derived attributes.
+
+✅ CORRECT — Rule.count + Rule.formula: reactive, dependency-tracked, re-fires automatically:
+```python
+Rule.count(derive=models.Shipment.prohibited_count, as_count_of=models.ShipmentCommodity,
+           where=lambda row: row.is_prohibited == 1)
+Rule.formula(derive=models.Shipment.clvs_eligible,
+             as_expression=lambda row: 1 if row.prohibited_count == 0 else 0)
+```
+
+**Valid Rule event methods (side effects only):**
 
 | Use case | Method |
 |----------|--------|
-| Set value before formulas/constraints run | `Rule.early_row_event` |
+| FK lookup before formulas run (no rule equivalent) | `Rule.early_row_event` |
 | Append child rows during parent insert | `Rule.row_event` |
 | Kafka publish / side-effect after flush | `Rule.after_flush_row_event` |
 | Post-commit finalization | `Rule.commit_row_event` |
@@ -547,16 +581,16 @@ SUMMARY: Quick Reference
 1. **Event handlers**: def handler(row, old_row, logic_row) - ALL THREE
 2. **Logging**: Use logic_row.log() not app_logger
 3. **Request Pattern**: new_logic_row(ModelClass) returns LogicRow with .row
-4. **Rule APIs**: Check logic_bank_api.prompt for correct parameters
+4. **Rule APIs**: Check logic_bank_api.md for correct parameters
 5. **Anti-patterns**: No get_logic_row(), no calling=False, no app_logger in rules
 6. **Type handling**: int for FKs, Decimal for money
-7. **Event dependencies**: early_row_event if a rule depends on the value you're setting
+7. **Rules over events**: derived values → Rule.formula/sum/count; events → side effects only
 8. **Testing**: logic_row.log(), check old_row, use is_inserted/updated/deleted
 9. **Valid event methods**: early_row_event, row_event, after_flush_row_event, commit_row_event
 
 For rule-specific APIs and examples:
-- Deterministic rules → docs/training/logic_bank_api.prompt
-- Probabilistic rules → docs/training/logic_bank_api_probabilistic.prompt
+- Deterministic rules → docs/training/logic_bank_api.md
+- Probabilistic rules → docs/training/probabilistic_logic.md
 
 ---
 

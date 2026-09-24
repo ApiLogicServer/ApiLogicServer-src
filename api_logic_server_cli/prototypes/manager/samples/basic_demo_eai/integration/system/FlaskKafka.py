@@ -49,7 +49,11 @@ class FlaskKafka():
             handlers = self.handlers[msg.topic()]
             for handler in handlers:
                 handler(msg = msg, safrs_api = self.safrs_api)
-            # self.consumer.commit()
+            # self.consumer.commit(asynchronous=False)
+            # DEV/DEMO: commit is intentionally disabled (enable.auto.commit=false in config).
+            # Effect: offsets are never committed, so server restart replays all messages from earliest.
+            # The is_processed guard on Consumer 2 makes replays a safe no-op (skips already-processed blobs).
+            # PRODUCTION: uncomment the commit line above for at-least-once delivery with no replays.
         except Exception as e:
             logger.critical(str(e), exc_info=1)
             # self.consumer.close()

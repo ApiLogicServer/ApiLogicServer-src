@@ -32,7 +32,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         Maps:
           Account            → Customer.name lookup → Order.customer_id
           Items[].Name       → Product.name lookup  → Item.product_id
-          Items[].QuantityOrdered                  → Item.quantity
 
         All Check Credit rules (copy price, compute amount, sum totals,
         enforce credit limit) are automatically enforced by LogicBank.

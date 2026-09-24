@@ -3,13 +3,27 @@ title: EAI Consume Pattern — Kafka + XML/JSON → DB
 description: Two-message Kafka consume pattern with generic by-name XML/JSON mapper. Covers blob-row bridge, 3-tier mapping contract, local debug mode, and generated test data.
 source: Generic training for ApiLogicServer projects with GenAI integration
 usage: AI assistants read this when detecting Kafka consume, EAI, or XML/JSON-to-DB patterns in a user prompt
-version: 1.2
+version: 1.5
 date: April 4, 2026
 related:
   - implement_requirements.md (Kafka outbound, row_event patterns)
   - logic_bank_patterns.md (row_event, commit_row_event)
   - logic_bank_api.md (full rule API)
 changelog:
+  - 1.5 (Sep 23, 2026): Added `error_text` column to the blob table and a mandatory
+    `_record_error_text()` helper, called from every consumer 2 `except` block — same
+    mandatory weight as the 2-message pattern itself. Root cause: `is_processed=False`
+    alone tells an operator only that a message is stuck, not why; without a text field,
+    diagnosing failures meant grepping server logs and cross-referencing timestamps by
+    hand (found via basic_demo_eai testing: invalid-lookup and business-rule-rejection
+    failures both left blobs indistinguishable at the DB level). The helper writes in its
+    own clean transaction/session scope rather than calling `session.rollback()` inline,
+    per the existing § CONSUMER ROLLBACKS rule (framework relies on implicit rollbacks).
+  - 1.4 (Aug 6, 2026): Added artifact #9 (test/send_xyz.py, Kafka test publisher) to the
+    "Generated Artifacts" / "Minimal Generation Prompt" lists — a downstream project's
+    requirements.md referenced "eai_subscribe.md artifact #9" for this file, but only 8
+    artifacts were ever listed here, leaving a dangling reference. Also corrected the stale
+    version header (said 1.2, changelog already at 1.3).
   - 1.3 (April 22, 2026): (a) Two "do it this way" template fixes (demo_eai rebuild caught both): Consumer 1 now sets is_processed=False explicitly; JSON mapper skeleton replaced with concrete parent+child-array pattern with child_rows.append(child_row). (b) Two high-value diagnostics: process_xyz_payload now raises TypeError immediately if parse() returns tuples instead of model rows; row-event bridge now logs when the is_processed guard fires (makes silent skip visible in logic log)
   - 1.2 (April 15, 2026): Added mandatory is_processed guard to Artifact 3 row-event bridge template; without it the debug path triggers a spurious Kafka re-publish that crashes Consumer 2 on UNIQUE constraint (bug caught by customs_demo implementation)
   - 1.1 (April 12, 2026): Added source-PK normalization rule for placeholder external IDs (e.g. 0), plus insert-only rerun DB-reset guidance
@@ -89,6 +103,7 @@ class XyzMessage(Base):
     received_at  = Column(DateTime, default=datetime.utcnow)  # audit: when received
     payload      = Column(Text, nullable=False)                # raw XML or JSON blob
     is_processed = Column(Boolean, default=False)             # True after Tx 2 commits
+    error_text   = Column(Text, nullable=True)                 # exception message if Tx 2 failed
 ```
 
 > **models.py imports**: ensure `from datetime import datetime` is at the top of models.py.
@@ -97,6 +112,14 @@ class XyzMessage(Base):
 `received_at` is set on insert (Tx 1). `is_processed` flips to `True` when consumer 2
 commits successfully (Tx 2). On parse failure Tx 2 rolls back — blob stays `False`,
 queryable for retry: `SELECT * FROM xyz_message WHERE is_processed = 0`.
+
+> 🚨 **`error_text` is mandatory — as mandatory as the 2-message pattern itself.**
+> A failed Tx 2 must never fail *silently* onto the blob row. `is_processed = False` alone
+> tells an operator only that *something* is stuck — not why, and not whether row #17 failed
+> for a different reason than row #23. Without `error_text`, diagnosing a backlog of failed
+> messages means grepping server logs and cross-referencing timestamps by hand; with it, the
+> failure reason is queryable alongside the blob: `SELECT id, error_text FROM xyz_message
+> WHERE is_processed = 0`. See § Generated Artifacts, Consumer 2, for where this is set.
 
 ### 2. Topic handler file (`integration/kafka/kafka_subscribe_discovery/xyz.py`)
 
@@ -151,6 +174,21 @@ def process_xyz_payload(payload: str, session, blob_id: int = None):
     return parent_row, blob
 
 
+def _record_error_text(blob_model, blob_id: int, error_text: str):
+    """Persist a Tx 2 failure reason onto its blob row, in its own clean transaction.
+
+    Called from the `except` block of a Kafka consumer — never call `session.rollback()`
+    there (see § CONSUMER ROLLBACKS); instead use a fresh, short-lived session scope so
+    this write can never be poisoned by the failed Tx 2 it's reporting on.
+    """
+    import safrs
+    fresh_session = safrs.DB.session
+    blob = fresh_session.get(blob_model, blob_id)
+    if blob:
+        blob.error_text = error_text
+        fresh_session.commit()
+
+
 def register(bus):
     """Called by kafka_subscribe_discovery/auto_discovery.py before bus.run()."""
 
@@ -172,7 +210,10 @@ def register(bus):
             try:
                 process_xyz_payload(msg.value().decode('utf-8'), session, blob_id=blob_id)
             except Exception as e:
-                logger.exception(f"xyz_processed parse error (blob_id={blob_id})")  # blob stays is_processed=False; full traceback logged
+                logger.exception(f"xyz_processed parse error (blob_id={blob_id})")  # full traceback logged
+                # 🚨 mandatory — record failure on the blob row itself, not just the log (see § error_text)
+                if blob_id:
+                    _record_error_text(models.XyzMessage, blob_id, str(e))
 ```
 
 ### 3. Row event bridge (`logic/logic_discovery/xyz_consume.py`)
@@ -318,7 +359,10 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
                         blob.is_processed = True
                 session.commit()
             except Exception as e:
-                logger.exception(f"xyz_processed parse error")  # blob stays is_processed=False; full traceback logged
+                logger.exception(f"xyz_processed parse error (blob_id={blob_id})")  # full traceback logged
+                # 🚨 mandatory — record failure on the blob row itself, not just the log (see § error_text)
+                if blob_id:
+                    _record_error_text(models.XyzMessage, blob_id, str(e))
 ```
 
 > **XML payloads:** replace `json.loads(payload)` with `ET.fromstring(payload)`.
@@ -570,6 +614,9 @@ the commit happens in a fresh transaction (not inside a `row_event` `before_flus
     ```
     Edit a key field (e.g. Account) to a different valid value between runs so each run creates a distinct row. Verify DB as above.
 
+    Using Podman instead of Docker? Substitute `podman exec` for `docker exec` — same
+    `broker1` container name either way (see `dockercompose_start_kafka.yml`).
+
 **Cardinality sanity check:**
 - After one successful run, validate expected parent/child counts derived from the sample payload and any declarative enrichment/matching rules.
 - Put exact counts in the project requirements or regression test for that pipeline; do not hardcode domain-specific counts in generic training.
@@ -595,19 +642,26 @@ The script resets Kafka topics and the log file only; it does **not** clear the 
 
 set -e
 
+# Docker or Podman — whichever is installed. Same broker1 container either way
+# (dockercompose_start_kafka.yml works unchanged under `podman compose`), so this
+# script must not hardcode `docker exec` — that fails outright on a Podman-only
+# machine (no `docker` binary at all, not just a different runtime under the hood).
+CONTAINER_CLI=$(command -v docker >/dev/null 2>&1 && echo docker || echo podman)
+
 # Truncate log
 if [ -f logs/als.log ]; then > logs/als.log && echo "Log cleared."; fi
 
 # Delete + recreate topics so consumer offsets start fresh
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz --delete --if-exists || true
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz_processed --delete --if-exists || true
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz --delete --if-exists || true
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz_processed --delete --if-exists || true
 sleep 2
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz_processed
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz
+$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz_processed
 echo "Kafka topics reset."
 
 # ---------------------------------------------------------------------------
-# Useful inspection commands (run manually):
+# Useful inspection commands (run manually — substitute `podman` for `docker` if
+# that's what's installed):
 # ---------------------------------------------------------------------------
 # List all topics:
 #   docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
@@ -644,7 +698,8 @@ Target tables: [list model classes from models.py].
 If no sample message exists, generate one from the schema.
 
 Generate:
-1. XyzMessage blob table (add to database/db.sqlite and models.py)
+1. XyzMessage blob table (add to database/db.sqlite and models.py) — including `error_text`
+   (nullable text column; see § error_text — mandatory, not optional)
 2. integration/kafka/kafka_subscribe_discovery/xyz.py — topic handler file with:
    - module docstring containing: (a) Basic Design — numbered list of files + what each one does (see example below), (b) the creating prompt used to generate it, (c) debug test instructions and test file locations, (d) how to enable Kafka via config/default.env including `bash integration/kafka/xyz_reset.sh` to reset topics + log between runs
    - Basic Design example:
@@ -661,6 +716,8 @@ Generate:
      ```
    - `register(bus)`, XYZ_EXCEPTIONS dict, XYZ_PARENT_LOOKUPS / XYZ_CHILD_LOOKUPS / XYZ_CHILD_KEY (if any field needs name→FK resolution; see § Lookup Resolution)
    - `process_xyz_payload(payload, session, blob_id=None)` shared function
+   - `_record_error_text(blob_model, blob_id, error_text)` helper (see § Generated Artifacts,
+     item 2) — every consumer 2 `except` block must call it, mandatory, not optional
    - handlers for topics `xyz` and `xyz_processed` (consumer 2 calls `process_xyz_payload`)
 3. logic/logic_discovery/xyz_consume.py — row_event bridge; only publishes to Kafka, no inline parse (see § Local Debug Mode)
 4. integration/XyzMapper.py — 3-tier mapper (by-name + FIELD_EXCEPTIONS stub + custom callback stub)
@@ -668,6 +725,11 @@ Generate:
 6. api/api_discovery/xyz_kafka_consume_debug.py — one file per topic, auto-discovered by api_discovery; calls `process_xyz_payload()` directly (env-var gated, no Kafka required)
 7. ui/admin/admin.yaml — add XyzMessage section; set payload field as `type: textarea`
 8. integration/kafka/xyz_reset.sh — **required, do not skip** — bash script to delete+recreate Kafka topics and truncate log (see § Kafka Reset Script below for the template); step 8 of the live-Kafka workflow references this script by name
+9. test/send_xyz.py — Kafka test publisher used for the live-Kafka verification step; use
+   `confluent_kafka.Producer` directly (never `subprocess` + `kafka-console-producer`, which
+   sends one message per input line and mangles multi-line XML/JSON payloads — see
+   § TEST PUBLISHERS above). Reads the topic name and a sample payload file, publishes one
+   message, and reports delivery via a `Producer.produce(..., callback=...)` + `flush()`.
 
 Example admin.yaml entry for the blob table:
 ```yaml

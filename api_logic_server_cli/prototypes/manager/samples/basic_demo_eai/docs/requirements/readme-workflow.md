@@ -2,15 +2,23 @@
 
 Place your **Executable Requirements (XRD)** here, then say **"implement reqs"** to AI.
 
+**See `project_creation_report.md`** (generated at `genai-logic create` time) for this
+project's own record: where its scaffold came from, and a running index of every use
+case implemented so far (each linked to its `ad-libs.md`).
+
 ## Structure
 
 ```
 docs/requirements/
-  readme.md              ← this file (narrative, not executed)
-  requirements.md        ← executable spec: logic rules, use cases, constraints
-  message_formats/       ← Kafka topic shapes (JSON or XML samples)
-    <topic>.json
-    <topic>.xml
+  readme-workflow.md               ← this file (narrative, not executed)
+  project_creation_report.md        ← generated: this project's record + Use Cases index
+  project_creation_prompt.md        ← generated: what was requested (real or inferred)
+  <use_case>/
+    requirements.md       ← executable spec: logic rules, use cases, constraints
+    ad-libs.md             ← decisions made beyond the spec
+    message_formats/       ← Kafka topic shapes (JSON or XML samples)
+      <topic>.json
+      <topic>.xml
 ```
 
 ## Workflow

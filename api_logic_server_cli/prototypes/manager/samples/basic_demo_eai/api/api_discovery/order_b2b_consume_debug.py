@@ -6,7 +6,7 @@ Req §3 / §6: Test the order_b2b consume pipeline without Kafka.
 Enabled when APILOGICPROJECT_CONSUME_DEBUG=true (set in config/default.env).
 
 Test:
-  curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/demo_eai/message_formats/order_b2b.json"
+  curl "http://localhost:5656/consume_debug/order_b2b?file=integration/kafka/message_formats/order_b2b.json"
 
 Calls process_order_b2b_payload() — the same function Consumer 2 uses — so the
 debug path exercises identical logic to the production Kafka path.
@@ -34,7 +34,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
           file — path to JSON file containing the order_b2b payload
 
         Example:
-          curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/demo_eai/message_formats/order_b2b.json"
+          curl "http://localhost:5656/consume_debug/order_b2b?file=integration/kafka/message_formats/order_b2b.json"
         """
         file_path = request.args.get('file')
         if not file_path:
