@@ -1,6 +1,6 @@
 # Agentic Engineering — where GenAI-Logic fits
 
-Source: Wynford Rees (FedEx), prepping a questionnaire for the Sept 29 2026 Town Hall on
+Source: An organization employee, prepping a questionnaire for the Sept 29 2026 Town Hall on
 Context Engineering adoption. He asked Gemini to explain the difference between VIBE
 Development, Context Engineering, and Agentic Engineering — the transcript below is his,
 verbatim, followed by where GenAI-Logic actually sits.
@@ -24,15 +24,15 @@ agentic part stays narrow on purpose — one judgment call inside a rule chain, 
 open-ended tool-calling loop — which is exactly the discipline Gemini's own "Over-Agenting"
 warning calls for.
 
-Wynford's questionnaire is good as written. One addition worth making: a Context
+The author's questionnaire is good as written. One addition worth making: a Context
 Engineering *product* should be evaluable by what it outputs — auditable rules, audit
 logs, ad-libs — not just claimed as a methodology.
 
 ---
 
-## Wynford's questionnaire draft (for Town Hall)
+## Questionnaire draft (for Town Hall)
 
-> FedEx currently support VIBE Development ("Vague Improvisational Behavioral Evaluation"
+> Does the organization currently support VIBE Development ("Vague Improvisational Behavioral Evaluation"
 > with GitHub Copilot where you write a prompt, paste in some text, hit run and visually
 > inspect the output, If it looks okay, you ship it). Context Engineering (like
 > Retrieval-Augmented Generation/RAG) Development recognizes that the quality of the LLM's
@@ -41,12 +41,12 @@ logs, ad-libs — not just claimed as a methodology.
 > curate AI's working memory to achieve highly accurate, grounded, and safe results in a
 > "single turn inference" by removing ambiguity from the prompt.
 >
-> Is Context Engineering Development currently supported or does FedEx have plans to
+> Is Context Engineering Development currently supported or does the organization have plans to
 > support Context Engineering Development. Is there an evaluation process in place or a way
 > to submit a request for evaluating a Context Engineering Development product that has
 > Context Engineering as it's core methodology for application development purposes.
 
-## Gemini's explainer (Wynford's prompt: "Can you explain the difference between Context
+## Gemini's explainer (the author's prompt: "Can you explain the difference between Context
 Engineering and Agentic Engineering? How are they different than VIBE development")
 
 VIBE Development, Context Engineering, and Agentic Engineering — a progression from informal
@@ -95,7 +95,7 @@ together, not AI vs. Rules"* — R1 (deterministic DSL) and R2 (LLM calls) execu
 same commit, with R1 governing R2's result. Every AI request and response is logged to an
 audit table (`SysSupplierReq`) for review.
 
-So the honest answer to Wynford's question isn't "GenAI-Logic is Context Engineering, not
+So the honest answer to the author's question isn't "GenAI-Logic is Context Engineering, not
 Agentic Engineering" — it's **both, at different moments, with the agentic part
 deliberately kept narrow and auditable** rather than an open-ended tool-calling loop. That
 lines up with Gemini's own "Over-Agenting" warning: an AI Rule is one bounded judgment call
@@ -112,8 +112,8 @@ methodology; they can read the rule, replay the audit log, and confirm the const
 
 ## For the Town Hall questionnaire specifically
 
-Wynford's draft question is good and should go as written — it's the right question to ask
-FedEx's AI CoE. One addition worth considering: naming what makes a Context Engineering
+The author's draft question is good and should go as written — it's the right question to ask
+the organization's AI CoE. One addition worth considering: naming what makes a Context Engineering
 *product* (as opposed to a Context Engineering *pattern* like RAG) evaluable on its own
 terms — the artifact it outputs is source code that a human reviews and version-controls,
 not a black-box answer. That's the detail an evaluator will actually want to test against:
