@@ -210,19 +210,35 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                         # this guard, every README link to a pre-built sample readme (e.g.
                         # samples/basic_demo_eai/readme.md) gets silently rewritten to a nonexistent
                         # Docs URL on every Manager creation/refresh.
+                        #
+                        # The target character class excludes ) [ ] on purpose: a real link target
+                        # (path or URL) never contains those, but a line with two adjacent links —
+                        # e.g. "[text](samples/x.md) ([↗](https://github.com/.../x.md))" — otherwise
+                        # lets [^)]+ cross the inner "[↗](" and swallow the second link's opening
+                        # paren/bracket into the first match, corrupting both links into one garbled
+                        # URL. Confirmed real failure (Manager-readme.md, Sep 2026): every sample
+                        # whose .md link was immediately followed by a "([↗](...))" companion link
+                        # came out as "(https://apilogicserver.github.io/Docs/[↗](https://...))".
                         keep_md_label = 'copilot' in each_line or 'Copilot' in each_line
                         def _md_link_sub(m):
                             target = m.group(1)
-                            if target.startswith('samples/'):
-                                return m.group(0)  # leave [label](samples/...md) untouched, label and all
+                            if target.startswith('samples/') or target.startswith('http://') or target.startswith('https://'):
+                                return m.group(0)  # leave samples/...md and already-absolute URLs untouched
                             new_target = f'https://apilogicserver.github.io/Docs/{target}'
                             return f'({new_target})'
-                        each_line = re.sub(r'\(([^)]+\.md)\)', _md_link_sub, each_line)
+                        each_line = re.sub(r'\(([^()\[\]]+\.md)\)', _md_link_sub, each_line)
                         if not keep_md_label:
-                            # strip '.md' from labels/text outside of samples/...md targets (hmm...
-                            # todo: find out why this exists) - segment on samples/...md spans so the
-                            # blanket strip can't reach inside a path we're protecting above
-                            parts = re.split(r'(samples/[^\s)]*\.md)', each_line)
+                            # strip '.md' from labels/text outside of protected spans (hmm...
+                            # todo: find out why this exists) - segment on samples/...md AND
+                            # github.com/...md spans so the blanket strip can't reach inside a
+                            # real file path/URL that needs its extension to resolve. Only
+                            # github.com (not the synthesized apilogicserver.github.io/Docs
+                            # links, which are Docs-site pages without a .md extension) is
+                            # protected here — confirmed real failure alongside the above: the
+                            # companion "[↗](https://github.com/.../x.md)" link had its .md
+                            # silently stripped by this same blanket replace, turning a working
+                            # GitHub file link into a 404.
+                            parts = re.split(r'(samples/[^\s)]*\.md|https?://github\.com/[^\s)]*\.md)', each_line)
                             for i in range(0, len(parts), 2):  # even indices = outside protected spans
                                 parts[i] = parts[i].replace('.md', '')
                             each_line = ''.join(parts)
