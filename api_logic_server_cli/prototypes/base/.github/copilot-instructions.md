@@ -1,4 +1,18 @@
 ---
+version: 3.42 - 9/24/26 - Added a standalone "how does logic become rules" Q&A, alongside
+"what are rules" — not merged into it. The existing "what are rules" answer only covers
+rules as an artifact (the 3-property table: auto-reused/invoked/ordered); it says nothing
+about how an AI gets from a pasted requirement to a correct rule. That authorship story
+existed only compressed into "how do rules work"'s Phase 1 ("Authoring") — 5 bullets inside
+an answer whose real subject is the runtime engine, not creation — so a user asking
+specifically how rules get created had no answer keyed to that question. New answer: CE
+steers the AI toward the right rule type (sum/count/formula/Allocate/Request Pattern)
+instead of the procedural code it defaults to unguided, and resolves authoring ambiguity
+(copy vs. live reference, aggregate ownership, FK lookups) — same substance as Phase 1, but
+addressable on its own and not buried in engine-mechanics framing. Updated both "what are
+rules"'s closing invite and follow-up offer to mention it, and retitled "how do rules
+work"'s implicit scope to runtime-enforcement-only in its own follow-up offer, so the two
+answers stay distinct (created vs. enforced) rather than re-overlapping.
 version: 3.41 - 8/30/26 - Three fixes found live in basic_demo_rfi's first STEP 1b run
 (Manager CE). (1) logic_bank_api.md: added a "BOUNDARY-OPERATOR CONVENTION" note right
 after the Check Credit worked example — "less than the credit limit" was implemented as
@@ -316,11 +330,29 @@ Taken together: ~40X less code to write, maintain, and debug (measured: ~220 lin
 
 &nbsp;
 
-*Want to know more? Ask about: debugging rules, performance, or how the engine works under the hood.*
+*Want to know more? Ask about: how rules get created, debugging rules, performance, or how the engine works under the hood.*
 
 ---
 
-**FOLLOW-UP OFFER**: "Would you like to see how the engine works under the hood, or see the rules for this project?"
+**FOLLOW-UP OFFER**: "Would you like to see how rules get created, how the engine works under the hood, or see the rules for this project?"
+
+**WHEN USER ASKS: "how does logic become rules", "how do rules get created", "how does the AI write rules", "how do I get from a requirement to a rule"**
+**PRIMARY ANSWER**: Respond with exactly this:
+
+---
+You write intent in plain English — a requirement, a Gherkin scenario, a formula, even a paste from a regulation. The AI doesn't just translate that into code; **Context Engineering** steers it toward the *right kind* of rule for what you actually asked — a sum, a count, a formula, an Allocate, a Request Pattern for AI/email/Kafka judgment calls — instead of the procedural code it's seen a million times in training.
+
+&nbsp;
+
+That steering is the difference: left unguided, the same AI defaults to path-dependent functions — one handler per place the logic needs to run, each one a chance to miss a path. CE resolves the ambiguity instead (copy vs. live reference, which table owns an aggregate, when a lookup needs its own FK) and produces the declarative rule that's automatically reused over every path, not re-derived by hand for each one.
+
+&nbsp;
+
+You still review it — every rule is a readable Python function you can read, edit, and version like any other source file. AI authors; you approve.
+
+---
+
+**FOLLOW-UP OFFER**: "Want to see how the engine enforces these at runtime, or the rules for this project?"
 
 **WHEN USER ASKS: "why not let AI write the code", "why rules not AI", "why can't AI just do this", "why not just use AI", "how is this different from Copilot/Cursor generating the same logic as code", or any "AI alone" / "why not just use Copilot/Cursor" variant**
 
