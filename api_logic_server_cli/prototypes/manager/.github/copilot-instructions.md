@@ -23,146 +23,37 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.26
+version: 2.27
 changelog:
-  - 2.26 (Sep 4 2026) - Extracted STEP 1a/1b's transcript-format instructions into a new
-    on-demand file, `.github/rfi_transcript_format.md`, read only when a transcript is
-    about to be written — not on every Manager CE activation. The old inline instruction
-    ("verbatim, human/AI turns, not paraphrased") was vague enough that a live run
-    (library_rfi) produced a transcript with `(batched — see below)` placeholders under
-    several questions and a separate cross-referenced answer list — flagged by a human
-    reviewer as hard to follow, fixed live, then generalized into the new file's concrete
-    Question/Options/Answered structure (matching what `AskUserQuestion` itself renders).
-    Both STEP 1a and STEP 1b's transcript bullets now point to the new file instead of
-    carrying the format inline, keeping this file's per-session read cost unchanged for
-    the common case (no interview) while making the format correct and reusable for the
-    STEP 1a/1b case.
-  - 2.25 (Aug 30 2026) - Added STEP 0: `//`-prefixed lines in a pasted prompt are
-    human-facing comments (notes, alternatives, asides), not spec to execute or a
-    STEP 1b interview flag. Real case: `samples/prompts/basic_demo_rfi.prompt` added a
-    `// or, use an existing db: Create X from samples/dbs/basic_demo.sqlite.` line as
-    documentation for a human choosing how to invoke the prompt — nothing in Method 4's
-    sequence previously said this class of line should be read-but-not-acted-on, so a
-    literal parse could plausibly try to act on it (e.g. asking which database to use,
-    or silently switching databases) instead of treating it as commentary. Explicitly
-    lists the three things a prompt line can be (spec / STEP 1b interview flag /
-    comment) so the distinction is made once, before any fork decision, not re-derived
-    per-line.
-  - 2.24 (Aug 30 2026) - STEP 1b now requires MERGING a flagged clause's interview
-    resolution into the prompt, never silently overwriting the behavior of an
-    already-fully-specified clause — extending an existing rule (new where= condition,
-    new referenced column) is fine; changing what it DOES is not, without surfacing
-    the conflict to the user first. Real failure case (basic_demo_rfi, first live
-    STEP 1b run): the explicit Check Credit clause said Customer.balance excludes
-    shipped orders (ship = settled). The flagged Returns clause's interview correctly
-    noticed a shipped order was already excluded from balance, so "decrease balance
-    on return" would be a no-op under the existing formula — then silently resolved
-    this by changing the SUM's where= from date_shipped is null to date_returned is
-    null. This fixed the returns case but silently discarded the explicit clause's
-    ship-reduces-balance behavior (shipping an order no longer affects balance at
-    all now) — a change the user never asked for or confirmed, even though the
-    two-path choice (keep formula + add adjustment vs. change formula) was already
-    being offered for the FLAGGED clause's resolution; it just wasn't framed as
-    also being a decision about the EXPLICIT clause's fate. Caught only by the user
-    manually tracing balance behavior after the fact, not by the run itself.
-  - 2.23 (Aug 30 2026) - Added STEP 5d: a lightweight, self-reported "CE/Training Files
-    Read" list appended to project_creation_report.md at the end of every Method 4 run
-    — which CE/training files were loaded, in what order, approximate size, no new
-    reads or file-size checks performed to produce it (would defeat the point — added
-    reading to measure reading). Motivated by a live cost/context concern (basic_demo_rfi_1,
-    Aug 2026): a run hit "Credits at 50%" and an autocompact-thrashing error, and there
-    was no artifact to diagnose which files drove it after the fact. Explicitly scoped to
-    file-read tracking only, NOT token/cost/time metrics — this assistant has no reliable
-    access to those numbers (they live in the harness/UI layer, e.g. the credits banner),
-    and estimating them would be fabrication dressed as measurement in a provenance doc,
-    which is exactly where that's most damaging (provenance is the trust artifact).
-  - 2.22 (Aug 30 2026) - Method 4 STEP 1 gains a third fork (new STEP 1b) for prompts
-    that are otherwise complete but explicitly ask for an interview on one clause —
-    e.g. "Also, interview me to work out this general intent: <clause>". Previously
-    ANY supplied prompt (complete or not) fell into "prompt in hand → proceed exactly
-    as today," which has no mechanism to honor an inline interview instruction — it
-    silently executes the whole prompt including the flagged clause, defaulting
-    unstated details instead of asking. Real failure case (basic_demo_rfi_1, Aug 2026):
-    a prompt's 4 fully-specified clauses (check_credit, Kafka publish) executed
-    correctly, but a 5th clause ("customers can return items within a policy window,
-    but only if shipped") — genuinely ambiguous (window length? per-product or global?
-    partial returns? does it interact with the Kafka event?) — was silently resolved
-    with an invented default (`return_policy_days=30`) and only surfaced afterward in
-    ad-libs.md, never asked about. Root cause: the model's own "go mode" vs "interview
-    mode" are mutually exclusive with no blend, and STEP 1's fork evaluates once up
-    front on presence/absence of a prompt, not on whether the prompt itself requests
-    partial clarification. STEP 1b reuses STEP 1a's interview mechanics (one topic at
-    a time, batched not incremental, synthesize + read back for confirmation) but
-    scoped to just the flagged clause(s) — executes every other clause normally, only
-    pausing on the flagged one, then continues into STEP 2 with the clause's resolved
-    text folded into the prompt. Same transcript file as STEP 1a
-    (`docs/requirements/<name>-transcript.md`), appended rather than overwritten if
-    both fire. Not yet independently re-verified live after this fix — the trigger
-    prompt (`samples/prompts/basic_demo_rfi.prompt`, line 17) was updated in the same
-    session to use the explicit "interview me to work out..." phrasing this fork keys
-    off of, but the fork itself has not yet been run against it.
-  - 2.21 (Aug 17 2026) - STEP 6: AI starts the server itself instead of telling user to
-    press F5 — Codespaces' cached last-used debug config can make bare F5 skip the
-    runProjectName prompt, confusing first-time users. Hand-off now points to the Debug
-    picker for the first run.
-  - 2.20 (Aug 17 2026) - STEP 4: `logic/declare_logic.py` is explicitly a stub, not the
-    logic target — a model found rule-shaped scaffolding there and treated it as done,
-    skipping `logic/logic_discovery/<use_case_name>.py` entirely.
-  - 2.19 (Aug 12 2026) - Method 4 STEP 1 now forks when no domain prompt is provided —
-    AI asks whether the user has a prompt file or wants to discuss the system
-    conversationally ("AI-as-BA"). "Discuss" branches into a Socratic interview (new
-    STEP 1a) covering the same ground SCS step 4a-4d would extract from written text
-    (constants, FK lookups, Request Pattern judgment calls, type hierarchies), batched
-    (not incremental DDL), synthesized into a real requirements.md before any schema
-    work — the transcript itself is ALSO written verbatim to
-    docs/requirements/<name>-transcript.md (once, at the end, not per-turn) as a
-    companion record of how the requirements were derived, not just the final shape.
-    Output feeds STEP 5a's project_creation_prompt.md exactly as a written prompt file
-    would. Validated live (project RFI, local trial in build_and_test/genai-logic,
-    Aug 12 2026): 4-entity domain (Customer/Order/Item/Product), full derivation chain
-    + credit-limit constraint + Kafka shipping notification, verified working end to
-    end against a running server (over-limit order correctly rejected, shipping event
-    fired exactly once on is_paid transition, no refire on redundant update). Gate is
-    narrow — only fires inside Method 4 (new domain project, no prompt in hand yet);
-    existing projects and prompt-supplied creation are unaffected. See
-    marketing/Analysis.tech/ai-as-ba-design.md for full design rationale and the
-    revised transcript decision.
-  - 2.18 (Aug 5 2026) - STEP 5a/5b filenames updated to match the CLI-guaranteed floor
-    now written by `genai-logic create` itself (STEP 2): docs/requirements/prompt.md →
-    project_creation_prompt.md; docs/requirements/readme.md → project_creation_report.md.
-    Since v2.15, `create` has (independently of this Manager CE) started writing baseline
-    versions of both files for every project/method — this CE's STEP 5a/5b was never
-    updated to match, so it still named the pre-rename files. Added explicit notes that
-    STEP 5a overwrites (not creates) the CLI's inferred prompt file with the real verbatim
-    prompt, and STEP 5b enriches (not creates) the CLI's baseline report.
-  - 2.17 (Jul 16 2026) - User Activation Protocol STEP 3 now checks if any ancestor
-    directory is literally named `ApiLogicServer-dev` (framework dev checkout signal);
-    if so, appends one line after welcome.md offering to load
-    system/ApiLogicServer-Internal-Dev/dev-architecture.md. Structural trigger instead of
-    requiring the user to remember a phrase — end-user/Codespaces workspaces (no such
-    ancestor) never see this line.
-  - 2.16 (Jul 16 2026) - Consolidated with CLAUDE.md: Method 2 (`genai-logic genai`) marked
-    ⛔ SUPER-DEPRECATED (was contradicting CLAUDE.md's ban, now consistent); added standalone
-    "PATH RULE for Manager root" section (previously only in CLAUDE.md and buried inside
-    Method 4 STEP 4). CLAUDE.md now @-loads this file directly instead of duplicating/
-    paraphrasing it, so Claude and Copilot read the same source of truth.
-  - 2.15 (Jul 2 2026) - STEP 5 now mandates copying the full originating prompt file VERBATIM to docs/requirements/prompt.md (new STEP 5a) before writing readme.md/ad-libs.md — previously only the source path was recorded in readme.md, which goes stale/dangling if the source prompt file (e.g. samples/prompts/<name>.prompt.md) is later edited or deleted. Renumbered old STEP 5 (tell user) to STEP 6.
-  - 2.14 (Jul 1 2026) - STEP 4 now explicitly forbids re-running `genai-logic create`; states the workflow is DDL → rebuild → logic → seed (not create). Fixes case where AI ran create again instead of implementing into the already-created project.
-  - 2.13 (Jul 1 2026) - STEP 5 ad-libs format now requires "Creation Steps" section — ordered list of commands actually run (create, DDL, rebuild, seed, logic files) so future readers can replay how the project was built
-  - 2.12 (Jun 15 2026) - STEP 4 now reminds AI that per-use-case docs/requirements/<use_case_name>/requirements.md (project CE step 8) is required during Method 4 / "See It Work", separate from Manager-level STEP 5 provenance/ad-libs files
-  - 2.11 (Mar 18 2026) - Method 4 rewritten as "stay in Manager" 1-step flow: AI creates project, reads project CE + training files, implements full system from subdirectory without user switching workspaces
-  - 2.10 (Feb 23 2026) - Collapsed Method 4: all SCS workflow now lives in project CE; manager role is just one create command with starter.sqlite
-  - 2.9 (Feb 23 2026) - Method 4 rewritten: starter.sqlite + rebuild-from-database replaces manual create_db_models.py; removed project CE from manager samples (clean separation of concerns)
-  - 2.8 (Feb 23 2026) - Added Method 4: System Creation Services - clean domain project from prompt using Claude + project CE (implement_requirements.md, RequestObjectPattern.md, logic_bank_api.md); updated welcome.md to surface SCS
-  - 2.7 (Nov 20 2025) - Reverted to simple single-file pattern from basic_demo (removed conditional logic and list_dir check)
-  - 2.6 (Nov 20 2025) - Applied proven OBX pattern from basic_demo (visual markers, separate welcome files, mandatory command language) - FAILED
-  - 2.5 (Nov 17 2025) - Strengthened basic_demo detection logic, mandatory list_dir check
-  - 2.4 (Nov 2025) - Simplified structure, removed redundant sections
-  - 2.3 (Nov 2025) - Added activation phrases, forcing welcome presentation
-  - 2.2 (Nov 2025) - Initial welcome instructions
-  - 2.1 (Oct 2025) - Added "What is the Project Manager?" orientation, friendly collaborative tone, conditional Quick Start for returning users
-  - 2.0 (Oct 2025) - OBX improvements, strengthen basic_demo as default path
-  - 1.0 (Initial) - Established project creation methods
+  - 2.27 (Sep 25 2026) - Added "refresh manager" trigger → `genai-logic start --clean --no-open-manager`.
+  - 2.26 (Sep 4 2026) - Moved transcript-format rules to on-demand `.github/rfi_transcript_format.md`, read only when writing a transcript (fixes a malformed transcript from vague inline instructions).
+  - 2.25 (Aug 30 2026) - STEP 0: `//`-prefixed prompt lines are human comments, not spec or a STEP 1b interview flag — read for context, never acted on.
+  - 2.24 (Aug 30 2026) - STEP 1b: merge a flagged clause's interview resolution into the prompt; never let it silently change what an already-specified clause does (real case: an interview fix silently broke an explicit balance rule) — surface conflicts to the user instead.
+  - 2.23 (Aug 30 2026) - Added STEP 5d: self-reported "CE/Training Files Read" list in project_creation_report.md (files/order only, no token/cost estimates) — diagnoses excessive CE-reading cost.
+  - 2.22 (Aug 30 2026) - Added STEP 1b: prompts that are complete but flag one clause for interview now get a scoped interview on just that clause, instead of silently defaulting it (real case: a returns-policy clause got an invented default instead of being asked about).
+  - 2.21 (Aug 17 2026) - STEP 6: AI starts the server itself instead of telling the user to press F5 (Codespaces' cached debug config can make bare F5 skip the project-name prompt).
+  - 2.20 (Aug 17 2026) - STEP 4: `logic/declare_logic.py` is a stub, not the logic target — real logic goes in `logic/logic_discovery/<use_case_name>.py`.
+  - 2.19 (Aug 12 2026) - Method 4 STEP 1 forks when no prompt is provided: offers a Socratic interview (STEP 1a) that produces requirements.md + a verbatim transcript, feeding STEP 5a as if it were a written prompt.
+  - 2.18 (Aug 5 2026) - STEP 5a/5b filenames updated to match the CLI's own output: project_creation_prompt.md / project_creation_report.md (STEP 5a overwrites the CLI's inferred prompt with the real one; STEP 5b enriches the baseline report).
+  - 2.17 (Jul 16 2026) - User Activation STEP 3: if any ancestor dir is named `ApiLogicServer-dev`, offer to load dev-architecture.md after welcome.md.
+  - 2.16 (Jul 16 2026) - Method 2 (`genai-logic genai`) marked SUPER-DEPRECATED; added standalone "PATH RULE for Manager root" section; CLAUDE.md now @-loads this file directly.
+  - 2.15 (Jul 2 2026) - STEP 5a: copy the full originating prompt file verbatim to docs/requirements/prompt.md before writing readme.md/ad-libs.md (source file may later change or vanish).
+  - 2.14 (Jul 1 2026) - STEP 4: never re-run `genai-logic create` — workflow is DDL → rebuild → logic → seed.
+  - 2.13 (Jul 1 2026) - STEP 5 ad-libs.md requires a "Creation Steps" section listing commands actually run.
+  - 2.12 (Jun 15 2026) - STEP 4: per-use-case requirements.md (project CE step 8) is required during Method 4, separate from Manager-level STEP 5 provenance files.
+  - 2.11 (Mar 18 2026) - Method 4 rewritten as a "stay in Manager" 1-step flow — no workspace switch needed.
+  - 2.10 (Feb 23 2026) - Collapsed Method 4: SCS workflow now lives in project CE.
+  - 2.9 (Feb 23 2026) - Method 4: starter.sqlite + rebuild-from-database replaces manual create_db_models.py.
+  - 2.8 (Feb 23 2026) - Added Method 4 (System Creation Services): domain project from prompt via project CE.
+  - 2.7 (Nov 20 2025) - Reverted to simple single-file pattern from basic_demo.
+  - 2.6 (Nov 20 2025) - Applied OBX pattern from basic_demo — FAILED.
+  - 2.5 (Nov 17 2025) - Strengthened basic_demo detection logic.
+  - 2.4 (Nov 2025) - Simplified structure, removed redundant sections.
+  - 2.3 (Nov 2025) - Added activation phrases, forcing welcome presentation.
+  - 2.2 (Nov 2025) - Initial welcome instructions.
+  - 2.1 (Oct 2025) - Added orientation section, friendly tone, conditional Quick Start.
+  - 2.0 (Oct 2025) - OBX improvements, strengthen basic_demo as default path.
+  - 1.0 (Initial) - Established project creation methods.
 ---
 
 # GitHub Copilot Instructions for GenAI-Logic (aka API Logic Server) - Project Manager
@@ -337,6 +228,15 @@ Project CE: basic_demo/.github/.copilot-instructions.md — version 3.18
 docs/training/logic_bank_api.md — (no version line found)
 ```
 If a file has no version/front matter, say so rather than omitting it. This is a diagnostic check (e.g. "is this CE in sync with gold") — answer only with what you actually loaded, never invent a version number.
+
+---
+
+**WHEN USER ASKS: "refresh manager"**
+**ACTION**: Run this CLI command:
+```bash
+genai-logic start --clean --no-open-manager
+```
+Report the command's output; do not summarize or paraphrase it.
 
 ---
 
