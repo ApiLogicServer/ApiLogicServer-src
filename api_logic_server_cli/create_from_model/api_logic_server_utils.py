@@ -195,6 +195,18 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                         each_line = each_line.replace('jpg)', 'jpg?raw=true)')
                     else:
                         pass # image is absolute - don't alter
+                # same absolute-ification for HTML <img src="images/...">  tags — the check above
+                # only catches markdown ![]() syntax; a hand-written <img> tag (used for images
+                # that need width=/align= attributes markdown can't express) was silently left as
+                # a relative doc-site path, which 404s once copied into a Manager that has no
+                # images/ folder of its own. Confirmed real failure (Manager-readme.md, Sep 2026):
+                # 4 <img> tags added for EAI/MCP/AI-Rules/Vibe-gallery proof images rendered as
+                # broken images on every machine except one with org_git/Docs checked out alongside.
+                if '<img src="images/' in each_line and "https://github.com/ApiLogicServer" not in each_line:
+                    each_line = each_line.replace('<img src="images/', '<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/')
+                    each_line = each_line.replace('.png"', '.png?raw=true"')
+                    each_line = each_line.replace('.jpeg"', '.jpeg?raw=true"')
+                    each_line = each_line.replace('.jpg"', '.jpg?raw=true"')
                 if '.md' in each_line:
                     is_exception = False
                     for each_exception in exceptions:
