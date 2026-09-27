@@ -1,4 +1,47 @@
 ---
+version: 3.45 - 9/26/26 - Two fixes to STEP 8, both found live on a second health_fit blind
+build. (1) The "Absence of an Event" check (step 4) previously said implement the reactive
+rule and flag the trigger question separately — corrected: this is now a BLOCKING finding.
+Do not implement the reactive half either until the missing-row mechanism is resolved; a
+hand-seeded test of reactive-only logic cannot exercise the actual gap and its passing result
+is misleading, not reassuring — it manufactures the appearance of a verified, working feature
+whose central input doesn't exist yet. Added step 5b: remove/FIXME the specific clause,
+list candidate strategies in ad-libs.md as options (not a chosen path), leave other clauses
+in the same requirements.md implemented normally. (2) Added step 6: independently re-run the
+DDL-change-list-vs-schema "MANDATORY CLOSING CHECK" from implement_requirements.md, even when
+the coding pass (STEP 6) already narrated catching a near-miss itself — a self-caught near-
+miss during coding is evidence the failure mode was actively occurring, not evidence the pass
+is now reliable; STEP 8 must verify against database/models.py directly, not trust the coding
+pass's own account of having fixed it.
+version: 3.44 - 9/26/26 - Added `SysConfig.current(session)` accessor to
+database/customize_models.py (base prototype) — every generated project now has it,
+conditionally defined only when a `SysConfig` class exists (most projects don't have one;
+must not raise/log at import time when absent). Documented in the System Creation Services
+section as a fallback for when the FK wiring (steps 2-4) was skipped or impractical — the
+Rule.copy-via-FK pattern remains preferred whenever a transactional header table exists.
+Real case (heartfit_companion/health_fit, Sep 2026): an existing-db project's threshold-reading
+rule functions each repeated `logic_row.session.query(models.SysConfig).first()`, and one had
+a silent `config.rate if config else <guessed default>` fallback that would never error, just
+quietly use the wrong value forever. `.current()` raises RuntimeError on a missing row instead.
+version: 3.43 - 9/26/26 - Added STEP 8 to Executable Requirements: a MANDATORY BEHAVIORAL
+VERIFICATION PASS, run separately from STEP 6/7 (after code + ad-libs are written, not folded
+into the same pass). STEP 7's existing scan checks PRESENCE (does a requirements.md/rule
+exist); this new step checks CORRECTNESS (does each rule's actual behavior satisfy what its
+requirement clause's own words — including column/field names — literally claim), plus a
+distinct check for requirements whose qualifying condition is the NON-occurrence of an
+expected row (no rule can originate a row that never arrives). Real case (heartfit_companion,
+Sep 2026): a `Rule.count` exactly matched its requirement's own literal formula text
+(`count(Attendance where status == 'absent')`) — a presence scan would call this clean — but
+the SAME requirement's column name (`consecutive_absences`) demanded reset-on-attendance
+streak behavior the formula could not express; the authoring pass did not catch this on
+itself, only a later, separate re-read did. Also added the companion rule that any requirement
+inferred from a name/convention (not stated in the clause's own prose) must be written back
+into requirements.md/ad-libs.md, not just fixed silently in code — otherwise the written spec
+and implemented behavior go permanently out of sync. Companion additions to
+docs/training/logic_bank_api.md v1.0.25/1.0.26: "Running Streaks (Consecutive Counts)" (the
+Rule.count-can't-reset pattern) and "Absence of an Event" (no LogicBank rule type fires on a
+row that's expected but never written — needs an explicit companion write path: scheduled job,
+clock-tied event, or a documented external-system responsibility).
 version: 3.42 - 9/24/26 - Added a standalone "how does logic become rules" Q&A, alongside
 "what are rules" — not merged into it. The existing "what are rules" answer only covers
 rules as an artifact (the 3-property table: auto-reused/invoked/ordered); it says nothing
@@ -719,6 +762,88 @@ STEP 7: Write completed ad-libs report to docs/requirements/<name>/ad-libs.md AN
         exists (STEP 6's per-use-case mandate above). List each logic file and its matching
         requirements.md explicitly before reporting completion — do not end the session with
         logic files that lack their traceability anchor.
+
+STEP 8: ⛔ MANDATORY BEHAVIORAL VERIFICATION PASS — a SEPARATE pass from STEP 6/7, run AFTER
+        all code and the STEP 7 ad-libs report are written, not folded into the same pass that
+        wrote them.
+
+        WHY THIS IS ITS OWN STEP, NOT PART OF STEP 7's SCAN: STEP 7's scan checks PRESENCE — does
+        a requirements.md exist for each logic file, does a rollup column have a matching rule.
+        This step checks CORRECTNESS — does each rule's actual behavior satisfy what its
+        requirement clause's own words claim. These are different questions, and the pass that
+        just wrote the code is demonstrably not a reliable check on itself for the second one:
+        confirmed real case (heartfit_companion, Sep 2026) — a `Rule.count` was written that
+        exactly matched the requirement's own literal formula text (`count(Attendance where
+        status == 'absent')`), so a presence/traceability scan would report it clean. But the
+        SAME requirement's column name (`consecutive_absences`) demanded reset-on-attendance
+        streak behavior the formula could not express (Rule.count never resets) — a self-report
+        by the authoring pass did not catch this; it was only caught later, by a second person
+        asking to re-read the requirement and the code together. Do not skip this step on the
+        assumption that STEP 6/7 already covered it — they check a different thing.
+
+        MECHANICAL PROCEDURE — for EVERY requirement clause in requirements.md, in order:
+        1. Read the clause's exact wording (including any words in a column/field NAME the
+           clause defines — a name is part of the requirement, not decoration; see
+           docs/training/logic_bank_api.md's "Running Streaks" section for why a name can
+           imply behavior the clause's own formula text does not literally state).
+        2. Read the specific Rule.* call(s) that clause produced, and mentally execute them
+           against 2-3 concrete before/after scenarios implied by the clause's own wording.
+        3. Ask literally: "does this rule's behavior, run against those scenarios, produce
+           what the clause's words claim?" — not "does a rule exist for this clause" (that's
+           STEP 7's question) and not "does this look like a reasonable rule" (too generous).
+        4. Separately ask: "does this clause depend on a row that gets WRITTEN, or on a row
+           that's expected but might never arrive (a no-show, a missed deadline, a failure to
+           renew)?" If the latter, no Rule.* can originate that row — see docs/training/
+           logic_bank_api.md's "Absence of an Event" section. This is a BLOCKING finding, not
+           a flag-and-continue one: if this clause (or one it depends on, e.g. a rollup it
+           reads) has no confirmed companion write path, the clause is NOT YET IMPLEMENTABLE.
+           Do not accept "the reactive logic is correct and tested" as evidence the clause is
+           done — a hand-seeded test of reactive logic cannot exercise the actual gap (whether
+           the input row ever arrives in production) and its passing result is misleading, not
+           reassuring. If you find this gap AFTER already implementing the clause, that is
+           still a finding to act on now, in this same step — see step 5b below.
+        5. If step 3 finds a behavioral gap: do NOT just fix the code silently. First add a 🔴
+           Review Required entry to ad-libs.md describing the gap (same severity-tiered format
+           STEP 7 already uses), THEN fix the code, THEN update requirements.md itself if the
+           true intent (e.g. streak semantics) existed only in a name/convention and was never
+           written down in prose — see the paragraph after next.
+        5b. If step 4 finds an absence-of-event gap: do NOT fix it by implementing a trigger
+           mechanism, and do NOT leave already-written reactive logic in place unchanged.
+           Remove or comment out the rule(s) for this specific clause, replace with a `# FIXME:
+           <use_case> clause N not implemented — see ad-libs.md, missing-row trigger mechanism
+           not yet decided`, and write the full candidate-strategies list to ad-libs.md exactly
+           as docs/training/logic_bank_api.md's "Absence of an Event" section specifies (list
+           the options, do not pick one). Leave every OTHER clause in the same requirements.md
+           implemented normally — this blocks only the clause(s) that depend on the missing-row
+           mechanism.
+
+        6. Independently re-run the DDL-change-list-vs-actual-schema check from
+           docs/training/implement_requirements.md's "MANDATORY CLOSING CHECK" — even if the
+           coding pass (STEP 6) already reported doing this itself. A self-caught near-miss
+           during coding is evidence this failure mode was ACTIVELY OCCURRING during that pass,
+           not evidence the pass is now reliable — the same self-report blind spot this whole
+           STEP 8 exists to work around applies here too, not just to requirement-clause
+           correctness. Confirmed real case (health_fit, Sep 2026): the coding pass narrated
+           catching itself about to reference `Patient.high_exertion_session_count` before ever
+           adding it via DDL, fixed it in the moment, and moved on — a legitimate save, but one
+           STEP 8 never independently re-checked, because STEP 8's own procedure at the time
+           only covered requirement-clause behavior, not schema-column existence. Re-derive the
+           column list yourself from `database/models.py` (not from trusting the coding pass's
+           narration) and confirm every column any `Rule.*`/`calling=` function reads or writes
+           actually exists as a real column, not an attribute that only appears inside a
+           lambda/function body.
+
+        ⛔ ANY REQUIREMENT INFERRED FROM A NAME OR CONVENTION MUST BE WRITTEN BACK INTO
+        requirements.md (or logged as an ad-lib) — NOT JUST FIXED SILENTLY IN CODE. If step 1
+        above surfaces a stricter/different requirement than the clause's own prose states
+        (e.g. the column is named `consecutive_absences` but the formula text only says
+        `count(...)`), that inference is itself a new requirement entering the system through
+        an unwritten channel. Add it to requirements.md explicitly (state the true semantics in
+        prose, not just fix the rule) so a future re-read of requirements.md alone — without
+        also inspecting the column name — still reveals what the correct behavior is supposed
+        to be. Fixing the code without updating requirements.md leaves the written spec and the
+        implemented behavior permanently out of sync, which is the exact class of gap this step
+        exists to close.
 ```
 
 **Ad-libs report format:** See `docs/training/implement_requirements.md` for the complete format including the Walkthrough summary, Pre-Coding Analysis, Execution Metrics, and Error Correction Loop detail.
@@ -1137,6 +1262,28 @@ def get_supplier_from_ai(product_id: int, logic_row: LogicRow) -> models.SysSupp
 **🚨 FK scan — verification that step 4b was complete:** Before writing any `Rule.copy` or `Rule.formula` that reads a lookup value, confirm that the transactional table has an integer FK column to that lookup table (not a `String` code column). If the column is a `String`, step 4b was skipped — add the FK column via DDL + `rebuild-from-database`, then wire `Rule.copy`.
 
 **🚨 Literal scan — verification that step 4a was complete:** Before finishing logic files, scan every lambda for numeric/date literals (`0.05`, `0.25`, `5000.0`, `'2025-12-26'`). If you find one here, step 4a was skipped — add the column to `SysConfig` via `ALTER TABLE sys_config ADD COLUMN ...` + `rebuild-from-database`, then replace the literal with `row.<copied_column>`. Do not patch it with a hardcoded constant.
+
+**`SysConfig.current(session)` — fallback ONLY when the FK wiring (steps 2-4) was skipped or
+is genuinely impractical (e.g. an existing-db project retrofit, no transactional header
+table to add an FK to):** every generated project's `database/customize_models.py` defines
+`SysConfig.current(session)` — a small accessor that returns the single `SysConfig` row, or
+raises `RuntimeError` if it's missing (see that file's comment for why). This is NOT a
+replacement for the `Rule.copy(..., from_parent=models.SysConfig.<col>)` pattern above —
+that pattern is still correct and preferred whenever a transactional header table exists to
+carry the FK, since it gives snapshot semantics and requires no query in rule code at all.
+Reach for `SysConfig.current()` only in rule/event functions that genuinely have no FK path
+to `SysConfig` (confirmed real case, heartfit_companion/health_fit, Sep 2026: an existing-db
+project's `VitalReading`/`Attendance` tables had no `sys_config_id` FK, so threshold-reading
+rule functions each repeated `logic_row.session.query(models.SysConfig).first()` — duplicated
+code, and in one case masked by a silent `config.rate if config else <guessed default>`
+fallback that would have used the wrong value forever with no error). Prefer:
+```python
+threshold = models.SysConfig.current(logic_row.session).high_systolic_threshold
+```
+over repeating the raw query, and never write a `... if config else <default>` fallback —
+let `.current()`'s `RuntimeError` surface a genuinely missing row instead of silently
+guessing. If you add a fallback anyway because a specific case needs it, say so explicitly as
+an ad-lib — do not do it silently.
 
 **Workflow:**
 

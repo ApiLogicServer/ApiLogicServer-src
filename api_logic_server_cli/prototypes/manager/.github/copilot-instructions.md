@@ -23,8 +23,16 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.27
+version: 2.28
 changelog:
+  - 2.28 (Sep 26 2026) - Method 4 STEP 4: added explicit callout to run the project CE's new
+    STEP 8 (MANDATORY BEHAVIORAL VERIFICATION PASS) before proceeding to Manager-level STEP 5.
+    Real case (heartfit_companion, Sep 2026): a freshly-created project's Rule.count exactly
+    matched its requirement's literal formula text, so the existing presence/traceability
+    scans found nothing wrong — but the requirement's own column name
+    (`consecutive_absences`) implied streak/reset behavior the formula could not express, and
+    this went uncaught by the authoring pass itself. See project CE copilot-instructions.md
+    v3.43 and docs/training/logic_bank_api.md v1.0.25/1.0.26 for the full pattern and fix.
   - 2.27 (Sep 25 2026) - Added "refresh manager" trigger → `genai-logic start --clean --no-open-manager`.
   - 2.26 (Sep 4 2026) - Moved transcript-format rules to on-demand `.github/rfi_transcript_format.md`, read only when writing a transcript (fixes a malformed transcript from vague inline instructions).
   - 2.25 (Aug 30 2026) - STEP 0: `//`-prefixed prompt lines are human comments, not spec or a STEP 1b interview flag — read for context, never acted on.
@@ -480,6 +488,13 @@ STEP 4: Implement the domain prompt using the project CE's System Creation Servi
            prompt excerpt for that use case) — see project CE step 8 for details. This is
            separate from, and in addition to, the Manager-level STEP 5 provenance/ad-libs
            files below.
+        ⛔ After all logic files are written, run the project CE's STEP 8 (MANDATORY
+           BEHAVIORAL VERIFICATION PASS) before proceeding to STEP 5 below — a separate,
+           later re-read of each requirement clause against its generated rule's actual
+           behavior, not the same pass that wrote the rule. This is not optional just because
+           the project was freshly created in this same session; a self-authored pass has the
+           same blind spot whether the project is new or pre-existing. See project CE's
+           `.github/copilot-instructions.md` STEP 8 for the full procedure.
 
 ⚠️ CRITICAL PATH RULE — all file operations use the subdirectory as root:
    - File reads/writes:  <name>/database/db.sqlite,  <name>/logic/logic_discovery/...

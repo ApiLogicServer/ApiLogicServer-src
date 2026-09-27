@@ -1,9 +1,60 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.24
-# Last Updated: August 18, 2026
+# Version: 1.0.28
+# Last Updated: September 26, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 # Changelog:
+#   1.0.28 (Sep 26 2026) - Corrected 1.0.27's "Absence of an Event" section again: 1.0.27 fixed
+#     the trigger-mechanism guessing problem but still said to implement the reactive rule (the
+#     streak/threshold/alert logic) while flagging the trigger question separately. That is
+#     itself wrong, for a subtler reason: a hand-seeded test of the reactive logic cannot
+#     exercise the actual gap (whether the input row ever arrives in production), so its
+#     passing result misleadingly reads as "this feature works." Now: do NOT implement the
+#     reactive half either until the missing-row mechanism is decided - write the ad-lib +
+#     FIXME and stop on that clause; implement every other clause normally.
+#   1.0.27 (Sep 26 2026) - Corrected 1.0.26's "Absence of an Event" section: its own "CORRECT"
+#     guidance said to PICK one of (a)/(b) and build toward it - the exact unrequested-design-
+#     decision problem this file warns against elsewhere. Real case (health_fit blind-test
+#     build, same day): the AI correctly flagged the missing-row gap in ad-libs.md, but ALSO
+#     wired `Rule.early_row_event(on_class=Attendance, calling=_update_absence_streak)` -
+#     silently committing to "a synthesized absent row will exist" before the user had chosen
+#     a strategy. User caught it: a health/fitness domain plausibly has wearables reporting in
+#     periodically, in which case the right design might be watching for the ABSENCE of a
+#     heartbeat/sync (last-seen + elapsed time), not synthesizing an Attendance row at all -
+#     a third strategy the original two-option guidance didn't even list. Fixed: the section
+#     now explicitly says do NOT pick a mechanism and wire code to it; implement only the part
+#     safe to build (the reactive rule once a qualifying row exists), list candidate strategies
+#     in ad-libs.md as OPTIONS for the user to choose between (added a third: periodic-signal-
+#     absence, for domains where devices/wearables report in on their own schedule), and name
+#     that the list may not be exhaustive.
+#   1.0.26 (Sep 26 2026) - Added "Absence of an Event" detection section: LogicBank rules only
+#     fire on rows that get written (insert/update/delete) - no rule type can react to a row that
+#     was EXPECTED but never arrives. Real case (heartfit_companion, Sep 2026): an
+#     exertion_dropoff alert depended on Attendance.status='absent' rows, but nothing in the
+#     generated project ever wrote one outside hardcoded seed data - no batch job, no
+#     scheduled/clock-driven reconciliation, no event tied to ClassSchedule.end_time elapsing.
+#     The requirement and the code agreed with each other; the gap was that neither, nor
+#     anything else in the system, supplied the row the rule needed to react to. This is
+#     structurally different from a wrong-rule-type bug (see 1.0.25) - the fix isn't "pick a
+#     different Rule.* type," it's "identify that no rule can originate this row at all, and
+#     design/state the companion write path explicitly (scheduled job, clock-tick event, or an
+#     external system's documented responsibility)."
+#   1.0.25 (Sep 26 2026) - Added "Running Streaks (Consecutive Counts)" section: a requirement
+#     phrased with "count(...)" in its OWN formula text can still be a streak, not an aggregate,
+#     when the column name says "consecutive"/"streak"/"in a row" - Rule.count is order-blind
+#     and non-resetting, so it silently implements a lifetime total instead. Real case
+#     (heartfit_companion, Sep 2026): `Patient.consecutive_absences = count(Attendance where
+#     status == 'absent')` was implemented literally as Rule.count - never resets, never
+#     decreases, so a patient absent twice years ago who has since attended every class would
+#     still read consecutive_absences >= 2, risking a false drop-off alert on an unrelated later
+#     absence. Caught not by a name-pattern scanner but by a mandatory second pass reading the
+#     requirement clause and the generated rule side by side and asking "does this rule's actual
+#     behavior satisfy what these exact words claim" - see the new "MANDATORY BEHAVIORAL
+#     VERIFICATION PASS" section this same version adds to the Executable Requirements / SCS
+#     workflow (copilot-instructions.md), which generalizes this beyond just streak bugs. Also:
+#     the streak semantics here existed ONLY in the column name, not in the written requirement
+#     text - see that same section's mandate that any requirement inferred from a name/convention
+#     be written back into requirements.md or ad-libs.md, not fixed silently in code only.
 #   1.0.24 (Aug 18 2026) - Added "MISSING LOOKUP MUST NOT SILENTLY PASS A CONSTRAINT" section,
 #     right after the existing early_row_event/relationship-staleness warning whose own ❌ WRONG
 #     example already has this exact bug shape unlabeled. Real case: a live BLT run of the
@@ -1275,6 +1326,163 @@ WRONG (do not do this):
     Rule.commit_row_event(on_class=Order, calling=my_custom_kafka_function)
 
 RIGHT (do this instead): see Rule.after_flush_row_event example above.
+
+=============================================================================
+🔁 Running Streaks (Consecutive Counts) — NOT Rule.count
+=============================================================================
+
+DETECTION: a derived column named `consecutive_*`, `streak_*`, `*_in_a_row`, or similar —
+even if the REQUIREMENT'S OWN TEXT describes it with the word "count" or literally as
+`count(...)`. Do not trust that wording. Ask instead: can a child row ever transition OUT of
+the qualifying state, or is each row an immutable historical fact (once "absent," a class
+attendance record never becomes "not absent")? If each row is immutable, a plain `Rule.count`
+over a `where=` filter can only ever grow — it has no way to reset when a non-qualifying row
+appears in between. That is a lifetime total, not a streak, regardless of what the requirement
+calls it.
+
+❌ WRONG — matches the requirement's own "count(...)" phrasing, but is a cumulative total that
+never resets and never decreases. A patient absent twice years ago, who has attended every
+class since, still reads consecutive_absences >= 2 today:
+    Rule.count(derive=Patient.consecutive_absences, as_count_of=Attendance,
+               where=lambda row: row.status == 'absent')
+
+WHY NOT Rule.formula either: a formula is a pure function of the CURRENT row's own/parent
+attributes — it has no way to reference "my own prior derived value" as an input to computing
+its next value. A streak needs a fold/accumulator: `next_state = f(prior_state, this_event)`.
+None of the five documented rule types encode "read my own current value, then update myself
+based on it plus the new child" — this requires a purpose-built pattern, not a rule type choice.
+
+✅ CORRECT SHAPE — two parent columns + one child-side early_row_event, functioning as the
+fold/accumulator a streak actually is:
+    Patient.consecutive_missed_last   # bool: did the most recent child qualify?
+    Patient.consecutive_missed_count  # int: current streak length
+
+    def _update_absence_streak(row, old_row, logic_row):
+        """Attendance event: extends or resets Patient.consecutive_missed_count based on
+        whether this attendance qualifies (absent) and whether the prior one did too - a
+        fold/accumulator, NOT a Rule.count (see 'Running Streaks' above)."""
+        patient = row.patient
+        qualifies = (row.status == 'absent')
+        if qualifies and patient.consecutive_missed_last:
+            patient.consecutive_missed_count = (patient.consecutive_missed_count or 0) + 1
+        elif qualifies:
+            patient.consecutive_missed_count = 1
+        else:
+            patient.consecutive_missed_count = 0
+        patient.consecutive_missed_last = qualifies
+
+    Rule.early_row_event(on_class=Attendance, calling=_update_absence_streak)
+
+Note the accumulator shape generalizes to ANY "consecutive/streak" requirement, not just
+absences: `consecutive_missed_last` is the carried state (was the prior child a "hit"), and
+`consecutive_missed_count` is the running total that survives only hit-after-hit — a single
+non-qualifying row anywhere in the sequence collapses it back to 0.
+
+⚠️ CAVEAT — relationship-freshness risk: this pattern reads `patient.consecutive_missed_last`
+through the SQLAlchemy relationship inside an early_row_event on the child. See "after an
+early_row_event sets an FK column, do NOT read the FK's relationship attribute" earlier in this
+file for the general risk (a relationship attribute set earlier in the same flush is not
+guaranteed fresh) — verify this pattern's actual behavior with a real insert/commit/re-read
+test before trusting it in production logic; do not assume it from this write-up alone.
+
+=============================================================================
+🚫 Absence of an Event — No Rule Can Fire on a Row That Never Arrives
+=============================================================================
+
+THE UNDERLYING FACT: every LogicBank rule type — Rule.sum, Rule.count, Rule.formula,
+Rule.constraint, Rule.row_event, Rule.early_row_event, Rule.commit_row_event,
+Rule.after_flush_row_event — fires only in reaction to a row being inserted, updated, or
+deleted. There is no rule type, and no mechanism in the DSL, that fires on a row FAILING to
+arrive by some deadline. This is not a missing feature to work around with a cleverer rule —
+it is structural: rules react to writes, and "nothing was written" produces no event of any
+kind for any rule to react to.
+
+DETECTION: any requirement phrased as "no-show," "absent," "missed deadline," "failed to
+respond," "did not renew," or any condition defined by the NON-occurrence of an expected row
+within a time window. For each such clause, ask explicitly: "does this depend on a row that
+gets written, or on a row that's expected but might never be written?" If the latter, a
+Rule.count/Rule.constraint/etc. downstream of that row (e.g. `where=status=='absent'`) is fine
+ONCE the row exists — but nothing in the rules layer can be the thing that WRITES that row when
+a deadline silently passes with no activity.
+
+❌ WRONG — assuming the presence of a `status` column with an 'absent'/'no_show'/etc. value
+means the feature is complete, without checking whether anything ever sets that value outside
+of hand-seeded test data:
+    Rule.count(derive=Patient.consecutive_absences, as_count_of=Attendance,
+               where=lambda row: row.status == 'absent')
+    # ^ Correct AS A RULE (modulo the streak issue above) — but if nothing outside seed data
+    # ever INSERTS an Attendance row with status='absent', this rule has no real trigger path.
+    # It only ever "works" against demo data, never against live usage.
+
+REAL FAILURE CASE (heartfit_companion, Sep 2026): `Attendance.status` supports
+'attended'/'absent'/'excused', and `exertion_dropoff.py`'s Rule.count and after_flush_row_event
+were both written correctly against that column. But searching the entire generated project,
+the ONLY place `status='absent'` was ever written was two hardcoded rows in the seed script.
+There was no API endpoint, no scheduled/periodic job, and no event tied to
+`ClassSchedule.end_time` elapsing that would ever produce a real `absent` row in operation. A
+patient who is scheduled and simply doesn't show up generates NO ROW AT ALL — nothing "fails to
+post" that a rule could react to. The entire alert chain was correct in isolation and
+untriggerable end-to-end.
+
+✅ CORRECT — treat the missing-row case as a BLOCKING design question, not a detail to flag
+and route around. Do NOT implement the reactive rule while this question is unresolved —
+write the ad-lib and a FIXME, and STOP on this clause:
+
+  ⛔ DO NOT choose a trigger mechanism and wire code to it (e.g. `Rule.early_row_event(
+  on_class=Attendance, ...)` assuming a synthesized absent row will exist). That silently
+  forecloses other, possibly better-fitting strategies before the user has said which one
+  matches their actual system — the same class of unrequested-design-decision problem this
+  whole file exists to catch elsewhere (see the streak pattern above: don't guess).
+
+  ⛔ ALSO DO NOT implement the reactive half either (the streak/threshold/alert logic that
+  fires once a qualifying row exists) and consider the clause "done modulo the trigger."
+  This is a STRICTER rule than it sounds, and it is not just about avoiding a bad guess —
+  it is about what implementing the reactive half, on its own, actually communicates and
+  invites. The reactive logic's own correctness is not in question here; the question is
+  whether its input will ever exist in production. Building and testing the reactive half
+  first produces a subtle, worse failure than skipping it: it manufactures the APPEARANCE
+  of a working, verified feature, and the verification is structurally blind to the actual
+  gap — any test of the reactive logic necessarily inserts the row by hand (there is no
+  other way to test it yet), so the test can only ever confirm "the code reacts correctly
+  to a row," never "the row will exist." A passing test, an ad-lib footnote, and 30+ lines
+  of carefully-engineered accumulator logic together read as "this feature works" to
+  anyone who didn't read the footnote closely — that is worse than an honest gap, because
+  it looks finished. Confirmed real case (health_fit, Sep 2026): a full streak accumulator
+  was built and empirically verified (via hand-seeded rows) to correctly build, reset, and
+  restart a consecutive-absence count — genuinely correct code — while the question of
+  what ever produces a real absent row remained completely unresolved and was never once
+  exercised by that verification. The requirement this rule serves ("alert after N missed
+  classes") is not implementable until that question is answered, because the answer may
+  change what "reactive logic" even means — see option (c) below, which is not a variant of
+  the same accumulator, it is a different computation entirely.
+
+  Candidate strategies exist — write them in `ad-libs.md` as OPTIONS for the user to choose
+  from, not as a menu to silently pick from and build toward:
+  (a) A companion write path: a scheduled job or an event tied to some OTHER row's write
+      (e.g. a "close out this class" action, or a nightly sweep) that diffs "who was
+      expected" against "who checked in" once a deadline passes, and explicitly INSERTS the
+      missing-row fact (e.g. `Attendance(status='absent')`). Ordinary application code, not
+      a LogicBank rule — a rule only takes over once that row exists.
+  (b) An external system (front-desk check-in app, coordinator UI, partner feed) is solely
+      responsible for writing the negative-fact row; this project's rules only react to it
+      once written.
+  (c) If devices/wearables in this domain report in periodically (a heartbeat/sync, not an
+      attendance record), the natural design may not involve synthesizing an absence row at
+      all — it may mean watching for the ABSENCE of that periodic signal (last-seen timestamp
+      + a check against elapsed time), a fundamentally different computation from (a)/(b),
+      not just a different way of populating the same accumulator. Whether this applies
+      depends on facts about the actual system (does anything ping in periodically?) that
+      are not yet known and must not be assumed either way.
+  There may be other strategies specific to the domain — this list is not exhaustive.
+
+  What TO do instead: write a 🔴 Review Required entry in `ad-libs.md` naming the gap,
+  listing the candidate strategies, and stating plainly that this clause is NOT implemented
+  pending the user's decision. Add a `# FIXME: <use_case> clause N not implemented — see
+  ad-libs.md, missing-row trigger mechanism not yet decided` comment at the point in the
+  logic file where the rule would go, so a reader of the code (not just the ad-lib) sees the
+  gap immediately. Do implement every OTHER clause in the same requirements.md that does not
+  depend on this open question — this blocks only the clause(s) whose correctness depends on
+  the missing-row mechanism, not the whole use case.
 
 =============================================================================
 🗂️ FILE ORGANIZATION: Complete Example with Directory Structure
