@@ -1,0 +1,180 @@
+about:
+  date: September 27, 2026 20:41:47
+  merged:
+    at: September 27, 2026 20:41:55
+    new_attributes: 'ClassSchedule.attended_count '
+    new_resources: ''
+    new_tab_groups: ''
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 4
+  number_tables: 6
+info_toggle_checked: true
+resources:
+  Alert:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: student_id
+      required: true
+    - name: alert_type
+      required: true
+    - name: status
+      required: true
+    - name: message
+      required: true
+    - name: created_at
+    tab_groups:
+    - direction: toone
+      fks:
+      - student_id
+      name: student
+      resource: Student
+    type: Alert
+    user_key: id
+  Attendance:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: class_schedule_id
+      required: true
+    - name: student_id
+      required: true
+    - name: status
+      required: true
+    - name: recorded_at
+    tab_groups:
+    - direction: toone
+      fks:
+      - class_schedule_id
+      name: class_schedule
+      resource: ClassSchedule
+    - direction: toone
+      fks:
+      - student_id
+      name: student
+      resource: Student
+    type: Attendance
+    user_key: id
+  ClassSchedule:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: course_id
+      required: true
+    - name: session_date
+      required: true
+    - name: start_time
+    - name: end_time
+    - name: attended_count
+    tab_groups:
+    - direction: tomany
+      fks:
+      - class_schedule_id
+      name: AttendanceList
+      resource: Attendance
+    - direction: toone
+      fks:
+      - course_id
+      name: course
+      resource: Course
+    type: ClassSchedule
+    user_key: id
+  Course:
+    attributes:
+    - label: ' course_name*'
+      name: course_name
+      required: true
+      search: true
+      sort: true
+    - name: instructor_name
+    - name: max_capacity
+    - name: enrolled_count
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - course_id
+      name: ClassScheduleList
+      resource: ClassSchedule
+    type: Course
+    user_key: course_name
+  Student:
+    attributes:
+    - label: ' first_name*'
+      name: first_name
+      required: true
+      search: true
+      sort: true
+    - name: last_name
+      required: true
+    - name: email
+    - name: active_alert_count
+    - name: consecutive_absences
+    - name: created_at
+    - name: id
+    - name: total_sessions_completed
+    tab_groups:
+    - direction: tomany
+      fks:
+      - student_id
+      name: AlertList
+      resource: Alert
+    - direction: tomany
+      fks:
+      - student_id
+      name: AttendanceList
+      resource: Attendance
+    type: Student
+    user_key: first_name
+  SysConfig:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: id
+    - name: consecutive_absence_threshold
+    type: SysConfig
+    user_key: name
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '2'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

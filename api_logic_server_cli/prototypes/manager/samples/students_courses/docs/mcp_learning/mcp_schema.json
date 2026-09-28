@@ -1,0 +1,158 @@
+{
+    "tool_type": "json-api",
+    "schema_version": "1.0",
+    "base_url": "http://localhost:5656/api",
+    "description": "API Logic Project: students_courses",
+    "resources": [
+        {
+            "name": "Alert",
+            "path": "/Alert",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "student_id",
+                "alert_type",
+                "status",
+                "message",
+                "created_at"
+            ],
+            "filterable": [
+                "id",
+                "student_id",
+                "alert_type",
+                "status",
+                "message",
+                "created_at"
+            ]
+        },
+        {
+            "name": "Student",
+            "path": "/Student",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "first_name",
+                "last_name",
+                "email",
+                "active_alert_count",
+                "consecutive_absences",
+                "total_sessions_completed",
+                "created_at"
+            ],
+            "filterable": [
+                "id",
+                "first_name",
+                "last_name",
+                "email",
+                "active_alert_count",
+                "consecutive_absences",
+                "total_sessions_completed",
+                "created_at"
+            ]
+        },
+        {
+            "name": "Attendance",
+            "path": "/Attendance",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "student_id",
+                "class_schedule_id",
+                "status",
+                "recorded_at"
+            ],
+            "filterable": [
+                "id",
+                "student_id",
+                "class_schedule_id",
+                "status",
+                "recorded_at"
+            ]
+        },
+        {
+            "name": "ClassSchedule",
+            "path": "/ClassSchedule",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "course_id",
+                "session_date",
+                "start_time",
+                "end_time",
+                "attended_count"
+            ],
+            "filterable": [
+                "id",
+                "course_id",
+                "session_date",
+                "start_time",
+                "end_time",
+                "attended_count"
+            ]
+        },
+        {
+            "name": "Course",
+            "path": "/Course",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "course_name",
+                "instructor_name",
+                "max_capacity",
+                "enrolled_count"
+            ],
+            "filterable": [
+                "id",
+                "course_name",
+                "instructor_name",
+                "max_capacity",
+                "enrolled_count"
+            ]
+        },
+        {
+            "name": "SysConfig",
+            "path": "/SysConfig",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "consecutive_absence_threshold"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "consecutive_absence_threshold"
+            ]
+        }
+    ]
+}

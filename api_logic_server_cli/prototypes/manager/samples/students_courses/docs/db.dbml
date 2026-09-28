@@ -1,0 +1,62 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Table Alert {
+    id INTEGER [primary key]
+    student_id INTEGER 
+    alert_type TEXT 
+    status TEXT 
+    message TEXT 
+    created_at TIMESTAMP 
+    }
+
+Table Student {
+    id INTEGER [primary key]
+    first_name TEXT 
+    last_name TEXT 
+    email TEXT 
+    active_alert_count INTEGER 
+    consecutive_absences INTEGER 
+    total_sessions_completed INTEGER 
+    created_at TIMESTAMP 
+    }
+
+Table Attendance {
+    id INTEGER [primary key]
+    student_id INTEGER 
+    class_schedule_id INTEGER 
+    status TEXT 
+    recorded_at TIMESTAMP 
+    }
+
+Table ClassSchedule {
+    id INTEGER [primary key]
+    course_id INTEGER 
+    session_date TEXT 
+    start_time TEXT 
+    end_time TEXT 
+    attended_count INTEGER 
+    }
+
+Table Course {
+    id INTEGER [primary key]
+    course_name TEXT 
+    instructor_name TEXT 
+    max_capacity INTEGER 
+    enrolled_count INTEGER 
+    }
+
+Table SysConfig {
+    id INTEGER [primary key]
+    name TEXT 
+    consecutive_absence_threshold INTEGER 
+    }
+
+
+
+// Relationships
+    Ref: Alert.(student_id) > Student.(id)
+    Ref: Attendance.(class_schedule_id) > ClassSchedule.(id)
+    Ref: Attendance.(student_id) > Student.(id)
+    Ref: ClassSchedule.(course_id) > Course.(id)
