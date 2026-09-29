@@ -43,6 +43,14 @@ See readme files under api, logic and security.
 
 ---
 
+# 📋 Project Summary
+
+A public-library loan and fine system, elicited through an AI interview rather than a written spec: 21-day loans with one renewal, per-day overdue fines capped per book, and a fine-threshold checkout block that only affects new loans (existing loans aren't retroactively invalidated when a member crosses the threshold). Returned books notify the oldest waiting hold rather than auto-checking it out, preserving a FIFO queue.
+
+See [project_creation_report.md](docs/requirements/project_creation_report.md) for how this was built.
+
+---
+
 # 🚀 Quick Start
 
 <details markdown>

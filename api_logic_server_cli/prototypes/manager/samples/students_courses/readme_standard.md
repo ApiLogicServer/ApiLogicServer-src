@@ -30,6 +30,14 @@ See readme files under api, logic and security.
 
 ---
 
+# 📋 Project Summary
+
+This is a student attendance and course-enrollment system that enforces enrollment capacity and tracks completed sessions per student. It also deliberately documents an unresolved design gap: the requirement for a consecutive-absence dropoff alert depends on an Attendance row being written for a missed class, but nothing in the system yet confirms that such a row is ever produced for a genuine no-show — so that logic is blocked and flagged rather than guessed at, per this platform's governance conventions.
+
+See [project_creation_report.md](docs/requirements/project_creation_report.md) for how this was built.
+
+---
+
 # 🚀 Quick Start
 
 <details markdown>

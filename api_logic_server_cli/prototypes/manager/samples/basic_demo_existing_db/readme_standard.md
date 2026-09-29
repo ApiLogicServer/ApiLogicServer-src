@@ -30,6 +30,14 @@ See readme files under api, logic and security.
 
 ---
 
+# 📋 Project Summary
+
+This is an order-management system for customers, products, and orders, built from an existing pre-populated database rather than DDL. Five declarative rules enforce that a customer's balance never exceeds their credit limit, computed live from unshipped order totals, line-item pricing, and product costs. A sixth rule publishes shipped orders to Kafka for downstream integration.
+
+See [project_creation_report.md](docs/requirements/project_creation_report.md) for how this was built.
+
+---
+
 # 🚀 Quick Start
 
 <details markdown>

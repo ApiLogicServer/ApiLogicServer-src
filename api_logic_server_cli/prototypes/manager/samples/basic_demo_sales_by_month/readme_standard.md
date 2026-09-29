@@ -30,6 +30,14 @@ See readme files under api, logic and security.
 
 ---
 
+# 📋 Project Summary
+
+This extends the standard order-management/check-credit system (customers, products, orders, items) with sales-rep performance tracking. Orders can be assigned to a Sales Rep, and a monthly SalesRepTotal row — created automatically on that rep's first order of the month — accumulates total sales amount and order count as orders are placed.
+
+See [project_creation_report.md](docs/requirements/project_creation_report.md) for how this was built.
+
+---
+
 # 🚀 Quick Start
 
 <details markdown>

@@ -18,6 +18,16 @@ This illustrates basic [GenAI-Logic](https://www.genai-logic.com/product/key-fea
 2. Adding declarative logic and security, and 
 3. Customizing your project using your IDE and Python<br><br>
 
+---
+
+# 📋 Project Summary
+
+This is the canonical basic_demo reference: an order-management system for customers, products, and orders, governed by five declarative rules that enforce a customer's balance never exceeds their credit limit. It's the baseline example used throughout this project's own documentation to illustrate declarative rules versus hand-written procedural code, and also scaffolds email (SysEmail) and MCP client integration.
+
+See [project_creation_report.md](docs/requirements/project_creation_report.md) for how this was built.
+
+---
+
 <details markdown>
 <summary><strong>Say "hi" to your coding assistant</strong> — click to see important notes on models</summary>
 

@@ -18,6 +18,14 @@ See readme files under api, logic and security.
 
 ---
 
+# 📋 Project Summary
+
+Departments own General Ledger Accounts and Charge Definitions — percentage splits that route costs to those accounts. Projects are funded by one or more Departments per a Project Funding Definition, itself a set of percentage splits. When a Charge is posted against a Project, it's cascade-allocated two levels deep: first split across funding Departments, then each Department's share split again across its own GL Accounts — with an AI rule resolving which Project a Charge belongs to from a free-text description.
+
+See [project_creation_report.md](docs/requirements/project_creation_report.md) for how this was built.
+
+---
+
 # 🚀 Quick Start
 
 <details markdown>

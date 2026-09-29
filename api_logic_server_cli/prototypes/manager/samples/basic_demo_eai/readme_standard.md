@@ -30,6 +30,14 @@ See readme files under api, logic and security.
 
 ---
 
+# 📋 Project Summary
+
+This project provides a JSON:API and Admin App over the basic_demo schema (customers, orders, items, products), scaffolded as the target for an Enterprise Application Integration (EAI) demo — consuming B2B order messages over a Custom API or Kafka. No custom business logic has been implemented yet beyond the generated placeholders.
+
+See [project_creation_report.md](docs/requirements/project_creation_report.md) for how this was built.
+
+---
+
 # 🚀 Quick Start
 
 <details markdown>

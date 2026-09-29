@@ -524,6 +524,25 @@ STEP 5: ⛔ MANDATORY PROVENANCE — before telling the user the project is done
    project_creation_prompt.md is the complete original text, preserved once at the
    project root.
 
+   c2. Replace the PROJECT_SUMMARY_PLACEHOLDER block in <name>/readme.md's
+      "📋 Project Summary" section (just before "🚀 Quick Start") with a real,
+      2-4 sentence, plain-English description of what THIS project's schema and
+      rules actually do — grounded in the actual tables and Rule.* calls just
+      implemented, not the prompt's wording. End it with a pointer to
+      project_creation_prompt.md/project_creation_report.md for how it was built —
+      do not re-explain provenance mechanics here, that's what those files are for.
+      Example (basic_demo_logic_gov shape):
+        "This is an order-management system for customers, products, and orders.
+        Five declarative rules enforce that a customer's balance never exceeds
+        their credit limit, computed live from unshipped order totals, line-item
+        pricing, and product costs — automatically, on every insert, update, or
+        delete, across all four tables. A sixth rule publishes shipped orders to
+        Kafka for downstream integration.
+
+        See [project_creation_report.md](docs/requirements/project_creation_report.md)
+        for how this was built."
+      Creation-time only — do not revisit this section on later "implement reqs" runs.
+
    d. Append a "CE/Training Files Read" list to project_creation_report.md — a
       lightweight self-report of which CE and training files this run actually
       loaded, in order, with approximate size (e.g. "docs/training/logic_bank_api.md

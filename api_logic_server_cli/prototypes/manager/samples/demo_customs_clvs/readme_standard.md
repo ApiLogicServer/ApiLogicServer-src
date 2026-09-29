@@ -30,6 +30,14 @@ See readme files under api, logic and security.
 
 ---
 
+# 📋 Project Summary
+
+This system determines whether an imported shipment qualifies for Canada's CLVS (Courier Low Value Shipment) expedited customs clearance program. Rules check courier authorization, declared value against a configurable threshold, the absence of prohibited or controlled/regulated commodity lines, and release at an approved customs office — producing both a boolean eligibility flag and a human-readable reason string auditors can review directly.
+
+See [project_creation_report.md](docs/requirements/project_creation_report.md) for how this was built.
+
+---
+
 # 🚀 Quick Start
 
 <details markdown>

@@ -19,6 +19,16 @@ This illustrates basic [GenAI-Logic](https://www.genai-logic.com/product/key-fea
 2. Adding declarative logic and security, and 
 3. Customizing your project using your IDE and Python<br><br>
 
+---
+
+# 📋 Project Summary
+
+This is the standard order-management check-credit system (customers, products, orders, items), with one difference: Item.unit_price is chosen by an AI rule that picks the optimal Supplier for each Product based on cost, lead time, and world conditions, instead of a plain copy from the product's list price. Every AI decision — the request, the chosen supplier, the price, and any fallback reason — is captured in a full audit-trail record you can review in the Admin App.
+
+See [project_creation_report.md](docs/requirements/project_creation_report.md) for how this was built.
+
+---
+
 **🤖 Two Ways to Explore:**
 
 * **Self-Paced:** Follow the sections below at your own speed

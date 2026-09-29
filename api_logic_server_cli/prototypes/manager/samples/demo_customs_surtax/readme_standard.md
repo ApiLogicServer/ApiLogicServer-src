@@ -27,6 +27,14 @@ See readme files under api, logic and security.
 
 ---
 
+# 📋 Project Summary
+
+This system implements Canada's CBSA Steel Derivative Goods Surtax Order, calculating surtax, base duty, and provincial sales tax on steel-derivative import line items. Rates are resolved from country-of-origin and province lookups and snapshotted onto each entry, with surtax applicability conditioned on both the country's tariff status and the shipment date against a regulatory effective date.
+
+See [project_creation_report.md](docs/requirements/project_creation_report.md) for how this was built.
+
+---
+
 # 🚀 Quick Start
 
 <details markdown>
