@@ -117,6 +117,7 @@
 			"plaintext": false,
 			"markdown": false,
 			"scminput": false
-		}
+		},
+		"codeQL.githubDatabase.update": "never"
 	}
 }
