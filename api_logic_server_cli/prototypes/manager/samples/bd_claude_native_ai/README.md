@@ -20,7 +20,7 @@ This is the control group for [the insert-only experiment](https://apilogicserve
 
 - **The prompt:** [basic_demo_procedural.prompt.md](basic_demo_procedural.prompt.md)
 - **The full transcript:** [transcript.md](transcript.md) — unedited, exactly what Claude produced
-- **The finding:** [bug-assessment.md](bug-assessment.md) — live-probed against the running app
+- **The finding:** [project-assessment.md](project-assessment.md) — live-probed against the running app, logic and API both
 
 **What happened:** the AI built `place_order()` — the insert path — correctly. No update path, no delete path, anywhere in the app. `Customer.balance` is a running accumulator, not a recomputed value, so it's only ever correct if every future write goes through that one function. Quantity changes, item deletions, and customer/product reassignments all leave stale data behind, silently, with nothing to catch it.
 
