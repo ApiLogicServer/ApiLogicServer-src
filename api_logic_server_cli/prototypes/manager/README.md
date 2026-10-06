@@ -716,7 +716,7 @@ Rules make it **auditable** — logistics firm participation is *subject to audi
 &nbsp;
 
 <details markdown>
-<summary>Business Users and Developers, Collaborating — a Friendly IDE with Just Enough Guidance (via Context Engineering)</summary>
+<summary>Business Users and Developers, Collaborating — one governed artifact, a Friendly IDE, just enough guidance</summary>
 
 &nbsp;
 
