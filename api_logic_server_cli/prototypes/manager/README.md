@@ -436,7 +436,7 @@ The three reports above analyze the rules as declared — this one proves they r
 &nbsp;
 
 <details markdown>
-<summary>&emsp;&emsp;<strong>Governance at Scale</strong> — the architecture reliably produces rules</summary>
+<summary>&emsp;&emsp;<strong>Governance at Scale</strong> — the architecture reliably produces rules, project after project</summary>
 
 <br>**Governance depends on rules** — they're what you can read, trust, and audit. But the **manual rules-vs-code discipline is hard to sustain** across projects: someone has to walk the floor, bird-dogging and catching the reversions, and when the bird-dog goes away, the procedural code sneaks back in.
 
