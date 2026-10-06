@@ -61,16 +61,26 @@ CODESPACES-ONLY-END -->
 
 <br>
 
-> **Governance** — logic that's readable, enforced without bypass, and auditable — isn't a developer nicety; it's a [standing CIO concern](https://www.nascio.org/resource/state-cio-top-ten-policy-and-technology-priorities-for-2026/) — AI took the #1 spot in NASCIO's 2026 survey of state CIOs, and governance is the first concern NASCIO lists under it. Whereas governance is often regarded as a **process** — reviews, signoffs, a committee — our **focus is automated governance**. Watch for it below: the same commit that fails in a moment is that property, live.
+**Widespread agreement on governance.** It's a [standing CIO concern](https://www.nascio.org/resource/state-cio-top-ten-policy-and-technology-priorities-for-2026/) — AI took the #1 spot in NASCIO's 2026 survey of state CIOs, and governance is the first concern NASCIO lists under it.
 
-Say this to your AI assistant (allow several minutes):
+Far better than **procedures** — reviews, signoffs, a committee — ***software*** can enforce your business policy, with logic that's **readable**, **enforced without bypass**, and **auditable**.
+
+And governance requires something you can check: **complete, readable and trustworthy**.
+
+- **Requirements** are readable, but incomplete.
+- **Code** is complete, but ~40x more in this example, with complex ordering and dependencies, so you can't trust what you are reading.
+- **The rules** the AI generates are complete, readable and trustworthy.
+
+Watch for it below: the save that fails in a moment is governance, live.
+
+Paste these **requirements** into your AI assistant (allow several minutes):
 
 ```
 Create basic_demo from samples/dbs/basic_demo.sqlite.
 
 On Placing Orders, Check Credit:    
     1. The Customer's balance is less than the credit limit
-    2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+    2. The Customer's balance is the sum of the unshipped Order amount_total
     3. The Order's amount_total is the sum of the Item amount
     4. The Item amount is the quantity * unit_price
     5. The Item unit_price is copied from the Product unit_price
@@ -86,6 +96,19 @@ Use case: App Integration
 > ```
 > Same prompt, same logic, same rules — [check_credit.py](samples/basic_demo_existing_db/logic/logic_discovery/place_order/check_credit.py) is real, already there. Press F5 and you're looking at a working, governed project in seconds, no AI call required.
 CODESPACES-ONLY-END -->
+
+<details markdown>
+<summary>The AI turns those <strong>requirements</strong> into five <strong>rules</strong>, one for each — click to see them in your IDE</summary>
+
+<br><img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/check_credit.png?raw=true" alt="VS Code showing check_credit.py: the five requirements as intent at the top, and the five matching declarative rules below" width="640">
+
+The requirements are the docstring; the rules are the five lines of `declare_logic()`, one per requirement. The file is [check_credit.py](samples/basic_demo_logic_gov/logic/logic_discovery/place_order/check_credit.py).
+
+*Note:* the screenshot words requirement 2 as "…where date_shipped is null"; the prompt above says "…the unshipped Order amount_total". Both produce the same rule: your wording doesn't have to match ours.
+
+</details>
+
+&nbsp;
 
 <details markdown>
 <summary>Starting from a new database instead?</summary>
@@ -136,6 +159,7 @@ Change the quantity to a very large number. Save.
 Key take-aways:
 
 * The save fails — note the dialog.  The **dialog is governance in action.**
+* **First thing to check: read the rules.** The API and Admin App are mechanical; open `logic/logic_discovery/place_order/check_credit.py` in your project — that's where "is it right?" is decided.
 * That's 5 rules — not ~200 lines of code — governing this transaction across four tables. **Not what you'd get if you'd asked AI alone.** Let's explore.
 
 </details>
@@ -375,20 +399,32 @@ They sit alongside the infrastructure you already rely on — your database, Kaf
 &nbsp;
 
 <details markdown>
-<summary>&emsp;&emsp;<strong>Project Governance</strong> — see and manage the logic (alerts, diagrams, health check, tests)</summary>
+<summary>&emsp;&emsp;<strong>Project Governance</strong> — read the rules first, then see and manage the logic (alerts, diagrams, health check, tests)</summary>
 
 <br>
+
+<details markdown>
+<summary>&emsp;&emsp;↳ <strong>Read the rules first</strong> — complete, rigorous, readable, trustworthy</summary>
+
+<br>When a system is generated, the first question is whether it's right, or close. **Business logic is the focus**; the API and Admin App are mechanical.
+
+**Rules** are complete and rigorous. They are **readable** (~40x more concise in this example), and you can **trust** what you read, without concern about where they are called, whether they are ordered correctly, or how dependencies are handled. The alternatives don't give you that:
+
+- **Requirements are readable, but incomplete.** They leave decisions unmade, so they can't tell you what the system does.
+- **Code is hard to read and hard to trust.** There's far more of it, and you have to trace where it's called, whether it's ordered correctly, and whether dependencies are handled.
+
+<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/check_credit.png?raw=true" alt="5 declarative rules for check_credit — the same 5 requirements, readable in seconds" width="640">
+
+[logic_discovery/place_order/check_credit.py](samples/basic_demo_logic_gov/logic/logic_discovery/place_order/check_credit.py): five requirements, five rules. What they can't show you is what the requirement left unsaid and the AI had to assume. That's next.
+
+</details>
+
+&nbsp;
 
 <details markdown>
 <summary>&emsp;&emsp;↳ <strong>AI Alerts</strong> — proactive human-in-the-loop, every AI assumption</summary>
 
 <br><img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/ad-lib-report.png?raw=true" alt="Ad-libs report: a Review Required entry naming a blocking ambiguity, with candidate resolutions" width="640">
-
-AI can generate a full working system — API, Admin App, business logic — in minutes. How do you know it's what you meant? Where do you look?
-
-Most of it, you don't need to. The API and Admin App are **mechanical** — deterministically derived from the schema, the same every time, nothing the AI "decided."
-
-The one place a human judgment call was actually needed — where the AI translated your intent into policy — is also the clearest, most concise version of the whole system: **the rules**.
 
 Every requirement leaves things unsaid — the AI can and should resolve that ambiguity. But that carries the responsibility to provide a **proactive** heads-up so you can confirm the decision; that's shown in the report above.
 
