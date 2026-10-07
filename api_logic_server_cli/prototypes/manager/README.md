@@ -63,9 +63,7 @@ CODESPACES-ONLY-END -->
 
 **Widespread agreement on governance.** It's a [standing CIO concern](https://www.nascio.org/resource/state-cio-top-ten-policy-and-technology-priorities-for-2026/) — AI took the #1 spot in NASCIO's 2026 survey of state CIOs, and governance is the first concern NASCIO lists under it.
 
-Far better than **procedures** — reviews, signoffs, a committee — ***software*** can enforce your business policy, with logic that's **readable**, **enforced without bypass**, and **auditable**.
-
-And governance requires something you can check: **complete, readable and trustworthy**.
+IT has long written **software** to enforce business policy. AI makes that faster, but what it creates still needs governing — not just **procedures** (reviews, signoffs, a committee), but resulting logic that is **complete, readable and trustworthy**.
 
 - **Requirements** are readable, but incomplete.
 - **Code** is complete, but ~40x more in this example, with complex ordering and dependencies, so you can't trust what you are reading.
