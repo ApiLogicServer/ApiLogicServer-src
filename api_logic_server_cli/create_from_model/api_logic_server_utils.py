@@ -250,7 +250,14 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                             # companion "[↗](https://github.com/.../x.md)" link had its .md
                             # silently stripped by this same blanket replace, turning a working
                             # GitHub file link into a 404.
-                            parts = re.split(r'(samples/[^\s)]*\.md|https?://github\.com/[^\s)]*\.md)', each_line)
+                            #
+                            # Also protect `backticked` spans: a literal filename in code
+                            # formatting (e.g. `requirements.md`) names a real file the reader
+                            # must type or open; stripping its extension turns the instruction
+                            # into one that names a file that doesn't exist. Confirmed real
+                            # failure (Manager-readme.md, Oct 2026): "edit its `requirements.md`"
+                            # came out as "edit its `requirements`" on every Manager refresh.
+                            parts = re.split(r'(`[^`]*\.md[^`]*`|samples/[^\s)]*\.md|https?://github\.com/[^\s)]*\.md)', each_line)
                             for i in range(0, len(parts), 2):  # even indices = outside protected spans
                                 parts[i] = parts[i].replace('.md', '')
                             each_line = ''.join(parts)

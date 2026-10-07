@@ -167,7 +167,7 @@ Key take-aways:
 &nbsp;
 
 <details markdown>
-<summary>AI Alone Writes Code That's Hard to Read or Trust — Here's the Evidence</summary>
+<summary>AI Alone Writes Code That's Hard to Read or Trust — Here's What We Found</summary>
 
 <br>AI is genuinely good at UI, data mapping, boilerplate, etc — we see impressive results. **Business logic is the exception.**
 
@@ -263,7 +263,7 @@ That's not (only) a capability gap — it's what happens when dependencies are e
 &nbsp;
 
 <details markdown>
-<summary>&emsp;&emsp;<strong>What you just built</strong> — run it, debug it, change it (your IDE)</summary>
+<summary>&emsp;&emsp;<strong>What you just built</strong> — run it, debug it, change it in your existing IDE</summary>
 
 <br>**Run it.** You've probably used AI to generate code before — so what's different here?
 
@@ -399,7 +399,7 @@ They sit alongside the infrastructure you already rely on — your database, Kaf
 &nbsp;
 
 <details markdown>
-<summary>&emsp;&emsp;<strong>Project Governance</strong> — read the rules first, then see and manage the logic (alerts, diagrams, health check, tests)</summary>
+<summary>&emsp;&emsp;<strong>Project Governance</strong> — read the rules first, then manage the logic (alerts, diagrams, health check, tests)</summary>
 
 <br>
 
