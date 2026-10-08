@@ -1,0 +1,24 @@
+{
+  "realm" : "kcals",
+  "users" : [ {
+    "id" : "395468b2-bc26-4639-afcd-eb23d5a46271",
+    "createdTimestamp" : 1708774012772,
+    "username" : "demo",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "credentials" : [ {
+      "id" : "417d39eb-7f48-46e9-9a24-bd36a8a38fa6",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1708774029343,
+      "secretData" : "{\"value\":\"u31X27kWe2EK3PC5wHBTFOZq1HSvPTxceyrtTX73ENk=\",\"salt\":\"uwKdDL4nhfh+Eu9OgFCQfQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}
