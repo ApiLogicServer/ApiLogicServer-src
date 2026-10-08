@@ -1,79 +1,110 @@
-# Ad-Libs — demo_mcp_send_email
+## Ad-Libs Report
+**0 items need your review. 3 FYIs — standard patterns, no action needed.**
 
-Every assumption or guess made beyond the literal prompt spec (`project_creation_prompt.md`).
+---
 
-## Creation Steps
+## Walkthrough
 
-Commands actually run, in order:
+1. **Basic data model** — Reused existing `basic_demo.sqlite` schema (Customer, Order, Item, Product, Supplier, ProductSupplier) unchanged; it already carried `Customer.email`/`email_opt_out` and `Order.CreatedOn`.
+2. **Derived/predicted schema additions** — No SysConfig constants, no new FK/lookup columns, no Allocate junction tables. One new table: `SysEmail` (child of Customer) per the explicit spec — request fields only, fire-and-forget pattern (no Request Pattern response/audit columns needed).
+3. **Create db** — `genai-logic create --project-name=demo_mcp_send_email --db_url=sqlite:///samples/dbs/basic_demo.sqlite`; 1 DDL change (`CREATE TABLE sys_email`) + `rebuild-from-database`; admin.yaml replaced from admin-merge.yaml (user confirmed).
+4. **Run impl-req** — Check Credit: 2 sum, 1 formula, 1 copy, 1 constraint. Send Email: 1 `after_flush_row_event` (fire-and-forget). MCP client: added via `genai-logic genai-add-mcp-client` (generic tool — separate `mcp` bind-key db, `SysMcp` table, generated `row_event` logic file, Admin UI entry).
+5. **Test data / testing** — No new seed needed; `basic_demo.sqlite`'s existing rows (5 customers incl. one opted-out, 5 orders spanning shipped/unshipped and before/after the cutoff date) already covered every test scenario. Verified live via curl against the running server (see Diagnostic Appendix).
 
-```bash
-genai-logic create --project-name=demo_mcp_send_email --db_url=sqlite:///samples/dbs/basic_demo.sqlite
-sqlite3 demo_mcp_send_email/database/db.sqlite "CREATE TABLE sys_email (...)"
-cd demo_mcp_send_email && genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite
-# admin.yaml <- admin-merge.yaml (backup to admin.yaml.bak; no prior customizations existed)
-genai-logic genai-add-mcp-client
-# wrote logic/logic_discovery/check_credit.py
-# wrote logic/logic_discovery/send_email.py
-cd .. && python api_logic_server_run.py   # verification only, then stopped
+<details markdown>
+<summary>Full diagnostic detail (DDL change list, rule plan, rejected alternatives, replay log)</summary>
+
+### 🟢 Diagnostic Appendix
+
+#### Pre-Coding Analysis
+
+**Phase 1 — Schema Impact Assessment**
+Files read: `samples/prompts/demo_mcp_send_email.prompt.md` (all 3 sections), `database/models.py` (post-create)
+
+| Step | Signal |
+|---|---|
+| Check Credit | All referenced columns (`balance`, `credit_limit`, `date_shipped`, `amount_total`, `quantity`, `unit_price`) already present in `basic_demo.sqlite` — no schema change |
+| Send Email | New child table required (`SysEmail`) — `Rule.after_flush_row_event` fire-and-forget pattern; `Customer.email_opt_out` already present |
+| MCP client | No direct DDL — handled by the dedicated `genai-logic genai-add-mcp-client` tool, which adds its own `mcp`-bind-key database (`SysMcp`) |
+
+DDL change list:
+
+| Table | Change | Reason |
+|---|---|---|
+| sys_email | CREATE TABLE (id, customer_id FK, subject, message, CreatedOn) | Send Email — child-of-Customer audit/request table, per spec |
+
+**Phase 2 — CE / Pattern Assessment**
+Files read: `logic_bank_api.md`, `logic_bank_patterns.md`, `RequestObjectPattern.md`
+
+| Step | Rule Plan |
+|---|---|
+| Check Credit | `Rule.sum(Customer.balance)`, `Rule.sum(Order.amount_total)`, `Rule.formula(Item.amount)`, `Rule.copy(Item.unit_price)`, `Rule.constraint(Customer, balance<=credit_limit)` |
+| Send Email | `Rule.after_flush_row_event(SysEmail, ...)` — logs "email sent" unless `customer.email_opt_out` |
+| MCP client | Generic `genai-logic genai-add-mcp-client` — no custom rule authored |
+
+Anti-patterns confirmed clear:
+- [x] No parent flag where Rule.count on child table is correct (n/a — no child-rollup-as-flag case here)
+- [x] No `as_expression=lambda row: my_func(row)` — n/a, all formulas are direct lambdas
+- [x] No `session.query()` inside formula or row_event
+- [x] Boundary-operator convention applied: "less than the credit limit" → `<=` (matches CE's standing convention, not strict `<`)
+
+**Implementation Plan**:
+
+| Step | What was planned |
+|---|---|
+| 1 | `CREATE TABLE sys_email` + `rebuild-from-database` |
+| 2 | Confirm/replace `admin.yaml` from `admin-merge.yaml` (user confirmed Replace) |
+| 3 | `genai-logic genai-add-mcp-client` — adds SysMcp infra |
+| 4 | Write `logic/logic_discovery/check_credit.py` |
+| 5 | Write `logic/logic_discovery/send_email.py` |
+| 6 | Start server, verify all 3 use cases live (curl) |
+
+---
+
+#### Execution Metrics
+
+| Metric | Value |
+|---|---|
+| Strategy Used | Reused existing seeded schema/data for Check Credit; added one child table for Send Email; used the project's own generic `genai-add-mcp-client` CLI tool (not hand-authored) for the MCP client, since it is documented in `integration/mcp/readme-mcp.md` as the supported way to add this feature |
+| CE Files Loaded | logic_bank_api.md, logic_bank_patterns.md, RequestObjectPattern.md, implement_requirements.md, MCP_Copilot_Integration.md |
+| Schema Read First | Yes — `database/models.py` and `basic_demo.sqlite`'s live schema/data read before writing any rule |
+| Sample Data Read | Yes — existing `basic_demo.sqlite` seed rows read first; confirmed they already cover both opt-out and date-cutoff test scenarios, so no new seed script was written |
+| Subagent Used | No — single pass |
+| Self-Verification | Yes — server started, curl against `/api/Item`, `/api/SysEmail`, `/api/mcp-SysMcp`, and `logs/als.log` rule-fire trace checked for each use case |
+| Lightweight Checks Used | Yes — curl + `logs/als.log` per use case |
+| Gate Test Run Count | 1 per use case (diagnostic, not just final) |
+| Gate Test Purpose | Diagnostic — confirmed constraint rejection, opt-out skip, and end-to-end MCP fan-out all fired correctly |
+| Error Correction Loops | 2 (see below) |
+| Long-Run Diagnostics | None — clean run |
+
+**Error Correction Loops**:
+
+```
+Loop 1:
+  Symptom:   First Check-Credit constraint test (inserting a huge Item against order_id=1) succeeded instead of rejecting.
+  Diagnosis: order_id=1 was already shipped (date_shipped set), so it is excluded from the Customer.balance sum by design — not a rule bug.
+  Fix:       Deleted the stray test Item, retried against an unshipped order (order_id=2); constraint correctly rejected with error 2001.
+  Time:      ~1 min
+  Root cause type: test design, not a CE/code gap.
+
+Loop 2:
+  Symptom:   POST to /api/SysMcp/ returned 405.
+  Diagnosis: SysMcp lives on a separate `mcp` bind-key database; its JSON:API collection name is "mcp-SysMcp" (per `_s_collection_name` in the generated `database/mcp_models.py`), not "SysMcp".
+  Fix:       Used /api/mcp-SysMcp/ — succeeded (201), full MCP flow traced in logs/als.log.
+  Time:      ~1 min
+  Root cause type: generic-tool naming convention, not a CE gap in the use-case logic I authored.
 ```
 
-## Ad-Libs
+---
 
-1. **Source database, not `starter.sqlite`.** The prompt explicitly said "Create
-   demo_mcp_send_email from samples/dbs/basic_demo.sqlite" — `basic_demo.sqlite` already
-   contains the exact Customer/Order/Item/Product schema the Check Credit clause needs
-   (balance, credit_limit, amount_total, date_shipped, unit_price). Used that db_url directly
-   in `genai-logic create` instead of the Method-4 default `starter.sqlite`, per the prompt's
-   explicit instruction. No `SysConfig`/`sys_config` table exists in this project as a result —
-   there were no rate/threshold constants in the prompt to warrant one.
+### 🔴 Review Required
+*None — all decisions were specified or followed standard patterns.*
 
-2. **`SysEmail` schema beyond the 3 named columns.** The prompt named only `message`,
-   `subject`, `CreatedOn` plus "(child of customer)". Added the implied `id` primary key and
-   `customer_id` FK (required for "child of customer" and for the event's `row.customer`
-   lookup). `Customer.email_opt_out` already existed in `basic_demo.sqlite` — not an ad-lib,
-   just confirmed present rather than added.
+---
 
-3. **Event wiring.** "When a SysEmail is created, log 'email sent'" — implemented as
-   `Rule.commit_row_event` (fires after commit), matching this project's own CE worked example
-   for this exact scenario (`.github/copilot-instructions.md`, "Adding events" section). The log
-   message text ("email sent to {name} - Subject: {subject}" / "email blocked for {name} -
-   customer opted out") is not specified verbatim by the prompt; wrote it to literally contain
-   "email sent" (clause's exact phrase) for the opted-in case.
+### 🟡 FYI
+- `logic/logic_discovery/check_credit.py` — "less than the credit limit" implemented as `<=` per the CE's standing boundary-operator convention (not strict `<`).
+- `logic/logic_discovery/send_email.py` — used `Rule.after_flush_row_event` (fire-and-forget, per `RequestObjectPattern.md`'s `SysEmail` worked example) rather than `commit_row_event`, since the two project training files name different event types for this exact pattern and `RequestObjectPattern.md` is the more detailed/authoritative one for this table shape.
+- `database/models.py` / `database/mcp_models.py` — MCP client (3rd prompt section) implemented entirely via the project's own `genai-logic genai-add-mcp-client` CLI command rather than hand-authored rules, per `integration/mcp/readme-mcp.md`'s explicit instruction; no custom logic was written for this section.
 
-4. **Boundary operator on Check Credit clause 1** ("balance is less than the credit limit") —
-   implemented as `<=` per this CE's standing BOUNDARY-OPERATOR CONVENTION (`docs/training/
-   logic_bank_api.md`): ordinary "less than X" phrasing defaults to `<=` unless the prompt
-   states the boundary is excluded, which it does not here. Verified live: credit_limit set
-   to exactly the current balance is accepted; only balance > credit_limit is rejected.
-
-5. **MCP natural-language resolution not implemented here — already generic.** The third
-   use case ("Add the MCP client...") only required running `genai-logic genai-add-mcp-client`
-   (adds `SysMcp` table + Admin UI + the generic `mcp_client_executor`). No custom logic was
-   written to interpret "List the orders... and send a discount email..." — the generated
-   `logic/logic_discovery/mcp_client_executor_request.py` already wires any `SysMcp` insert to
-   the generic executor, and the project's `/.well-known/mcp.json` discovery doc's `learning`
-   field already contains the fan-out + "only if 'email' is in the query, POST to SysEmail"
-   instructions as boilerplate (not specific to this project). Verified end-to-end live
-   (see below) — this worked with zero additional code.
-
-## Verification performed (live, via running server; test data cleaned up afterward)
-
-- Check Credit constraint: PATCH `Customer.credit_limit` below current `balance` → rejected
-  (code 2001, "balance (...) exceeds credit limit (...)").
-- Check Credit cascade: inserted Order + Item (qty 2 × Widget, unit_price 90) → `Item.unit_price`
-  copied (90.0), `Item.amount` = 180.0, `Order.amount_total` = 180.0, `Customer.balance`
-  incremented by 180.0 (delta-adjusted, not recomputed) — all four clauses confirmed, then
-  rolled back by deleting the Item/Order (balance correctly decremented back).
-- Send Email: POST `SysEmail` for an opted-in customer → log line "email sent to Alice -
-  Subject: Discount Offer"; for an opted-out customer → "email blocked for Bob - customer
-  opted out". `Customer.email_opt_out` toggled via PATCH for the test, then reset to its
-  original seed value.
-- MCP end-to-end: POST to `/api/mcp-SysMcp/` with the exact natural-language request from the
-  prompt ("List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a
-  discount email (subject: 'Discount Offer') to the customer for each one.") → the executor
-  found the matching unshipped/old orders and POSTed a `SysEmail` per customer, correctly
-  skipping the opted-out customer ("Silent"). All test rows deleted afterward.
-
-No 🔴 Review Required findings — no clause depends on a row that might never be written (no
-"absence of event" case here); every clause maps to a real Rule.* call whose live behavior
-matches the requirement's own wording.
+</details>
