@@ -31,7 +31,7 @@ codespaces_patch: |
 
 # Welcome to GenAI-Logic
 
-GenAI-Logic turns your requirements into enterprise-class database transaction systems, **governed** by **no-bypass rules**.
+GenAI-Logic turns your requirements into enterprise-class database transaction systems, **governed** by **no-bypass rules** that you can read, trust and maintain.
 
 It reads whatever form your requirements are already in — **plain English, Gherkin, actual regulation text** — or, you can request an **interview** to discover the requirements.
 
@@ -195,7 +195,7 @@ Same 5 requirements from the Check Credit prompt in "The Ideal" above — handed
 &nbsp;
 
 <details markdown>
-<summary>&emsp;&emsp;<strong>Not trustworthy (1)</strong> — good spec generated 2 subtle bugs</summary>
+<summary>&emsp;&emsp;<strong>Not trustworthy (a)</strong> — subtle bugs even from a good spec</summary>
 
 <br>The AI's code handled updates, but missed two re-parenting cases:
 
@@ -211,7 +211,7 @@ There's a structural problem underneath the bugs, too: **AI pattern-matches depe
 &nbsp;
 
 <details markdown>
-<summary>&emsp;&emsp;<strong>Not trustworthy (2)</strong> — <em>typical</em> spec omitted entire update and delete paths</summary>
+<summary>&emsp;&emsp;<strong>Not trustworthy (b)</strong> — whole paths silently missing from a typical spec</summary>
 
 <br>The example above presumed an excellent, declarative spec — but specs aren't always so good. We tried it with a *typical* one: check credit on placing an order, phrased the way a developer naturally writes it. We gave that requirement to two frontier models, with no GenAI-Logic, and told them explicitly not to use rules:
 
@@ -241,7 +241,7 @@ Probed directly: change an item's quantity, delete an item, reassign an order to
 &nbsp;
 
 <details markdown>
-<summary>&emsp;&emsp;<strong>Not maintainable</strong> — every regeneration re-exposes you to (1) and (2)</summary>
+<summary>&emsp;&emsp;<strong>Not maintainable</strong> — every regeneration re-exposes you to (a) and (b)</summary>
 
 <br>Hand-editing 200 generated lines isn't a real option — nobody reliably patches the output of a code generator, any more than you'd hand-patch a compiler's output. That leaves one path: **change the prompt and regenerate.**
 
@@ -366,16 +366,7 @@ But that same incompleteness is why **natural language requirements can't be the
 
 &nbsp;
 
-<details markdown>
-<summary>&emsp;&emsp;↳ Some call this "governance by architecture, not discipline" — what that means</summary>
-
-<br>**Discipline** means every developer, on every change, has to remember the right pattern and every edge case — the burden lives in people, and it slips.
-
-**Architecture** means the software does it automatically — it's just how the system works, the same way a commit handler always runs. Nobody has to remember, because there's nothing to remember.
-
-Full case: [Governance by Architecture, Not Discipline](https://apilogicserver.github.io/Docs/Tech-Gov-By-Arch/).
-
-</details>
+*This is what people mean by "governance by architecture, not discipline" — see the full idea, tying this together with everything else here, further down this page.*
 
 </details>
 
@@ -815,6 +806,27 @@ The result: **BU/IT collaboration** instead of finger-pointing over whose fault 
 &nbsp;
 
 <details markdown>
+<summary>Governance by Architecture, Not Discipline — design time, runtime, review time</summary>
+
+<br>**Discipline** means someone has to remember: write the rule correctly, write it for every path, keep doing it right as the system grows, never cut a corner under deadline pressure. The burden lives in people — and it slips.
+
+**Architecture** means the system doesn't depend on anyone remembering — at every point it matters:
+
+- **At design time — anything in, rules out.** Prompt, Gherkin, regulation text, spreadsheet formula — whatever form intent arrives in, Context Engineering steers it toward *rules*, not code. Not a best practice to follow — what the pipeline does **by construction**. ("AI Alone Writes Code That's Hard to Read or Trust" above was a *found* problem, not an exception.)
+
+- **At runtime — enforced, not called.** Every transaction, every caller — API, message, MCP, agent, workflow (see "Trustworthy and Auditable" above) — fires through **the one commit point** nothing can route around. Nothing to forget, because there's nothing to remember.
+
+- **At review time — rules are executable business documentation.** **The same rules** are code to a developer, business documentation to a business user confirming policy (see "Business Users and Developers, Collaborating" above), and audit evidence to the auditor certifying it. And since the engine owns ordering and dependencies, reading a rule needs no call-site tracing — you can trust it runs, and that it already accounts for what it depends on.
+
+Same claim, every time someone needs it — design, runtime, or review: what happens doesn't depend on anyone's diligence. It depends on the architecture.
+
+Full case: [Governance by Architecture, Not Discipline](https://apilogicserver.github.io/Docs/Tech-Gov-By-Arch/).
+
+</details>
+
+&nbsp;
+
+<details markdown>
 <summary>Go deeper — beyond credit-check: security, customization, integration, logic debugging</summary>
 
 &nbsp;
@@ -905,7 +917,7 @@ Each of these builds a complete system from a single prompt or command — 💬 
 | Use Case | 💬 Say to your AI, or › run | What You'll Learn |
 |----------|---------|-------------------|
 | **[Use Case 1: AI Rules](samples/basic_demo_ai_rules-supplier/readme.md)**<br> demo_ai_rules_supplier | › genai-logic create --project_name=demo_ai_rules_supplier --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Use AI Rules (req pattern) to choose Optimal Supplier, per world conditions |
-| **[Use Case 2: Governed MCP Server](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-MCP-Send-Email)** <br>demo_mcp_send_email | 💬 `implement reqs samples/prompts/demo_mcp_send_email`<br><br>Or › `genai-logic create --project_name=demo_mcp_send_email --db_url=sqlite:///samples/dbs/basic_demo.sqlite` | - Bus Users compose new service to send email to overdue customers, subject to email opt-out rules<br>- Create custom API with NL<br>- Create an email service (req pattern)<br>- Executable Requirements (fast path) or manual steps |
+| **[Use Case 2: Governed MCP Server](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-MCP-Send-Email)** <br>demo_mcp_send_email | 💬 `implement reqs samples/prompts/demo_mcp_send_email`<br><br>Or › `genai-logic create --project_name=demo_mcp_send_email --db_url=sqlite:///samples/dbs/basic_demo.sqlite` | Executable Requirements (fast path) or manual steps<br>- Bus Users compose new service to send email to overdue customers, subject to email opt-out rules<br>- Create custom API with NL<br>- Create an email service (req pattern) |
 | **[EAI: Enterprise App Integration](samples/basic_demo_eai/readme.md)** <br>demo_eai | › genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Executable Requirements<br>- Create custom API with NL<br>- Create Kafka Listener with NL |
 | **[Use Case 4: Vibe Dev Backend](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-Vibe)** <br> demo_vibe | › genai-logic create --project_name=demo_vibe --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - UI elements, eg, Cards, Maps, Trees... |
 | **[Requirements From Interview](https://apilogicserver.github.io/Docs/Exec-Reqmts/)** <br> basic_demo_rfi | 💬 paste [samples/prompts/basic_demo_rfi.prompt](samples/prompts/basic_demo_rfi.prompt) | - Most of this prompt is fully specified (AI builds those parts directly, no questions asked)<br>- And requests interview ("Also, interview me to work out this general intent: ...")... AI interviews you on that part only, confirms before building<br>- [Real transcript included](samples/requirements/RFI/RFI-transcript.md) |
