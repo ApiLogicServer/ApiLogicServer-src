@@ -806,11 +806,13 @@ The result: **BU/IT collaboration** instead of finger-pointing over whose fault 
 &nbsp;
 
 <details markdown>
-<summary>Governance by Architecture, Not Discipline — design time, runtime, review time</summary>
+<summary>Governance by Architecture — rules for design time, runtime, review time</summary>
 
 <br>**Discipline** means someone has to remember: write the rule correctly, write it for every path, keep doing it right as the system grows, never cut a corner under deadline pressure. The burden lives in people — and it slips.
 
-**Architecture** means the system doesn't depend on anyone remembering — at every point it matters:
+**Architecture** means the system doesn't depend on anyone remembering.
+
+Not governance by process — **the system itself produces rules you can read and check.** At every point it matters:
 
 - **At design time — anything in, rules out.** Prompt, Gherkin, regulation text, spreadsheet formula — whatever form intent arrives in, Context Engineering steers it toward *rules*, not code. Not a best practice to follow — what the pipeline does **by construction**. ("AI Alone Writes Code That's Hard to Read or Trust" above was a *found* problem, not an exception.)
 
