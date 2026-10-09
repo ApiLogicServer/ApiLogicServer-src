@@ -195,7 +195,7 @@ Same 5 requirements from the Check Credit prompt in "The Ideal" above — handed
 &nbsp;
 
 <details markdown>
-<summary>&emsp;&emsp;<strong>Not trustworthy (a)</strong> — subtle bugs even from a good spec</summary>
+<summary>&emsp;&emsp;<strong>Not trustworthy (a)</strong> — subtle reparenting bugs even from a good spec</summary>
 
 <br>The AI's code handled updates, but missed two re-parenting cases:
 
