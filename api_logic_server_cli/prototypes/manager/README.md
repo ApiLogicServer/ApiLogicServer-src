@@ -806,21 +806,49 @@ The result: **BU/IT collaboration** instead of finger-pointing over whose fault 
 &nbsp;
 
 <details markdown>
-<summary>Governance by Architecture — rules for design time, runtime, review time</summary>
+<summary>Governance by Architecture — rules for design, runtime, review and maintenance</summary>
 
-<br>**Discipline** means someone has to remember: write the rule correctly, write it for every path, keep doing it right as the system grows, never cut a corner under deadline pressure. The burden lives in people — and it slips.
+<br>**Discipline** means someone has to remember: write the rule correctly, for every path, and keep doing it as the system grows and deadlines press. The burden lives in people — and it slips.
 
-**Architecture** means the system doesn't depend on anyone remembering.
+**Architecture** means the rules are created automatically from your requirements, and automatically govern every transaction — nothing to remember.
 
-Not governance by process — **the system itself produces rules you can read and check.** At every point it matters:
+Not governance by process: **the system itself produces rules you can read and check.** At every point it matters:
 
-- **At design time — anything in, rules out.** Prompt, Gherkin, regulation text, spreadsheet formula — whatever form intent arrives in, Context Engineering steers it toward *rules*, not code. Not a best practice to follow — what the pipeline does **by construction**. ("AI Alone Writes Code That's Hard to Read or Trust" above was a *found* problem, not an exception.)
+<details markdown>
+<summary>&emsp;&emsp;<strong>At design time</strong> — anything in, rules out</summary>
 
-- **At runtime — enforced, not called.** Every transaction, every caller — API, message, MCP, agent, workflow (see "Trustworthy and Auditable" above) — fires through **the one commit point** nothing can route around. Nothing to forget, because there's nothing to remember.
+<br>Prompt, Gherkin, regulation text, spreadsheet formula: whatever form intent arrives in, Context Engineering steers it toward *rules*, not code. That's what the pipeline does **by construction**, not a best practice to follow.
 
-- **At review time — rules are executable business documentation.** **The same rules** are code to a developer, business documentation to a business user confirming policy (see "Business Users and Developers, Collaborating" above), and audit evidence to the auditor certifying it. And since the engine owns ordering and dependencies, reading a rule needs no call-site tracing — you can trust it runs, and that it already accounts for what it depends on.
+</details>
 
-Same claim, every time someone needs it — design, runtime, or review: what happens doesn't depend on anyone's diligence. It depends on the architecture.
+<details markdown>
+<summary>&emsp;&emsp;<strong>At runtime</strong> — enforced, not called</summary>
+
+<br>Every transaction, every caller (API, message, MCP, agent, workflow) fires through **the one commit point** nothing can route around. Nothing to forget, because there's nothing to remember.
+
+</details>
+
+<details markdown>
+<summary>&emsp;&emsp;<strong>At review time</strong> — executable business documentation</summary>
+
+<br>**The same rules** are code to a developer, business documentation to a business user confirming policy, and audit evidence to the auditor certifying it. And you can trust it runs: reading a rule needs no call-site tracing.
+
+</details>
+
+<details markdown>
+<summary>&emsp;&emsp;<strong>At maintenance</strong> — change one rule, not every path</summary>
+
+<br>Add a rule anywhere and the engine finds its place; change one and every path that touches it follows. No call sites to hunt down, no execution order to keep straight — nothing to remember when the system changes, which is where much of its cost lives.
+
+</details>
+
+&nbsp;
+
+That works across the organization and the life cycle because rules are the one artifact that is complete, readable and executable:
+
+![Complete, Readable, Executable: the missing artifact](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/Gov-Artifact.png?raw=true)
+
+Same claim, every time someone needs it — design, runtime, review, or maintenance: what happens doesn't depend on anyone's diligence. It depends on the architecture.
 
 Full case: [Governance by Architecture, Not Discipline](https://apilogicserver.github.io/Docs/Tech-Gov-By-Arch/).
 
