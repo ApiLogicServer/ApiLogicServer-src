@@ -31,13 +31,17 @@ codespaces_patch: |
 
 # Welcome to GenAI-Logic
 
-GenAI-Logic turns your requirements into enterprise-class database transaction systems, **governed** by **no-bypass rules** that you can read, trust and maintain.
+For IT teams that want the speed and simplicity of AI, with enterprise-class governance:
+
+GenAI-Logic turns your requirements into database transaction systems, **governed by no-bypass rules** you can read, trust and maintain.
+
+Better models might write better code, but governance doesn't depend on the model. Requirements are readable but incomplete; code is complete but too big to read, review or audit. Rules are both: short enough to read, complete enough to run.
 
 It reads whatever form your requirements are already in — **plain English, Gherkin, actual regulation text** — or, you can request an **interview** to discover the requirements.
 
 And it **fits what you already use**: your methodology, standard tools, and shared artifacts, **fostering collaboration** between Business Users and Developers.
 
-This is the start page for the [GenAI-Logic Manager](https://apilogicserver.github.io/Docs/Manager) — where you manage projects, create notes and resources, etc.  It's also your learnng hub.
+This is the start page for the [GenAI-Logic Manager](https://apilogicserver.github.io/Docs/Manager) — where you manage projects, notes and resources. It's also your learning hub.
 <!-- CODESPACES-ONLY-START
 (see [codespaces setup here](system/ApiLogicServer-Internal-Dev/setup.gif))
 CODESPACES-ONLY-END -->
@@ -838,7 +842,7 @@ Not governance by process: **the system itself produces rules you can read and c
 <details markdown>
 <summary>&emsp;&emsp;<strong>At maintenance</strong> — change one rule, not every path</summary>
 
-<br>Add a rule anywhere and the engine finds its place; change one and every path that touches it follows. No call sites to hunt down, no execution order to keep straight — nothing to remember when the system changes, which is where much of its cost lives.
+<br>With code, every change is another chance to miss a path; here it's one declaration, and the engine handles the rest. Add a rule anywhere and the engine finds its place. No call sites to hunt down, no execution order to keep straight — nothing to remember when the system changes, which is where much of its cost lives.
 
 </details>
 
