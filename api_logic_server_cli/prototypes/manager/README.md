@@ -62,7 +62,7 @@ CODESPACES-ONLY-END -->
 
 <details markdown>
 <summary>The Ideal — executable business prompts, held to an enterprise standard</summary>
-<h3 id="the-ideal" style="display:none">The Ideal</h3>
+<h3 id="the-ideal" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;white-space:nowrap;border:0">The Ideal</h3>
 
 <br>
 
@@ -175,7 +175,7 @@ Key take-aways:
 
 <details markdown>
 <summary>AI Alone Writes Code That's Hard to Read or Trust — Here's What We Found</summary>
-<h3 id="ai-alone" style="display:none">AI Alone</h3>
+<h3 id="ai-alone" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;white-space:nowrap;border:0">AI Alone</h3>
 
 <br>AI is genuinely good at UI, data mapping, boilerplate, etc — we see impressive results. **Business logic is the exception.**
 
@@ -267,7 +267,7 @@ That's not (only) a capability gap — it's what happens when dependencies are e
 
 <details markdown>
 <summary><strong>Rules</strong> You Can Read, Trust, and Maintain — <strong>Governance by Architecture</strong></summary>
-<h3 id="rules-you-can-read" style="display:none">Rules You Can Read</h3>
+<h3 id="rules-you-can-read" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;white-space:nowrap;border:0">Rules You Can Read</h3>
 
 &nbsp;
 
@@ -500,7 +500,7 @@ Full case: [Governance at Scale](https://apilogicserver.github.io/Docs/Tech-XGR/
 
 <details markdown>
 <summary>Enterprise-Class Results — enabled by a pre-built enterprise architecture (click to see real projects)</summary>
-<h3 id="enterprise-class-results" style="display:none">Enterprise-Class Results</h3>
+<h3 id="enterprise-class-results" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;white-space:nowrap;border:0">Enterprise-Class Results</h3>
 
 &nbsp;
 
@@ -754,7 +754,7 @@ Rules make it **auditable** — logistics firm participation is *subject to audi
 
 <details markdown>
 <summary>Business Users and Developers, Collaborating — one governed artifact, a Friendly IDE, just enough guidance</summary>
-<h3 id="business-users-and-developers" style="display:none">Business Users and Developers</h3>
+<h3 id="business-users-and-developers" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;white-space:nowrap;border:0">Business Users and Developers</h3>
 
 &nbsp;
 
@@ -816,7 +816,7 @@ The result: **BU/IT collaboration** instead of finger-pointing over whose fault 
 
 <details markdown>
 <summary>Governance by Architecture — rules for design, runtime, review and maintenance</summary>
-<h3 id="governance-by-architecture-toc" style="display:none">Governance by Architecture</h3>
+<h3 id="governance-by-architecture-toc" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;white-space:nowrap;border:0">Governance by Architecture</h3>
 
 <br>**Discipline** means someone has to remember: write the rule correctly, for every path, and keep doing it as the system grows and deadlines press. The burden lives in people — and it slips.
 
@@ -868,7 +868,7 @@ Full case: [Governance by Architecture, Not Discipline](https://apilogicserver.g
 
 <details markdown>
 <summary>Go deeper — beyond credit-check: security, customization, integration, logic debugging</summary>
-<h3 id="go-deeper" style="display:none">Go deeper</h3>
+<h3 id="go-deeper" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;white-space:nowrap;border:0">Go deeper</h3>
 
 &nbsp;
 
