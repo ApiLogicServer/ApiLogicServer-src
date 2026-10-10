@@ -107,7 +107,7 @@ CODESPACES-ONLY-END -->
 <details markdown>
 <summary>The AI turns those <strong>requirements</strong> into five <strong>rules</strong>, one for each — click to see them in your IDE</summary>
 
-<br><img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/check_credit.png?raw=true" alt="VS Code showing check_credit.py: the five requirements as intent at the top, and the five matching declarative rules below" width="640">
+<br><img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/check_credit.png" alt="VS Code showing check_credit.py: the five requirements as intent at the top, and the five matching declarative rules below" width="640">
 
 The requirements are the docstring; the rules are the five lines of `declare_logic()`, one per requirement. The file is [check_credit.py](samples/basic_demo_logic_gov/logic/logic_discovery/place_order/check_credit.py).
 
@@ -157,7 +157,7 @@ Change the quantity to a very large number. Save.
 4. Edit the Item
 5. Set the quantity
 
-![credit-check](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/credit-check.png?raw=true)
+![credit-check](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/basic_demo/credit-check.png)
 
 </details>
 
@@ -185,12 +185,12 @@ Left unguided, any AI assistant — including the one that just built basic_demo
 <summary>&emsp;&emsp;<strong>Not readable</strong> — you can't govern what you can't read (5 vs ~200 lines)</summary>
 
 <br>**~200 lines** of procedural code — ***hard to read, intent unclear*:**
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/credit_service.png?raw=true" alt="~200 lines of procedural credit-check code, for the same 5 requirements 5 declarative rules cover" width="640">
+<img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/credit_service.png" alt="~200 lines of procedural credit-check code, for the same 5 requirements 5 declarative rules cover" width="640">
 
 Same 5 requirements from the Check Credit prompt in "The Ideal" above — handed to AI with no guidance, it generated this: [procedural/credit_service.py](samples/basic_demo_logic_gov/logic/procedural/credit_service.py) — **~200 lines**. Open it and judge for yourself.
 
 **5 declarative rules — *readable* at a glance:**
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/check_credit.png?raw=true" alt="5 declarative rules for check_credit — the same 5 requirements, readable in seconds" width="640">
+<img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/check_credit.png" alt="5 declarative rules for check_credit — the same 5 requirements, readable in seconds" width="640">
 
 [logic_discovery/place_order/check_credit.py](samples/basic_demo_logic_gov/logic/logic_discovery/place_order/check_credit.py) — same 5 requirements, same AI.
 
@@ -293,7 +293,7 @@ The save you just saw fail was enforced by exactly one of those 5 rules.
 
 Every rule is a plain Python function or lambda. Set a breakpoint on any `calling=` function or `as_condition=` lambda in your IDE, exactly like you would anywhere else in the codebase — no proprietary debugger, no special UI.
 
-![logic-debug](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/logic/logic-debug.png?raw=true)
+![logic-debug](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/logic/logic-debug.png)
 
 **Change it.** Ask your AI assistant for a new rule, in plain English:
 
@@ -314,7 +314,7 @@ To change a requirement later, edit its `requirements.md` and say "implement req
 <details markdown>
 <summary>&emsp;&emsp;<strong>Trustworthy and Auditable</strong> — AI Driven Rules (AI, Context Engineering, Rules engine)</summary>
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/architecture/logic-architecture-exec.png?raw=true" alt="Design and Runtime funnels into one governed Rules Engine" height="380" width="380" align="right">
+<img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/architecture/logic-architecture-exec.png" alt="Design and Runtime funnels into one governed Rules Engine" height="380" width="380" align="right">
 
 <br>Two funnels, converging on one engine, at the same commit point:
 
@@ -390,7 +390,7 @@ They sit alongside the infrastructure you already rely on — your database, Kaf
 
 **Think of a DBMS** — the rules are the DDL, the rules engine is the database server. The rules are plain Python files in your project, under source control, the way DDL is a script you keep. The rules engine runs inside your service and enforces them at commit, the way a database server enforces its schema.
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/Gov-Layer.png?raw=true" alt="AI Driven Rules sit between callers and the database, alongside security (Keycloak/RBAC) and messaging (Kafka); rules are written by AI and Context Engineering" width="640">
+<img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/Gov-Layer.png" alt="AI Driven Rules sit between callers and the database, alongside security (Keycloak/RBAC) and messaging (Kafka); rules are written by AI and Context Engineering" width="640">
 
 &nbsp;
 
@@ -413,7 +413,7 @@ They sit alongside the infrastructure you already rely on — your database, Kaf
 - **Requirements are readable, but incomplete.** They leave decisions unmade, so they can't tell you what the system does.
 - **Code is hard to read and hard to trust.** There's far more of it, and you have to trace where it's called, whether it's ordered correctly, and whether dependencies are handled.
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/check_credit.png?raw=true" alt="5 declarative rules for check_credit — the same 5 requirements, readable in seconds" width="640">
+<img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/check_credit.png" alt="5 declarative rules for check_credit — the same 5 requirements, readable in seconds" width="640">
 
 [logic_discovery/place_order/check_credit.py](samples/basic_demo_logic_gov/logic/logic_discovery/place_order/check_credit.py): five requirements, five rules. What they can't show you is what the requirement left unsaid and the AI had to assume. That's next.
 
@@ -424,7 +424,7 @@ They sit alongside the infrastructure you already rely on — your database, Kaf
 <details markdown>
 <summary>&emsp;&emsp;↳ <strong>AI Alerts</strong> — proactive human-in-the-loop, every AI assumption</summary>
 
-<br><img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/ad-lib-report.png?raw=true" alt="Ad-libs report: a Review Required entry naming a blocking ambiguity, with candidate resolutions" width="640">
+<br><img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/ad-lib-report.png" alt="Ad-libs report: a Review Required entry naming a blocking ambiguity, with candidate resolutions" width="640">
 
 Every requirement leaves things unsaid — the AI can and should resolve that ambiguity. But that carries the responsibility to provide a **proactive** heads-up so you can confirm the decision; that's shown in the report above.
 
@@ -450,7 +450,7 @@ A compliance reviewer can check the implementation in minutes, not by reading co
 <details markdown>
 <summary>&emsp;&emsp;↳ <strong>Health Check</strong> — logic analysis / usage / utilization</summary>
 
-<br><img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/proj-gov-report.png?raw=true" alt="Health check report: coverage, integrity, and red-flag scores for a project's rules" width="640">
+<br><img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/proj-gov-report.png" alt="Health check report: coverage, integrity, and red-flag scores for a project's rules" width="640">
 
 Ongoing hygiene, not just at creation: run any time to confirm the codebase still holds up as the project evolves — rule adoption, dependency-tracking integrity, missing docstrings, across the whole project. [Full report](samples/basic_demo_logic_gov/docs/requirements/health_check.md).
 
@@ -461,7 +461,7 @@ Ongoing hygiene, not just at creation: run any time to confirm the codebase stil
 <details markdown>
 <summary>&emsp;&emsp;↳ <strong>Test Creation</strong> — requirements traceability (from rules analysis)</summary>
 
-<br><img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/hehave-test.png?raw=true" alt="Behave Logic Report: a test scenario traced to the rules it exercised and the logic log proving they fired" width="640">
+<br><img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/hehave-test.png" alt="Behave Logic Report: a test scenario traced to the rules it exercised and the logic log proving they fired" width="640">
 
 The three reports above analyze the rules as declared — this one proves they ran. Behave tests trace straight back to the requirement that drove them — and the report shows which declarative rules fired for each scenario, with before/after values, not just pass/fail. Requirement → test → rule → execution log, in one place. [Full report](samples/basic_demo_logic_gov/test/api_logic_server_behave/reports/Behave%20Logic%20Report.md).
 
@@ -482,11 +482,11 @@ The three reports above analyze the rules as declared — this one proves they r
 
 **And it repeats:** we've run these three samples hundreds of times, and the output has always been rules. The Context Engineering is tuned not just on rule syntax but on the best patterns of rule use, and because the output is rules, anyone can read and check them.
 
-![Governance by Architecture, Not Discipline](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/architecture/proc-decl-simple.png?raw=true)
+![Governance by Architecture, Not Discipline](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/architecture/proc-decl-simple.png)
 
 The GenAI-Logic side of that test, in full: [samples/basic_demo_genai_logic](samples/basic_demo_genai_logic) — the procedurally-phrased prompt, the 5 rules it produced, and confirmation all 9 change paths are governed, not just the one the prompt described.
 
-![Procedural Spec In, Declarative Rules Out](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/exec_reqmts/proc-to-decl.png?raw=true)
+![Procedural Spec In, Declarative Rules Out](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/exec_reqmts/proc-to-decl.png)
 
 The native-AI side, in full: [samples/bd_claude_native_ai](samples/bd_claude_native_ai) — the actual code, the prompt, and the [unedited transcript](samples/bd_claude_native_ai/transcript.md).
 
@@ -518,7 +518,7 @@ patterns. [More on system vs. domain knowledge →](https://apilogicserver.githu
 
 <br>The demo above showed ***Publish** the Order to Kafka topic*. For the **subscribe** side, see [samples/basic_demo_eai/readme.md](samples/basic_demo_eai/readme.md): B2B orders from partner systems, via a Custom API or Kafka subscriber, including *lookups* so partners send `"Account": "Alice"` (not internal IDs). One project handles both directions — no separate system to stand up:
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/demo-eai.png?raw=true" alt="basic_demo_eai: B2B Partner and Broker both feed one governed order system, which publishes order_shipping" width="560">
+<img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/demo-eai.png" alt="basic_demo_eai: B2B Partner and Broker both feed one governed order system, which publishes order_shipping" width="560">
 
 Below is the portion of the requirement for subscribing:
 
@@ -553,7 +553,7 @@ this platform generates. You don't ask for it.
 
 <br>Your API is **MCP-discoverable** out of the box (`/.well-known/mcp.json`). Copilot, Claude, or ChatGPT can find the schema and answer natural-language queries against it. There's no discovery layer for you to write — see [samples/basic_demo_ai_rules-supplier/readme_ai_mcp.md](samples/basic_demo_ai_rules-supplier/readme_ai_mcp.md)
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/mcp-ui.png?raw=true" alt="Admin App SysMcp form — a business user enters a natural-language request (list unpaid orders, email each customer a discount), no code written" width="560">
+<img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/basic_demo/mcp-ui.png" alt="Admin App SysMcp form — a business user enters a natural-language request (list unpaid orders, email each customer a discount), no code written" width="560">
 
 Here, an end user makes a NL request to find some data, and send email — **the same governing rules enforce it**, whether the request came from MCP, the API, or a form. No new door, no new bypass.
 
@@ -570,7 +570,7 @@ You can also use MCP in your IDE to issue queries in natural language.
 
 Point yours at the generated API, and it renders against real, governed data — the same logic runs no matter what's calling it. One database, one API, any number of custom front ends: dashboards, tree views, maps, card layouts — all shown below, same backend, all generated in about 15 minutes with no hand-written JavaScript.
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/ui-vibe/nw/vibe-gallery.png?raw=true" alt="Gallery of vibe-generated UIs — dashboard, tree view, map, cards — all against one governed API" width="700">
+<img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/ui-vibe/nw/vibe-gallery.png" alt="Gallery of vibe-generated UIs — dashboard, tree view, map, cards — all against one governed API" width="700">
 
 The card layout above, worked first try:
 
@@ -630,7 +630,7 @@ for more NL → declaration examples.
 
 <br>Rules that call AI for genuinely judgment-call decisions (e.g. picking a supplier under disrupted shipping lanes). Such AI "proposals" are **governed by the deterministic rules** to ensure results conform to business policy, with a full audit trail of every AI request and response — see [samples/basic_demo_ai_rules-supplier/readme.md](samples/basic_demo_ai_rules-supplier/readme.md)
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/copilot/AI-Rules-Audit.png?raw=true" alt="Audit trail of an AI Rule's request and response, shown in the Admin App" width="560">
+<img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/sample-ai/copilot/AI-Rules-Audit.png" alt="Audit trail of an AI Rule's request and response, shown in the Admin App" width="560">
 
 The rule below is one line (`__Use AI__ to Set...`) inside an otherwise ordinary logic declaration — deterministic and AI rules aren't two systems, they're the same DSL:
 
@@ -738,7 +738,7 @@ Producing these rules:
 
 <br>The [business description](samples/demo_customs_clvs/readme.md) ([↗](https://github.com/ApiLogicServer/demo_customs_clvs/blob/main/readme.md)) and [actual requirements](samples/demo_customs_clvs/docs/requirements/customs_demo/requirements.md) ([↗](https://github.com/ApiLogicServer/demo_customs_clvs/blob/main/docs/requirements/customs_demo/requirements.md)) illustrate **Gherkin requirements, with audit-grade rules**:
 
-![CLVS: Gherkin requirements to a governed shipment system](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/customs_demo/summary.png?raw=true)
+![CLVS: Gherkin requirements to a governed shipment system](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/customs_demo/summary.png)
 
 This system subscribes to a broker feed of messages in complex XML formats; the transformation into business objects is **by example**, from [sample XML](samples/requirements/customs_demo_clvs/docs/requirements/customs_demo/message_formats/demo-01-no-match.xml) ([↗](https://github.com/ApiLogicServer/demo_customs_clvs/blob/main/docs/requirements/customs_demo/message_formats/demo-01-no-match.xml)).
 
@@ -763,7 +763,7 @@ Rules make it **auditable** — logistics firm participation is *subject to audi
 
 <br>
 
-![reg-tech](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/exec_reqmts/reg-tech.png?raw=true)
+![reg-tech](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/exec_reqmts/reg-tech.png)
 
 *More: [Business-User-Friendly IDE →](https://apilogicserver.github.io/Docs/Introduction/#a-business-user-friendly-ide)*
 
@@ -778,7 +778,7 @@ Rules make it **auditable** — logistics firm participation is *subject to audi
 
 You keep your own methodology, and you never face a blank page: ask for just enough guidance, when you need it.
 
-![help-me](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/help-me.png?raw=true)
+![help-me](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/help-me.png)
 
 </details>
 
@@ -793,7 +793,7 @@ You keep your own methodology, and you never face a blank page: ask for just eno
 
 The result: **BU/IT collaboration** instead of finger-pointing over whose fault the gap was — one artifact, one team owns it, from day one.
 
-![collaboration](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/exec_reqmts/collaboration.png?raw=true)
+![collaboration](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/exec_reqmts/collaboration.png)
 
 </details>
 
@@ -804,7 +804,7 @@ The result: **BU/IT collaboration** instead of finger-pointing over whose fault 
 
 <br>And when you need even more guidance, just ask the system to define the **requirements from an interview** — AI will interview you on what's still ambiguous, then confirm before building. No spec-writing skill required going in.
 
-![RFI](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/exec_reqmts/RFI.png?raw=true)
+![RFI](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/exec_reqmts/RFI.png)
 
 [Real transcript, unedited →](samples/requirements/RFI/RFI-transcript.md)
 
@@ -856,7 +856,7 @@ Not governance by process: **the system itself produces rules you can read and c
 
 That works across the organization and the life cycle because rules are the one artifact that is complete, readable and executable:
 
-![Complete, Readable, Executable: the missing artifact](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/readme/Gov-Artifact.png?raw=true)
+![Complete, Readable, Executable: the missing artifact](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/Gov-Artifact.png)
 
 Same claim, every time someone needs it — design, runtime, review, or maintenance: what happens doesn't depend on anyone's diligence. It depends on the architecture.
 
@@ -1131,7 +1131,7 @@ To hide the YAML or JSON front matter (the metadata block at the top of your mar
 
 The preview will now automatically strip the front matter from the rendered view.
 
-![hide-front-matter](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/manager/hide-front-matter.png?raw=true)
+![hide-front-matter](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/hide-front-matter.png)
 
 </details>
 
