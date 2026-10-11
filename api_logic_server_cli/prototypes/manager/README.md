@@ -33,11 +33,13 @@ codespaces_patch: |
 
 For IT teams that want the speed and simplicity of AI, with enterprise-class governance:
 
-GenAI-Logic turns your requirements into database transaction systems, **governed by no-bypass rules** you can read, trust and maintain.
+GenAI-Logic turns your requirements into database transaction systems. The AI generates **rules, not code**: no-bypass rules you can read, trust and maintain.
 
-Better models might write better code, but governance doesn't depend on the model. Requirements are readable but incomplete; code is complete but too big to read, review or audit. Rules are both: short enough to read, complete enough to run.
+**Rules** are **readable**: complete, and concise. AI codegen alone leaves you only requirements (incomplete) and code (bloated), however good the model.
 
-It reads whatever form your requirements are already in — **plain English, Gherkin, actual regulation text** — or, you can request an **interview** to discover the requirements.
+Governance is often **reactive**: procedures that catch problems after the fact. Here it is **proactive**: governing rules are the policy you read, enforced on every transaction.
+
+Whatever comes in, **governing rules come out** — project after project. It reads your requirements in whatever form they already exist — **plain English, Gherkin, actual regulation text** — or you can request an **interview** to discover them.
 
 And it **fits what you already use**: your methodology, standard tools, and shared artifacts, **fostering collaboration** between Business Users and Developers.
 
@@ -350,6 +352,8 @@ Functions don't behave like that. So why is that? **Traditional logic is procedu
 
 **This is bigger than the ~40x less code.** With procedural code, seeing a function isn't enough — you still have to trace every call site to know whether it actually runs for the path you care about. With a rule, seeing it *is* the proof: Auto-invoked guarantees it fires everywhere, so reading the rule tells you it runs — **without the path analysis** you'd otherwise have to do yourself.
 
+**Reading a rule tells you it runs, and that everything that depends on it is chained and re-derived — without tracing call sites or dependency chains. In code, that tracing is exactly where the bugs are.** The reparenting bugs found earlier were this: reparenting silently left one side of the balance stale.
+
 If it helps: think of a **spreadsheet** — `B10 = SUM(B1:B9)` isn't called, it *reacts*. Rules react the same way to changes in what they depend on.
 
 Full writeup: [declarative/procedural comparison](samples/basic_demo_logic_gov/logic/procedural/declarative-vs-procedural-comparison.md).
@@ -404,14 +408,14 @@ They sit alongside the infrastructure you already rely on — your database, Kaf
 <br>
 
 <details markdown>
-<summary>&emsp;&emsp;↳ <strong>Read the rules first</strong> — complete, rigorous, readable, trustworthy</summary>
+<summary>&emsp;&emsp;↳ <strong>Read the rules first</strong> — readable (complete and concise) and trustworthy</summary>
 
 <br>When a system is generated, the first question is whether it's right, or close. **Business logic is the focus**; the API and Admin App are mechanical.
 
-**Rules** are complete and rigorous. They are **readable** (~40x more concise in this example), and you can **trust** what you read, without concern about where they are called, whether they are ordered correctly, or how dependencies are handled. The alternatives don't give you that:
+**Rules** are **readable**: complete, and concise (~40x more concise than the code, in this example). And you can **trust** what you read: the rules are **deterministic**, and the engine calls them, orders them and **handles their dependencies**, so there is nothing to trace. The alternatives don't give you that:
 
-- **Requirements are readable, but incomplete.** They leave decisions unmade, so they can't tell you what the system does.
-- **Code is hard to read and hard to trust.** There's far more of it, and you have to trace where it's called, whether it's ordered correctly, and whether dependencies are handled.
+- **Requirements are easy to read, but incomplete — and a little vague.** They leave decisions unmade and open to interpretation, so they can't tell you what the system does.
+- **Code is bloated, and hard to trust.** There's far more of it, and you have to trace where it's called, whether it's ordered correctly, and whether dependencies are handled.
 
 <img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/check_credit.png" alt="5 declarative rules for check_credit — the same 5 requirements, readable in seconds" width="640">
 
