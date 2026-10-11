@@ -185,14 +185,15 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                         each_line = each_line[4:]
                     in_mkdocs_block_with_sections = True
                 each_line = each_line.replace('{:target="_blank" rel="noopener"}', '')
+                # Images are served from raw.githubusercontent.com: the github.com/.../blob/...?raw=true
+                # form intermittently returns 503 to direct fetches, which breaks images in Codespaces
+                # and the VS Code preview (Oct 2026). raw.githubusercontent.com needs no ?raw=true.
+                is_abs_image = "https://github.com/ApiLogicServer" in each_line or "https://raw.githubusercontent.com/ApiLogicServer" in each_line
                 if each_line.startswith('![') or each_line.startswith('[![') or each_line.startswith('    !['):
-                    if "https://github.com/ApiLogicServer" not in each_line:     # make doc-relative urls absolute...
+                    if not is_abs_image:     # make doc-relative urls absolute...
                         if "creates-and-runs-video" in each_line:
                             debug_stop = "good stop"
-                        each_line = each_line.replace('images', 'https://github.com/ApiLogicServer/Docs/blob/main/docs/images')
-                        each_line = each_line.replace('png)', 'png?raw=true)')
-                        each_line = each_line.replace('jpeg)', 'jpeg?raw=true)')
-                        each_line = each_line.replace('jpg)', 'jpg?raw=true)')
+                        each_line = each_line.replace('images', 'https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images')
                     else:
                         pass # image is absolute - don't alter
                 # same absolute-ification for HTML <img src="images/...">  tags — the check above
@@ -202,11 +203,13 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                 # images/ folder of its own. Confirmed real failure (Manager-readme.md, Sep 2026):
                 # 4 <img> tags added for EAI/MCP/AI-Rules/Vibe-gallery proof images rendered as
                 # broken images on every machine except one with org_git/Docs checked out alongside.
-                if '<img src="images/' in each_line and "https://github.com/ApiLogicServer" not in each_line:
-                    each_line = each_line.replace('<img src="images/', '<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/')
-                    each_line = each_line.replace('.png"', '.png?raw=true"')
-                    each_line = each_line.replace('.jpeg"', '.jpeg?raw=true"')
-                    each_line = each_line.replace('.jpg"', '.jpg?raw=true"')
+                if '<img src="images/' in each_line and not is_abs_image:
+                    each_line = each_line.replace('<img src="images/', '<img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/')
+                # also normalize image URLs already written absolute in the source doc (hand-written
+                # <img> tags with github.com/.../blob/...?raw=true), so every image uses the same host
+                if 'github.com/ApiLogicServer/Docs/blob/main/docs/images/' in each_line:
+                    each_line = re.sub(r'https://github\.com/ApiLogicServer/Docs/blob/main/docs/images/([^"\'()\s?]+)(?:\?raw=true)?',
+                                       r'https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/\1', each_line)
                 if '.md' in each_line:
                     is_exception = False
                     for each_exception in exceptions:
