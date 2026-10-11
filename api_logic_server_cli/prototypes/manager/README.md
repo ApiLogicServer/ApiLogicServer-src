@@ -78,7 +78,7 @@ Everyone who's had AI build a system hits the same wall afterward: *what have I 
 
 That's governance by architecture, not process: logic everyone can read, and trust that the engine enforces.
 
-Many assume AI will eventually get good enough that the prompt becomes the system of record, and code is just compiler output nobody reads. We hope so — but even then, governance still needs something you can read and check. Spreadsheet-like rules are that thing, regardless of which model wrote them.
+Many assume AI will eventually get good enough that the prompt becomes the system of record, and code is just compiler output nobody reads. We hope so — but even then, **governance still needs something you can read and check.** Spreadsheet-like rules are that thing, regardless of which model wrote them.
 
 Watch it live below: the save that fails in a moment is governance in action.
 
