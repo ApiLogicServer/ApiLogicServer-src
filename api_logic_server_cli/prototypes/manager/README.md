@@ -37,7 +37,7 @@ GenAI-Logic turns your requirements into database transaction systems. The AI ge
 
 **Rules** are **readable**: complete, and concise. AI codegen alone leaves you only requirements (incomplete) and code (bloated), however good the model.
 
-Governance is often **reactive**: procedures that catch problems after the fact. Here it is **proactive**: governing rules are the policy you read, enforced on every transaction.
+Governance here is **proactive**: governing rules are the policy you read, enforced on every transaction. Elsewhere it is often *reactive*: procedures that catch problems after the fact.
 
 Whatever comes in, **governing rules come out** — project after project. It reads your requirements in whatever form they already exist — **plain English, Gherkin, actual regulation text** — or you can request an **interview** to discover them.
 
