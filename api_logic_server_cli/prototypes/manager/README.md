@@ -33,7 +33,7 @@ codespaces_patch: |
 
 For IT teams that want the speed and simplicity of AI, with enterprise-class governance:
 
-GenAI-Logic creates extensible projects for database transaction systems from your requirements. The AI is guided to write **rules first, code only where needed**: no-bypass logic you can read, trust and maintain.
+GenAI-Logic creates extensible projects for database transaction systems from your requirements. The AI is guided to write **rules first** (code only where needed): **no-bypass** logic you can read, trust and maintain.
 
 **Rules** are **readable**: complete, and concise. AI codegen alone leaves you only requirements (incomplete) and code (bloated), however good the model.
 
