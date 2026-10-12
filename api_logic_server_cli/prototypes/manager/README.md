@@ -33,7 +33,7 @@ codespaces_patch: |
 
 For IT teams that want the speed and simplicity of AI, with enterprise-class governance:
 
-GenAI-Logic turns your requirements into database transaction systems. The AI generates **rules, not code**: no-bypass rules you can read, trust and maintain.
+GenAI-Logic creates extensible projects for database transaction systems from your requirements. The AI is guided to write **rules first, code only where needed**: no-bypass logic you can read, trust and maintain.
 
 **Rules** are **readable**: complete, and concise. AI codegen alone leaves you only requirements (incomplete) and code (bloated), however good the model.
 
@@ -443,7 +443,7 @@ You review the judgment calls, not the code. [Full report](samples/students_cour
 <details markdown>
 <summary>&emsp;&emsp;↳ <strong>Logic Flow Diagram</strong> — visualize logic flow</summary>
 
-<br><img src="samples/basic_demo_logic_gov/docs/requirements/logic_diagrams/logic_diagram.svg" alt="Logic diagram: Item/Order/Customer rule chain, generated from the running rules" width="480">
+![Logic diagram: Item/Order/Customer rule chain, generated from the running rules](samples/basic_demo_logic_gov/docs/requirements/logic_diagrams/logic_diagram.svg)
 
 A compliance reviewer can check the implementation in minutes, not by reading code. [Full report](samples/basic_demo_logic_gov/docs/requirements/logic_flow_basic_demo_logic_gov.md) — the same report generates for any project, including the enterprise-scale ones below.
 
@@ -699,7 +699,7 @@ Project Funding Definition is active.
 
 And the rules it produced:
 
-<img src="samples/allocate_dept_account_demo/docs/requirements/logic_diagrams/logic_diagram.svg" alt="Logic diagram: cascading budget allocation rule chain" width="480">
+![Logic diagram: cascading budget allocation rule chain](samples/allocate_dept_account_demo/docs/requirements/logic_diagrams/logic_diagram.svg)
 
 &nbsp;
 
@@ -727,9 +727,16 @@ Transactions are received as a CustomsEntry with multiple
 SurtaxLineItems, one per imported product HS code.
 ```
 
-Producing these rules:
+That prompt creates:
 
-<img src="samples/demo_customs_surtax/docs/requirements/logic_diagrams/logic_diagram.svg" alt="Logic diagram: CBSA steel-surtax rule chain" width="480">
+1. An **MCP-enabled API and an Admin App**. Those are mechanical and typically don't need review.
+2. The **business rules** which express your business logic and govern all updates. This is the key part: review them to verify the AI understood and translated your intent. Here are the rules it produced (nearly as concise as the requirement, but complete and deterministic):
+
+![The CBSA steel-surtax business rules, as produced from the prompt](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/surtax-rules.png)
+
+You can use the Rules Diagram to visualize rule chaining:
+
+![Logic diagram: CBSA steel-surtax rule chain](samples/demo_customs_surtax/docs/requirements/logic_diagrams/logic_diagram.svg)
 
 [Read the rules](samples/demo_customs_surtax/logic/logic_discovery/cbsa_steel_surtax.py) ([↗](https://github.com/ApiLogicServer/demo_customs_surtax/blob/main/logic/logic_discovery/cbsa_steel_surtax.py)) yourself.
 
