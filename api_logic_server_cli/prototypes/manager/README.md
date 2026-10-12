@@ -847,6 +847,8 @@ Not governance by process: **the system itself produces rules you can read and c
 
 <br>**The same rules** are code to a developer, business documentation to a business user confirming policy, and audit evidence to the auditor certifying it. And you can trust it runs: reading a rule needs no call-site tracing.
 
+Review is becoming where AI-built systems stall: with code there is far more to read, and reading it doesn't tell you what runs. Here there is ~40x less (in this example), and **what you read is what is enforced**.
+
 </details>
 
 <details markdown>
