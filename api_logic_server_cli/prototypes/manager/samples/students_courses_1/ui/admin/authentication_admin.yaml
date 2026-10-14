@@ -1,0 +1,99 @@
+about:
+  date: June 20, 2024 16:59:24
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 3
+  number_tables: 3
+resources:
+  authentication-Role:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    tab_groups:
+    - direction: tomany
+      fks:
+      - role_name
+      name: UserRoleList
+      resource: authentication-UserRole
+    type: authentication-Role
+    user_key: name
+  authentication-User:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: username
+    - name: password_hash
+    - name: region
+    - name: client_id
+    - name: id
+      required: true
+    tab_groups:
+    - direction: tomany
+      fks:
+      - owner_id
+      name: ApiList
+      resource: authentication-Api
+    - direction: tomany
+      fks:
+      - user_id
+      name: UserRoleList
+      resource: authentication-UserRole
+    type: authentication-User
+    user_key: name
+  authentication-UserRole:
+    attributes:
+    - label: ' role_name*'
+      name: role_name
+      required: true
+      search: true
+      sort: true
+    - name: role_name
+      required: true
+    - name: user_id
+      required: true
+    - name: notes
+    tab_groups:
+    - direction: toone
+      fks:
+      - role_name
+      name: Role
+      resource: authentication-Role
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: authentication-User
+    type: authentication-UserRole
+    user_key: role_name
+settings:
+  HomeJS: http://localhost:5656/admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '10000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'
