@@ -25,6 +25,10 @@ version: 1.1 for readme, 9/27/2026 - updated after CE v3.47 fix verified live
 
 &nbsp;
 
+You may prefer to view this guide in the browser; [click here](https://apilogicserver.github.io/Docs/Sample-Students-Courses) — it also covers the `students_courses_1` follow-on (resolving the blocked clause).
+
+&nbsp;
+
 <details markdown>
 
 <summary>What This Sample Checks</summary>

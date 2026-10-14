@@ -34,6 +34,10 @@ version: 1.0, 10/13/2026
 
 &nbsp;
 
+You may prefer to view this guide in the browser; [click here](https://apilogicserver.github.io/Docs/Sample-Students-Courses).
+
+&nbsp;
+
 **This project is `samples/students_courses` carried one phase further.** It is not a
 different fixture — phase 1 here is the exact same build, same requirements, same correctly-blocked
 result. See [`samples/students_courses`](../students_courses) first if you haven't: that
