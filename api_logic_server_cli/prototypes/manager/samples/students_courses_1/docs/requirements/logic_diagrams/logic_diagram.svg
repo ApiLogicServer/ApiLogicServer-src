@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1132pt" height="263pt" viewBox="18.80 18.80 1132.40 263.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 272.18)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-272.18 1141.42,-272.18 1141.42,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="405.94" y="-228.03" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — samples/students_courses_1</text>
+<g id="clust3" class="cluster">
+<title>cluster_events</title>
+</g>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="8,-5.5 8,-38.5 145.25,-38.5 145.25,-5.5 8,-5.5" />
+<text xml:space="preserve" text-anchor="start" x="17" y="-20.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ Attendance inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-6.5 9,-37.5 144.25,-37.5 144.25,-6.5 9,-6.5" />
+</g>
+
+<g id="node3" class="node">
+<title>Attendance</title>
+<polygon fill="#4a6fa5" stroke="none" points="292,-23 292,-39 361.25,-39 361.25,-23 292,-23" />
+<text xml:space="preserve" text-anchor="start" x="294" y="-27.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Attendance </text>
+<polygon fill="#b8cce8" stroke="none" points="292,-5 292,-23 303.92,-23 303.92,-5 292,-5" />
+<text xml:space="preserve" text-anchor="start" x="296.46" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="303.92,-5 303.92,-23 349.33,-23 349.33,-5 303.92,-5" />
+<text xml:space="preserve" text-anchor="start" x="306.92" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> status </text>
+<polygon fill="#b8cce8" stroke="none" points="349.33,-5 349.33,-23 361.25,-23 361.25,-5 349.33,-5" />
+<text xml:space="preserve" text-anchor="start" x="353.79" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="291,-4 291,-40 362.25,-40 362.25,-4 291,-4" />
+</g>
+
+<g id="edge5" class="edge">
+<title>TRIGGER-&gt;Attendance</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M152.8,-22C192.18,-22 231.56,-22 270.95,-22" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="280.73,-22 270.73,-26.5 278.17,-22.5 270.73,-22.5 270.73,-22 270.73,-21.5 278.17,-21.5 270.73,-17.5 280.73,-22" />
+</g>
+
+<g id="node2" class="node">
+<title>Alert</title>
+<polygon fill="#4a6fa5" stroke="none" points="444.38,-23 444.38,-39 498.88,-39 498.88,-23 444.38,-23" />
+<text xml:space="preserve" text-anchor="start" x="456.25" y="-27.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Alert </text>
+<polygon fill="#b8cce8" stroke="none" points="444.38,-5 444.38,-23 451.38,-23 451.38,-5 444.38,-5" />
+<text xml:space="preserve" text-anchor="start" x="446.38" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="451.38,-5 451.38,-23 491.88,-23 491.88,-5 451.38,-5" />
+<text xml:space="preserve" text-anchor="start" x="454.38" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> status </text>
+<polygon fill="#b8cce8" stroke="none" points="491.88,-5 491.88,-23 498.88,-23 498.88,-5 491.88,-5" />
+<text xml:space="preserve" text-anchor="start" x="493.88" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="443.38,-4 443.38,-40 499.88,-40 499.88,-4 443.38,-4" />
+</g>
+
+<g id="node6" class="node">
+<title>Student</title>
+<polygon fill="#4a6fa5" stroke="none" points="340.12,-176.25 340.12,-192.25 489.12,-192.25 489.12,-176.25 340.12,-176.25" />
+<text xml:space="preserve" text-anchor="start" x="391" y="-180.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Student </text>
+<polygon fill="#b8cce8" stroke="none" points="340.12,-158.25 340.12,-176.25 347.12,-176.25 347.12,-158.25 340.12,-158.25" />
+<text xml:space="preserve" text-anchor="start" x="342.12" y="-164.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="347.12,-158.25 347.12,-176.25 482.12,-176.25 482.12,-158.25 347.12,-158.25" />
+<text xml:space="preserve" text-anchor="start" x="350.12" y="-164.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> total_sessions_completed </text>
+<polygon fill="#b8cce8" stroke="none" points="482.12,-158.25 482.12,-176.25 489.12,-176.25 489.12,-158.25 482.12,-158.25" />
+<text xml:space="preserve" text-anchor="start" x="484.12" y="-164.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="340.12,-140.25 340.12,-158.25 347.12,-158.25 347.12,-140.25 340.12,-140.25" />
+<text xml:space="preserve" text-anchor="start" x="342.12" y="-146.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="347.12,-140.25 347.12,-158.25 482.12,-158.25 482.12,-140.25 347.12,-140.25" />
+<text xml:space="preserve" text-anchor="start" x="350.12" y="-146.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> active_alert_count </text>
+<polygon fill="#b8cce8" stroke="none" points="482.12,-140.25 482.12,-158.25 489.12,-158.25 489.12,-140.25 482.12,-140.25" />
+<text xml:space="preserve" text-anchor="start" x="484.12" y="-146.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="339.12,-139.25 339.12,-193.25 490.12,-193.25 490.12,-139.25 339.12,-139.25" />
+</g>
+
+<g id="edge1" class="edge">
+<title>Alert-&gt;Student</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M425.96,-37.47C418.21,-39.76 410.21,-42.03 402.62,-44 321.64,-65.09 271.14,-18.84 218.62,-84 182.62,-128.67 262.98,-149.06 331.43,-158.18" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="425.81,-37.51 436.69,-38.94 430.83,-36.01 435.17,-34.7 435.17,-34.7 435.17,-34.7 430.83,-36.01 434.09,-30.32 425.81,-37.51" />
+</g>
+
+<g id="edge8" class="edge">
+<title>Alert:w-&gt;Student:Student_active_alert_count_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M434.41,-22C420.25,-22 363.38,-96.42 347.67,-127.81" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="344.44,-136.95 343.53,-126.02 344.82,-134.37 347.3,-127.36 347.77,-127.52 348.24,-127.69 345.76,-134.7 352.01,-129.02 344.44,-136.95" />
+<text xml:space="preserve" text-anchor="middle" x="378.15" y="-85.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">3</text>
+</g>
+
+<g id="edge2" class="edge">
+<title>Attendance-&gt;Student</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M342.7,-52.49C350.07,-65.7 359.06,-81.4 367.62,-95.25 375.86,-108.57 385.42,-122.99 393.76,-135.25" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="342.84,-52.75 341.93,-41.82 340.31,-48.17 338.11,-44.2 338.11,-44.2 338.11,-44.2 340.31,-48.17 334.06,-46.18 342.84,-52.75" />
+</g>
+
+<g id="edge7" class="edge">
+<title>Attendance:w-&gt;Student:Student_total_sessions_completed_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M282.04,-22C216.74,-22 263.51,-150.73 327.08,-165.81" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="336.71,-166.96 326.24,-170.24 334.1,-167.15 326.72,-166.27 326.78,-165.78 326.84,-165.28 334.22,-166.16 327.31,-161.31 336.71,-166.96" />
+<text xml:space="preserve" text-anchor="middle" x="261.19" y="-85.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">2</text>
+</g>
+
+<g id="node7" class="node">
+<title>evt__update_absence_streak_and_alert</title>
+<polygon fill="#e8f5e9" stroke="none" points="868.38,-152.12 868.38,-180.38 1048.88,-180.38 1048.88,-152.12 868.38,-152.12" />
+<text xml:space="preserve" text-anchor="start" x="875.38" y="-162.88" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _update_absence_streak_and_alert</text>
+<polygon fill="none" stroke="#27ae60" points="868.38,-152.12 868.38,-180.38 1048.88,-180.38 1048.88,-152.12 868.38,-152.12" />
+</g>
+
+<g id="edge9" class="edge">
+<title>Attendance-&gt;evt__update_absence_streak_and_alert</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M370.22,-35.98C380.77,-38.86 392.05,-41.73 402.62,-44 516.07,-68.38 547.14,-59.81 660.62,-84 741.23,-101.18 832.45,-127.01 892.5,-144.92" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="901.93,-147.75 891.06,-149.19 898.52,-146.83 892.33,-144.97 892.36,-144.88 892.38,-144.78 898.57,-146.64 893.65,-140.57 901.93,-147.75" />
+<text xml:space="preserve" text-anchor="middle" x="720.4" y="-85.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">early</text>
+</g>
+
+<g id="node4" class="node">
+<title>Course</title>
+<polygon fill="#4a6fa5" stroke="none" points="647.38,-167.25 647.38,-183.25 743.88,-183.25 743.88,-167.25 647.38,-167.25" />
+<text xml:space="preserve" text-anchor="start" x="673.5" y="-171.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Course </text>
+<polygon fill="#b8cce8" stroke="none" points="647.38,-149.25 647.38,-167.25 654.38,-167.25 654.38,-149.25 647.38,-149.25" />
+<text xml:space="preserve" text-anchor="start" x="649.38" y="-155.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="654.38,-149.25 654.38,-167.25 736.88,-167.25 736.88,-149.25 654.38,-149.25" />
+<text xml:space="preserve" text-anchor="start" x="657.38" y="-155.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> enrolled_count </text>
+<polygon fill="#b8cce8" stroke="none" points="736.88,-149.25 736.88,-167.25 743.88,-167.25 743.88,-149.25 736.88,-149.25" />
+<text xml:space="preserve" text-anchor="start" x="738.88" y="-155.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#c0392b" stroke-width="3" points="645.88,-147.75 645.88,-184.75 745.38,-184.75 745.38,-147.75 645.88,-147.75" />
+</g>
+
+<g id="node5" class="node">
+<title>Enrollment</title>
+<polygon fill="#4a6fa5" stroke="none" points="659.75,-22 659.75,-38 727.5,-38 727.5,-22 659.75,-22" />
+<text xml:space="preserve" text-anchor="start" x="661.75" y="-26.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Enrollment </text>
+<polygon fill="#dbe4f0" stroke="none" points="680.33,-6 680.33,-22 706.92,-22 706.92,-6 680.33,-6" />
+<text xml:space="preserve" text-anchor="start" x="690.62" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e">  </text>
+<polygon fill="none" stroke="#4a6fa5" points="658.75,-5 658.75,-39 728.5,-39 728.5,-5 658.75,-5" />
+</g>
+
+<g id="edge3" class="edge">
+<title>Enrollment-&gt;Course</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M641.35,-35.83C606.56,-47.24 569.9,-66.6 585.62,-95.25 596.95,-115.89 617.23,-131.31 637.32,-142.35" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="641.3,-35.84 652.18,-37.19 646.3,-34.3 650.63,-32.96 650.63,-32.96 650.63,-32.96 646.3,-34.3 649.52,-28.59 641.3,-35.84" />
+</g>
+
+<g id="edge6" class="edge">
+<title>Enrollment:w-&gt;Course:Course_enrolled_count_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M649.79,-22C597.73,-22 643.2,-82.37 650.04,-135.9" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="650.71,-145.82 645.55,-136.14 650.04,-143.29 649.54,-135.87 650.04,-135.84 650.54,-135.81 651.04,-143.23 654.53,-135.54 650.71,-145.82" />
+<text xml:space="preserve" text-anchor="middle" x="642.18" y="-85.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">1</text>
+</g>
+
+<g id="edge4" class="edge">
+<title>Enrollment-&gt;Student</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M641.78,-47.28C618.67,-58.27 591.17,-71.55 566.62,-84 534.07,-100.51 498.02,-119.74 469.2,-135.34" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="641.82,-47.26 652.78,-47.05 646.55,-45.02 650.64,-43.08 650.64,-43.08 650.64,-43.08 646.55,-45.02 648.93,-38.91 641.82,-47.26" />
+</g>
+</g>
+</svg>
