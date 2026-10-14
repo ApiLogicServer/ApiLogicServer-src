@@ -1,9 +1,16 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.28
-# Last Updated: September 26, 2026
+# Version: 1.0.29
+# Last Updated: October 13, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 # Changelog:
+#   1.0.29 (Oct 13 2026) - Added "EXTENDED RULE: insert_parent" section (composite natural-key
+#     bucket/rollup rows, auto-created on first reference, adjusted not recreated thereafter).
+#     insert_parent itself was documented only as a one-line parameter description with no
+#     worked example anywhere in the user-facing CE - the full story (the bucket pattern, the
+#     late-set-composite-key gotcha that was a real LogicBank engine bug, fixed in 1.34.0)
+#     existed only in internal dev-architecture.md, never reaching a normal project session.
+#     Modeled on basic_demo_sales_by_month's SalesRepTotal(sales_rep_id, year_month) sample.
 #   1.0.28 (Sep 26 2026) - Corrected 1.0.27's "Absence of an Event" section again: 1.0.27 fixed
 #     the trigger-mechanism guessing problem but still said to implement the reactive rule (the
 #     streak/threshold/alert logic) while flagging the trigger question separately. That is
@@ -1551,6 +1558,60 @@ def declare_logic():
     Rule.copy(derive=models.Item.unit_price, from_parent=models.Product.unit_price)
     Rule.count(derive=models.Product.count_suppliers, as_count_of=models.ProductSupplier)
 
+
+=============================================================================
+🪣 EXTENDED RULE: insert_parent — Auto-Created Bucket/Rollup Rows
+=============================================================================
+
+**Pattern:** a parent row keyed by a value computed on the child (often a composite natural
+key like `(sales_rep_id, year_month)`) does not need to be pre-seeded. The first child insert
+for a given key auto-creates its parent "bucket" row; every later child for the same key
+adjusts that existing bucket — it is NOT recreated.
+
+**🚨 DETECTION — use `insert_parent=True` (not a plain `Rule.sum`/`Rule.count`) when:**
+- A rollup/bucket parent is identified by a key that only exists once children start arriving
+  (e.g. "monthly sales total per rep" — there is no `SalesRepTotal` row for a given rep/month
+  until the first `Order` for that rep in that month is placed)
+- The prompt describes the bucket as something that "shows up" or "accumulates" rather than
+  something pre-existing to look up
+
+**Example — `SalesRepTotal(sales_rep_id, year_month)` monthly bucket**
+(`samples/basic_demo_sales_by_month`):
+
+```python
+Rule.sum(derive=models.SalesRepTotal.total_amount, as_sum_of=models.Order.amount_total,
+    insert_parent=True)
+
+Rule.count(derive=models.SalesRepTotal.order_count, as_count_of=models.Order,
+    insert_parent=True)
+```
+
+Placing an `Order` for a sales rep auto-creates `SalesRepTotal` on first reference for that
+rep/month, and adjusts it (not re-creates it) on every later order for the same rep/month. The
+bucket is never explicitly inserted by application code — the rule engine creates it the first
+time it's needed, from the FK/natural-key values already present on the child row being
+inserted.
+
+**⚠️ The composite key must be fully set BEFORE row construction, not set late by an event:**
+If a component of the parent's natural key (e.g. a computed `year_month` bucket key) is set by
+an `early_row_event` or stamping handler rather than being present at the child row's
+construction time, `insert_parent` can silently fail to find/create the correct parent — this
+was a real LogicBank engine bug (two bugs, actually: a relationship-setter side effect that
+nulled the child's own composite-FK columns, and the aggregate-adjustment code path silently
+giving up when no parent was found instead of honoring `insert_parent=True`), fixed in
+**LogicBank 1.34.0**. If your project's `logicbank` package predates that version, either set
+every composite-key component at construction time (not in a later event) or upgrade.
+`basic_demo_sales_by_month`'s own stamping handler
+(`logic/logic_discovery/system/all_classes_stamping.py`) sets `Order.CreatedOnYearMonth`
+generically, cross-cutting — confirm your `pip show logicbank` is `>=1.34.0` before relying on
+a similarly late-set key component.
+
+**`insert_parent` is rare — do not reach for it by default.** Per `Rule.sum`/`Rule.count`'s own
+parameter doc: "Do not use unless directly requested." The overwhelming majority of
+parent/child aggregates have a parent that already exists (a `Customer` placing an `Order`,
+a `Course` with `Enrollment` rows) — `insert_parent=True` is specifically for the
+bucket/rollup-row case where the parent's own existence is itself implied by the first
+qualifying child, not stated anywhere else in the prompt.
 
 =============================================================================
 💳 EXTENDED RULE: Allocate (Provider → Recipients)
