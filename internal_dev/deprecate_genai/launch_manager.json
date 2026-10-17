@@ -1,0 +1,774 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "API Logic Server Run (run project from manager)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/${input:runProjectName}",
+            "env": {
+                "PYTHONHASHSEED": "0",
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
+        },
+        {
+            "name": "1. GENAI - Create genai_logic demo project",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=-1", "--project-name=genai_demo",
+                "--using=${workspaceFolder}/system/genai/examples/genai_demo/genai_demo_informal.prompt"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - 1.1  GENAI - Iterate (first, add prompt to system/genai/temp/<project>)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",   
+                    "--using=system/genai/temp/${input:inputGenaiProjectName}" ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - 1.2  GENAI - Retry from repaired chatgpt response",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",
+                "--using=${input:inputGenaiProjectName}",
+                "--repaired-response=system/genai/temp/chatgpt_retry.response"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - 1.3  GENAI - Retry from repaired model",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "create",
+                "--project-name=genai_demo",
+                "--db_url=sqlite",
+                "--from-model=system/genai/temp/create_db_models.py"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - 1.4  GENAI - Postgresql",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",
+                "--db-url=postgresql://postgres:p@localhost/genai_demo",
+                "--using=${input:inputGenaiProjectName}_pg"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - 1.5  GENAI - repaired-response=genai_demo.response_example",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=-1"
+                , "--using=enai_demo.prompt"
+                , "--project-name=genai_demo"
+                , "--repaired-response=system/genai/examples/genai_demo/genai_demo.response_example"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "ApiLogicServer Create",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "create",
+                "--project-name=${input:inputProjectName}",
+                "--db-url=${input:inputDBURL}"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - ApiLogicServer Create nw_sample_nocust",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "True",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "create",
+                "--project-name=samples/nw_sample_nocust",
+                "--db-url=nw"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - ApiLogicServer Create nw_sample With Customizations",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "True",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "create",
+                "--project-name=samples/nw_sample",
+                "--db-url=nw+"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "App Model Editor - Prepare",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/system/app_model_editor/ui/yaml",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["install"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "  - Start Server",
+            "type": "debugpy",
+            "cwd": "${workspaceFolder}/system/app_model_editor",
+            "env": {
+                "PYTHONPATH": "", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICPROJECT_DEBUG": "False"},
+            "request": "launch",
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": ["--flask_host=localhost", "--port=5655", "--swagger_port=5655", "--swagger_host=localhost", "--verbose=False"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - Start",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/system/app_model_editor/ui/yaml",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["start"],
+            "port": 4299,
+            "restart": true,
+            "timeout": 30000,
+            "protocol": "inspector",
+            "justMyCode": false,
+            "console": "integratedTerminal",
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        {
+            "name": "Internal - GenAI smoke test - genai_demo (with informal logic)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=-1", "--project-name=genai_demo",
+                "--using=${workspaceFolder}/system/genai/examples/genai_demo/genai_demo.prompt"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - Suggestions s1. Create Project, without Rules",
+//  typical start for suggestiosn - just the model
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=3", "--project-name=genai_demo_no_logic",
+                "--using=${workspaceFolder}/system/genai/examples/genai_demo/genai_demo_no_logic.prompt"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI  - Suggestions s2. Request Rule Suggestions",
+// typical next step - suggest logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": ["genai-logic", "--suggest",
+                ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - Suggestions <cli logic>",
+// typical next step - explore rules for supplied logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": ["genai-logic", "--suggest", "--logic='balance is total of order amounts'"
+                ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - Suggestions s3. See the rules for the logic",
+// typical next step - explore rules for supplied logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": ["genai-logic", "--suggest", "--logic='*'"
+                ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - Suggestions s4. Now, (alter and) Implement the Rule Suggestions",
+// typical next step - activate suggested logic created above
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--project-name=genai_demo_with_logic",
+                "--using=${workspaceFolder}/genai_demo_no_logic/docs/logic_suggestions"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - suggest logic -> WebG iterate (requires cp)",
+// Simulate WebG: cp docs/genai_demo_no_logic_003.prompt docs/logic/active_rules.json
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--project-name=genai_demo_with_suggested_logic",
+                "--using=${workspaceFolder}/genai_demo_no_logic/docs",
+                "--active-rules"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - FixUp f0 genai_demo_with_logic (setup in readme) - upd model and test data from logic",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=-1"
+                , "--using=enai_demo.prompt"
+                , "--project-name=genai_demo_fixup_required"
+                , "--repaired-response=system/genai/examples/genai_demo/genai_demo_fixup_required.json"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - FixUp f1 genai_demo_with_logic (setup in readme) - upd model and test data from logic",
+// see readme - comment out Customer.Balance in samples/nw_sample/database/models.py
+// note; can't use pre-installed nw - this relies on docs files
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_fixup_required",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            // FIXME "args": [ "genai-utils", "--fixup", "--using=genai/fixup"],
+            "args": [ "genai-utils", "--fixup"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - FixUp f2 - rebuild from response -> genai_demo_with_logic_fixed",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai"
+                , "--using=genai_demo_fixup_result"
+                , "--project-name=fixed_project"
+                , "--retries=-1"
+                , "--repaired-response=genai_demo_fixup_required/docs/fixup/response_fixup.json"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI RECOMPUTE r0 - rebuild test data (genai_demo)",
+// typical step - iterate the model, now with logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai-utils", "--rebuild-test-data"
+                    // , "--using=docs/recompute"]
+                    ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI RECOMPUTE r1 - rebuild test data (genai_demo)",
+// typical step - iterate the model, now with logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "database/test_data/response2code.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "--test-data"
+                    , "--response=docs/response.json"
+                    ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI RECOMPUTE r2 - rebuild test data (genai_demo)",
+// typical step - iterate the model, now with logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "database/test_data/test_data_code.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI iteration - GenAI - no logic -> accept edited suggestions (logic/active_rules.json)",
+// iterate from WebG suggestions -- GenAI - no logic, then remove suffix from ...genai_demo/genai_demo_iteration/logic/active_rules_webg.json
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=3", "--project-name=genai_demo_with_logic",
+                "--using=${workspaceFolder}/system/genai/examples/genai_demo/active_rules_suggestions_test"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "GenAI - no logic - see system/genai/examples/genai_demo/multiple_logic_files/docs/readme - then fixup",
+// typical next step - fixup
+// see system/genai/examples/genai_demo/multiple_logic_files/docs
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": ["genai-logic"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - no logic - FixUp (new attrs -> data model, test data)",
+// typical next step - rebuild
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": ["genai-utils", "--fixup"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - no logic - rebuild fixed up project",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=-1",
+                "--project-name=genai_demo_no_logic_fixed",  "--using=genai_demo_no_logic",
+                "--repaired-response=${workspaceFolder}/genai_demo_no_logic/docs/fixup/response_fixup.json"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI informal logic - emp_depts",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=-1",
+                "--using=${workspaceFolder}/system/genai/examples/emp_depts/emp_dept.prompt"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "    - Create students_classes_informal, iteration / informal logic",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai", "--test-data-rows=4", "--temperature=0.7",
+                "--using=${workspaceFolder}/system/genai/examples/students_classes_informal_iteration",
+                "--project-name=students_classes_informal_flask"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - IMPORT test",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed",
+            "justMyCode": false,
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai-utils", "--import-genai"
+                , "--using=../wg_demo_no_logic_fixed"
+                // , "--project-name=students_classes_informal_flask"
+                ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - IMPORT retry test",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed",
+            "justMyCode": false,
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai-utils", "--import-genai"
+                . "--import-resume"
+                , "--using=../wg_demo_no_logic_fixed"
+                // , "--project-name=students_classes_informal_flask"
+                ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "  - retry repaired-response",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=-1",
+                "--using=genai_demo",
+                "--repaired-response=system/genai/examples/genai_demo/genai_demo.response_example"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - retry conversation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=-1",
+                "--using=retry-project",
+                "--using=system/genai/retry/conv"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "REBUILD TEST DATA - A1",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"SECURITY_ENABLED": "True"},
+            "cwd": "${workspaceFolder}/genai_demo_informal",
+            "program": "${workspaceFolder}/genai_demo_informal/database/test_data/response2code.py",
+            "redirectOutput": true,
+            "args": ["--test-data"
+                    ,"--response=docs/genai_demo_informal_003.response"
+            ],
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "REBUILD TEST DATA - A2",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICPROJECT_NO_FLASK": "True"},
+            "cwd": "${workspaceFolder}/genai_demo_informal",
+            "program": "${workspaceFolder}/genai_demo_informal/database/test_data/test_data_code.py",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Python: Module",
+            "type": "debugpy",
+            "request": "launch",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "module": "enter-your-module-name"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "console": "internalConsole"
+        },
+        {
+            "name": "Sys Info",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "samples/nw_sample/venv_setup/py.py",
+            "redirectOutput": true,
+            "args": ["sys-info"],
+            "justMyCode": false,
+            "console": "integratedTerminal"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "inputProjectName",
+            "type": "promptString",
+            "description": "Project Name (will create directory with this name)",
+            "default": "nw"
+        },
+        {
+            "id": "runProjectName",
+            "type": "promptString",
+            "description": "Project Name (folder) to run",
+            "default": "basic_demo"
+        },
+        {
+            "id": "inputGenaiProjectName",
+            "type": "promptString",
+            "description": "Project Name (will create directory with this name)",
+            "default": "genai_demo"
+        },
+        {
+            "id": "inputDBURL",
+            "type": "promptString",
+            "description": "Database URL (SQLAlchemy URI)",
+            "default": "sqlite:///nw.sqlite"
+        }
+    ]
+  }

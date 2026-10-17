@@ -30,11 +30,20 @@ docs/requirements/
 
 Available in the Manager at `samples/requirements/`:
 - `Order-EAI/` — Kafka order integration (subscribe + publish, custom B2B API)
-- `elmo/` — CIMCorp/ISDC customs shipment XML ingestion via Kafka
+- `demo_eai/` — B2B order intake via Kafka, custom API, outbound shipping notification (minimal Folder example)
+- `customs_demo_clvs/` — CBSA customs system: 7 XML message variants + CSV mapping table (enterprise-scale Folder example)
+- `students_courses/` — course enrollment capacity + attendance drop-off alerting (CE regression fixture; its streak/alert clause is correctly left blocked — see its `README.md` and `RECREATE_PROMPT.md`)
+- `students_courses_attendance_sweep/` — phase 2 of `students_courses`: an externally-triggered sweep endpoint + `Enrollment` table that resolves the blocked clause (run it in a project where `students_courses` is already implemented)
+- `RFI/` — a real conversational-interview transcript showing how a `requirements.md` is drafted
 
 Copy one into this folder:
 ```bash
 cp -r <manager>/samples/requirements/Order-EAI/* docs/requirements/
+```
+
+A flat set named for its `implement reqs <name>` command is copied as the folder itself:
+```bash
+cp -r <manager>/samples/requirements/students_courses_attendance_sweep docs/requirements/
 ```
 
 ## Ad-libs report
