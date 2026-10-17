@@ -35,7 +35,7 @@ For IT teams that want the speed and simplicity of AI, with enterprise-class gov
 
 GenAI-Logic creates extensible projects for database transaction systems from your requirements. The AI is guided to write **rules first** (code only where needed): **no-bypass** logic you can read, trust and maintain.
 
-**Rules** are **readable**: complete, and concise. AI codegen alone leaves you only requirements (incomplete) and code (bloated), however good the model.
+**Rules** are **readable**: complete, concise and clear. AI codegen alone leaves you only requirements (incomplete) and code (bloated, complicated), however good the model.
 
 Governance here is **proactive**: governing rules are the policy you read, enforced on every transaction. Elsewhere it is often *reactive*: procedures that catch problems after the fact.
 
@@ -408,14 +408,20 @@ They sit alongside the infrastructure you already rely on — your database, Kaf
 <br>
 
 <details markdown>
-<summary>&emsp;&emsp;↳ <strong>Read the rules first</strong> — readable (complete and concise) and trustworthy</summary>
+<summary>&emsp;&emsp;↳ <strong>Read the rules first</strong> — complete, concise, clear</summary>
 
 <br>When a system is generated, the first question is whether it's right, or close. **Business logic is the focus**; the API and Admin App are mechanical.
 
-**Rules** are **readable**: complete, and concise (~40x more concise than the code, in this example). And you can **trust** what you read: the rules are **deterministic**, and the engine calls them, orders them and **handles their dependencies**, so there is nothing to trace. The alternatives don't give you that:
+**Rules** are **readable**:
+
+- **Complete** — the rules explicitly address what the requirements left incomplete or vague: every decision is made and written down, so the result is **deterministic** (the AI Alerts report lists the open ones).
+- **Concise** — ~40x less than the code, in this example: five rules for five requirements. The logic stays about the size of the requirements instead of exploding into code.
+- **Clear** — what you read is what runs: the engine calls each rule, orders it and **handles complex dependencies**, so nothing hides in a call site or dependency chain, where bugs fail silently.
+
+The alternatives don't give you that:
 
 - **Requirements are easy to read, but incomplete — and a little vague.** They leave decisions unmade and open to interpretation, so they can't tell you what the system does.
-- **Code is bloated, and hard to trust.** There's far more of it, and you have to trace where it's called, whether it's ordered correctly, and whether dependencies are handled.
+- **Code is bloated, complicated, and hard to trust.** There's far more of it, and you have to trace where it's called, whether it's ordered correctly, and whether dependencies are handled.
 
 <img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/manager/readme/check_credit.png" alt="5 declarative rules for check_credit — the same 5 requirements, readable in seconds" width="640">
 
