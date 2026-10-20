@@ -1,3 +1,18 @@
+\!!! pied-piper ":bulb: TL;DR - Executable Test Suite, Documentation"
+
+      You can optionally use the Behave test framework to capture requirements and execute a test suite (here is an [Agile Approach for using Behave](Logic-Tutorial.md)). Say this to your AI assistant, in order:
+
+      1. `create logic diagram for each requirement` - optional; needs Graphviz (`brew install graphviz`)
+      2. `create tests from rules` - writes the Behave `.feature` files and steps
+      3. `run the tests` - starts the server if needed, runs the Behave suite, reports pass/fail
+      4. `run the behave report`
+
+      This creates the **Behave Logic Report** shown below, as `test/api_logic_server_behave/reports/Behave Logic Report.md`.
+      You can run step 4 before any tests exist: the requirements, rules, data model, security and messages sections are read from the project's files.
+
+&nbsp;
+&nbsp;
+
 This report is generated from the project's own files, in the order an auditor reads them:
 requirements traced to the code that implements them, every rule, the data model, security
 (RBAC), messages and APIs - and then test evidence, with the logic each test exercised.

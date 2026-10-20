@@ -21,7 +21,7 @@ Step 3.  Generate .feature files → Business language scenarios
 Step 4.  Implement steps/*.py → Using discovered APIs or CRUD
 Step 4b. VERIFY STEP ORDERING → Multi-item BEFORE single-item (Rule #0.5!)
 Step 4c. ADD LOGIC LOG INTEGRATION → prt once in Given, does_file_contain in Then
-Step 5.  SUGGEST how to run tests (DO NOT run automatically)
+Step 5.  SUGGEST "run the tests" (DO NOT run automatically as part of creating tests)
 ```
 
 **CRITICAL PRE-TEST CHECKLIST:**
@@ -44,17 +44,57 @@ Step 5.  SUGGEST how to run tests (DO NOT run automatically)
 
 **DO NOT skip Step 4b!** Wrong step ordering causes silent failures with balance=0.
 
-**DO NOT run tests automatically!** Instead, suggest this workflow:
+**DO NOT run tests as part of "create tests from rules"!** Creating tests only writes files; end by suggesting
+the user say "run the tests". Running is a separate, explicit request - see "Running Tests and the Report" below.
 
-```bash
-# 1. Start the server (in separate terminal or background)
-python api_logic_server_run.py
+## Running Tests and the Report
 
-# 2. Run the tests (in another terminal)
-python test/api_logic_server_behave/behave_run.py
+**Triggers:** "run the tests", "run the behave tests" -> Part A. "run the behave report" -> Part B.
+"run the tests and the report" -> A then B. (Manual equivalent: the commands in each part.)
+
+### Part A - run the tests (`run the tests`)
+
+```
+Step 1. Is a server already up?   lsof -i :5656   (or: curl -s -o /dev/null -w "%{http_code}" http://localhost:5656/)
+        - Up: use it, and tell the user you did. (If logic/models changed since it started, say it may be stale.)
+        - Down: start it YOURSELF, from the project root, venv active:
+              source ../venv/bin/activate        # skip if no venv (e.g. Codespaces)
+              mkdir -p logs && python api_logic_server_run.py > logs/server_for_tests.log 2>&1 &
+          then WAIT until it answers (retry curl every 2s, up to ~30s). If it never answers, read
+          logs/server_for_tests.log (and logs/als.log), report the error, stop. Do not run the tests.
+          Remember that YOU started it.
+Step 2. Run the tests from test/api_logic_server_behave, ALWAYS with --outfile:
+              cd test/api_logic_server_behave && python behave_run.py --outfile=logs/behave.log
+          Without --outfile, logs/behave.log stays empty and the report shows no test results.
+Step 3. Read the result: behave's final "N scenarios passed, M failed" lines. For each failure, show the
+        failing scenario, the failing step and its message (also in logs/behave.log: "Assertion Failed").
+        Never say "passed" without having seen the counts.
+Step 4. If YOU started the server, stop it and confirm the port is free (server restart hygiene):
+              pkill -f "python api_logic_server_run.py"; lsof -i :5656    # must return nothing
+        Leave a pre-existing server alone.
+Step 5. Offer: "Run the behave report?"
 ```
 
-**Why manual execution?** Tests require a running server. The AI cannot manage multiple terminals or background processes reliably.
+Notes: Kafka tests need the broker reachable if the project has Kafka enabled; a connection failure there
+is an environment problem to report, not a test failure to "fix". With security enabled the steps log in via
+`test_utils.login()` - nothing extra to do.
+
+### Part B - run the report (`run the behave report`)
+
+```
+Step 1. cd test/api_logic_server_behave && python behave_logic_report.py run
+        The server does NOT need to be running. Tests do not need to have been run: without
+        logs/behave.log the report still builds the requirements, rules, data model, security and
+        messages sections; it just has no test results.
+Step 2. Tell the user the output: test/api_logic_server_behave/reports/Behave Logic Report.md
+        (open it in the IDE's markdown preview, or: open "reports/Behave Logic Report.md").
+Step 3. Summarize from the generator's output / the report's header: rules, scenarios, passed/failed,
+        any "test scenarios FAILED" banner, and any requirement gaps listed under Coverage summary.
+Step 4. If logs/behave.log is old relative to the logic or tests, say so: "results are from the last run".
+```
+
+If the generator exits with an error or prints "0 rules" it was run from the wrong place or the project has
+no logic files - report that rather than presenting the report.
 
 ## Phase 1 vs Phase 2: The Core Decision
 
@@ -763,8 +803,8 @@ grep -n "@when('.*with.*{" features/steps/*.py
 4. Decide Phase 1 vs Phase 2 → Based on custom API existence
 5. Generate .feature files → Business language scenarios
 6. Implement steps/*.py → Using discovered APIs or CRUD
-7. Run tests → python behave_run.py
-8. Generate report → python behave_logic_report.py run
+7. Run tests → say "run the tests" (python behave_run.py --outfile=logs/behave.log)
+8. Generate report → say "run the behave report" (python behave_logic_report.py run)
 ```
 
 ## Key Testing Patterns

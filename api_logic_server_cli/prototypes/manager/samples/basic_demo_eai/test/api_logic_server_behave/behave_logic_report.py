@@ -1651,7 +1651,7 @@ def tests_howto(root: Path, has_tests: bool) -> list:
         "",
         "The assistant reads `database/models.py`, the logic files and the custom APIs, then writes "
         "`.feature` files and step implementations under `test/api_logic_server_behave/features/`. "
-        "It suggests how to run them; it does not run them for you.",
+        "Then say `run the tests` and `run the behave report` and the assistant does both.",
         "",
         *named_prompt,
         "**2. You can also define tests manually.** Add a `<name>.feature` file (Gherkin) under "
@@ -1659,7 +1659,7 @@ def tests_howto(root: Path, has_tests: bool) -> list:
         "The steps call the running API, so tests exercise the same rules as any client. "
         "See `docs/training/testing.md` for the patterns that keep tests repeatable.",
         "",
-        "**Then run them** (server running, from `test/api_logic_server_behave`):",
+        "**Or run them yourself** (server running, from `test/api_logic_server_behave`):",
         "",
         "```",
         "python behave_run.py --outfile=logs/behave.log",

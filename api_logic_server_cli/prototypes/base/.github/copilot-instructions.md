@@ -1,4 +1,10 @@
 ---
+version: 3.50 - 10/20/26 - New triggers "run the tests" and "run the behave report" (also "run the behave
+tests"): the assistant now starts the server if needed, runs behave_run.py --outfile=logs/behave.log, stops a
+server it started, and (separately) runs behave_logic_report.py run. Previously the CE said "DO NOT run tests
+automatically" (testing.md) and had no trigger for the report, so the documented workflow ended with the user
+copying commands. Creating tests ("create tests from rules") still only writes files and suggests; running is
+now an explicit, separate request. See docs/training/testing.md "Running Tests and the Report".
 version: 3.49 - 10/19/26 - Logic Diagram trigger: "create logic diagram for each requirement" (also "create
 logic diagrams" / "create rule diagrams") now maps to a new `--each` mode of logic_diagram_gv.py (v1.4) -
 one scoped diagram per logic file (use case) in one run, skipping system/ files and files with no rules.
@@ -608,6 +614,28 @@ STEP 1: Read docs/training/health_check.md COMPLETELY (silently)
 STEP 2: Follow the five checks and report format defined there
 STEP 3: Offer to fix each ⚠️ finding
 ```
+
+---
+
+## 🧪 Run Tests / Behave Report
+
+**ACTIVATION TRIGGERS:**
+- "run the tests" / "run the behave tests" / "run behave"
+- "run the behave report" / "generate the behave report" / "behave logic report"
+- "run the tests and the report" (do both, in order)
+
+**MANDATORY SEQUENCE:**
+
+```
+STEP 1: Read docs/training/testing.md section "Running Tests and the Report" (silently)
+STEP 2: Follow it exactly - it covers starting/stopping the server, the --outfile flag,
+        and reporting results. "run the tests" and "run the behave report" are separate
+        requests; do the report only if asked (or offer it after the tests).
+```
+
+**❌ FORBIDDEN:** running `behave_run.py` without `--outfile=logs/behave.log` (the log stays empty and the
+report has no test results); leaving a server running that you started; declaring tests passed without
+reading the pass/fail counts.
 
 ---
 
