@@ -35,4 +35,6 @@ FIELD_EXCEPTIONS = {
 
 
 def row_to_dict(row):
+    """Order mapper: serializes an Order (with customer name and item lines) into the order_shipping
+    message, shaped by SAMPLE and renamed per FIELD_EXCEPTIONS."""
     return serialize_row(row, sample=SAMPLE, exceptions=FIELD_EXCEPTIONS)

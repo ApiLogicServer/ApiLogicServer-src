@@ -140,6 +140,8 @@ def declare_logic():
     # Extract row.project_id to a local variable to prevent LogicBank dependency
     # scanner from misreading attribute names inside chained method calls.
     def check_active_funding(row: models.Charge, old_row, logic_row: LogicRow):
+        """Charge event: on insert, rejects the charge unless its Project exists and has an active
+        ProjectFundingDefinition (a missing project or definition counts as not active)."""
         if not logic_row.is_inserted():
             return
         project_id = row.project_id

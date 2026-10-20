@@ -1,4 +1,20 @@
 ---
+version: 3.49 - 10/19/26 - Logic Diagram trigger: "create logic diagram for each requirement" (also "create
+logic diagrams" / "create rule diagrams") now maps to a new `--each` mode of logic_diagram_gv.py (v1.4) -
+one scoped diagram per logic file (use case) in one run, skipping system/ files and files with no rules.
+Previously only the single combined diagram or one hand-named scoped diagram existed, and nothing looped.
+Also corrected STEP 3's output paths (scoped output is docs/requirements/<req>/logic_diagrams/, not
+docs/requirements/logic_diagram_<req>.svg) and documented that the <requirement> argument is a substring of the
+logic file path, not a requirement number or Feature name.
+version: 3.48 - 10/19/26 - Docstring-on-every-action-function rule generalized. The CE already required a
+docstring on `calling=` functions and on the four event types (docs/training/logic_bank_api.md); it did not
+name Allocate callbacks, Kafka publish/subscribe handlers, mappers or API services, and its own examples
+(eai_subscribe.md _publish_xyz, allocate.md allocators, RequestObjectPattern.md handlers) had none - and
+examples get copied more than rules. Motivation: the Behave Logic Report / logic diagram describe each
+action by its docstring's first line, so an undocumented handler shows up as a bare function name. Changes:
+one general rule with a `<Object> <kind>: <what and why>` format and a kind table; docstrings added to the
+example functions above; health_check.md v1.9 widens the missing-docstring demerit to match. Lambdas and
+trivial private helpers stay exempt.
 version: 3.47 - 9/27/26 - STEP 8 step 4 ("Absence of an Event" check): closed a loophole where
 an AI could correctly identify the missing-write-path ambiguity, narrate a plausible assumption
 to resolve it, and file that assumption as a 🟡 FYI instead of the required 🔴 BLOCKING finding.
@@ -600,6 +616,9 @@ STEP 3: Offer to fix each ⚠️ finding
 **ACTIVATION TRIGGERS:**
 - "create logic diagram"
 - "create logic diagram from <requirement>"
+- "create logic diagram for each requirement" / "create logic diagrams" / "create rule diagrams" /
+  "diagram each requirement" / "one diagram per use case"  → **one diagram per logic file (use case)**,
+  use `--each` (below)
 - "show logic diagram"
 - "generate logic diagram"
 - Any similar phrase requesting a visual of the rule chain
@@ -619,12 +638,25 @@ STEP 2: Run from Manager root:
         python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py <project_name> <requirement>
         # e.g.: python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py basic_demo check_credit
 
-        # Or use the per-project shortcut (from Manager root):
-        python <project_name>/docs/training/logic_diagrams/generate_logic_diagram.py [<requirement>]
+        # One diagram per logic file (use case) — for "for each requirement" / "create logic diagrams":
+        python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py <project_name> --each
 
-STEP 3: Tell user to open: <project_name>/docs/requirements/logic_diagram[_<requirement>].svg
-        (drag into browser, or VSCode SVG Preview extension)
+        # Or use the per-project shortcut (from Manager root):
+        python <project_name>/docs/training/logic_diagrams/generate_logic_diagram.py [<requirement> | --each]
+
+STEP 3: Tell user where the diagram(s) are (drag into browser, or VSCode SVG Preview extension):
+        Full:    <project_name>/docs/requirements/logic_diagrams/logic_diagram.svg
+        Scoped:  <project_name>/docs/requirements/<requirement>/logic_diagrams/logic_diagram_<requirement>.svg
+        --each:  one scoped diagram per logic file, in the Scoped location above. List each one written,
+                 and any file skipped for having no rules (the run reports both).
 ```
+
+**What "each requirement" means here:** one diagram per **logic file** under `logic/logic_discovery/`
+(files are named for their use case, e.g. `check_credit.py`). `system/` files are skipped. The
+`<requirement>` argument is matched as a case-insensitive **substring of the logic file path** — it
+matches file or directory names (`check_credit`, `place_order`), **not** requirement numbers like §3 or
+`Feature:` names. If the user names a requirement by number or title, map it to the logic file that
+implements it (the file's module docstring carries the requirement text) and pass that file's name.
 
 **Reading the diagram:**
 - Tables show only columns involved in logic
@@ -638,6 +670,7 @@ STEP 3: Tell user to open: <project_name>/docs/requirements/logic_diagram[_<requ
 ```bash
 python docs/training/logic_diagrams/generate_logic_diagram.py              # full
 python docs/training/logic_diagrams/generate_logic_diagram.py check_credit # scoped
+python docs/training/logic_diagrams/generate_logic_diagram.py --each       # one per logic file (use case)
 ```
 
 ---

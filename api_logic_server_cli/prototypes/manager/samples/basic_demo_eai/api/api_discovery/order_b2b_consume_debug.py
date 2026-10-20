@@ -22,13 +22,15 @@ app_logger = logging.getLogger("api_logic_server_app")
 
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators=[]):
+    """API service consume_debug: registers GET /consume_debug/order_b2b, only when
+    APILOGICPROJECT_CONSUME_DEBUG is set."""
     if not os.getenv('APILOGICPROJECT_CONSUME_DEBUG'):
         return
 
     @app.route('/consume_debug/order_b2b')
     def consume_debug_order_b2b():
         """
-        Debug the order_b2b consume pipeline without Kafka.
+        API service consume_debug: runs the order_b2b consume pipeline without Kafka.
 
         Query param:
           file — path to JSON file containing the order_b2b payload

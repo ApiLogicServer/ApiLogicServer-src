@@ -8,6 +8,10 @@ Two-layer design (matches LogicBank wiki style):
 
 Usage (from Manager root):
     python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py <project> [<requirement>]
+    python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py <project> --each
+
+    --each  → one scoped diagram per logic file (use case), i.e. the <requirement> form run once
+              for every file under logic_discovery/ (system/ files and files with no rules are skipped)
 
     <requirement> is optional — matches logic file names or directory names:
         (none)              → all rules, all tables
@@ -22,6 +26,8 @@ Output:
 Requires: graphviz dot binary (brew install graphviz)
 
 Changelog:
+  1.4 - --each: one scoped diagram per logic file (use case) in a single run; a file that yields
+        no rules is reported and skipped instead of ending the run.
   1.3 - STI subtype grouping: tables with 2+ show_when discriminator groups in
         ui/admin/admin.yaml (e.g. Employee: Type=hourly, Type=commissioned,
         military=yes) now group those columns together with a tinted
@@ -1231,9 +1237,47 @@ def generate(project_name: str, requirement: str = None, manager_root: Path = No
     return svg_path
 
 
+def generate_each(project_name: str, manager_root: Path = None):
+    """One scoped diagram per logic file (use case): generate() once per file stem.
+
+    Skips system/ files and declare_logic.py, and carries on past a file with no rules
+    (generate() exits in that case - caught here so one empty file doesn't end the run).
+    """
+    if manager_root is None:
+        manager_root = Path.cwd()
+    project_dir = manager_root / project_name
+    if not project_dir.exists():
+        print(f"ERROR: project not found: {project_dir}")
+        sys.exit(1)
+    stems = []
+    for py, rel in find_logic_files(project_dir, None):
+        if "/system/" in rel.replace("\\", "/") or py.name == "declare_logic.py":
+            continue
+        if py.stem not in stems:
+            stems.append(py.stem)
+    if not stems:
+        print("No logic files found under logic/logic_discovery/")
+        return []
+    done = []
+    for stem in stems:
+        print(f"\n── {stem}")
+        try:
+            generate(project_name, stem, manager_root)
+            done.append((stem, "diagram written"))
+        except SystemExit:
+            done.append((stem, "skipped - no rules"))
+    print("\nSummary:")
+    for stem, outcome in done:
+        print(f"  {stem}: {outcome}")
+    return done
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python logic_diagram_gv.py <project> [<requirement>]")
+        print("Usage: python logic_diagram_gv.py <project> [<requirement> | --each]")
         sys.exit(1)
-    req = sys.argv[2] if len(sys.argv) > 2 else None
-    generate(sys.argv[1], req)
+    if "--each" in sys.argv[2:]:
+        generate_each(sys.argv[1])
+    else:
+        req = sys.argv[2] if len(sys.argv) > 2 else None
+        generate(sys.argv[1], req)

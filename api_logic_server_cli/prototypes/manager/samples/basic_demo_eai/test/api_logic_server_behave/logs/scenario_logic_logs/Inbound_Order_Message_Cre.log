@@ -1,0 +1,46 @@
+ Inbound Order Message Cre  - 2026-10-19 20:06:24,033 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10c773130) (sqlalchemy before_flush)			 - 2026-10-19 20:06:24,037 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: Delta 1792465584034, balance: 0, credit_limit: 1000, email: None, email_opt_out: None  row: 0x10ca186d0  session: 0x10c773130  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,037 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: Delta 1792465584034, balance: 0, credit_limit: 1000, email: None, email_opt_out: None  row: 0x10ca186d0  session: 0x10c773130  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,037 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10c773130)   										 - 2026-10-19 20:06:24,038 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c773130)   										 - 2026-10-19 20:06:24,038 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-19 20:06:24,038 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10c773130))       	 - 2026-10-19 20:06:24,038 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10c9c19d0) (sqlalchemy before_flush)			 - 2026-10-19 20:06:24,046 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave kafka test, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10ca183d0  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,046 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave kafka test, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10ca183d0  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,047 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10ca18c50  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,047 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10ca18c50  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,048 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10ca18c50  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,048 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka test, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total:  [0-->] 180.0000000000  row: 0x10ca183d0  session: 0x10c9c19d0  ins_upd_dlt: upd, initial: upd - 2026-10-19 20:06:24,048 - logic_logger - INFO
+......Customer[20] {Update - Adjusting customer: balance} id: 20, name: Delta 1792465584034, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c9bc9d0  session: 0x10c9c19d0  ins_upd_dlt: upd, initial: upd - 2026-10-19 20:06:24,048 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 1, amount: None, unit_price: None  row: 0x10c957150  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,048 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10c957150  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,049 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10c957150  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,049 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka test, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total:  [180.0000000000-->] 330.0000000000  row: 0x10ca183d0  session: 0x10c9c19d0  ins_upd_dlt: upd, initial: upd - 2026-10-19 20:06:24,049 - logic_logger - INFO
+......Customer[20] {Update - Adjusting customer: balance} id: 20, name: Delta 1792465584034, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c9bc9d0  session: 0x10c9c19d0  ins_upd_dlt: upd, initial: upd - 2026-10-19 20:06:24,049 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, received_at: None, payload: {"Account": "Delta 1792465584034", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: True, error_text: None  row: 0x10c75d2b0  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,049 - logic_logger - INFO
+..OrderB2bMessage[None] {server_defaults: received_at } id: None, received_at: 2026-10-19, payload: {"Account": "Delta 1792465584034", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: True, error_text: None  row: 0x10c75d2b0  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,049 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10c9c19d0)   										 - 2026-10-19 20:06:24,050 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c9c19d0)   										 - 2026-10-19 20:06:24,051 - logic_logger - INFO
+..Order[17] {AfterFlush Event} id: 17, notes: behave kafka test, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total: 330.0000000000  row: 0x10ca183d0  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,051 - logic_logger - INFO
+..OrderB2bMessage[1] {AfterFlush Event} id: 1, received_at: 2026-10-19, payload: {"Account": "Delta 1792465584034", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: True, error_text: None  row: 0x10c75d2b0  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,051 - logic_logger - INFO
+..OrderB2bMessage[1] {_publish_order_b2b: skipping re-publish — blob.id=1 already is_processed=True (debug path)} id: 1, received_at: 2026-10-19, payload: {"Account": "Delta 1792465584034", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: True, error_text: None  row: 0x10c75d2b0  session: 0x10c9c19d0  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:24,051 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-19 20:06:24,051 - logic_logger - INFO
+  Customer		## - 2026-10-19 20:06:24,051 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10c5f1620>)		## - 2026-10-19 20:06:24,051 - logic_logger - INFO
+  Item		## - 2026-10-19 20:06:24,051 - logic_logger - INFO
+    2. Derive <class 'database.models.Item'>.amount as Formula (1): as_expression=lambda row: row.quantity * row.unit [...]		## - 2026-10-19 20:06:24,051 - logic_logger - INFO
+    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		## - 2026-10-19 20:06:24,051 - logic_logger - INFO
+  Order		## - 2026-10-19 20:06:24,051 - logic_logger - INFO
+    4. RowEvent Order._send_order_to_kafka() 		## - 2026-10-19 20:06:24,051 - logic_logger - INFO
+    5. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		## - 2026-10-19 20:06:24,051 - logic_logger - INFO
+  OrderB2bMessage		## - 2026-10-19 20:06:24,051 - logic_logger - INFO
+    6. RowEvent OrderB2bMessage._publish_order_b2b() 		## - 2026-10-19 20:06:24,051 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10c9c19d0))       	 - 2026-10-19 20:06:24,051 - logic_logger - INFO

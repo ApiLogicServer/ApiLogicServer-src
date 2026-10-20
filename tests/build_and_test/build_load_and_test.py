@@ -270,7 +270,14 @@ def stop_server(msg: str, port: str='5656'):
             with _sock.socket(_sock.AF_INET, _sock.SOCK_STREAM) as _s:
                 if _s.connect_ex(('localhost', int(port))) != 0:
                     return   # clean exit — port already free
-        subprocess.run(f"lsof -ti:{port} | xargs kill -9 2>/dev/null", shell=True, capture_output=True)
+        # Flask reloader: killing only the listener can leave the parent, which respawns it - so repeat until free
+        for _ in range(5):
+            subprocess.run(f"lsof -ti:{port} | xargs kill -9 2>/dev/null", shell=True, capture_output=True)
+            time.sleep(1)
+            with _sock.socket(_sock.AF_INET, _sock.SOCK_STREAM) as _s:
+                if _s.connect_ex(('localhost', int(port))) != 0:
+                    return
+        print(f".. Warning: port {port} still in use after force-kill")
 
 def print_run_output(msg, input):
     print(f'\n{msg}')
@@ -730,6 +737,43 @@ def docker_creation_tests(api_logic_server_tests_path):
     print('==> Verify manually: start docker; als run --project=/localhost/sqlserver\n')
 
 
+def preserve_behave_project(api_logic_project_path: Path) -> Path:
+    """
+    Copy the whole project (behave.log, scenario logic logs, Behave Logic Report, diagrams) to a
+    sibling folder, <project>_behave_report, so later tests that rebuild or restart the project cannot
+    lose it ("report lost due to rebuild tests that run later").  Verify the report on the COPY.
+
+    If anything fails, the copy remains, so there is no need to reproduce the run to diagnose it.
+    Skips __pycache__ / node_modules (not evidence).  The database inside the copy may be mid-write
+    (the server is still running) - the report does not read it.
+    """
+    target = api_logic_project_path.parent / f'{api_logic_project_path.name}_behave_report'
+    if target.exists():
+        shutil.rmtree(target)
+    shutil.copytree(api_logic_project_path, target,
+                    ignore=shutil.ignore_patterns('__pycache__', 'node_modules', '*.pyc'))
+    print(f'\nBehave: preserved project (logs, report, diagrams) at: {target}\n')
+    return target
+
+
+def verify_behave_report(project_copy: Path) -> None:
+    """
+    Checks the Behave Logic Report in the preserved copy (run_command's return code is not reliable,
+    so a report that failed to generate - or was lost - would otherwise go unnoticed).
+    Raises if the report is missing/empty, lacks its two key sections, or flags failing scenarios.
+    """
+    report = project_copy / 'test' / 'api_logic_server_behave' / 'reports' / 'Behave Logic Report.md'
+    if not report.is_file() or report.stat().st_size == 0:
+        raise Exception(f'Behave Logic Report was not generated (missing or empty): {report}')
+    text = report.read_text(encoding='utf-8')
+    for heading in ('## Requirements Traceability To Rules', '## Tests and Results'):
+        if heading not in text:
+            raise Exception(f"Behave Logic Report is missing section '{heading}': {report}")
+    if 'test scenarios FAILED' in text:   # the banner the report shows above its Contents when a scenario fails
+        raise Exception(f'Behave Logic Report shows failing scenarios: {report}')
+    print(f'Behave Logic Report verified ({report.stat().st_size} bytes): {report}\n')
+
+
 def validate_nw(api_logic_server_install_path, set_venv):
     """
     With NW open, verifies:
@@ -782,7 +826,8 @@ def validate_nw(api_logic_server_install_path, set_venv):
         file_contents = f.read()
         print (file_contents)
         f.close()
-        print(f'\nYou must manually stop the server (using the Admin App)\n')
+        print('\nStopping server after Behave failure..\n')
+        stop_server(msg='*** Behave Failure ***\n')   # else it holds port 5656 (and the shell)
         rtn_code = 1
         if result_behave_report:
             rtn_code = result_behave_report.returncode
@@ -812,12 +857,18 @@ def validate_nw(api_logic_server_install_path, set_venv):
             wiki = wiki.replace('/', '\\\\')
         result_behave_report = run_command(f"{python} behave_logic_report.py run --prepend_wiki={prepend_wiki} --wiki={wiki}",
         """
-        result_behave_report = run_command(f"{set_venv} && {python} behave_logic_report.py run",
+        # NB: cmd_venv.sh does `cd <install dir>` before running the command, so cwd= is ignored (on mac/linux):
+        # a bare 'behave_logic_report.py' is not found there, and the failure was silent (report never written).
+        # Pass the absolute path, as for behave_run.py; the report moves to its own folder (ensure_working_directory).
+        behave_report_path = api_logic_project_behave_path.joinpath('behave_logic_report.py')
+        result_behave_report = run_command(f"{set_venv} && {python} {behave_report_path} run",
             cwd=api_logic_project_behave_path,
             msg="\nBehave Logic Report",
             show_output=True)  # note: report lost due to rebuild tests that run later
         if result_behave_report.returncode != 0:  # sadly, always is 0 (run_command bug?)
             raise Exception("Behave Report Error")
+        preserved_project = preserve_behave_project(api_logic_project_path)  # before later tests overwrite it
+        verify_behave_report(preserved_project)
         has_traceback = does_file_contain(in_file=api_logic_project_logs_path, search_for="Traceback") 
         has_assertion_failed = does_file_contain(in_file=api_logic_project_logs_path, search_for="Assertion Failed:") 
         if has_traceback or has_assertion_failed:
@@ -825,12 +876,17 @@ def validate_nw(api_logic_server_install_path, set_venv):
 
     except Exception as err:
         print(f'\n\nBehave Failure\nHere is err: {err}\n')
+        try:
+            preserve_behave_project(api_logic_project_path)   # keep logs/report for diagnosis
+        except Exception as copy_err:
+            print(f'(could not preserve the project: {copy_err})')
         print(f'Behave Failure\nHere is log from: {str(api_logic_project_logs_path)}\n')
         f = open(str(api_logic_project_logs_path), 'r')
         file_contents = f.read()
         print (file_contents)
         f.close()
-        print(f'\nYou must manually stop the server (using the Admin App)\n')
+        print('\nStopping server after Behave failure..\n')
+        stop_server(msg='*** Behave Failure ***\n')   # else it holds port 5656 (and the shell)
         rtn_code = 1
         if result_behave_report:
             rtn_code = result_behave_report.returncode

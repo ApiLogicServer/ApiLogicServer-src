@@ -21,7 +21,8 @@ _CHILD_EXCEPTIONS = {
 
 
 def parse(payload: str) -> tuple:
-    """Returns (order_row, list[Item]) — plain model rows, NOT (row, src_dict) tuples."""
+    """Order mapper: parses an order_b2b JSON payload into (Order row, list of Item rows) — plain
+    model rows, NOT (row, src_dict) tuples."""
     import json
     data = json.loads(payload)
 

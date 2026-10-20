@@ -88,11 +88,13 @@ def process_order_b2b_payload(payload: str, session, blob_id: int = None):
 # ─── Kafka consumer registration ─────────────────────────────────────────────
 
 def register(bus):
-    """Called by kafka_subscribe_discovery/auto_discovery.py before bus.run()."""
+    """Kafka subscribe order_b2b: registers the two topic handlers (order_b2b, order_b2b_processed);
+    called by kafka_subscribe_discovery/auto_discovery.py before bus.run()."""
 
     @bus.handle('order_b2b')
     def order_b2b(msg, safrs_api):
-        """Consumer 1: save raw blob, commit. row_event publishes to order_b2b_processed."""
+        """Kafka subscribe order_b2b (Consumer 1): saves the raw message as an OrderB2bMessage blob and
+        commits; the row event then publishes it to order_b2b_processed."""
         with safrs_api.app.app_context():
             session = safrs.DB.session
             blob = models.OrderB2bMessage(payload=msg.value().decode('utf-8'), is_processed=False)
@@ -101,7 +103,8 @@ def register(bus):
 
     @bus.handle('order_b2b_processed')
     def order_b2b_processed(msg, safrs_api):
-        """Consumer 2: parse + persist domain rows, mark blob processed (atomic Tx 2)."""
+        """Kafka subscribe order_b2b_processed (Consumer 2): parses the blob and persists Order and Item
+        rows, marking the blob processed, in one atomic transaction (Tx 2)."""
         with safrs_api.app.app_context():
             session = safrs.DB.session
             blob_id = int(msg.key().decode('utf-8')) if msg.key() else None

@@ -16,6 +16,8 @@ import integration.kafka.kafka_producer as kafka_producer
 
 
 def _send_order_to_kafka(row: models.Order, old_row: models.Order, logic_row: LogicRow):
+    """Order publish: sends the Order to Kafka topic order_shipping when date_shipped is first set
+    (or changes), by example, using the message shape in kafka_publish_discovery/order_shipping.py."""
     if row.date_shipped is not None and (old_row is None or row.date_shipped != old_row.date_shipped):
         from integration.kafka.kafka_publish_discovery import order_shipping
         kafka_producer.publish_kafka_message(

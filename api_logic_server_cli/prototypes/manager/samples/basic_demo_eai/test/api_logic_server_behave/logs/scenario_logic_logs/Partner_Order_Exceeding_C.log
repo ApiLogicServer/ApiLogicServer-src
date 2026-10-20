@@ -1,0 +1,31 @@
+ Partner Order Exceeding C  - 2026-10-19 20:06:20,601 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10c773350) (sqlalchemy before_flush)			 - 2026-10-19 20:06:20,602 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: Gamma 1792465580602, balance: 0, credit_limit: 100, email: None, email_opt_out: None  row: 0x10c7f1dd0  session: 0x10c773350  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:20,603 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: Gamma 1792465580602, balance: 0, credit_limit: 100, email: None, email_opt_out: None  row: 0x10c7f1dd0  session: 0x10c773350  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:20,603 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10c773350)   										 - 2026-10-19 20:06:20,603 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c773350)   										 - 2026-10-19 20:06:20,603 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-19 20:06:20,603 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10c773350))       	 - 2026-10-19 20:06:20,603 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10c773570) (sqlalchemy before_flush)			 - 2026-10-19 20:06:20,606 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 8, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c78b9d0  session: 0x10c773570  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:20,606 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 8, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c78b9d0  session: 0x10c773570  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:20,606 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10c7f32d0  session: 0x10c773570  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:20,606 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10c7f32d0  session: 0x10c773570  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:20,606 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c7f32d0  session: 0x10c773570  ins_upd_dlt: ins, initial: ins - 2026-10-19 20:06:20,606 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 8, CreatedOn: None, date_shipped: None, amount_total:  [0-->] 180.0000000000  row: 0x10c78b9d0  session: 0x10c773570  ins_upd_dlt: upd, initial: upd - 2026-10-19 20:06:20,606 - logic_logger - INFO
+......Customer[8] {Update - Adjusting customer: balance} id: 8, name: Gamma 1792465580602, balance:  [0E-10-->] 180.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10c7f3250  session: 0x10c773570  ins_upd_dlt: upd, initial: upd - 2026-10-19 20:06:20,606 - logic_logger - INFO
+......Customer[8] {Constraint Failure: balance (180.0000000000) exceeds credit limit (100.0000000000)} id: 8, name: Gamma 1792465580602, balance:  [0E-10-->] 180.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10c7f3250  session: 0x10c773570  ins_upd_dlt: upd, initial: upd - 2026-10-19 20:06:20,606 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-19 20:06:20,606 - logic_logger - INFO
+  Customer		## - 2026-10-19 20:06:20,606 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10c5f1620>)		## - 2026-10-19 20:06:20,606 - logic_logger - INFO
+    2. Constraint Function: None 		## - 2026-10-19 20:06:20,606 - logic_logger - INFO
+  Item		## - 2026-10-19 20:06:20,606 - logic_logger - INFO
+    3. Derive <class 'database.models.Item'>.amount as Formula (1): as_expression=lambda row: row.quantity * row.unit [...]		## - 2026-10-19 20:06:20,607 - logic_logger - INFO
+    4. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		## - 2026-10-19 20:06:20,607 - logic_logger - INFO
+  Order		## - 2026-10-19 20:06:20,607 - logic_logger - INFO
+    5. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		## - 2026-10-19 20:06:20,607 - logic_logger - INFO

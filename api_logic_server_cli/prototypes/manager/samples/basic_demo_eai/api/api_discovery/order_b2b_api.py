@@ -13,11 +13,12 @@ app_logger = logging.getLogger("api_logic_server_app")
 
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators=[]):
+    """API service OrderB2B: registers POST /api/OrderB2B, discovered at startup by api_discovery."""
 
     @app.route('/api/OrderB2B', methods=['POST'])
     def order_b2b_api():
         """
-        Accept an inbound B2B order from an external partner.
+        API service OrderB2B: accepts an inbound B2B order from an external partner.
 
         Payload (message_formats/order_b2b.json):
             {

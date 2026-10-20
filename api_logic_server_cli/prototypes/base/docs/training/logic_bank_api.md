@@ -360,6 +360,65 @@ BECAUSE EVENTS ARE EASY TO MISS:
   reviewing a logic file — an undocumented or absent event for a stated requirement clause is
   a visible gap, not a silent one.
 
+CRITICAL — THE SAME DOCSTRING RULE COVERS EVERY OTHER "ACTION" FUNCTION, NOT JUST calling= AND EVENTS:
+  The two rules above name Rule.formula/Rule.constraint calling= functions and the four event
+  types. They are one rule, not two special cases: ANY function you write that a Rule.*,
+  Allocate, or an integration discovery file calls gets a one-line docstring, first line in
+  the form  """<Object> <kind>: <what it does and why>."""  where <kind> is one of:
+
+    kind                  | what it is                                          | example first line
+    ----------------------|-----------------------------------------------------|----------------------------------
+    formula               | calling= on Rule.formula/Rule.constraint            | Derive clvs_eligible: ...
+    event                 | any of the 4 Rule.*_row_event types                 | ShipmentCommodity event: ...
+    allocator             | Allocate while_calling_allocator= callback          | Allocator: ...
+    recipients            | Allocate recipients= function                       | Recipients: ...
+    publish handler       | function a row event calls to send a Kafka message  | Order publish: ...
+    subscribe handler     | register(bus) / topic handler in kafka_subscribe_discovery/ | Kafka subscribe order_b2b: ...
+    mapper                | RowDictMapper / EaiPublishMapper / parse() helper   | Order mapper: ...
+    API service           | class or function exposed by api_discovery/         | API service OrderB2B: ...
+
+  Why every kind, not only the two above: the Behave Logic Report and the logic diagram read
+  the FIRST docstring line to describe the rule or message flow to a human (an auditor, a
+  reviewer) who will not open the code. A function with no docstring shows up there as a bare
+  function name, which is exactly the "nobody knows what the code does" state the report exists
+  to prevent. Integration code is the most common place this is missed, because it feels like
+  plumbing rather than "a rule".
+
+  ✅ CORRECT:
+  ```python
+  def _send_order_to_kafka(row, old_row, logic_row):
+      """Order publish: sends the Order to Kafka topic order_shipping when date_shipped is first
+      set, using the by-example message in message_formats/order_shipping.json."""
+      ...
+
+  def allocate_charge_to_dept(allocation_logic_row, provider_logic_row) -> bool:
+      """Allocator: creates one department allocation per project funding line, sized by the
+      line's percent of the charge amount (Level 1 of the charge cascade)."""
+      ...
+
+  def funding_lines_for_charge(provider):
+      """Recipients: the project funding lines that apply to this charge's project."""
+      ...
+  ```
+
+  ❌ WRONG — an action function with no docstring (the rule ties to it, but a reader cannot tell what it does):
+  ```python
+  def _send_order_to_kafka(row, old_row, logic_row):
+      if row.date_shipped is not None and (old_row is None or row.date_shipped != old_row.date_shipped):
+          ...
+  ```
+
+  What does NOT need one: lambdas passed as where=, as_condition=, as_expression= (a lambda
+  cannot carry a docstring — the logic file's own docstring, which is the verbatim requirement
+  text, is what describes those rules), and trivial private helpers called only from a function
+  that already has a docstring. The test: "would a reader of the Behave Logic Report or the logic
+  diagram see this function's name and have to open the code to learn what it does?" If yes, it
+  needs the docstring.
+
+  Docstring content: describe WHAT it does and WHY, in plain English. This is a different thing
+  from the logic FILE's module docstring (next section), which holds only the verbatim
+  requirement text. Function docstrings are the one place implementation intent belongs.
+
 CRITICAL — ONE VALUE PER FORMULA:
   A Rule.formula calling function must return exactly one value — the column named in derive=.
   Setting other row attributes as side-effects inside the function is WRONG:

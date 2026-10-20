@@ -1,0 +1,128 @@
+Feature: About Sample # features/about.feature:6
+
+  Scenario: Transaction Processing                           # features/about.feature:8
+    Given Sample Database                                    # features/steps/about.py:8
+    When Transactions are submitted                          # features/steps/about.py:12
+    Then Enforce business policies with Logic (rules + code) # features/steps/about.py:16
+
+Feature: B2B Order Integration # features/b2b_order.feature:1
+
+  Scenario: Partner Order Is Accepted And Rules Derive The Totals  # features/b2b_order.feature:6
+    Given Customer "Acme" with balance 0 and credit limit 1000     # features/steps/check_credit.py:20
+    When B2B order is posted for "Acme" with 2 Widget and 1 Gadget # features/steps/b2b_and_kafka.py:47
+    Then B2B order is accepted                                     # features/steps/b2b_and_kafka.py:62
+    Then Order has 2 items                                         # features/steps/b2b_and_kafka.py:80
+    Then Order amount_total is 330                                 # features/steps/check_credit.py:197
+    Then Customer balance is 330                                   # features/steps/check_credit.py:204
+
+  Scenario: Partner Order For An Unknown Customer Is Rejected   # features/b2b_order.feature:14
+    Given Customer "Beta" with balance 0 and credit limit 1000  # features/steps/check_credit.py:20
+    When B2B order is posted for unknown customer with 1 Widget # features/steps/b2b_and_kafka.py:52
+    Then B2B order is rejected with status 404                  # features/steps/b2b_and_kafka.py:68
+    Then Customer balance is 0                                  # features/steps/check_credit.py:204
+
+  Scenario: Partner Order Exceeding Credit Limit Is Rejected   # features/b2b_order.feature:20
+    Given Customer "Gamma" with balance 0 and credit limit 100 # features/steps/check_credit.py:20
+    When B2B order is posted for "Gamma" with 2 Widget         # features/steps/b2b_and_kafka.py:57
+    Then B2B order is not accepted                             # features/steps/b2b_and_kafka.py:75
+    Then Customer balance is 0                                 # features/steps/check_credit.py:204
+
+Feature: Check Credit # features/check_credit.feature:1
+
+  Scenario: Create Order Rolls Up To Customer Balance           # features/check_credit.feature:10
+    Given Customer "Alice" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
+    And Order is created for "Alice"                            # features/steps/check_credit.py:49
+    When Item is created with 5 Widget                          # features/steps/check_credit.py:74
+    Then Item unit_price is 90                                  # features/steps/check_credit.py:183
+    Then Item amount is 450                                     # features/steps/check_credit.py:190
+    Then Order amount_total is 450                              # features/steps/check_credit.py:197
+    Then Customer balance is 450                                # features/steps/check_credit.py:204
+
+  Scenario: Update Item Quantity Recalculates Amounts         # features/check_credit.feature:19
+    Given Customer "Bob" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
+    And Order is created for "Bob"                            # features/steps/check_credit.py:49
+    And Item is created with 2 Widget                         # features/steps/check_credit.py:74
+    When Item quantity is changed to 6                        # features/steps/check_credit.py:97
+    Then Item amount is 540                                   # features/steps/check_credit.py:190
+    Then Order amount_total is 540                            # features/steps/check_credit.py:197
+    Then Customer balance is 540                              # features/steps/check_credit.py:204
+
+  Scenario: Update Item Product Recopies Unit Price             # features/check_credit.feature:28
+    Given Customer "Carol" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
+    And Order is created for "Carol"                            # features/steps/check_credit.py:49
+    And Item is created with 3 Widget                           # features/steps/check_credit.py:74
+    When Item product is changed to Gadget                      # features/steps/check_credit.py:110
+    Then Item unit_price is 150                                 # features/steps/check_credit.py:183
+    Then Item amount is 450                                     # features/steps/check_credit.py:190
+    Then Order amount_total is 450                              # features/steps/check_credit.py:197
+    Then Customer balance is 450                                # features/steps/check_credit.py:204
+
+  Scenario: Delete Item Reduces Order And Balance              # features/check_credit.feature:38
+    Given Customer "Dave" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
+    And Order is created for "Dave"                            # features/steps/check_credit.py:49
+    And Item is created with 4 Widget                          # features/steps/check_credit.py:74
+    When Item is deleted                                       # features/steps/check_credit.py:124
+    Then Order amount_total is 0                               # features/steps/check_credit.py:197
+    Then Customer balance is 0                                 # features/steps/check_credit.py:204
+
+  Scenario: Change Order Customer Adjusts Both Balances        # features/check_credit.feature:46
+    Given Customer "Erin" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
+    And Customer "Frank" with balance 0 and credit limit 1000  # features/steps/check_credit.py:20
+    And Order is created for "Erin"                            # features/steps/check_credit.py:49
+    And Item is created with 5 Widget                          # features/steps/check_credit.py:74
+    When Order customer is changed to "Frank"                  # features/steps/check_credit.py:130
+    Then Customer "Erin" balance is 0                          # features/steps/check_credit.py:212
+    Then Customer "Frank" balance is 450                       # features/steps/check_credit.py:212
+
+  Scenario: Ship Order Excludes From Balance                    # features/check_credit.feature:55
+    Given Customer "Grace" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
+    And Order is created for "Grace"                            # features/steps/check_credit.py:49
+    And Item is created with 5 Widget                           # features/steps/check_credit.py:74
+    When Order is shipped                                       # features/steps/check_credit.py:144
+    Then Customer balance is 0                                  # features/steps/check_credit.py:204
+
+  Scenario: Unship Order Includes In Balance                    # features/check_credit.feature:62
+    Given Customer "Heidi" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
+    And Order is created for "Heidi"                            # features/steps/check_credit.py:49
+    And Item is created with 5 Widget                           # features/steps/check_credit.py:74
+    And Order is shipped                                        # features/steps/check_credit.py:157
+    When Order is unshipped                                     # features/steps/check_credit.py:170
+    Then Customer balance is 450                                # features/steps/check_credit.py:204
+
+  Scenario: Order Within Credit Limit Is Accepted              # features/check_credit.feature:70
+    Given Customer "Ivan" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
+    And Order is created for "Ivan"                            # features/steps/check_credit.py:49
+    When Item is created with 10 Widget                        # features/steps/check_credit.py:74
+    Then Order creation succeeded                              # features/steps/check_credit.py:220
+    Then Customer balance is 900                               # features/steps/check_credit.py:204
+
+  Scenario: Order Exceeding Credit Limit Is Rejected         # features/check_credit.feature:77
+    Given Customer "Judy" with balance 0 and credit limit 40 # features/steps/check_credit.py:20
+    And Order is created for "Judy"                          # features/steps/check_credit.py:49
+    When Item is created with 5 Widget                       # features/steps/check_credit.py:74
+    Then Item creation is rejected                           # features/steps/check_credit.py:225
+    Then Customer balance is 0                               # features/steps/check_credit.py:204
+
+Feature: Kafka Publish Shipping Notification # features/kafka_publish.feature:1
+
+  Scenario: Shipping An Order Publishes To order_shipping      # features/kafka_publish.feature:7
+    Given Customer "Echo" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
+    And Order is created for "Echo"                            # features/steps/check_credit.py:49
+    And Item is created with 1 Widget                          # features/steps/check_credit.py:74
+    When Order is shipped                                      # features/steps/check_credit.py:144
+    Then The order_shipping publish event fired                # features/steps/b2b_and_kafka.py:145
+    Then A message for the order is on topic order_shipping    # features/steps/b2b_and_kafka.py:159
+
+Feature: Kafka Subscribe Order Integration # features/kafka_subscribe.feature:1
+
+  Scenario: Inbound Order Message Creates The Order And Items                     # features/kafka_subscribe.feature:6
+    Given Customer "Delta" with balance 0 and credit limit 1000                   # features/steps/check_credit.py:20
+    When Inbound order message is consumed for "Delta" with 2 Widget and 1 Gadget # features/steps/b2b_and_kafka.py:114
+    Then Order is persisted from the message                                      # features/steps/b2b_and_kafka.py:124
+    Then Order has 2 items                                                        # features/steps/b2b_and_kafka.py:80
+    Then Order amount_total is 330                                                # features/steps/check_credit.py:197
+    Then Customer balance is 330                                                  # features/steps/check_credit.py:204
+    Then Message blob is marked processed                                         # features/steps/b2b_and_kafka.py:130
+
+&nbsp;&nbsp;
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/samples/basic_demo_eai/test/api_logic_server_behave/behave_run.py completed at October 19, 2026 20:06:24

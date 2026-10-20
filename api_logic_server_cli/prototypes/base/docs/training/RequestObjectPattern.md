@@ -101,6 +101,7 @@ Rule.after_flush_row_event(
 )
 
 def send_email_if_not_opted_out(row: models.SysEmail, old_row, logic_row):
+    """SysEmail event: on insert, sends the email unless the customer has opted out, and logs either way."""
     if not logic_row.is_inserted():
         return
     if row.customer.email_opt_out:
@@ -119,6 +120,7 @@ Rule.early_row_event(
 )
 
 def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row):
+    """SysSupplierReq event: on insert, asks the AI service for the best supplier and records the choice and reason."""
     if not logic_row.is_inserted():
         return
     # call AI, populate response fields

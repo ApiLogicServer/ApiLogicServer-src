@@ -55,9 +55,14 @@ python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py basic_demo
 # Scoped to one requirement (only tables/rules for that use case):
 python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py basic_demo check_credit
 python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py basic_demo place_order
+
+# One scoped diagram per logic file (use case) - "create logic diagram for each requirement":
+python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py basic_demo --each
 ```
 
-Output: `docs/requirements/logic_diagram[_<requirement>].svg` + matching `.dot` source.
+Output: full diagram `docs/requirements/logic_diagrams/logic_diagram.svg`; scoped (and each `--each` diagram)
+`docs/requirements/<requirement>/logic_diagrams/logic_diagram_<requirement>.svg`; each with its `.dot` source.
+`<requirement>` is a substring of the logic file path (a file or directory name), not a requirement number.
 
 The generator reads:
 - `logic/declare_logic.py` + all `logic/logic_discovery/**/*.py`

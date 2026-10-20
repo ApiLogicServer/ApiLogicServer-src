@@ -220,6 +220,8 @@ def register(bus):
 
 ```python
 def _publish_xyz(row: models.XyzMessage, old_row, logic_row: LogicRow):
+    """XyzMessage event: publishes the raw blob to xyz_processed after Tx 1 commits, so
+    Consumer 2 can parse it in a clean Tx 2 (2-message pattern)."""
     if not logic_row.is_inserted() or not row.payload:
         return
     if row.is_processed:
