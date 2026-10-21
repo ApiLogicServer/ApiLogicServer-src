@@ -1,0 +1,4 @@
+# Example only - this file is NOT read. To use it, rename it to: default_from_git.txt
+# First non-comment line wins: a git URL, or a directory (relative paths are relative to the Manager).
+# See readme.md in this folder.
+https://github.com/ApiLogicServer/scaffold-sample

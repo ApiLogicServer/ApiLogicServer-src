@@ -202,12 +202,12 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/test/api_logic_server_behave",
-            "program": "${workspaceFolder}/test/api_logic_server_behave/behave_logic_report.py",
+            "program": "${workspaceFolder}/test/api_logic_server_behave/requirements_traceability_report.py",
             "redirectOutput": true,
             "justMyCode": false,            
             "args": ["run"
-                ,"--prepend_wiki=reports/Behave Logic Report Intro.md"
-                ,"--wiki=reports/Behave Logic Report.md"
+                ,"--template=reports/Requirements Traceability Report Template.md"
+                ,"--wiki=reports/Requirements Traceability Report.md"
             ],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"

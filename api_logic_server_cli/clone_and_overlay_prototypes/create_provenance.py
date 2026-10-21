@@ -26,7 +26,9 @@ def _scaffold_source_lines(project, api_logic_server_dir_str: str) -> str:
     base_dir = Path(api_logic_server_dir_str).joinpath('prototypes/base')
     lines = [f"- **Base template:** `{base_dir}` (always the foundation - every project starts here)"]
     if project.from_git:
-        lines.append(f"- **Overlay (`--from_git`):** `{project.from_git}` "
+        source = getattr(project, 'from_git_source', "")
+        where = (f"default organization template, named in `{source}`" if source else "`--from_git`")
+        lines.append(f"- **Overlay ({where}):** `{project.from_git}` "
                       f"(your files, applied on top of base - same mechanism as the built-in "
                       f"nw/allocation/BudgetApp sample overlays)")
     else:
@@ -48,7 +50,8 @@ def _inferred_prompt(project) -> str:
         f"Create a project providing an admin app and JSON:API for database `{project.db_url}`."
     ]
     if project.from_git:
-        lines.append(f"\nScaffold overlay requested via `--from_git={project.from_git}`.")
+        lines.append(f"\nScaffold overlay applied from `{project.from_git}`"
+                     + (f" (the Manager's default template, `{project.from_git_source}`)." if getattr(project, 'from_git_source', "") else " (`--from_git`)."))
     return "\n".join(lines)
 
 

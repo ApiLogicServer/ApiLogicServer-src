@@ -70,7 +70,7 @@ Step 3. Read the result: behave's final "N scenarios passed, M failed" lines. Fo
         failing scenario, the failing step and its message (also in logs/behave.log: "Assertion Failed").
         Never say "passed" without having seen the counts.
 Step 4. If YOU started the server, stop it and confirm the port is free (server restart hygiene):
-              pkill -f "python api_logic_server_run.py"; lsof -i :5656    # must return nothing
+              pkill -f "api_logic_server_run.py"; lsof -i :5656    # must return nothing
         Leave a pre-existing server alone.
 Step 5. Offer: "Run the behave report?"
 ```
@@ -82,12 +82,12 @@ is an environment problem to report, not a test failure to "fix". With security 
 ### Part B - run the report (`run the behave report`)
 
 ```
-Step 1. cd test/api_logic_server_behave && python behave_logic_report.py run
+Step 1. cd test/api_logic_server_behave && python requirements_traceability_report.py run
         The server does NOT need to be running. Tests do not need to have been run: without
         logs/behave.log the report still builds the requirements, rules, data model, security and
         messages sections; it just has no test results.
-Step 2. Tell the user the output: test/api_logic_server_behave/reports/Behave Logic Report.md
-        (open it in the IDE's markdown preview, or: open "reports/Behave Logic Report.md").
+Step 2. Tell the user the output: test/api_logic_server_behave/reports/Requirements Traceability Report.md
+        (open it in the IDE's markdown preview, or: open "reports/Requirements Traceability Report.md").
 Step 3. Summarize from the generator's output / the report's header: rules, scenarios, passed/failed,
         any "test scenarios FAILED" banner, and any requirement gaps listed under Coverage summary.
 Step 4. If logs/behave.log is old relative to the logic or tests, say so: "results are from the last run".
@@ -804,7 +804,7 @@ grep -n "@when('.*with.*{" features/steps/*.py
 5. Generate .feature files → Business language scenarios
 6. Implement steps/*.py → Using discovered APIs or CRUD
 7. Run tests → say "run the tests" (python behave_run.py --outfile=logs/behave.log)
-8. Generate report → say "run the behave report" (python behave_logic_report.py run)
+8. Generate report → say "run the behave report" (python requirements_traceability_report.py run)
 ```
 
 ## Key Testing Patterns

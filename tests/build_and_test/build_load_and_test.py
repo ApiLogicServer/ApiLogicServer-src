@@ -758,20 +758,20 @@ def preserve_behave_project(api_logic_project_path: Path) -> Path:
 
 def verify_behave_report(project_copy: Path) -> None:
     """
-    Checks the Behave Logic Report in the preserved copy (run_command's return code is not reliable,
+    Checks the Requirements Traceability Report in the preserved copy (run_command's return code is not reliable,
     so a report that failed to generate - or was lost - would otherwise go unnoticed).
     Raises if the report is missing/empty, lacks its two key sections, or flags failing scenarios.
     """
-    report = project_copy / 'test' / 'api_logic_server_behave' / 'reports' / 'Behave Logic Report.md'
+    report = project_copy / 'test' / 'api_logic_server_behave' / 'reports' / 'Requirements Traceability Report.md'
     if not report.is_file() or report.stat().st_size == 0:
-        raise Exception(f'Behave Logic Report was not generated (missing or empty): {report}')
+        raise Exception(f'Requirements Traceability Report was not generated (missing or empty): {report}')
     text = report.read_text(encoding='utf-8')
-    for heading in ('## Requirements Traceability To Rules', '## Tests and Results'):
+    for heading in ('## Requirements Coverage', '## Tests and Results'):
         if heading not in text:
-            raise Exception(f"Behave Logic Report is missing section '{heading}': {report}")
+            raise Exception(f"Requirements Traceability Report is missing section '{heading}': {report}")
     if 'test scenarios FAILED' in text:   # the banner the report shows above its Contents when a scenario fails
-        raise Exception(f'Behave Logic Report shows failing scenarios: {report}')
-    print(f'Behave Logic Report verified ({report.stat().st_size} bytes): {report}\n')
+        raise Exception(f'Requirements Traceability Report shows failing scenarios: {report}')
+    print(f'Requirements Traceability Report verified ({report.stat().st_size} bytes): {report}\n')
 
 
 def validate_nw(api_logic_server_install_path, set_venv):
@@ -850,20 +850,20 @@ def validate_nw(api_logic_server_install_path, set_venv):
             raise Exception("Behave Run Error")
         print("\nBehave tests run - now run report..\n")
         """
-        prepend_wiki = f'reports/Behave Logic Report Intro.md'  # unix ok, but...
-        wiki = f'reports/Behave Logic Report.md'
+        prepend_wiki = f'reports/Requirements Traceability Report Template.md'  # unix ok, but...
+        wiki = f'reports/Requirements Traceability Report.md'
         if platform == "win32":                                 # win: arg parse fails
             prepend_wiki = prepend_wiki.replace('/', '\\\\')
             wiki = wiki.replace('/', '\\\\')
-        result_behave_report = run_command(f"{python} behave_logic_report.py run --prepend_wiki={prepend_wiki} --wiki={wiki}",
+        result_behave_report = run_command(f"{python} requirements_traceability_report.py run --template={prepend_wiki} --wiki={wiki}",
         """
         # NB: cmd_venv.sh does `cd <install dir>` before running the command, so cwd= is ignored (on mac/linux):
         # a bare 'behave_logic_report.py' is not found there, and the failure was silent (report never written).
         # Pass the absolute path, as for behave_run.py; the report moves to its own folder (ensure_working_directory).
-        behave_report_path = api_logic_project_behave_path.joinpath('behave_logic_report.py')
+        behave_report_path = api_logic_project_behave_path.joinpath('requirements_traceability_report.py')
         result_behave_report = run_command(f"{set_venv} && {python} {behave_report_path} run",
             cwd=api_logic_project_behave_path,
-            msg="\nBehave Logic Report",
+            msg="\nRequirements Traceability Report",
             show_output=True)  # note: report lost due to rebuild tests that run later
         if result_behave_report.returncode != 0:  # sadly, always is 0 (run_command bug?)
             raise Exception("Behave Report Error")

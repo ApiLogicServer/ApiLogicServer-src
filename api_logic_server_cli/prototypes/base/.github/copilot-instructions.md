@@ -1,7 +1,7 @@
 ---
 version: 3.50 - 10/20/26 - New triggers "run the tests" and "run the behave report" (also "run the behave
 tests"): the assistant now starts the server if needed, runs behave_run.py --outfile=logs/behave.log, stops a
-server it started, and (separately) runs behave_logic_report.py run. Previously the CE said "DO NOT run tests
+server it started, and (separately) runs requirements_traceability_report.py run. Previously the CE said "DO NOT run tests
 automatically" (testing.md) and had no trigger for the report, so the documented workflow ended with the user
 copying commands. Creating tests ("create tests from rules") still only writes files and suggests; running is
 now an explicit, separate request. See docs/training/testing.md "Running Tests and the Report".
@@ -621,7 +621,7 @@ STEP 3: Offer to fix each ⚠️ finding
 
 **ACTIVATION TRIGGERS:**
 - "run the tests" / "run the behave tests" / "run behave"
-- "run the behave report" / "generate the behave report" / "behave logic report"
+- "run the report" / "run the behave report" / "generate the behave report" / "behave logic report" / "requirements traceability report"
 - "run the tests and the report" (do both, in order)
 
 **MANDATORY SEQUENCE:**
@@ -1918,7 +1918,7 @@ python api_logic_server_run.py
 
 **Server Management Best Practices:**
 - Before making structural changes (models, logic files), STOP the running server to avoid file locking issues
-- To stop server: `pkill -f "python api_logic_server_run.py"` or use Ctrl+C if running in foreground
+- To stop server: `pkill -f "api_logic_server_run.py"` or use Ctrl+C if running in foreground
 - USER ACTION: After making changes, user restarts server (e.g., `python api_logic_server_run.py &`)
 - Monitor startup output for errors, especially after database/model changes
 - If server fails to start after model changes, check that alembic migrations have been applied
@@ -2063,7 +2063,7 @@ STEP 2.5: Check for EAI Consume pattern:
         5b. SERVER RESTART HYGIENE — mandatory before every `&`-backgrounded start:
           ❌ FORBIDDEN: starting a new `python api_logic_server_run.py &` without first
                        confirming no prior instance is still alive
-          ✅ REQUIRED: `pkill -f "python api_logic_server_run.py"` (or equivalent), then
+          ✅ REQUIRED: `pkill -f "api_logic_server_run.py"` (or equivalent), then
                        confirm the port is free (`lsof -i :5656` returns nothing) before
                        the next start
           REAL FAILURE CASE: a debug-loop iteration backgrounded a new server with `&`
@@ -2607,10 +2607,10 @@ def step_impl(context, customer_name, quantity, product_name):
 python behave_run.py --outfile=logs/behave.log
 
 # 2. Generate report (reads behave.log + scenario_logic_logs/*.log)
-python behave_logic_report.py run
+python requirements_traceability_report.py run
 
 # 3. View report
-open reports/Behave\ Logic\ Report.md
+open reports/Requirements\ Traceability\ Report.md
 ```
 
 **WHAT THE REPORT SHOWS**:
@@ -2672,7 +2672,7 @@ ls -lh logs/behave.log  # Should be several KB, not 0 bytes
 ls logs/scenario_logic_logs/ | head -10
 
 # Count detail sections in report (should equal number of scenarios)
-grep -c "<details markdown>" reports/Behave\ Logic\ Report.md
+grep -c "<details markdown>" reports/Requirements\ Traceability\ Report.md
 
 # View a specific scenario's log directly
 cat logs/scenario_logic_logs/Delete_Item_Reduces_Order.log

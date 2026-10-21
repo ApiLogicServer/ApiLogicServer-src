@@ -1,5 +1,5 @@
 """
-JSON → Order + Items mapper for Kafka topic order_b2b / Custom API OrderB2B.
+JSON → Order + Items mapper for Kafka topic order_b2b / Custom API OrderB2B (Req §2, §3).
 
 parse() returns (order_row, item_rows) — plain model rows, never (row, src_dict)
 tuples. The caller zips item_rows with the raw payload's Items array to call

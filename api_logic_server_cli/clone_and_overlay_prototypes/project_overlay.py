@@ -20,6 +20,37 @@ from shutil import copyfile
 log = logging.getLogger('create_from_model.model_creation_services')
 
 
+def resolve_default_from_git(project) -> None:
+    """ Organization template: if --from_git was not given, use the Manager's default.
+
+        The default is the first non-comment line of <Manager>/system/config/default_from_git.txt
+        (a git URL or a directory; a relative directory is relative to the Manager root, the cwd).
+        --from_git=none opts out for one project.  Sets project.from_git, and project.from_git_source
+        (the file it came from) so provenance can say where the template came from.
+        Fails (rather than silently creating an untemplated project) if the default cannot be used. """
+    project.from_git_source = ""
+    given = (project.from_git or "").strip()
+    if given.lower() == "none":
+        project.from_git = ""
+        return
+    if given:
+        return
+    cfg = Path.cwd() / 'system' / 'config' / 'default_from_git.txt'
+    if not cfg.is_file():
+        return
+    lines = [ln.strip() for ln in cfg.read_text().splitlines() if ln.strip() and not ln.strip().startswith('#')]
+    if not lines:
+        return
+    default = lines[0]
+    if not (default.startswith("https://") or default.startswith("git@")):
+        default = str((Path.cwd() / default).resolve()) if not Path(default).is_absolute() else default
+        if not Path(default).is_dir():
+            raise Exception(f"\n==> Default template (from {cfg}) is not a directory: {default}\n"
+                            f"    Fix {cfg}, or create this project without it using --from_git=none\n")
+    project.from_git = default
+    project.from_git_source = str(cfg)
+
+
 def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> str:
     """
     clone prototype to  project directory, copy sqlite db, and remove git folder
@@ -47,6 +78,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
     import clone_and_overlay_prototypes.create_provenance as create_provenance
 
     import tempfile
+    resolve_default_from_git(project)
     cloned_from = project.from_git
     tmpdirname = ""
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -95,7 +127,18 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
                 git_clone_dir = str(Path(tmpdirname) / "from_git_overlay")
                 cmd = f'git clone --quiet {project.from_git} {git_clone_dir}'
                 log.debug(f'.. ..Overlay --from_git: {cmd}')
-                result = create_utils.run_command(cmd, msg=msg)
+                try:
+                    result = create_utils.run_command(cmd, msg=msg)
+                except Exception as e:
+                    if getattr(project, 'from_git_source', ""):
+                        raise Exception(f"\n==> Unable to clone the default template {project.from_git}\n"
+                                        f"    (named in {project.from_git_source}): {e}\n"
+                                        f"    Fix that file, or create this project without it using --from_git=none\n")
+                    raise
+                if not Path(git_clone_dir).is_dir():
+                    raise Exception(f"\n==> Unable to clone the template {project.from_git}"
+                                    + (f" (named in {project.from_git_source})" if getattr(project, 'from_git_source', "") else "")
+                                    + "\n    Create this project without it using --from_git=none\n")
                 delete_dir(f'{git_clone_dir}/.git', "3.")
                 recursive_overwrite(git_clone_dir, project.project_directory)
             else:

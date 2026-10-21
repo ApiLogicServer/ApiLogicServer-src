@@ -927,10 +927,10 @@ def genai_iterate(ctx, project_name: str, using: str):
               help="Attribute Name for db cols named 'id'")
 @click.option('--from_git',
               default="",
-              help="Template clone-from project (or directory)")
+              help="Template clone-from project (or directory). Default: first line of system/config/default_from_git.txt; 'none' = no template")
 @click.option('--from-git', 'from_git',
               default="",
-              help="Template clone-from project (or directory)")
+              help="Template clone-from project (or directory). Default: first line of system/config/default_from_git.txt; 'none' = no template")
 @click.option('--run', is_flag=True,
               default=False,
               help="Run created project")
@@ -1100,10 +1100,10 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
               help="Attribute Name for db cols named 'id'")
 @click.option('--from_git',
               default="",
-              help="Template clone-from project (or directory)")
+              help="Template clone-from project (or directory). Default: first line of system/config/default_from_git.txt; 'none' = no template")
 @click.option('--from-git', 'from_git',
               default="",
-              help="Template clone-from project (or directory)")
+              help="Template clone-from project (or directory). Default: first line of system/config/default_from_git.txt; 'none' = no template")
 @click.option('--run', is_flag=True,
               default=True,
               help="Run created project")
@@ -1261,10 +1261,10 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
               help="Attribute Name for db cols named 'id'")
 @click.option('--from_git',
               default="",
-              help="Template clone-from project (or directory)")
+              help="Template clone-from project (or directory). Default: first line of system/config/default_from_git.txt; 'none' = no template")
 @click.option('--from-git', 'from_git',
               default="",
-              help="Template clone-from project (or directory)")
+              help="Template clone-from project (or directory). Default: first line of system/config/default_from_git.txt; 'none' = no template")
 @click.option('--run', is_flag=True,
               default=False,
               help="Run created project")
@@ -1774,10 +1774,10 @@ def sample_ai_iteration(ctx, bind_key_url_separator: str, api_name: str, project
               help="Last node of API Logic Server url\n")
 @click.option('--from_git',
               default="",
-              help="Template clone-from project (or directory)")
+              help="Template clone-from project (or directory). Default: first line of system/config/default_from_git.txt; 'none' = no template")
 @click.option('--from-git', 'from_git',
               default="",
-              help="Template clone-from project (or directory)")
+              help="Template clone-from project (or directory). Default: first line of system/config/default_from_git.txt; 'none' = no template")
 @click.option('--run', is_flag=True,
               default=False,
               help="Run created project")
