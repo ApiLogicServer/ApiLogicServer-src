@@ -10,7 +10,11 @@
 This report shows requirements, the rules created from them, and the tests created from those rules.
 
 <!-- text: cover -->
-This report is generated from the project's own files: its requirements, the rules and integrations built from them, and the tests that check them. Nothing in it is written by hand. Open **Background** (below the summary) for what the terms mean, how to read the report, and what it does and does not establish.
+This project began as natural-language requirements, fleshed out by AI into a running system of business rules that are *executable documentation*. This report is how you govern the result.
+
+A governable system is one you can **read**, **trust**, and **maintain**: each requirement is listed beside the rules that implement it (*read*); the tests and logic logs show those rules running (*trust*); re-run it after any change and it flags the gaps — an untested requirement, an untraced rule, a channel no test checks (*maintain*).
+
+It is generated from the project's own files, nothing written by hand, so it is as current as the last run and covers the whole project, not a sample. Open **Background** (below the summary) for what the terms mean, how to read the report, and what it can and can't tell you.
 
 > ⚙ generated: project line (name, date, rule and test counts, generator version), last test run, and a banner if any scenario failed
 
@@ -37,7 +41,7 @@ _Status: ✅ every requirement is implemented and tested, all scenarios pass, an
 
 <br>
 
-A **requirement** is a statement of business behavior, written in plain language. It lives in the project at `docs/requirements/<name>/requirements.md`. The system is built from these requirements, and this report is organized around them. For example:
+A **requirement** is a statement of business behavior - how data is computed, validated, and transmitted - written in plain language. It lives in the project at `docs/requirements/<name>/requirements.md`.  For example:
 
 &nbsp;
 
@@ -59,69 +63,66 @@ On Placing Orders, Check Credit
 
 <br>
 
-Rules enforce business policy — multi-table derivations, constraints, and actions like messaging. **LogicBank**, the rule engine, hooks SQLAlchemy's commit event to run them on every transaction. They are authored as plain Python functions in `logic/logic_discovery/` — readable, version-controlled, and owned like any other source file.
+A requirement is written at a high level, and AI fills in details as it builds — as it should — so the requirement no longer says exactly what the system does. The rules do. That's a Goldilocks answer to the question of what you review:
 
-But unlike procedural code, rules are *declarative*, which has important implications:
+* **Requirements say too little** — incomplete by design; AI fills in the details.
+* **Code says too much** — business language in, hundreds of lines of procedural code out. The work moves from writing to reading, and if you can't read it, you can't govern it.
+* **Rules are just right** — close to the requirement's own level, but complete and deterministic.
 
-&nbsp;
+Code could be treated like machine language — never read, only trusted — if it were produced deterministically. Generation from natural language isn't. Rules restore that contract: a readable source, deterministically executed.
 
-| Property         | What it means                                                                              | Why it matters                          |
-| ---------------- | ------------------------------------------------------------------------------------------ | --------------------------------------- |
-| **Auto-reused**  | `Customer.balance = sum of unpaid orders` — declared once, enforced over every change path | No per-path handlers to write or miss   |
-| **Auto-invoked** | Rules fire at every commit, from every caller — you never call them                        | Can't be forgotten, can't be bypassed   |
-| **Auto-ordered** | The engine computes dependency order at startup                                            | Add a rule anywhere, it finds its place |
-
-&nbsp;
-
-If it helps, think of a spreadsheet: `B10 = SUM(B1:B9)` isn't called, it *reacts*. Rules react the same way to changes in what they depend on. Rules are typically about 40x more concise than equivalent procedural code.
-
-Each requirement is implemented by one or more rules. For example:
-
-&nbsp;
+The requirements above become rules like this:
 
 ```
 Rule.copy(derive=models.Item.unit_price, from_parent=models.Product.unit_price)
-
 Rule.formula(derive=models.Item.amount,
              as_expression=lambda row: row.quantity * row.unit_price)
-
 Rule.sum(derive=models.Order.amount_total, as_sum_of=models.Item.amount)
-
-Rule.sum(derive=models.Customer.balance,
-         as_sum_of=models.Order.amount_total,
+Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total,
          where=lambda row: row.date_shipped is None)
-
 Rule.constraint(
     validate=models.Customer,
-    as_condition=lambda row: row.balance is None or row.credit_limit is None or row.balance <= row.credit_limit,
+    as_condition=lambda row: row.balance <= row.credit_limit,
     error_msg="balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
 ```
 
-AI, guided by *context engineering*, translates requirements into rules like those above. Two key points:
+Rules are ***executable documentation*** that you can read and trust:
 
-1. Requirements can be informal or incomplete, and that is expected. A big part of the value of AI is to discern our intent (which is not deterministic) and make it concrete.
-2. Rules are complete, deterministic, and concise, which makes them (not the requirements) the right thing to review. This report lists each requirement alongside the rules created from it, for your review.
+* **Read:** rules stay near the requirement's level, so this report can list them side by side and you can check one against the other. 5 rules vs. ~200 lines in our [A/B test](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/basic_demo_logic_gov/logic/procedural/declarative-vs-procedural-comparison.md) — **~40x less to review**, whether generated or hand-coded.
+* **Trust:** the document is enforced, not just descriptive.
+    * **What you read is what runs** — no drift between description and behavior.
+    * **Dependencies:** with code, you analyze every execution path to know it runs at the right times. With rules: if the rule is there, it runs, in the right order.
+    * **All sources and paths:** the engine hooks into every commit — API, UI or agent — insert, update and delete, including related rows. No bypass.
+    * **Seeing is believing:** each scenario in *Tests and Results* below embeds its logic log — every rule that ran, in order, with old and new values.
+
+Better AI makes generating code easier. It doesn't change what you have to read. The problem is the representation, not the capability. And governance is active, not just process: the engine enforces the rules on every transaction, and this report — regenerated from the project itself — shows it happening.
+
+&nbsp;
 
 </details>
 
 &nbsp;
 
 <details markdown>
-<summary>How the system was built</summary>
+<summary>Process overview: creation and iteration</summary>
 
 <br>
 
-A typical sequence. Say each of these to your AI assistant, in order:
+![governance loop](https://apilogicserver.github.io/Docs/images/agile/governance_loop.svg)
 
-1. Write the requirements in natural language, in `docs/requirements/<name>/requirements.md`.
-2. `implement reqs <name>` - creates the rules, API endpoints and Kafka integrations.
-3. `create tests from rules` - writes the Behave scenarios and steps.
-4. `run the tests` - starts the server if needed, runs the suite, reports pass/fail.
-5. `run the requirements traceability report` - creates this report.
+In two phases. First, `genai-logic create` builds a working system from the database: API, Admin App, data model. Then behavior is added from requirements — the typical sequence, each step a request to an AI assistant:
+
+1. Write each requirement in natural language, in `docs/requirements/<name>/requirements.md`.
+2. `implement reqs <name>` — creates the rules, API endpoints and Kafka integrations.
+3. `create tests from rules` — writes the test scenarios and steps.
+4. `run the tests` — starts the server if needed, runs the suite, reports pass/fail.
+5. `run the requirements traceability report` — regenerates this report.
 
 Optional: `create logic diagram for each requirement` (needs Graphviz).
 
-This report then connects the chain: each requirement, to the rules and handlers that implement it, to the tests that exercise it, to the logic log that shows which rules ran. How this project was actually built is recorded under Provenance.
+What makes steps 3–5 possible: rules are high-level enough that AI can read them too. The tests, the logic diagrams and this report are all generated by reading the same rules you review — where logic is Python code, the report can only quote its docstring.
+
+The report connects the chain: requirement → rules and handlers → tests → logic log. How *this* project was actually built is recorded under Provenance.
 
 </details>
 
@@ -194,7 +195,7 @@ This report then connects the chain: each requirement, to the rules and handlers
 
 ## Requirements Coverage
 
-Traceability here is **forward** (requirement, to the rules, handlers and grants that implement it, to the tests that exercise it) and **backward** (implementation and tests, to the requirement they serve). Anything with no requirement is listed as untraced, and every requirement with no implementation or no test is listed as a gap. Links are made by the `Feature:` names and `§N` tags that requirements, code and tests carry.
+Every requirement should have rules that implement it, and tests that prove it. This section checks that chain in both directions: a requirement missing rules or tests is a gap, and rules or tests that belong to no requirement are flagged too. The matching uses the `Feature:` names and `§N` tags that requirements, code and tests share.
 
 ### Coverage summary
 
@@ -235,7 +236,7 @@ _"Seen" means the engine's log shows the rule ran, not proof that it took effect
 
 <!-- text: inventory-note -->
 
-_Declarative rules are read directly from their declarations; functions and events are Python, so the report shows each one's docstring, not an analysis of its code._
+_Declarative rules are read straight from their declarations. Functions and events are Python code, so for those the report shows the docstring — it does not analyze the code._
 
 <!-- text: detail-intro -->
 Each requirement is followed by the rules and handlers in the files that implement it. Logic diagrams are shown (click to expand) where they exist.
@@ -271,7 +272,7 @@ Each diagram is saved under `docs/requirements/<name>/logic_diagrams/`. Then reg
 
 ## Data Model
 
-<!-- (no introduction by default; add one here) -->
+The tables the rules run over. Shaded columns are derived by rules — no code writes them.
 
 > ⚙ generated: database diagram
 
@@ -285,7 +286,7 @@ _Generated from `docs/db.dbml` (parents above children; shaded rows are derived 
 
 ## Security (RBAC)
 
-<!-- (no introduction by default; add one here) -->
+Who can do what: each role's permissions, and which rows each role can see.
 
 > ⚙ generated: security status
 
@@ -299,7 +300,7 @@ _Generated from `docs/db.dbml` (parents above children; shaded rows are derived 
 
 ## Messages and APIs
 
-<!-- (no introduction by default; add one here) -->
+How data enters and leaves beyond the standard API: Kafka topics in and out, custom HTTP endpoints — and whether any test touches each one.
 
 > ⚙ generated: messages and APIs table
 
@@ -329,7 +330,7 @@ Topics and endpoints are read from the discovery folders. The condition that tri
 > ⚙ generated: pass/fail status line
 
 <!-- text: intro -->
-These are Behave scenarios. Each one drives the running API the way any client would (create an order, change a quantity, ship it) and checks the result.
+Each test drives the running system the way any client would — create an order, change a quantity, ship it — and checks the result.
 
 **The logic log** is what makes them more than pass/fail. Business rules run inside the server on every commit, so the server records exactly what they did, and this report embeds that record for each scenario. Two things to look for:
 
