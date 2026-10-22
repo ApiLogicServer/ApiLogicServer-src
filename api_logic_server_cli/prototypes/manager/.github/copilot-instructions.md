@@ -23,8 +23,16 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.28
+version: 2.29
 changelog:
+  - 2.29 (Oct 21 2026) - STEP 5c2 named the wrong file for demo-named projects. It said to
+    replace PROJECT_SUMMARY_PLACEHOLDER in `<name>/readme.md`, but for projects whose name
+    matches a Manager-readme.md prefix (`basic_demo*`, `demo_*`, ...) `create_readme.py`
+    fetches a demo-specific `readme.md` from the Docs repo and renames the template to
+    `readme_standard.md`, so the placeholder is in `readme_standard.md` and `readme.md` has
+    no marker. Real case (basic_demo_existing_db_iteration, Oct 2026): the step looked
+    unfulfillable and was skipped (grep of `readme.md` finds nothing). Now: replace it in
+    `readme_standard.md` if that file exists, else `readme.md`, and grep both for the marker.
   - 2.28 (Sep 26 2026) - Method 4 STEP 4: added explicit callout to run the project CE's new
     STEP 8 (MANDATORY BEHAVIORAL VERIFICATION PASS) before proceeding to Manager-level STEP 5.
     Real case (heartfit_companion, Sep 2026): a freshly-created project's Rule.count exactly
@@ -524,8 +532,11 @@ STEP 5: ⛔ MANDATORY PROVENANCE — before telling the user the project is done
    project_creation_prompt.md is the complete original text, preserved once at the
    project root.
 
-   c2. Replace the PROJECT_SUMMARY_PLACEHOLDER block in <name>/readme.md's
-      "📋 Project Summary" section (just before "🚀 Quick Start") with a real,
+   c2. Replace the PROJECT_SUMMARY_PLACEHOLDER block in the project's readme —
+      <name>/readme_standard.md if that file exists, otherwise <name>/readme.md (demo-named
+      projects such as basic_demo* get a Docs-fetched demo readme.md and the template
+      carrying the placeholder is renamed readme_standard.md; grep both for the marker) —
+      in its "📋 Project Summary" section (just before "🚀 Quick Start") with a real,
       2-4 sentence, plain-English description of what THIS project's schema and
       rules actually do — grounded in the actual tables and Rule.* calls just
       implemented, not the prompt's wording. End it with a pointer to

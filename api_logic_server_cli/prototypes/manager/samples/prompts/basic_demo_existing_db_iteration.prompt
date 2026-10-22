@@ -1,0 +1,20 @@
+// Iteration test for basic_demo_existing_db.prompt
+//
+// Step 1 - baseline:
+//   Create basic_demo_existing_db_iteration from samples/prompts/basic_demo_existing_db.prompt
+//   (same prompt, project name changed so it does not collide with the sample).
+//   Then: create tests from rules, run the tests, run the requirements traceability report.
+//   Keep a copy of the report as "before".
+//
+// Step 2 - iterate: edit docs/requirements/check_credit/requirements.md as below,
+//   then say: implement reqs check_credit
+//   Then: create tests for the change, run the tests, regenerate the report ("after").
+//
+// What to check each time: only the intended rule changed (diff the logic file), the other
+// rules and the Kafka event survived, earlier ad-libs were kept, old tests still pass.
+
+Iteration 1 - change in the middle of the chain (no schema change):
+    4. The Item amount is the quantity * unit_price, less 10% when the quantity is 10 or more
+
+Iteration 2 - tighten the credit check:
+    1. The Customer's balance is strictly less than the credit limit
