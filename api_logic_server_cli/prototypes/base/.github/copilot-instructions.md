@@ -1,4 +1,5 @@
 ---
+version: 3.51 - 10/23/26 - Executable Requirements STEP 6: added a checklist item requiring a verbatim `Feature:` docstring in NON-LOGIC implementation files (custom API, Kafka handlers/mappers, security) at write time. The traceability report only links a requirement to files carrying its Feature line, so rule-less requirements showed as "not implemented" until docstrings were added after the first report - which edited source after the test run and forced a server restart, test re-run and report regeneration (demo_eai, Oct 2026). Lists the exact globs the report scans (integration/row_dict_maps is not one).
 version: 3.50 - 10/20/26 - New triggers "run the tests" and "run the behave report" (also "run the behave
 tests"): the assistant now starts the server if needed, runs behave_run.py --outfile=logs/behave.log, stops a
 server it started, and (separately) runs requirements_traceability_report.py run. Previously the CE said "DO NOT run tests
@@ -832,6 +833,29 @@ STEP 6: Implement all steps in requirements.md in sequence.
                dependency-anchor comment (customs_demo, Aug 2026). Describe the anchor generically
                ("every attribute read inside _reasons()") instead of using "row.attr" as a token.
                The governance report flags missing anchors as 🔴 "Broken dependency tracking."
+           [ ] NON-LOGIC IMPLEMENTATION FILES NEED A `Feature:` DOCSTRING TOO — as you write
+               each one, not after the report flags it. The Requirements Traceability Report
+               links a requirement to its implementation by finding the requirement's own
+               `Feature: <name>` line (or a `§N` reference) in a source file. Logic files get
+               this from their module docstring. But a requirement implemented WITHOUT a rule —
+               a custom API, a Kafka subscribe/publish handler or mapper, security grants — has
+               no logic file, so unless its own file carries the line the report lists it as
+               "not implemented" even though it works and its tests pass.
+               Files the report scans (put the docstring in whichever implements the requirement):
+                 api/api_discovery/*.py, integration/*.py,
+                 integration/kafka/kafka_*_discovery/*.py, security/declare_security.py
+               NOT scanned: integration/row_dict_maps/*.py — put the line on the api_discovery
+               file that calls the mapper instead.
+               Format: the module docstring starts with `Feature: <name>` (the name copied
+               verbatim from requirements.md, nothing after it on that line), followed by that
+               requirement's Scenario text verbatim — the same copy-the-requirement-only rule as
+               logic files, no implementation notes. A file serving two requirements carries both
+               Feature lines.
+               REAL FAILURE CASE (demo_eai, Oct 2026): the B2B API, the Kafka subscribe handler
+               and the shipping publish mapper were written with no Feature docstring; the first
+               report marked §2 "not implemented". Adding the docstrings afterward edited source
+               after the test run, which forced a server restart, a full test re-run and a
+               regenerated report to get a current result.
 STEP 7: Write completed ad-libs report to docs/requirements/<name>/ad-libs.md AND summarize in chat
         ⛔ ALSO MANDATORY: append a link to it from docs/requirements/project_creation_report.md's
         "Use Cases" section — see implement_requirements.md for the exact line format.

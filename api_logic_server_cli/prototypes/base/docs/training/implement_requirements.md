@@ -1156,6 +1156,14 @@ Create a fully functional application and database
    Run DDL + `rebuild-from-database` ONCE before writing any logic or mapper files.
    ❌ NEVER discover a missing column while writing a logic file — that causes an error loop.
 
+   **🚨 Traceability anchor for rule-less requirements:** a requirement implemented by a
+   custom API, Kafka handler/mapper or security grants (no `logic/logic_discovery/` file) must
+   carry its `Feature: <name>` line, verbatim from requirements.md, in the module docstring of
+   the file that implements it — otherwise the Requirements Traceability Report shows it as
+   "not implemented". Write it when you write the file; adding it later edits source after the
+   test run and forces a re-run. Scanned globs and format: see STEP 6 in
+   `.github/copilot-instructions.md` ("NON-LOGIC IMPLEMENTATION FILES").
+
    **🚨 MANDATORY CLOSING CHECK — "planned a derived column" is not the same as "derived it":**
    Every row in the DDL change list whose Reason names a rule type (e.g. "Rule.count where=
    clause", "Rule.formula output") is a promise that some code will assign that column —

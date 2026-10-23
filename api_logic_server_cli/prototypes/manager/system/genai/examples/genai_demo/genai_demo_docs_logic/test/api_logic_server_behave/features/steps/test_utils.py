@@ -87,7 +87,7 @@ def login(user: str = 'aneu') -> dict:
         TOKEN=$(curl ${TOKEN_ENDPOINT} -d 'grant_type=password&client_id=alsclient' -d 'username=u1' -d 'password=p' | jq -r .access_token)
         """
         # Correctly separate the URL from the data
-        post_uri = f"{Config.KEYCLOAK_BASE}/protocol/openid-connect/token"
+        post_uri = f"{Config.KEYCLOAK_BASE_URL}/protocol/openid-connect/token"
         post_data = {
             'grant_type': 'password',
             'client_id': 'alsclient',

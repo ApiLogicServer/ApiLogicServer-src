@@ -173,6 +173,8 @@ Key take-aways:
 
 </details>
 
+&nbsp;
+
 <details markdown>
 <summary>AI Alone Writes Code That's Hard to Read or Trust — Here's What We Found</summary>
 <h3 id="ai-alone" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;white-space:nowrap;border:0">AI Alone</h3>
