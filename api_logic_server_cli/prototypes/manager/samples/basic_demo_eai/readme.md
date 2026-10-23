@@ -83,27 +83,40 @@ One command creates the project; one command executes **every** requirement belo
 (Check Credit, B2B API, Kafka Subscribe, Kafka Publish, Security) — this is the
 **entire build**, not the first of several steps:
 
-**🤖 Bootstrap your AI assistant — paste into chat (Agent mode, Claude Sonnet 4.6 recommended):**
-```bash title="🤖 Bootstrap your AI assistant — paste into chat (Agent mode, Claude Sonnet 4.6 recommended)"
-Please load `.github/.copilot-instructions.md`
-```
-
-> **Important:** be sure CoPilot is in "Agent" Mode.  "Ask" will not work.  Also, we get consistently good results with `Claude Sonnet 4.6`.
-
 **Establish Initial State, Execute Requirements:**
 ```bash title="Establish Initial State, Execute Requirements"
-# A - Create project from existing database
-genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite
+# A - Create Project
+!genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite
 
-# B - In created project, get these requirements
-$ cp -r ../samples/requirements/demo_eai/ .
+# B - Get Requirements
+!cd demo_eai && cp -r ../samples/requirements/demo_eai/ .
 
-# C - Optionally, configure security
-$ (cd devops/keycloak; docker compose up -d)
-$ genai-logic add-auth --provider-type=keycloak --db-url=localhost
+# C - Add Security (optional)
+!cd demo_eai/devops/keycloak && docker compose up -d
+!cd demo_eai && genai-logic add-auth --provider-type=keycloak --db-url=localhost
 
-# D - Create system from requirements
-implement requirements docs/requirements/demo_eai
+# D - Implement Requirements
+implement requirements docs/requirements/demo_eai in project demo_eai
+
+# E - Logic Diagrams (optional)
+create logic diagram for each requirement in demo_eai
+
+# F - Create Tests (optional)
+create tests from rules in demo_eai, one Feature per requirement, named exactly:
+- Check Credit
+- B2B Order Integration
+- Kafka Subscribe Order Integration
+- Kafka Publish Shipping Notification
+- Row-Level Security
+
+# G - Run Tests (optional)
+run the tests in demo_eai
+
+# H - Traceability Report (optional)
+run the requirements traceability report in demo_eai
+
+# Then OPEN the report: demo_eai/test/api_logic_server_behave/reports/Requirements Traceability Report.md
+# (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)
 ```
 
 **Using Podman instead of Docker?** Step C's `docker compose up -d` can be `podman compose up -d`

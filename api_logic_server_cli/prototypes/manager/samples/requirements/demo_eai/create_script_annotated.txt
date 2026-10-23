@@ -1,0 +1,50 @@
+// To create demo_eai: paste create_script.txt (the bare version of this file) into an AI CLI such as Claude Code, from the Manager root.
+// The AI runs each "!" line as a shell command, in order, and treats the plain lines as instructions.
+// Lines starting with // are notes for you; the AI ignores them. This annotated file is the source:
+// create_script.txt is generated from it by removing the // lines (grep -v '^//' | cat -s), so never edit that one by hand.
+// Prerequisites: Docker or Podman running (steps C and I); graphviz installed (step E: brew install graphviz).
+// With Podman, point DOCKER_HOST at the Podman API socket; the AI can do this.
+
+// A - Create Project
+// Before any rules, this already gives you: a JSON:API (filtering, sorting, pagination, optimistic locking, Swagger),
+// MCP-discoverable by AI agents, and a multi-table Admin App.
+!genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite
+
+// B - Get Requirements
+!cd demo_eai && cp -r ../samples/requirements/demo_eai/docs .
+
+// C - Add Security (optional)
+// Starts Keycloak in a container. The row-level security requirement is only exercised with it.
+!cd demo_eai/devops/keycloak && docker compose up -d
+!cd demo_eai && genai-logic add-auth --provider-type=keycloak --db-url=localhost
+
+// D - Implement Requirements
+// The build (a few minutes): rules, B2B API, Kafka subscribe and publish, security.
+implement requirements docs/requirements/demo_eai in project demo_eai
+When the build is done, print this verbatim: "Built. Scan these two files now: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made)."
+
+// E - Logic Diagrams (optional)
+create logic diagram for each requirement in demo_eai
+
+// F - Create Tests (optional)
+create tests from rules in demo_eai, one Feature per requirement, named exactly:
+- Check Credit
+- B2B Order Integration
+- Kafka Subscribe Order Integration
+- Kafka Publish Shipping Notification
+- Row-Level Security
+
+// G - Run Tests (optional)
+run the tests in demo_eai
+
+// H - Traceability Report (optional)
+run the requirements traceability report in demo_eai
+When the report is done, print this verbatim: "Open the report: demo_eai/test/api_logic_server_behave/reports/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
+
+// I - Live Kafka (optional)
+// Uses a running Kafka broker named broker1, or starts one from integration/kafka/dockercompose_start_kafka.yml.
+// The reset script deletes and recreates the order topics, so skip it if the broker holds messages you want to keep.
+verify demo_eai against live Kafka: make sure a broker is running, set KAFKA_SERVER and KAFKA_CONSUMER_GROUP in config/default.env, restart the server, then
+- send the sample message docs/requirements/demo_eai/message_formats/order_b2b.json to topic order_b2b, and confirm a processed blob and a new order
+- ship that order, and confirm a message with the order_shipping shape arrives on topic order_shipping
+stop the server when done

@@ -1,0 +1,28 @@
+!genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite
+
+!cd demo_eai && cp -r ../samples/requirements/demo_eai/docs .
+
+!cd demo_eai/devops/keycloak && docker compose up -d
+!cd demo_eai && genai-logic add-auth --provider-type=keycloak --db-url=localhost
+
+implement requirements docs/requirements/demo_eai in project demo_eai
+When the build is done, print this verbatim: "Built. Scan these two files now: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made)."
+
+create logic diagram for each requirement in demo_eai
+
+create tests from rules in demo_eai, one Feature per requirement, named exactly:
+- Check Credit
+- B2B Order Integration
+- Kafka Subscribe Order Integration
+- Kafka Publish Shipping Notification
+- Row-Level Security
+
+run the tests in demo_eai
+
+run the requirements traceability report in demo_eai
+When the report is done, print this verbatim: "Open the report: demo_eai/test/api_logic_server_behave/reports/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
+
+verify demo_eai against live Kafka: make sure a broker is running, set KAFKA_SERVER and KAFKA_CONSUMER_GROUP in config/default.env, restart the server, then
+- send the sample message docs/requirements/demo_eai/message_formats/order_b2b.json to topic order_b2b, and confirm a processed blob and a new order
+- ship that order, and confirm a message with the order_shipping shape arrives on topic order_shipping
+stop the server when done

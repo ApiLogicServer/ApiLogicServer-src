@@ -120,6 +120,10 @@ Custom API exists in api/api_discovery/?
 
 **CRITICAL:** Check for custom APIs BEFORE generating CRUD tests!
 
+**Read the URL and body shape from the discovered file — do not assume them.** Two styles exist:
+- `@jsonapi_rpc` class (example below): POST `/api/<Class>/<method>` with the `meta` wrapper.
+- Plain `@app.route('/api/<Name>', methods=['POST'])`: POST plain JSON (`{"Account": ..., "Items": [...]}`) to that route; no `meta` wrapper.
+
 **Discovery Process:**
 ```python
 # 1. Scan api/api_discovery/*.py
@@ -158,7 +162,7 @@ Without the `"method"` field, the API call will fail with a 500 error.
 **Example Discovery - OrderB2B:**
 ```python
 # api/api_discovery/order_b2b_service.py
-class OrderB2BEndPoint(safrs.JABase):
+class OrderB2B(safrs.JABase):
     @jsonapi_rpc(http_methods=["POST"])
     def OrderB2B(self, *args, **kwargs):
         """
@@ -175,7 +179,7 @@ class OrderB2BEndPoint(safrs.JABase):
 ```python
 {
     "order_b2b_service": {
-        "endpoint": "/api/OrderB2BEndPoint/OrderB2B",
+        "endpoint": "/api/OrderB2B/OrderB2B",
         "parameters": {
             "Account": "Customer name",
             "Items": [{"Name": "Product name", "QuantityOrdered": int}]
@@ -195,7 +199,7 @@ class OrderB2BEndPoint(safrs.JABase):
 # Phase 2: CREATE using custom API
 @when('B2B order placed for "{customer_name}" with items')
 def step_impl(context):
-    add_order_uri = 'http://localhost:5656/api/OrderB2BEndPoint/OrderB2B'
+    add_order_uri = 'http://localhost:5656/api/OrderB2B/OrderB2B'
     add_order_args = {
         "meta": {"method": "OrderB2B", "args": {"data": {
             "Account": customer_name,  # Business language!
@@ -700,7 +704,7 @@ def step_impl(context):
     items = [{"Name": row['Name'], "QuantityOrdered": int(row['Quantity'])} 
              for row in context.table]
     
-    add_order_uri = f'{BASE_URL}/api/OrderB2BEndPoint/OrderB2B'
+    add_order_uri = f'{BASE_URL}/api/OrderB2B/OrderB2B'
     add_order_args = {
         "meta": {"method": "OrderB2B", "args": {"data": {
             "Account": customer_name,
@@ -1026,22 +1030,20 @@ Example strings from CBSA rules:
 
 #### Step 5 — Write logic-verification Then steps using does_file_contain
 
+`does_file_contain(search_for, in_file)` returns a bool (search text first, file second) and does not assert — wrap it in `assert ..., message`.
+
 ```python
 @then('Logic computes surtax applicable True for post-cutoff date')
 def step_logic_surtax_true(context):
     log_file = logic_log_file(context.scenario_name)
-    test_utils.does_file_contain(
-        log_file, "Surtax Applicable: True",
+    assert test_utils.does_file_contain("Surtax Applicable: True", log_file), \
         f"Logic Log missing 'Surtax Applicable: True' in {log_file}"
-    )
 
 @then('Logic computes surtax_amount {amount} from customs_value times surtax_rate')
 def step_logic_surtax_amount(context, amount):
     log_file = logic_log_file(context.scenario_name)
-    test_utils.does_file_contain(
-        log_file, f"Surtax Amount: {amount}",
+    assert test_utils.does_file_contain(f"Surtax Amount: {amount}", log_file), \
         f"Logic Log missing 'Surtax Amount: {amount}' in {log_file}"
-    )
 ```
 
 #### Step 6 — Add logic-verification steps to the feature file

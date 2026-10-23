@@ -173,8 +173,6 @@ Key take-aways:
 
 </details>
 
-&nbsp;
-
 <details markdown>
 <summary>AI Alone Writes Code That's Hard to Read or Trust — Here's What We Found</summary>
 <h3 id="ai-alone" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;white-space:nowrap;border:0">AI Alone</h3>
@@ -553,6 +551,8 @@ a 2-message save that never loses data mid-parse, a queryable `error_text` reaso
 on every failure instead of a buried log line, and the same Check Credit rule
 enforced no matter which path wrote the row — comes with every Kafka subscriber
 this platform generates. You don't ask for it.
+
+**Build it yourself, in one paste:** EAI is the first demo under [Enterprise Technology Demos](#2-enterprise-technology-demos) — requirements, system, tests and a traceability report.
 
 </details>
 
@@ -942,6 +942,10 @@ Ready to see it for yourself? The demo catalog below runs the same systems live.
 
 &nbsp;
 
+**Next:** build a complete system from requirements — [Enterprise-Class Systems](#1-enterprise-class-systems-from-requirements) — or explore the enterprise technologies — [Enterprise Technology Demos](#2-enterprise-technology-demos). Both are in the catalog below; start with either.
+
+&nbsp;
+
 &nbsp;
 
 ## 📚 Build It Yourself — Demo Catalog
@@ -976,12 +980,12 @@ Each of these builds a complete system from a single prompt or command — 💬 
 
 | Use Case | 💬 Say to your AI, or › run | What You'll Learn |
 |----------|---------|-------------------|
-| **[Use Case 1: AI Rules](samples/basic_demo_ai_rules-supplier/readme.md)**<br> demo_ai_rules_supplier | › genai-logic create --project_name=demo_ai_rules_supplier --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Use AI Rules (req pattern) to choose Optimal Supplier, per world conditions |
-| **[Use Case 2: Governed MCP Server](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-MCP-Send-Email)** <br>demo_mcp_send_email | 💬 `implement reqs samples/prompts/demo_mcp_send_email`<br><br>Or › `genai-logic create --project_name=demo_mcp_send_email --db_url=sqlite:///samples/dbs/basic_demo.sqlite` | Executable Requirements (fast path) or manual steps<br>- Bus Users compose new service to send email to overdue customers, subject to email opt-out rules<br>- Create custom API with NL<br>- Create an email service (req pattern) |
-| **[EAI: Enterprise App Integration](samples/basic_demo_eai/readme.md)** <br>demo_eai | › genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Executable Requirements<br>- Create custom API with NL<br>- Create Kafka Listener with NL |
-| **[Use Case 4: Vibe Dev Backend](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-Vibe)** <br> demo_vibe | › genai-logic create --project_name=demo_vibe --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - UI elements, eg, Cards, Maps, Trees... |
+| **[EAI: Enterprise App Integration](samples/basic_demo_eai/readme.md)** <br>demo_eai | 💬 paste [samples/requirements/demo_eai/create_script.txt](samples/requirements/demo_eai/create_script.txt)<br>(each step explained: [annotated version](samples/requirements/demo_eai/create_script_annotated.txt)) | **Study this one — the full tour, in one paste:** requirements → running system → tests → traceability report.<br>- **Requirements in, system out:** Check Credit rules, a B2B Custom API, Kafka subscribe and publish, row-level security<br>- **Verify:** tests and a requirements traceability report, generated from the rules<br>- **Review:** the AI's ad-libs list the judgment calls it made<br>- Optional: Keycloak, logic diagrams, live Kafka (Docker or Podman) |
+| **[AI Rules](samples/basic_demo_ai_rules-supplier/readme.md)**<br> demo_ai_rules_supplier | › genai-logic create --project_name=demo_ai_rules_supplier --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Use AI Rules (req pattern) to choose Optimal Supplier, per world conditions |
+| **[Governed MCP Server](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-MCP-Send-Email)** <br>demo_mcp_send_email | 💬 `implement reqs samples/prompts/demo_mcp_send_email`<br><br>Or › `genai-logic create --project_name=demo_mcp_send_email --db_url=sqlite:///samples/dbs/basic_demo.sqlite` | Executable Requirements (fast path) or manual steps<br>- Bus Users compose new service to send email to overdue customers, subject to email opt-out rules<br>- Create custom API with NL<br>- Create an email service (req pattern) |
+| **[Vibe Dev Backend](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-Vibe)** <br> demo_vibe | › genai-logic create --project_name=demo_vibe --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - UI elements, eg, Cards, Maps, Trees... |
 | **[Requirements From Interview](https://apilogicserver.github.io/Docs/Exec-Reqmts/)** <br> basic_demo_rfi | 💬 paste [samples/prompts/basic_demo_rfi.prompt](samples/prompts/basic_demo_rfi.prompt) | - Most of this prompt is fully specified (AI builds those parts directly, no questions asked)<br>- And requests interview ("Also, interview me to work out this general intent: ...")... AI interviews you on that part only, confirms before building<br>- [Real transcript included](samples/requirements/RFI/RFI-transcript.md) |
-| **[Use Case 5: Business Users](https://www.genai-logic.com/#h.69d2voz8q5r1)** <br> webgenai | See `webgenai/` in this Manager | - Create systems from browser, with logic, sample data and derived attributes |
+| **[Business Users](https://www.genai-logic.com/#h.69d2voz8q5r1)** <br> webgenai | See `webgenai/` in this Manager | - Create systems from browser, with logic, sample data and derived attributes |
 
 &nbsp;
 

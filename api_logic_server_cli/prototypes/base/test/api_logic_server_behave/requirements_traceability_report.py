@@ -257,14 +257,22 @@ def get_docStrings(steps_dir: str):
                 if each_step_code_line.startswith('@when'):
                     comment_start = index + 2
                     if comment_start < len(step_code) and '"""' in step_code[comment_start]:
-                        doc_string_line = comment_start+1
                         doc_string = []
-                        while (True):
-                            if '"""' in step_code[doc_string_line]:
-                                break
-                            doc_string.append(step_code[doc_string_line][indent:])
-                            doc_string_line += 1
+                        if step_code[comment_start].count('"""') >= 2:
+                            # one-line docstring: """text""" - opening and closing on the same line
+                            one_line = step_code[comment_start].strip().strip('"').strip()
+                            doc_string.append(one_line + '\n')
+                            doc_string_line = comment_start
+                        else:
+                            doc_string_line = comment_start+1
+                            while doc_string_line < len(step_code):
+                                if '"""' in step_code[doc_string_line]:
+                                    break
+                                doc_string.append(step_code[doc_string_line][indent:])
+                                doc_string_line += 1
                         scenario_line = doc_string_line+1
+                        if scenario_line >= len(step_code):
+                            continue
                         if 'scenario_name' not in step_code[scenario_line]:
                             print(f'\n** Warning - scenario_name not found '
                                   f'in file {str(each_steps_dir_file_path)}, '

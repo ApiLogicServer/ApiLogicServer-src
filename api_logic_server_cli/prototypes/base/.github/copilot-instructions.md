@@ -3062,7 +3062,7 @@ import logging
 app_logger = logging.getLogger("api_logic_server_app")
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
-    api.expose_object(OrderB2B)  # CRITICAL: class name = URL endpoint name (e.g. OrderB2B → /OrderB2B)
+    api.expose_object(OrderB2B)  # CRITICAL: URL is /api/<Class>/<method> (e.g. class OrderB2B, method OrderB2B → /api/OrderB2B/OrderB2B)
 
 class OrderB2B(safrs.JABase):  # CRITICAL: name this EXACTLY the desired URL endpoint (NOT OrderB2BEndPoint)
     @classmethod
