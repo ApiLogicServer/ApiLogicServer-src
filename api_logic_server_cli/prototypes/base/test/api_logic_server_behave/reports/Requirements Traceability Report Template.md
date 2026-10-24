@@ -302,6 +302,15 @@ Who can do what: each role's permissions, and which rows each role can see.
 
 How data enters and leaves beyond the standard API: Kafka topics in and out, custom HTTP endpoints — and whether any test touches each one.
 
+<!-- text: kafka-mode-simulated -->
+**Kafka mode: simulated (no broker).** `KAFKA_SERVER` is not set, so no Kafka consumer or producer runs. The tests deliver inbound messages by calling `/consume_debug`, which runs the same parse-and-save function the live consumer uses, so lookups, rules and the saved message are exercised, but Kafka delivery itself is not. Outbound messages are built and logged, not sent. To test with a real broker, set `KAFKA_SERVER` and `KAFKA_CONSUMER_GROUP` (see `integration/kafka/kafka_readme.md`).
+
+<!-- text: kafka-mode-live -->
+**Kafka mode: live ({{server}}).** The tests sent inbound messages through a real broker: `/consume_debug` published them to topic `order_b2b`, the server's consumers processed them, and the tests then checked the results. Outbound `order_shipping` messages are checked in the server log, not read back from the topic.
+
+<!-- text: kafka-mode-mixed -->
+**Kafka mode: mixed.** Some scenarios sent messages through a live broker ({{server}}) and some were simulated through `/consume_debug`. The Scenario names and the table below say which.
+
 > ⚙ generated: messages and APIs table
 
 <!-- text: tests-mention-note -->

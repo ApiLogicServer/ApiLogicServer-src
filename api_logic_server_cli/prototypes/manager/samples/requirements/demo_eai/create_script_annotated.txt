@@ -1,9 +1,27 @@
-// To create demo_eai: paste create_script.txt (the bare version of this file) into an AI CLI such as Claude Code, from the Manager root.
+// To create demo_eai: paste create_script.txt (or create_script_no_container.txt) into an AI CLI such as Claude Code, from the Manager root.
 // The AI runs each "!" line as a shell command, in order, and treats the plain lines as instructions.
-// Lines starting with // are notes for you; the AI ignores them. This annotated file is the source:
-// create_script.txt is generated from it by removing the // lines (grep -v '^//' | cat -s), so never edit that one by hand.
-// Prerequisites: Docker or Podman running (steps C and I); graphviz installed (step E: brew install graphviz).
-// With Podman, point DOCKER_HOST at the Podman API socket; the AI can do this.
+// Lines starting with // are notes for you; the AI ignores them.
+//
+// This annotated file is the single source for BOTH bare scripts - never edit the generated ones by hand.
+//   Untagged lines go into both scripts.
+//   Lines starting with "[full] " go only into create_script.txt (Docker or Podman, Keycloak, live Kafka).
+//   Lines starting with "[no-container] " go only into create_script_no_container.txt (no Docker/Podman needed).
+// Regenerate both from this directory:
+//   grep -v '^//' create_script_annotated.txt | grep -v '^\[no-container\] ' | sed 's/^\[full\] //' | cat -s | sed '/./,$!d' > create_script.txt
+//   grep -v '^//' create_script_annotated.txt | grep -v '^\[full\] ' | sed 's/^\[no-container\] //' | cat -s | sed '/./,$!d' > create_script_no_container.txt
+//
+// Which to paste: create_script.txt if Docker or Podman is installed and running (steps C and I);
+// create_script_no_container.txt if not (for example a Codespace). The no-container script never starts a container:
+// Kafka runs in fallback mode (KAFKA_SERVER unset; messages are tested through the /consume_debug endpoint)
+// and security uses the SQL authentication provider instead of Keycloak.
+// Optional for either: graphviz installed (step E: brew install graphviz); the step is skipped if it is missing.
+
+// 0 - Preflight (full script only)
+// Stops instead of improvising when there is no container runtime. A Codespace run that improvised cost ~15 extra minutes.
+[full] Before anything else, run `docker info`, and if that fails run `podman info`. If both fail, STOP and tell me to use create_script_no_container.txt instead; do not start, install or download anything. If only podman works, use `podman compose` wherever this script says `docker compose`.
+
+// 0 - No containers (no-container script only)
+[no-container] This script uses no containers. Do not start or install Docker, Podman, Keycloak or a Kafka broker, and do not download any software. If something seems to need one, stop and tell me.
 
 // A - Create Project
 // Before any rules, this already gives you: a JSON:API (filtering, sorting, pagination, optimistic locking, Swagger),
@@ -14,17 +32,28 @@
 !cd demo_eai && cp -r ../samples/requirements/demo_eai/docs .
 
 // C - Add Security (optional)
-// Starts Keycloak in a container. The row-level security requirement is only exercised with it.
-!cd demo_eai/devops/keycloak && docker compose up -d
-!cd demo_eai && genai-logic add-auth --provider-type=keycloak --db-url=localhost
+// Full: starts Keycloak in a container. The row-level security requirement is exercised against it.
+// No-container: the SQL authentication provider (pre-built user/role tables in the project) - no container, and
+// the row-level security requirement is still exercised. SECURITY_ENABLED comes from add-auth.
+[full] !cd demo_eai/devops/keycloak && docker compose up -d
+[full] !cd demo_eai && genai-logic add-auth --provider-type=keycloak --db-url=localhost
+[no-container] !cd demo_eai && genai-logic add-auth --provider-type=sql
+
+// C2 - Kafka mode (no-container script only)
+// KAFKA_SERVER unset is the platform's fallback mode: no producer or consumer is created (the server logs
+// "Kafka mode: FALLBACK"), publishing logs "Kafka not enabled", and /consume_debug/order_b2b is the test path.
+[no-container] Leave KAFKA_SERVER and KAFKA_CONSUMER_GROUP unset (commented out) in demo_eai/config/default.env, so Kafka runs in fallback mode, and keep APILOGICPROJECT_CONSUME_DEBUG enabled. Then show the effective settings:
+[no-container] !cd demo_eai && grep -n -E "SECURITY_ENABLED|KAFKA_SERVER|KAFKA_CONSUMER_GROUP|CONSUME_DEBUG" config/default.env
 
 // D - Implement Requirements
 // The build (a few minutes): rules, B2B API, Kafka subscribe and publish, security.
 implement requirements docs/requirements/demo_eai in project demo_eai
+Generate every artifact the Kafka subscribe guide (eai_subscribe.md) lists, including the reset script and the test publisher, even when no broker is available: they are files, not containers.
 When the build is done, print this verbatim: "Built. Scan these two files now: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made)."
 
 // E - Logic Diagrams (optional)
-create logic diagram for each requirement in demo_eai
+// graphviz is a soft dependency: skip the step with one line if it is missing, never hand-assemble or download it.
+create logic diagram for each requirement in demo_eai. If `dot -V` fails, skip this step, say so in one line, and do not install anything.
 
 // F - Create Tests (optional)
 create tests from rules in demo_eai, one Feature per requirement, named exactly:
@@ -33,6 +62,7 @@ create tests from rules in demo_eai, one Feature per requirement, named exactly:
 - Kafka Subscribe Order Integration
 - Kafka Publish Shipping Notification
 - Row-Level Security
+[no-container] In the Kafka Subscribe Order Integration scenarios, word the delivery step to say it goes through /consume_debug with no broker (for example: "is submitted through /consume_debug, simulating topic order_b2b with no broker"), not "consumed from topic".
 
 // G - Run Tests (optional)
 run the tests in demo_eai
@@ -41,10 +71,18 @@ run the tests in demo_eai
 run the requirements traceability report in demo_eai
 When the report is done, print this verbatim: "Open the report: demo_eai/test/api_logic_server_behave/reports/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
 
-// I - Live Kafka (optional)
-// Uses a running Kafka broker named broker1, or starts one from integration/kafka/dockercompose_start_kafka.yml.
+// I - Live Kafka (full) / Kafka without a broker (no-container)
+// Full: uses a running Kafka broker named broker1, or starts one from integration/kafka/dockercompose_start_kafka.yml.
 // The reset script deletes and recreates the order topics, so skip it if the broker holds messages you want to keep.
-verify demo_eai against live Kafka: make sure a broker is running, set KAFKA_SERVER and KAFKA_CONSUMER_GROUP in config/default.env, restart the server, then
-- send the sample message docs/requirements/demo_eai/message_formats/order_b2b.json to topic order_b2b, and confirm a processed blob and a new order
-- ship that order, and confirm a message with the order_shipping shape arrives on topic order_shipping
-stop the server when done
+// No-container: the same two checks without a broker. The subscribe check calls /consume_debug/order_b2b, which runs
+// the same function the live consumer uses; the publish check reads the server log (publish logs and continues when
+// Kafka is not enabled, and the message it would send is in the log).
+[full] verify demo_eai against live Kafka: make sure a broker is running, set KAFKA_SERVER and KAFKA_CONSUMER_GROUP in config/default.env, restart the server, then
+[full] - send the sample message with the debug endpoint's curl command (mode=live, see the docstring of api/api_discovery/order_b2b_kafka_consume_debug.py), and confirm a processed blob and a new order
+[full] - ship that order, and confirm a message with the order_shipping shape arrives on topic order_shipping
+[full] stop the server when done
+[no-container] verify demo_eai without Kafka: start the server, then
+[no-container] - run the debug endpoint's curl command (see the docstring of api/api_discovery/order_b2b_kafka_consume_debug.py; with no broker it simulates) and confirm a processed blob and a new order
+[no-container] - ship that order, and confirm in the server log a publish line for topic order_shipping carrying the order_shipping message shape (with the "Kafka not enabled" note)
+[no-container] stop the server when done
+[no-container] When the verification is done, print this verbatim: "Built without containers. Kafka: debug path (no broker). Security: SQL provider. Not verified: live Kafka delivery."

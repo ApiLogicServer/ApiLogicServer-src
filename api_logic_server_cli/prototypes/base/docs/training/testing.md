@@ -16,6 +16,7 @@
 Step 1a. Read database/models.py → Understand schema (IDs, aggregates, columns)
 Step 1b. Read logic/declare_logic.py → Identify rules to test  
 Step 1c. Scan api/api_discovery/*.py → Discover custom APIs (PHASE 2!)
+Step 1d. Scan integration/kafka/kafka_subscribe_discovery/*.py → Kafka subscribers: mode-aware scenarios (Step 1d below)
 Step 2.  Decide Phase 1 vs Phase 2 → Based on custom API existence
 Step 3.  Generate .feature files → Business language scenarios
 Step 4.  Implement steps/*.py → Using discovered APIs or CRUD
@@ -41,6 +42,8 @@ Step 5.  SUGGEST "run the tests" (DO NOT run automatically as part of creating t
 - [ ] **Logic log prt called only once per scenario?** (in Given, before first API call — NEVER in When/Then)
 
 **DO NOT skip Step 1c!** Custom APIs change the entire testing approach.
+
+**DO NOT skip Step 1d!** A Kafka subscribe test that only calls the simulated path never exercises Kafka.
 
 **DO NOT skip Step 4b!** Wrong step ordering causes silent failures with balance=0.
 
@@ -215,6 +218,80 @@ def step_impl(context, qty):
     patch_data = {"data": {"attributes": {"quantity": qty}}}
     r = requests.patch(url=patch_uri, json=patch_data)
 ```
+
+## Step 1d: Discover Kafka subscribers (Phase 2)
+
+**CRITICAL:** if `integration/kafka/kafka_subscribe_discovery/*.py` has handlers (`@bus.handle('<topic>')`), generate the
+Kafka Subscribe scenarios in the **mode-aware** shape below. Do NOT write steps that only call the simulated path and
+word them "consumed from topic": that tests the parse-and-save function, not Kafka, and the word "consumed" claims more
+than was checked.
+
+**How a subscribe test reaches the pipeline.** The pipeline's debug endpoint, `GET /consume_debug/<topic>?file=...`
+(see `eai_subscribe.md`, "Debug endpoints"), takes the message from a file and either publishes it to the topic through a
+real broker (**live**) or runs the consumer's parse-and-save function directly (**simulated**). `mode=auto` (the
+default) picks live when a broker answers. The response says which: `"mode": "live" | "simulated"`. So the same
+scenarios run in both environments.
+
+**What the steps do:**
+
+```python
+import json, time, requests, test_utils
+from behave import *
+
+MODE_FILE = PROJECT_DIR / 'test' / 'api_logic_server_behave' / 'logs' / 'delivery_modes.json'
+
+def record_mode(context, mode, broker=None):
+    """Remember how this scenario's message was delivered, for the traceability report."""
+    modes = json.loads(MODE_FILE.read_text()) if MODE_FILE.is_file() else {}
+    modes[f'{context.feature.name} / {context.scenario.name}'] = {"mode": mode, **({"broker": broker} if broker else {})}
+    MODE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    MODE_FILE.write_text(json.dumps(modes, indent=2))
+
+def wait_for_blob(account, timeout=20):
+    """Live Kafka is asynchronous: poll until the blob for this (unique) account is processed or has error_text."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        r = requests.get(f'{BASE}/api/XyzMessage/', params={"sort": "-id", "page[limit]": 30}, headers=headers())
+        for each in r.json()['data']:
+            a = each['attributes']
+            if account in (a.get('payload') or '') and (a.get('is_processed') or a.get('error_text')):
+                return int(each['id']), a
+        time.sleep(0.5)
+    return None, None
+
+def deliver_message(context, account, mode='auto'):
+    """Send the message through the debug endpoint; set context.consumed / blob_id / error_text the same way for both modes."""
+    path = write_message(account)                       # a file the SERVER can read (path relative to the project root)
+    r = requests.get(f'{BASE}/consume_debug/xyz', params={"file": path, "mode": mode})
+    body = r.json()
+    context.consumed, context.blob_id, context.error_text = False, None, None
+    if r.status_code == 409:                            # live required, not available: NOT VERIFIED, not failed
+        context.scenario.skip(body.get('error', 'live Kafka is not available'))
+        return
+    record_mode(context, body['mode'], body.get('broker'))
+    if body['mode'] == 'simulated':
+        context.consumed, context.blob_id, context.error_text = bool(body.get('success')), body.get('blob_id'), body.get('error')
+        return
+    assert body.get('published'), f'live publish failed: {r.text}'
+    context.blob_id, a = wait_for_blob(account)
+    assert context.blob_id, ('no processed blob for ' + account + ' within 20 s - was the server started AFTER Kafka, '
+                             'with KAFKA_SERVER and a unique KAFKA_CONSUMER_GROUP?')
+    context.error_text = a.get('error_text')
+    context.consumed = bool(a.get('is_processed')) and not context.error_text
+```
+
+**Rules for these scenarios:**
+- **Neutral, honest wording**: "When an inbound order message for that customer is delivered to topic xyz". Never "consumed from topic" for a step that may be simulated.
+- **Then steps assert on the normalized result** (`context.consumed`, `context.error_text`, the blob via the API), so they hold in both modes. A rejected message: `error_text` (live) or the response's `error` (simulated) carries the rule's message.
+- **Unique data per scenario** (Rule #0): the account name is timestamped, so a live replay after a server restart cannot disturb the assertions.
+- **One live-only scenario** for what simulated cannot show: a rejected message leaves a blob with `is_processed = 0` and `error_text` set. Its When step calls `deliver_message(..., mode='live')`, which skips when Kafka is not available. Name it "(live Kafka only)".
+- **`features/environment.py` already exists** (shared by every project; do not regenerate or replace it). It times each
+  scenario (`logs/scenario_times.json`, shown next to each scenario in the report) and clears the previous run's records,
+  including `logs/delivery_modes.json`, so the report reads only this run. `behave_run.py` writes the whole run's time
+  into `behave.log` ("Behave run time: N s"); the report shows it in At a Glance.
+
+- **The report reads `logs/delivery_modes.json`** and labels the Kafka rows "simulated (no broker)" or "live", and a skipped live-only scenario shows as skipped, not passed. Do not hide a skip: skipped means "not verified".
+- **Outbound (publish) messages** are checked from the server log (`publish_kafka_message` logs the message JSON whether or not a broker answers), or read back from the topic when live. The log check proves the message content, not delivery.
 
 ## The Critical Rules (Read FIRST!)
 
