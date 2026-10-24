@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Compatibility shim: the report generator is now requirements_traceability_report.py
-(it writes reports/Requirements Traceability Report.md). This file keeps the old command working:
+(it writes docs/requirements/Requirements Traceability Report.md). This file keeps the old command working:
 
     python behave_logic_report.py run          # same as: python requirements_traceability_report.py run
 """

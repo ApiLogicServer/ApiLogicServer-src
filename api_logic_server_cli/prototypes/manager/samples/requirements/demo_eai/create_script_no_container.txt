@@ -26,7 +26,7 @@ In the Kafka Subscribe Order Integration scenarios, word the delivery step to sa
 run the tests in demo_eai
 
 run the requirements traceability report in demo_eai
-When the report is done, print this verbatim: "Open the report: demo_eai/test/api_logic_server_behave/reports/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
+When the report is done, print this verbatim: "Open the report: demo_eai/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
 
 verify demo_eai without Kafka: start the server, then
 - run the debug endpoint's curl command (see the docstring of api/api_discovery/order_b2b_kafka_consume_debug.py; with no broker it simulates) and confirm a processed blob and a new order

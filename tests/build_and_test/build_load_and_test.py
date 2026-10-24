@@ -762,7 +762,7 @@ def verify_behave_report(project_copy: Path) -> None:
     so a report that failed to generate - or was lost - would otherwise go unnoticed).
     Raises if the report is missing/empty, lacks its two key sections, or flags failing scenarios.
     """
-    report = project_copy / 'test' / 'api_logic_server_behave' / 'reports' / 'Requirements Traceability Report.md'
+    report = project_copy / 'docs' / 'requirements' / 'Requirements Traceability Report.md'
     if not report.is_file() or report.stat().st_size == 0:
         raise Exception(f'Requirements Traceability Report was not generated (missing or empty): {report}')
     text = report.read_text(encoding='utf-8')

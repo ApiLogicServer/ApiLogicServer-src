@@ -47,6 +47,11 @@
 	// registered yet at postAttachCommand time anyway).
 	"forwardPorts": [5656],
 
+	// EXPERIMENT (untested, not active): give the Codespace a container runtime, so the full demo scripts
+	// (Keycloak, live Kafka) can run here too. Uncomment, let the prebuild rebuild, then try create_script.txt.
+	// Until that is verified, the README points Codespaces users at create_script_no_container.txt.
+	// "features": { "ghcr.io/devcontainers/features/docker-in-docker:2": {} },
+
 	// Uncomment the next line to run commands after the container is created - for example installing curl.
 	// "postCreateCommand": "apt-get update && apt-get install -y curl",
 

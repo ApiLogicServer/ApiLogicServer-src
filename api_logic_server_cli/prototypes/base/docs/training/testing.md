@@ -89,8 +89,8 @@ Step 1. cd test/api_logic_server_behave && python requirements_traceability_repo
         The server does NOT need to be running. Tests do not need to have been run: without
         logs/behave.log the report still builds the requirements, rules, data model, security and
         messages sections; it just has no test results.
-Step 2. Tell the user the output: test/api_logic_server_behave/reports/Requirements Traceability Report.md
-        (open it in the IDE's markdown preview, or: open "reports/Requirements Traceability Report.md").
+Step 2. Tell the user the output: docs/requirements/Requirements Traceability Report.md
+        (open it in the IDE's markdown preview, or: open "docs/requirements/Requirements Traceability Report.md").
 Step 3. Summarize from the generator's output / the report's header: rules, scenarios, passed/failed,
         any "test scenarios FAILED" banner, and any requirement gaps listed under Coverage summary.
 Step 4. If logs/behave.log is old relative to the logic or tests, say so: "results are from the last run".

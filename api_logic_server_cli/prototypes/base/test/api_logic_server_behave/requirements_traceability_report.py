@@ -63,7 +63,8 @@ Changelog:
   2.5 - The template is a skeleton of the report: same order, the report's own static text (including its folds) as
         <!-- text: name --> blocks, and <!-- generated: ... --> lines where generated content goes. Table notes
         are now a visible one-line cue plus a fold with the detail.
-  2.4 - The script is requirements_traceability_report.py, writing reports/Requirements Traceability Report.md and
+  2.4 - The script is requirements_traceability_report.py, writing docs/requirements/Requirements Traceability Report.md (was reports/; links are
+        relative to the report's folder) and
         reading reports/Requirements Traceability Report Template.md. behave_logic_report.py remains as a
         shim that runs it, and the older Template / Intro file names are still read.
   2.3 - Renamed "Requirements Traceability Report" (first section: "Requirements Coverage"). The template file
@@ -2434,7 +2435,7 @@ def cli(ctx):
               default=f'logs/scenario_logic_logs',
               help="Per-scenario logic logs")
 @click.option('--wiki',
-              default=f'reports/Requirements Traceability Report.md',
+              default=f'../../docs/requirements/Requirements Traceability Report.md',  # all links are computed relative to this folder
               help="Report to write")
 @click.option('--template', '--prepend_wiki', 'prepend_wiki',
               default=f'reports/Requirements Traceability Report Template.md',

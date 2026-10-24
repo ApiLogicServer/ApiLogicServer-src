@@ -13,7 +13,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/api_logic_server_behave/requirements_traceability_report.py" />
-    <option name="PARAMETERS" value="run --template=reports/&quot;Requirements Traceability Report Template.md&quot; --wiki=reports/&quot;Requirements Traceability Report.md&quot;" />
+    <option name="PARAMETERS" value="run --template=reports/&quot;Requirements Traceability Report Template.md&quot; --wiki=../../docs/requirements/&quot;Requirements Traceability Report.md&quot;" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

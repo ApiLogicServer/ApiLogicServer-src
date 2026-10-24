@@ -415,7 +415,7 @@ To create a comprehensive markdown report showing which rules executed in each s
 python requirements_traceability_report.py run
 ```
 
-This generates `reports/Requirements Traceability Report.md` containing:
+This generates `docs/requirements/Requirements Traceability Report.md` containing:
 - **Test Scenarios**: All executed scenarios with descriptions
 - **Logic Documentation**: Step docstrings explaining what each test validates
 - **Rules Fired**: Which business logic rules executed during each scenario

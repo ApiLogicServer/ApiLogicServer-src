@@ -207,7 +207,7 @@
             "justMyCode": false,            
             "args": ["run"
                 ,"--template=reports/Requirements Traceability Report Template.md"
-                ,"--wiki=reports/Requirements Traceability Report.md"
+                ,"--wiki=../../docs/requirements/Requirements Traceability Report.md"
             ],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"

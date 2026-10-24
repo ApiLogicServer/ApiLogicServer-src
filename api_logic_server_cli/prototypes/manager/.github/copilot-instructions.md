@@ -23,8 +23,14 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.29
+version: 2.31
 changelog:
+  - 2.31 (Oct 24 2026) - Level 1: the final line now states why the verdict is DEGRADED or FAIL; the script runs its live Kafka step
+    right after the build, before the tests, so the tests and the traceability report run with Kafka enabled (no live-only skip).
+  - 2.30 (Oct 24 2026) - Added the "run a level N diagnostic" command; level 1 runs the demo_eai script end to end
+    (create, build from requirements, diagrams, tests, report, Kafka verification) and writes a timed report with a
+    PASS / DEGRADED / FAIL verdict. Motivation: a Codespace run of this script took 25 minutes because the AI improvised
+    around a missing container runtime; a repeatable, timed, improvisation-reporting run makes that visible.
   - 2.29 (Oct 21 2026) - STEP 5c2 named the wrong file for demo-named projects. It said to
     replace PROJECT_SUMMARY_PLACEHOLDER in `<name>/readme.md`, but for projects whose name
     matches a Manager-readme.md prefix (`basic_demo*`, `demo_*`, ...) `create_readme.py`
@@ -255,6 +261,54 @@ genai-logic start --clean --no-open-manager
 Report the command's output; do not summarize or paraphrase it.
 
 ---
+
+**WHEN USER SAYS: "run a level 1 diagnostic"** (or "level 1 diagnostic"; general form: "run a level N diagnostic")
+**PURPOSE**: an end-to-end check that this Manager, its context engineering (CE) and the engine work together: build a
+complete system from requirements, test it, and trace it — timed, with every deviation from the script reported.
+
+**Levels** (only these are defined; for any other N, list this table and stop):
+
+| Level | What it runs |
+|---|---|
+| 1 | The EAI demo, `demo_eai`: paste `samples/requirements/demo_eai/create_script.txt` |
+
+**LEVEL 1 — MANDATORY SEQUENCE:**
+
+```
+STEP 0: Guard. If `demo_eai/` already exists at the Manager root, STOP and ask the user: "demo_eai/ exists. Move it
+        aside to demo_eai_<YYYYMMDD-HHMM>/ and continue?" Never delete it, never run into it.
+        Record the start time:  date +%H:%M:%S   (and the Manager's version, from `genai-logic` output).
+STEP 1: Read samples/requirements/demo_eai/create_script.txt and follow it exactly as if the user had pasted it:
+        each "!" line is a shell command (from the Manager root, venv active), each plain line an instruction, in order,
+        including its "print this verbatim" lines. Its first line is a container-runtime preflight.
+        - Preflight passes: this is a FULL run.
+        - Preflight says STOP (no Docker/Podman): say so in one line, then follow
+          samples/requirements/demo_eai/create_script_no_container.txt instead. This is a NO-CONTAINER run; the
+          diagnostic is then DEGRADED at best (live Kafka and Keycloak were not exercised).
+STEP 2: Stay blind. Read only the script, the files it names (docs/requirements/demo_eai/*) and the project CE it
+        loads. Do NOT read other samples/ projects (basic_demo_eai etc.): the diagnostic checks what the CE alone
+        produces, and copying a reference implementation would hide CE gaps.
+STEP 3: Time every script step: run `date +%H:%M:%S` when each one starts and ends (create, requirements, build,
+        diagrams, tests, run tests, report, Kafka verification). Do not estimate times.
+STEP 4: Do not improvise silently. If you have to do anything the script does not say (install something, start a
+        container, change a config value, work around an error, skip a step), do the minimum, and write it down
+        (what, why, how long it cost). Never download or install software unless the script says to.
+STEP 5: Write the report to demo_eai/docs/requirements/level1_diagnostic.md and print its verdict line (format below).
+```
+
+**THE REPORT** (`demo_eai/docs/requirements/level1_diagnostic.md`) has these sections:
+1. **Run**: date, Manager version, mode (FULL or NO-CONTAINER, and why), total wall time.
+2. **Steps**: a table of script step, start, end, duration, status (✅ done as written / ⚠ done with a deviation / ❌ failed or skipped).
+3. **Results**: from Behave and the Requirements Traceability Report: scenarios passed / failed / skipped, requirements implemented and tested, the report's Kafka line (simulated or live), the ad-libs 🔴 items count.
+4. **Deviations**: every improvisation or workaround from STEP 4 (or "None"). This is the section that matters most.
+5. **CE files read**: the CE and training files actually loaded, in order (the same self-report as STEP 5d of Method 4; do not open files only to list them).
+6. **Verdict**:
+   - **PASS**: FULL run, every step ✅, all scenarios pass, none skipped, no deviations.
+   - **DEGRADED**: all scenarios that ran pass, but it was a NO-CONTAINER run, or a step was skipped, or deviations were needed.
+   - **FAIL**: a scenario failed, the server would not start, or a step the script requires could not be completed.
+
+Finish by printing exactly one line: `Level 1 diagnostic: <PASS|DEGRADED|FAIL> in <N> min (<FULL|NO-CONTAINER>) - report: demo_eai/docs/requirements/level1_diagnostic.md`
+For DEGRADED or FAIL, put the reason in the line, in a few words, before `in <N> min`: `Level 1 diagnostic: DEGRADED (NO-CONTAINER run; 2 deviations) in 9 min (NO-CONTAINER) - report: ...`. The reason is the first condition from the Verdict rules that applies, plus the number of deviations.
 
 ## ⚠️ PATH RULE for Manager root
 
