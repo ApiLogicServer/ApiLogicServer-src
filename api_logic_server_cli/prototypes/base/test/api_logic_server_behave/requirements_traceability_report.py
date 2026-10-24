@@ -41,6 +41,11 @@ Tips
 * for tab: & emsp;
 
 Changelog:
+  2.12 - Messages and APIs now lists custom API methods (@jsonapi_rpc, served at /api/<Class>/<method>) and the EAI debug
+        endpoints (register_consume_debug / register_queue_reset in the project's thin debug file); before, only
+        @app.route functions were found, so a project whose API is a jsonapi_rpc class showed "0 HTTP endpoints". A use-case
+        folder's requirements.md is no longer counted as another requirement when its Feature lines are already in a numbered
+        section (demo_eai reported 8 requirements; there are 5). Found by the level 1 diagnostic (Oct 24 2026).
   2.11 - Run time. behave_run.py writes "Behave run time: N s" into the log and features/environment.py records each
         scenario's seconds (logs/scenario_times.json). The report shows the run's time in At a Glance, the Coverage
         summary and the Tests and Results line, and each scenario's time next to its result.
@@ -97,7 +102,7 @@ Changelog:
 
 """
 
-__version__ = "2.11"
+__version__ = "2.12"
 
 tab = "&emsp;"
 behave_debug_info = " # "
@@ -636,7 +641,15 @@ def parse_requirements(root: Path) -> list:
             if not item.get("text"):
                 item["text"] = _requirement_text(text)
             item["sources"].append(rel)
-    return sorted(items.values(), key=lambda i: (i["num"] is None, i["num"] or 0, i["title"]))
+    # A use-case folder's requirements.md is the verbatim excerpt that anchors its logic file; when its Feature lines are
+    # all in a numbered section, it is the same requirement, not another one (it would be counted twice).
+    numbered_features = set()
+    for each in items.values():
+        if each["num"] is not None:
+            numbered_features |= each["features"]
+    kept = [each for each in items.values()
+            if not (each["num"] is None and each["features"] and each["features"] <= numbered_features)]
+    return sorted(kept, key=lambda i: (i["num"] is None, i["num"] or 0, i["title"]))
 
 
 def implementation_files(root: Path) -> list:
@@ -1391,6 +1404,42 @@ def collect_messages(root: Path, rules: list, report_dir: Path) -> list:
                     rows.append({"direction": "in", "channel": "HTTP", "name": f"{methods} {dec.args[0].value}",
                                  "handler": f"{fn.name}()", "desc": _doc1(fn) or "(no docstring)",
                                  "tables": "", "shape": None, "file": _rel(each, root)})
+        # custom API methods: @jsonapi_rpc on a safrs class method is served at /api/<Class>/<method>
+        for cls in (n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)):
+            for fn in (n for n in cls.body if isinstance(n, ast.FunctionDef)):
+                for dec in fn.decorator_list:
+                    target = dec.func if isinstance(dec, ast.Call) else dec
+                    called = target.id if isinstance(target, ast.Name) else \
+                        target.attr if isinstance(target, ast.Attribute) else ""
+                    if called != "jsonapi_rpc":
+                        continue
+                    methods = "POST"
+                    for kw in (dec.keywords if isinstance(dec, ast.Call) else []):
+                        if kw.arg == "http_methods":
+                            methods = ",".join(_seg(src, kw.value).strip("[]\"' ").replace("'", "").split(","))
+                    rows.append({"direction": "in", "channel": "HTTP", "name": f"{methods} /api/{cls.name}/{fn.name}",
+                                 "handler": f"{fn.name}()", "desc": _doc1(cls) or _doc1(fn) or "(no docstring)",
+                                 "tables": "", "shape": None, "file": _rel(each, root)})
+        # EAI debug endpoints: registered inside integration/system/EaiDebug.py, so the project file has no route decorator
+        debug = {"register_consume_debug": ("topic", "GET /consume_debug/{key}",
+                                            "EAI debug (development only, no authentication): sends the message in ?file= "
+                                            "to the topic, live through Kafka or simulated"),
+                 "register_queue_reset": ("name", "POST /consume_debug/{key}/reset",
+                                          "EAI debug (development only, destructive): purges the messages in the "
+                                          "pipeline's topics")}
+        for call in (n for n in ast.walk(tree) if isinstance(n, ast.Call)):
+            called = call.func.id if isinstance(call.func, ast.Name) else \
+                call.func.attr if isinstance(call.func, ast.Attribute) else ""
+            if called not in debug:
+                continue
+            arg_name, route, desc = debug[called]
+            given = {kw.arg: kw.value for kw in call.keywords}.get(arg_name)
+            if given is None and len(call.args) > 1:
+                given = call.args[1]            # register_*(app, <topic or name>, ...)
+            if isinstance(given, ast.Constant) and isinstance(given.value, str):
+                rows.append({"direction": "in", "channel": "HTTP", "name": route.format(key=given.value),
+                             "handler": f"{called}()", "desc": desc,
+                             "tables": "", "shape": None, "file": _rel(each, root)})
     return rows
 
 

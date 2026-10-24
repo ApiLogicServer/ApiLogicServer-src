@@ -1,4 +1,5 @@
 ---
+version: 3.52 - 10/24/26 - B2B API template: a rejected order now raises safrs.ValidationError (HTTP 400). The template returned `{...}, 400`, which jsonapi_rpc wraps in an HTTP 200 response, so an over-limit partner order looked accepted (found by the level 1 diagnostic on demo_eai).
 version: 3.51 - 10/23/26 - Executable Requirements STEP 6: added a checklist item requiring a verbatim `Feature:` docstring in NON-LOGIC implementation files (custom API, Kafka handlers/mappers, security) at write time. The traceability report only links a requirement to files carrying its Feature line, so rule-less requirements showed as "not implemented" until docstrings were added after the first report - which edited source after the test run and forced a server restart, test re-run and report regeneration (demo_eai, Oct 2026). Lists the exact globs the report scans (integration/row_dict_maps is not one).
 version: 3.50 - 10/20/26 - New triggers "run the tests" and "run the behave report" (also "run the behave
 tests"): the assistant now starts the server if needed, runs behave_run.py --outfile=logs/behave.log, stops a
@@ -3136,12 +3137,14 @@ class OrderB2B(safrs.JABase):  # CRITICAL: name this EXACTLY the desired URL end
         except Exception as e:
             app_logger.error(f"OrderB2B: Error creating order: {str(e)}")
             session.rollback()
-            return {"error": "Failed to create B2B order", "details": str(e)}, 400
+            # raise, do NOT `return {...}, 400`: under jsonapi_rpc a returned tuple is wrapped in an HTTP 200 response,
+            # so a rejected order would look accepted to the partner. ValidationError is answered with HTTP 400.
+            raise safrs.ValidationError(f"Failed to create B2B order: {e}")
 ```
 
 **IMPORTANT**: The project includes a working B2B integration example:
 - **API Endpoint**: `OrderB2BEndPoint.OrderB2B` - Creates orders from external partner format
-- **Error Handling**: Proper exception handling with session rollback for failed operations
+- **Error Handling**: session rollback, then `raise safrs.ValidationError(...)` so a rejected order answers HTTP 400 (a returned `{...}, 400` tuple reaches the partner as HTTP 200)
 - **Business Logic**: Automatic inheritance of all LogicBank rules (pricing, calculations, validation)
 - **Testing**: Comprehensive test suite demonstrating success and error scenarios
 - **Documentation**: Professional Swagger docs with YAML examples using real database data

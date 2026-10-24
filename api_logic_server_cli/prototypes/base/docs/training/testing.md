@@ -580,6 +580,10 @@ def step_impl(context):
 ```
 
 ### Rule #7: Custom API Response Handling ⚠️ NEW
+A rejected request (a rule or constraint fails, an unknown Account) answers **HTTP 400** with a JSON:API body
+`{"errors": [{"title": "Validation Error: ...", "code": "400"}]}`, not HTTP 200 with an error inside it. Assert
+`r.status_code == 400` and look for the rule's message in `r.text`.
+
 ```python
 # Phase 2 APIs may return different formats - handle both!
 r = requests.post(url=api_uri, json=args, headers=get_headers())
