@@ -41,6 +41,9 @@ Tips
 * for tab: & emsp;
 
 Changelog:
+  2.13 - The Security row of At a Glance names the authentication provider ("enabled (SQL provider)" or "(Keycloak
+        provider)"), read from SECURITY_PROVIDER (environment, config/default.env, else config/config.py). With the Kafka
+        row, it shows at a glance whether a run used containers (Keycloak, live Kafka) or ran degraded (SQL, simulated).
   2.12 - Messages and APIs now lists custom API methods (@jsonapi_rpc, served at /api/<Class>/<method>) and the EAI debug
         endpoints (register_consume_debug / register_queue_reset in the project's thin debug file); before, only
         @app.route functions were found, so a project whose API is a jsonapi_rpc class showed "0 HTTP endpoints". A use-case
@@ -102,7 +105,7 @@ Changelog:
 
 """
 
-__version__ = "2.12"
+__version__ = "2.13"
 
 tab = "&emsp;"
 behave_debug_info = " # "
@@ -1231,6 +1234,26 @@ def _security_enabled(root: Path) -> bool:
     return (m.group(1).lower() in ("true", "yes", "1")) if m else False
 
 
+def _security_provider(root: Path) -> str:
+    """ which authentication provider the project uses ("Keycloak" or "SQL"), or "" if it cannot be told.
+        Mirrors config/config.py: the class used is the KC_ alias if the SECURITY_PROVIDER string names keycloak
+        (environment, config/default.env, else the literal in config.py), else the SQL_ alias.
+        `add-auth --provider-type=X` rewrites the import lines, not the literal, so the imports decide. """
+    cfg = _read(root / "config" / "config.py")
+    value = os.environ.get("SECURITY_PROVIDER")
+    if value is None:
+        m = re.search(r'^\s*SECURITY_PROVIDER\s*=\s*(\w+)', _read(root / "config" / "default.env"), re.M)
+        value = m.group(1) if m else None
+    if value is None:
+        m = re.search(r"""^\s*SECURITY_PROVIDER\s*=\s*(?:os\.getenv\(\s*['"]SECURITY_PROVIDER['"]\s*,\s*)?['"](\w+)['"]""", cfg, re.M)
+        value = m.group(1) if m else ""
+    alias = "KC_" if "keycloak" in value.lower() else "SQL_"
+    m = re.search(r'^\s*from security\.authentication_provider\.(\w+)\.auth_provider import '
+                  r'Authentication_Provider as ' + alias + 'Authentication_Provider', cfg, re.M)
+    module = m.group(1).lower() if m else value.strip().lower()
+    return "Keycloak" if "keycloak" in module else "SQL" if module in ("sql", "sqlite") else ""
+
+
 def security_summary(root: Path) -> list:
     """ one line per Grant, for the requirement side-by-side """
     parsed = _parse_security(root)
@@ -2327,7 +2350,9 @@ def scorecard(root: Path, msg_rows: list, behave_log: str) -> list:
         lines.append(f"| Rules shown running in a test log | {f['seen'][0]} of {f['seen'][1]} |")
     parsed = _parse_security(root)
     if parsed:
-        lines.append(f"| Security | {'enabled' if _security_enabled(root) else 'not enabled'}; "
+        provider = _security_provider(root) if _security_enabled(root) else ""
+        lines.append(f"| Security | {'enabled' if _security_enabled(root) else 'not enabled'}"
+                     f"{f' ({provider} provider)' if provider else ''}; "
                      f"{len(parsed[0])} role(s), {len(parsed[1])} row-level grant(s) |")
     kafka_in = sum(1 for m in msg_rows if m["channel"] == "Kafka" and m["direction"] == "in")
     kafka_out = sum(1 for m in msg_rows if m["channel"] == "Kafka" and m["direction"] == "out")

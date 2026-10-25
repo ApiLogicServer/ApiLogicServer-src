@@ -1,35 +1,23 @@
-This script uses no containers. Do not start or install Docker, Podman, Keycloak or a Kafka broker, and do not download any software. If something seems to need one, stop and tell me.
+// create_script_no_container.txt: the opt-out. It never uses Docker or Podman, even when one is running.
+// Security uses the SQL authentication provider (no Keycloak); row-level security is still tested.
+// Kafka runs in fallback mode (KAFKA_SERVER unset): subscribe is tested through the debug endpoint
+// (/consume_debug/order_b2b, simulated); live Kafka delivery is not verified.
+// The main script, create_script.txt, does the same by itself when no container runtime is running.
+Do not use Docker or Podman, even if one is running: continue in degraded mode (SQL security, simulated Kafka) and tell me so up front.
 
-!genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite
+create project demo_eai from samples/dbs/basic_demo.sqlite
 
-!cd demo_eai && cp -r ../samples/requirements/demo_eai/docs .
+add security (degrade to SQL if Keycloak is not available)
 
-!cd demo_eai && genai-logic add-auth --provider-type=sql
+implement requirements samples/requirements/demo_eai/docs/requirements/demo_eai
 
-Leave KAFKA_SERVER and KAFKA_CONSUMER_GROUP unset (commented out) in demo_eai/config/default.env, so Kafka runs in fallback mode, and keep APILOGICPROJECT_CONSUME_DEBUG enabled. Then show the effective settings:
-!cd demo_eai && grep -n -E "SECURITY_ENABLED|KAFKA_SERVER|KAFKA_CONSUMER_GROUP|CONSUME_DEBUG" config/default.env
+verify message subscriptions (all topics)
 
-implement requirements docs/requirements/demo_eai in project demo_eai
-Generate every artifact the Kafka subscribe guide (eai_subscribe.md) lists, including the reset script and the test publisher, even when no broker is available: they are files, not containers.
-When the build is done, print this verbatim: "Built. Scan these two files now: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made)."
+create logic diagram for each requirement (skip if graphviz is not available)
 
-create logic diagram for each requirement in demo_eai. If `dot -V` fails, skip this step, say so in one line, and do not install anything.
+create tests from rules, using default names
 
-create tests from rules in demo_eai, one Feature per requirement, named exactly:
-- Check Credit
-- B2B Order Integration
-- Kafka Subscribe Order Integration
-- Kafka Publish Shipping Notification
-- Row-Level Security
-In the Kafka Subscribe Order Integration scenarios, word the delivery step to say it goes through /consume_debug with no broker (for example: "is submitted through /consume_debug, simulating topic order_b2b with no broker"), not "consumed from topic".
+run the tests
 
-run the tests in demo_eai
-
-run the requirements traceability report in demo_eai
-When the report is done, print this verbatim: "Open the report: demo_eai/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
-
-verify demo_eai without Kafka: start the server, then
-- run the debug endpoint's curl command (see the docstring of api/api_discovery/order_b2b_kafka_consume_debug.py; with no broker it simulates) and confirm a processed blob and a new order
-- ship that order, and confirm in the server log a publish line for topic order_shipping carrying the order_shipping message shape (with the "Kafka not enabled" note)
-stop the server when done
-When the verification is done, print this verbatim: "Built without containers. Kafka: debug path (no broker). Security: SQL provider. Not verified: live Kafka delivery."
+run the requirements traceability report
+When the report is done, print this verbatim: "Next: scan these two files: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made). Then open the report: demo_eai/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."

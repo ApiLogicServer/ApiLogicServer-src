@@ -23,8 +23,9 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.31
+version: 2.32
 changelog:
+  - 2.32 (Oct 24 2026) - New "Environment-Aware Steps" section: degrade (SQL security, simulated Kafka) instead of stopping when no container runtime runs, and say so up front; "add security" picks Keycloak or SQL; never install or download software; "create project X from <db>" is Method 1. From the first blind run of the clean demo_eai script, where these were done implicitly. create_script.txt is now that adaptive script (the level 1 diagnostic runs it).
   - 2.31 (Oct 24 2026) - Level 1: the final line now states why the verdict is DEGRADED or FAIL; the script runs its live Kafka step
     right after the build, before the tests, so the tests and the traceability report run with Kafka enabled (no live-only skip).
   - 2.30 (Oct 24 2026) - Added the "run a level N diagnostic" command; level 1 runs the demo_eai script end to end
@@ -169,6 +170,8 @@ User: "load .github/.copilot-instructions.md"
 
 ## Technical Reference (For AI - Do Not Present Unless Asked)
 
+**Pasted scripts and prompts:** a line starting with `//` is a note for the human reader. Read it for context, never execute it, and do not mention needing to act on it. This holds for every script (for example `create_script_no_container.txt` documents itself this way), not only Method 4 (see its STEP 0).
+
 <br>
 
 ## 🎯 Active Project Context
@@ -279,12 +282,11 @@ STEP 0: Guard. If `demo_eai/` already exists at the Manager root, STOP and ask t
         aside to demo_eai_<YYYYMMDD-HHMM>/ and continue?" Never delete it, never run into it.
         Record the start time:  date +%H:%M:%S   (and the Manager's version, from `genai-logic` output).
 STEP 1: Read samples/requirements/demo_eai/create_script.txt and follow it exactly as if the user had pasted it:
-        each "!" line is a shell command (from the Manager root, venv active), each plain line an instruction, in order,
-        including its "print this verbatim" lines. Its first line is a container-runtime preflight.
-        - Preflight passes: this is a FULL run.
-        - Preflight says STOP (no Docker/Podman): say so in one line, then follow
-          samples/requirements/demo_eai/create_script_no_container.txt instead. This is a NO-CONTAINER run; the
-          diagnostic is then DEGRADED at best (live Kafka and Keycloak were not exercised).
+        each plain line is an instruction, in order, including its "print this verbatim" lines (from the Manager
+        root, venv active). Its first line adapts to the container runtime:
+        - Docker or Podman running: this is a FULL run.
+        - Neither: the script says so up front and runs in degraded mode (SQL security, simulated Kafka). This is a
+          NO-CONTAINER run; the diagnostic is then DEGRADED at best (live Kafka and Keycloak were not exercised).
 STEP 2: Stay blind. Read only the script, the files it names (docs/requirements/demo_eai/*) and the project CE it
         loads. Do NOT read other samples/ projects (basic_demo_eai etc.): the diagnostic checks what the CE alone
         produces, and copying a reference implementation would hide CE gaps.
@@ -309,6 +311,34 @@ STEP 5: Write the report to demo_eai/docs/requirements/level1_diagnostic.md and 
 
 Finish by printing exactly one line: `Level 1 diagnostic: <PASS|DEGRADED|FAIL> in <N> min (<FULL|NO-CONTAINER>) - report: demo_eai/docs/requirements/level1_diagnostic.md`
 For DEGRADED or FAIL, put the reason in the line, in a few words, before `in <N> min`: `Level 1 diagnostic: DEGRADED (NO-CONTAINER run; 2 deviations) in 9 min (NO-CONTAINER) - report: ...`. The reason is the first condition from the Verdict rules that applies, plus the number of deviations.
+
+## 🧭 Environment-Aware Steps: degrade, don't stop
+
+Applies to scripts and requests that create and build a project (for example the demo_eai scripts).
+
+These are DEFAULTS: an explicit instruction in the script or request wins (for example `create_script_no_container.txt` opts out of containers even when one is running).
+
+**Container runtime.** Before a step that needs one, check `docker info`, then `podman info`.
+- Docker or Podman running: use it (Podman: `podman compose` wherever a script says `docker compose`).
+- Neither: continue in DEGRADED MODE and say so up front, in one line: SQL authentication, Kafka simulated through the
+  debug endpoint. Do not stop, and do not start, install or download anything. The user can add a container later with
+  no code changes (Kafka: set `KAFKA_SERVER` and restart; security: `add-auth --provider-type=keycloak`).
+- The user said not to use containers (for example `create_script_no_container.txt`): the SAME degraded mode, even
+  when a runtime is running. Then use no container at all: not `docker compose`, and not a Keycloak or Kafka broker
+  that happens to be running already. Say so up front.
+
+**"add security"** (no provider named): with a container runtime running and the user not having opted out of containers, Keycloak: `cd <project>/devops/keycloak && docker compose up -d`,
+then `cd <project> && genai-logic add-auth --provider-type=keycloak --db-url=localhost`. Otherwise SQL:
+`cd <project> && genai-logic add-auth --provider-type=sql` (never pass `--db-url` with `sql`). Say which one you used in one line.
+
+**Never install or download software** (graphviz, Docker, Kafka, a JDK, ...) unless the user's text says to. If a step
+needs something that is missing, skip it with a one-line note ("skip if ... is not available" in a script is that
+permission) or stop and ask.
+
+**"create project <name> from <database>"** (an existing database is named): Method 1 below
+(`genai-logic create --project_name=<name> --db_url=sqlite:///<database>`), not Method 4.
+
+---
 
 ## ⚠️ PATH RULE for Manager root
 

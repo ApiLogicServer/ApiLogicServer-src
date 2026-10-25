@@ -610,7 +610,7 @@ Consumer 1, the bridge and Consumer 2 never run when simulated. Say so wherever 
 *Live Kafka:*
 6. Start Kafka (idempotent): `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d` (Podman: `podman compose`).
 7. Set `KAFKA_SERVER` and a project-unique `KAFKA_CONSUMER_GROUP` in `config/default.env` (or as environment variables). The
-   server must be (re)started AFTER Kafka is up. The default consumer settings are enough for local tests; if you set
+   server must be (re)started AFTER Kafka is up. The default consumer settings (config/config.py: earliest offsets, no auto-commit, `session.timeout.ms` 6000) are enough for local tests; because offsets are never committed, every server start replays the whole topic, so reset the topics before the first live start (see "Verify Message Subscriptions" in the project CE); if you set
    `APILOGICPROJECT_KAFKA_CONSUMER` yourself you own all keys (use the full form):
     ```
     KAFKA_SERVER = localhost:9092

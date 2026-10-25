@@ -355,10 +355,10 @@ def main():
             "You're already running in GitHub Codespaces — a cloud VS Code environment "
             "in your browser. Nothing to install. (Use Chrome or Edge — Safari has known "
             "compatibility issues with VS Code in the browser.)\n\n"
-            "**No Docker or Podman in a Codespace.** For the EAI demo, paste "
-            "[samples/requirements/demo_eai/create_script_no_container.txt]"
-            "(samples/requirements/demo_eai/create_script_no_container.txt) instead of `create_script.txt`: "
-            "it uses SQL authentication and tests Kafka through the debug endpoint, and never needs a container.\n"
+            "**No Docker or Podman in a Codespace.** The EAI demo script "
+            "([samples/requirements/demo_eai/create_script.txt](samples/requirements/demo_eai/create_script.txt)) "
+            "notices that, tells you so up front, and runs in degraded mode: SQL authentication, and Kafka tested "
+            "through the debug endpoint. It never needs a container.\n"
         )
         match = sentinel_re.search(readme)
         if not match:

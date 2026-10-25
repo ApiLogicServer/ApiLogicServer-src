@@ -25,6 +25,10 @@ Step 4c. ADD LOGIC LOG INTEGRATION → prt once in Given, does_file_contain in T
 Step 5.  SUGGEST "run the tests" (DO NOT run automatically as part of creating tests)
 ```
 
+**FEATURE NAMES (default):** one Feature per requirement, named exactly as that requirement's `Feature:` line in
+`docs/requirements/<name>/requirements.md` (the Requirements Traceability Report matches tests to requirements on that
+name). A prompt that says "using default names" means exactly this; a list of names in the prompt overrides it.
+
 **CRITICAL PRE-TEST CHECKLIST:**
 - [ ] Step 1c completed? (Custom APIs discovered)
 - [ ] **Database values verified?** (Rule #10: Run SQL to check actual prices/flags)

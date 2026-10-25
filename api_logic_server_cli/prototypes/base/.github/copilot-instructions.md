@@ -1,4 +1,6 @@
 ---
+version: 3.54 - 10/24/26 - Closes the remaining gaps from the blind demo_eai run: default Feature names (testing.md), the quantity>0 / unit_price>0 contradiction (now: asked about as a 🔴 ad-lib, not added silently), undefined-term ambiguity is 🔴 not 🟡, and Executable Requirements STEP 1 copies a requirements dir given from outside the project.
+version: 3.53 - 10/24/26 - From the first blind run of create_script_clean.txt (demo_eai): (1) new "Verify Message Subscriptions" command - topic reset BEFORE the first live start (stale broker messages were replayed as junk orders), Kafka enabled in config only when a broker answers, degraded/simulated otherwise; (2) Executable Requirements HAND-OFF step - print the rules file and ad-libs pointer (or the user's verbatim wording) as its own message right after the build; the run had paraphrased a "print this verbatim" line and skipped it. Also config/config.py: the default Kafka consumer sets session.timeout.ms 6000 (a restart no longer waits ~45 s for the old session; the run saw a 35 s cold join).
 version: 3.52 - 10/24/26 - B2B API template: a rejected order now raises safrs.ValidationError (HTTP 400). The template returned `{...}, 400`, which jsonapi_rpc wraps in an HTTP 200 response, so an over-limit partner order looked accepted (found by the level 1 diagnostic on demo_eai).
 version: 3.51 - 10/23/26 - Executable Requirements STEP 6: added a checklist item requiring a verbatim `Feature:` docstring in NON-LOGIC implementation files (custom API, Kafka handlers/mappers, security) at write time. The traceability report only links a requirement to files carrying its Feature line, so rule-less requirements showed as "not implemented" until docstrings were added after the first report - which edited source after the test run and forced a server restart, test re-run and report regeneration (demo_eai, Oct 2026). Lists the exact globs the report scans (integration/row_dict_maps is not one).
 version: 3.50 - 10/20/26 - New triggers "run the tests" and "run the behave report" (also "run the behave
@@ -619,6 +621,51 @@ STEP 3: Offer to fix each ⚠️ finding
 
 ---
 
+## 📬 Verify Message Subscriptions
+
+**ACTIVATION TRIGGERS:**
+- "verify message subscriptions" / "verify message subscriptions (all topics)"
+- "verify <project> message subscriptions" / "verify the kafka subscribe"
+- Naming one topic narrows it: "verify message subscriptions (order_b2b only)"
+
+**MANDATORY SEQUENCE:**
+
+```
+STEP 1: Find the inbound ENTRY topics: the @bus.handle('<topic>') names in
+        integration/kafka/kafka_subscribe_discovery/*.py, except those ending in _processed (the internal
+        hop between Consumer 1 and Consumer 2). All of them unless the user named one.
+STEP 2: Is a broker available? If the run is DEGRADED (the user opted out of containers, or none are running),
+        verify SIMULATED only (the debug endpoint, mode=simulated) even if a broker answers on localhost, say so,
+        and stop here. Otherwise, if KAFKA_SERVER is unset, check whether one answers (docker ps | grep broker,
+        or localhost:9092). Nothing answers: this is the degraded mode the user was told about; verify
+        SIMULATED only, say so, and stop here.
+        A broker answers: set KAFKA_SERVER=localhost:9092 and a project-unique KAFKA_CONSUMER_GROUP
+        (<project>-group1) in config/default.env, and LEAVE THEM SET (later tests run live because of
+        this). Tell the user you did.
+STEP 3: Stop any running server (restart hygiene), then reset the topics BEFORE the first live start:
+        bash integration/kafka/<topic>_reset.sh (creates the topics if missing).
+        Why: offsets are never committed and the consumer starts at the earliest offset, so every start
+        REPLAYS the whole topic; messages left by earlier projects or runs become junk rows (real case,
+        demo_eai Oct 2026: 3 junk orders and 3 failed lookups on the first live start). The script
+        deletes and recreates those topics on the broker (other projects using the same names lose their
+        messages). With the server already up and Kafka enabled, use the purge instead:
+        curl -X POST http://localhost:5656/consume_debug/<topic>/reset
+STEP 4: Start the server (source ../venv/bin/activate; mkdir -p logs; python api_logic_server_run.py > logs/server_kafka.log 2>&1 &),
+        wait for "Kafka mode: ACTIVE" in logs/als.log.
+STEP 5: For each entry topic send the sample message live with the debug endpoint's curl command
+        (mode=live; see the docstring of api/api_discovery/<topic>_kafka_consume_debug.py), poll the blob
+        table (GET /api/<Blob>/?sort=-id) until is_processed or error_text, up to 60 s, and confirm the
+        domain row (the new Order etc.).
+STEP 6: Stop the server you started and confirm the port is free. Report per topic: live or simulated,
+        the blob id, and the outcome. Anything that failed is reported, not retried silently.
+```
+
+**❌ FORBIDDEN:** starting the server with Kafka enabled before the reset in STEP 3; restoring the project's
+database from a sample to clean up junk rows (reset the topics instead); declaring a topic verified from a
+simulated run when a broker was answering.
+
+---
+
 ## 🧪 Run Tests / Behave Report
 
 **ACTIVATION TRIGGERS:**
@@ -751,6 +798,9 @@ This is Phase 2 of the two-phase Executable Requirements workflow. Phase 1 (infr
 
 ```
 STEP 1: Locate docs/requirements/<name>/ — confirm it exists
+        If the user gave a path OUTSIDE the project (e.g. samples/requirements/<x>/docs/requirements/<name>), copy
+        that directory into the project first (docs/requirements/<name>/): the traceability report and every later
+        step read the requirements from the project's own docs/requirements/. Say you copied it.
 STEP 2: Read README.md if present (narrative context — do NOT implement)
 STEP 3: Read requirements.md — ALL steps, completely, before doing anything else
 STEP 4: Read message_formats/* if present — Kafka topic shapes / field mappings
@@ -869,6 +919,14 @@ STEP 7: Write completed ad-libs report to docs/requirements/<name>/ad-libs.md AN
         exists (STEP 6's per-use-case mandate above). List each logic file and its matching
         requirements.md explicitly before reporting completion — do not end the session with
         logic files that lack their traceability anchor.
+
+        📣 HAND-OFF — in your FINAL message of the run (a mid-run note is easily lost), tell the user where to
+        look: the rules file (the main file in logic/logic_discovery/) and docs/requirements/<name>/ad-libs.md
+        ("the judgment calls the AI made"), and how many items need review. If the user's prompt gives
+        hand-off wording ("print this verbatim: ..."), print exactly that text: verbatim, not paraphrased, and
+        not treated as a to-do for yourself. REAL CASE (demo_eai, Oct 2026, two runs): a prompt said 'When the build
+        is done, print this verbatim: "Built. Scan these two files now: ..."'; both runs went straight on to tool calls
+        and never printed it, while they did print the closing "Open the report" line. Hence the script now closes with one message.
 
 STEP 8: ⛔ MANDATORY BEHAVIORAL VERIFICATION PASS — a SEPARATE pass from STEP 6/7, run AFTER
         all code and the STEP 7 ad-libs report are written, not folded into the same pass that

@@ -72,13 +72,9 @@ Feature: Row-Level Security
 
 ## 6. How to Test
 
-- Test without Kafka (debug endpoint bypasses Kafka entirely):
+- Without Kafka (the debug endpoint runs the same parse-and-save function the consumer uses):
 ```
-curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/demo_eai/message_formats/order_b2b.json"
+curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/demo_eai/message_formats/order_b2b.json&mode=simulated"
 ```
 
-- Kafka is optional. To test with live Kafka:
-  1. Start Docker: `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
-  2. Reset topics: `bash integration/kafka/order_b2b_reset.sh`
-  3. Restart the server (after Docker is up, so it picks up Kafka env vars and subscribes to topics)
-  4. Send a test message using the curl command above
+- With live Kafka: say `verify message subscriptions`. It resets the topics first (messages left on the broker by earlier runs would otherwise be replayed), enables Kafka when a broker answers, sends the sample message live, and confirms the new order.

@@ -48,8 +48,9 @@
 	"forwardPorts": [5656],
 
 	// EXPERIMENT (untested, not active): give the Codespace a container runtime, so the full demo scripts
-	// (Keycloak, live Kafka) can run here too. Uncomment, let the prebuild rebuild, then try create_script.txt.
-	// Until that is verified, the README points Codespaces users at create_script_no_container.txt.
+	// (Keycloak, live Kafka) can run here too. Uncomment, let the prebuild rebuild, then run create_script.txt:
+	// it uses the container runtime when one is running. Until that is verified, create_script.txt runs here in
+	// degraded mode (SQL authentication, simulated Kafka) and says so.
 	// "features": { "ghcr.io/devcontainers/features/docker-in-docker:2": {} },
 
 	// Uncomment the next line to run commands after the container is created - for example installing curl.

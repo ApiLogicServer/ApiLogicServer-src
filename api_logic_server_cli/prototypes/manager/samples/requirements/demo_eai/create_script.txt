@@ -1,32 +1,18 @@
-Before anything else, run `docker info`, and if that fails run `podman info`. If both fail, STOP and tell me to use create_script_no_container.txt instead; do not start, install or download anything. If only podman works, use `podman compose` wherever this script says `docker compose`.
+Check for Docker or Podman. If neither is running, continue in degraded mode (SQL security, simulated Kafka) and tell me so up front.
 
-!genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite
+create project demo_eai from samples/dbs/basic_demo.sqlite
 
-!cd demo_eai && cp -r ../samples/requirements/demo_eai/docs .
+add security (degrade to SQL if Keycloak is not available)
 
-!cd demo_eai/devops/keycloak && docker compose up -d
-!cd demo_eai && genai-logic add-auth --provider-type=keycloak --db-url=localhost
+implement requirements samples/requirements/demo_eai/docs/requirements/demo_eai
 
-implement requirements docs/requirements/demo_eai in project demo_eai
-Generate every artifact the Kafka subscribe guide (eai_subscribe.md) lists, including the reset script and the test publisher, even when no broker is available: they are files, not containers.
-When the build is done, print this verbatim: "Built. Scan these two files now: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made)."
+verify message subscriptions (all topics)
 
-verify demo_eai against live Kafka: make sure a broker is running, set KAFKA_SERVER and KAFKA_CONSUMER_GROUP in config/default.env, run `bash integration/kafka/order_b2b_reset.sh` to create the topics, start the server, then
-- send the sample message with the debug endpoint's curl command (mode=live, see the docstring of api/api_discovery/order_b2b_kafka_consume_debug.py), and confirm a processed blob and a new order
-- ship that order, and confirm a message with the order_shipping shape arrives on topic order_shipping
-stop the server when done
+create logic diagram for each requirement (skip if graphviz is not available)
 
-create logic diagram for each requirement in demo_eai. If `dot -V` fails, skip this step, say so in one line, and do not install anything.
+create tests from rules, using default names
 
-create tests from rules in demo_eai, one Feature per requirement, named exactly:
-- Check Credit
-- B2B Order Integration
-- Kafka Subscribe Order Integration
-- Kafka Publish Shipping Notification
-- Row-Level Security
+run the tests
 
-run the tests in demo_eai
-
-run the requirements traceability report in demo_eai
-When the report is done, print this verbatim: "Open the report: demo_eai/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
-
+run the requirements traceability report
+When the report is done, print this verbatim: "Next: scan these two files: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made). Then open the report: demo_eai/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
