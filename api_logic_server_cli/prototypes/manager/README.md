@@ -236,13 +236,13 @@ Here's what needs to happen when someone places an order:
 - Before we let the order go through, check that the customer's balance doesn't go over their credit limit — if it would, reject the order.
 ```
 
-Both produced the same shape of code: one function, wired to order creation. **No update path. No delete path** — confirmed in [the actual code](samples/bd_claude_native_ai/app/orders.py).
+Both produced the same shape of code: one function, wired to order creation. **No update path. No delete path** — confirmed in [the actual code](samples/native_ai/bd_claude_native_ai/app/orders.py).
 
 Probed directly: change an item's quantity, delete an item, reassign an order to a different customer, reassign an item to a different product. Every case, both models, left stale data behind. No error. Nothing to catch it.
 
 **Key takeaways:**
 - **The logic wasn't buggy so much as absent** — it existed for exactly one path and nowhere else. [Full experiment →](https://apilogicserver.github.io/Docs/Tech-Standard-Reqs)
-- **A similar finding, looking beyond logic:** the hand-written API has no PATCH or DELETE on any resource either — not a bug, just more of what the prompt never asked for. [Full assessment →](samples/bd_claude_native_ai/project-assessment.md)
+- **A similar finding, looking beyond logic:** the hand-written API has no PATCH or DELETE on any resource either — not a bug, just more of what the prompt never asked for. [Full assessment →](samples/native_ai/bd_claude_native_ai/project-assessment.md)
 
 </details>
 
@@ -498,7 +498,7 @@ The GenAI-Logic side of that test, in full: [samples/basic_demo_genai_logic](sam
 
 ![Procedural Spec In, Declarative Rules Out](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/exec_reqmts/proc-to-decl.png)
 
-The native-AI side, in full: [samples/bd_claude_native_ai](samples/bd_claude_native_ai) — the actual code, the prompt, and the [unedited transcript](samples/bd_claude_native_ai/transcript.md).
+The native-AI side, in full: [samples/native_ai/bd_claude_native_ai](samples/native_ai/bd_claude_native_ai) — the actual code, the prompt, and the [unedited transcript](samples/native_ai/bd_claude_native_ai/transcript.md).
 
 Full case: [Governance at Scale](https://apilogicserver.github.io/Docs/Tech-XGR/).
 
@@ -982,7 +982,7 @@ Each of these builds a complete system from a single prompt or command — 💬 
 
 | Use Case | 💬 Say to your AI, or › run | What You'll Learn |
 |----------|---------|-------------------|
-| **[EAI: Enterprise App Integration](samples/basic_demo_eai/readme.md)** <br>demo_eai | 💬 paste [samples/requirements/demo_eai/create_script.txt](samples/requirements/demo_eai/create_script.txt)<br>(each step explained: [annotated version](samples/requirements/demo_eai/create_script_annotated.txt)) | **Study this one — the full tour, in one paste:** requirements → running system → tests → traceability report.<br>- **Requirements in, system out:** Check Credit rules, a B2B Custom API, Kafka subscribe and publish, row-level security<br>- **Verify:** tests and a requirements traceability report, generated from the rules<br>- **Review:** the AI's ad-libs list the judgment calls it made<br>- Optional: Keycloak, logic diagrams, live Kafka (Docker or Podman) |
+| **[EAI: Enterprise App Integration](samples/basic_demo_eai/readme.md)** <br>demo_eai | 💬 paste [samples/requirements/demo_eai/create_script.txt](samples/requirements/demo_eai/create_script.txt)<br>(each step explained: [annotated version](samples/requirements/demo_eai/create_script_annotated.txt))<br><br>**Skip Docker/Podman?** Paste [create_script_no_container.txt](samples/requirements/demo_eai/create_script_no_container.txt) instead (the main script also falls back to this by itself when none is running)<br><br>Or, 💬 say `run a level 1 diagnostic` | **Study this one — the full tour, in one paste:** requirements → running system → tests → traceability report.<br>- **Requirements in, system out:** Check Credit rules, a B2B Custom API, Kafka subscribe and publish, row-level security<br>- **Verify:** tests and a requirements traceability report, generated from the rules<br>- **Review:** the AI's ad-libs list the judgment calls it made<br>- Optional: Keycloak, logic diagrams, live Kafka (Docker or Podman) |
 | **[AI Rules](samples/basic_demo_ai_rules-supplier/readme.md)**<br> demo_ai_rules_supplier | › genai-logic create --project_name=demo_ai_rules_supplier --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - Use AI Rules (req pattern) to choose Optimal Supplier, per world conditions |
 | **[Governed MCP Server](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-MCP-Send-Email)** <br>demo_mcp_send_email | 💬 `implement reqs samples/prompts/demo_mcp_send_email`<br><br>Or › `genai-logic create --project_name=demo_mcp_send_email --db_url=sqlite:///samples/dbs/basic_demo.sqlite` | Executable Requirements (fast path) or manual steps<br>- Bus Users compose new service to send email to overdue customers, subject to email opt-out rules<br>- Create custom API with NL<br>- Create an email service (req pattern) |
 | **[Vibe Dev Backend](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-Vibe)** <br> demo_vibe | › genai-logic create --project_name=demo_vibe --db_url=sqlite:///samples/dbs/basic_demo.sqlite | - UI elements, eg, Cards, Maps, Trees... |

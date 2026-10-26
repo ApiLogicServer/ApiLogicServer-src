@@ -1,0 +1,21 @@
+// Non-GenAI-Logic baseline for create_script.txt: the same requirements, built with plain Python. Compare time, code size, and scenarios passed.
+// Fairness: same database, same requirements, same security, same Kafka verification, same kinds of tests, same closing summary.
+// Not used here: the genai-logic CLI, LogicBank rules, the project CE (.github, docs/training), Admin App generation, the traceability report, logic diagrams.
+Build this WITHOUT GenAI-Logic: do not run genai-logic, and do not read or follow .github/copilot-instructions.md, docs/training, or any other samples/ project. Use only Python, Flask, SQLAlchemy, confluent-kafka, and behave (all installed). Time each step below with `date +%H:%M:%S`, and tell me the total at the end.
+
+Check for Docker or Podman. If neither is running, continue in degraded mode (SQL security, simulated Kafka) and tell me so up front.
+
+create project demo_eai_native: copy samples/dbs/basic_demo.sqlite to demo_eai_native/database/db.sqlite, and build a Flask + SQLAlchemy REST API over its tables (JSON, filter by attribute, create/update/delete)
+
+add security (Keycloak if the container is running, else degrade to a simple SQL users/roles table)
+
+implement requirements samples/requirements/demo_eai/docs/requirements/demo_eai (copy that directory into demo_eai_native/docs/requirements/ first)
+
+verify message subscriptions (all topics): live through the Kafka broker if one is running, else simulated; reset the topics first so old messages are not replayed
+
+create tests: one behave scenario per requirement scenario, using the Feature and Scenario names in requirements.md
+
+run the tests
+
+write demo_eai_native/docs/requirements/project_summary.md: the requirements, their tests (passed / failed / skipped), how each relates to the code (file and function), the judgment calls you made beyond the requirements, the lines of code written (excluding tests), and the elapsed time of each step.
+When the summary is done, print this verbatim: "Next: scan demo_eai_native/docs/requirements/project_summary.md, then the code it points to."
