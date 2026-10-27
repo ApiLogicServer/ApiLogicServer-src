@@ -18,10 +18,15 @@ Step 1b. Read logic/declare_logic.py → Identify rules to test
 Step 1c. Scan api/api_discovery/*.py → Discover custom APIs (PHASE 2!)
 Step 1d. Scan integration/kafka/kafka_subscribe_discovery/*.py → Kafka subscribers: mode-aware scenarios (Step 1d below)
 Step 2.  Decide Phase 1 vs Phase 2 → Based on custom API existence
+Step 2b. COVERAGE PLAN → For EVERY rule found in 1b, list the scenarios the "Key Testing Patterns" matrix
+         requires (create, change, delete, move to another parent, where in/out, constraint pass/boundary/fail).
+         Write the plan BEFORE any .feature file. It is the checklist Step 4d closes.
 Step 3.  Generate .feature files → Business language scenarios
 Step 4.  Implement steps/*.py → Using discovered APIs or CRUD
 Step 4b. VERIFY STEP ORDERING → Multi-item BEFORE single-item (Rule #0.5!)
 Step 4c. ADD LOGIC LOG INTEGRATION → prt once in Given, does_file_contain in Then
+Step 4d. COVERAGE CLOSE-OUT → Re-walk the Step 2b plan against the .feature files you wrote. Every row has a
+         scenario, or is reported in your final message as NOT covered, with the reason. Do not end silently short.
 Step 5.  SUGGEST "run the tests" (DO NOT run automatically as part of creating tests)
 ```
 
@@ -898,21 +903,51 @@ grep -n "@when('.*with.*{" features/steps/*.py
 
 ## Key Testing Patterns
 
-**Test ALL scenarios for each rule:**
-- ✅ CREATE (POST) - new entity triggers rules
-- ✅ UPDATE (PATCH) - modify triggers recalc
-- ✅ UPDATE FK - change parent (both old/new adjust)
-- ✅ DELETE - remove entity (aggregates down)
-- ✅ WHERE include - condition becomes true
-- ✅ WHERE exclude - condition becomes false
-- ✅ Constraint pass - valid data accepted
-- ✅ Constraint fail - invalid data rejected
+⛔ **MANDATORY COVERAGE MATRIX — applied to every rule, not sampled.** The rules tell you which rows apply; each applicable
+row needs its own scenario. This is the Step 2b plan and the Step 4d close-out.
+
+| Rule | Scenarios required |
+|---|---|
+| `Rule.sum` / `Rule.count` (child rolls up to parent) | create a child; change the child's value; delete the child; **move the child to a different parent (the OLD and the NEW parent both adjust)** |
+| `Rule.copy` (child copies a parent value) | create (value copied); **change the child's FK to a different parent (the NEW parent's value is re-copied)** |
+| `Rule.formula` | change each input the formula reads (one scenario per input that matters) |
+| a `where=` on a sum/count | the row **enters** the set (condition becomes true) AND **leaves** it (becomes false) |
+| `Rule.constraint` | accepted; accepted at the boundary (equality, when the rule is `<=`); rejected |
+| publish event (Kafka) | fires when its condition becomes true; does NOT fire when it is not |
+
+**Moving a child to another parent is not optional.** It is the case hand-written and generated code most often gets wrong
+(the declarative-vs-procedural comparison's two bugs are exactly these: an order moved to another customer, an item's product
+changed), and it is the case a happy-path suite never reaches. Both need test data a single-customer, single-product
+scenario does not have:
+- a **second parent** (a second customer with its own credit limit; a second product with a *different* unit price - check
+  the real prices first, Rule #10)
+- the change made by **PATCHing the FK attribute** (the column name in `models.py`, e.g. `customer_id`, `product_id`),
+  not by creating a new row
+
+```gherkin
+Scenario: Move an order to another customer
+  Given customer A with an unshipped order of 100, and customer B with no orders
+  When the order is moved to customer B
+  Then customer A's balance falls by 100 and customer B's balance rises by 100
+
+Scenario: Change an item's product
+  Given an item priced from product P1
+  When the item's product is changed to P2, which has a different unit price
+  Then the item's unit price is P2's price, and the item amount, order total and customer balance follow
+```
 
 **Common missed scenarios:**
 - ❌ Only testing CREATE/UPDATE, not DELETE
 - ❌ Only testing WHERE one direction (ship, not unship)
-- ❌ Only testing constraint pass, not fail
-- ❌ Only testing FK create, not FK change
+- ❌ Only testing constraint pass, not fail (or not the boundary)
+- ❌ Only testing FK create, not FK change (**the one this section exists for**)
+
+**REAL FAILURE CASE (demo_eai, Oct 2026):** this list previously said "UPDATE FK - change parent" as one bullet among
+eight. Three runs of `create tests from rules` on the same five requirements covered Check Credit with a mix of change-the-quantity,
+ship and constraint scenarios (one run also had unship, delete and the boundary case), and none produced a scenario that
+moved an order to another customer or changed an item's product - the two paths the rules exist to cover. A suite that passes without them proves the
+happy path and says nothing about the dependencies. Treat a missing "move to another parent" or "change the FK" scenario for
+a sum, count or copy rule as an incomplete suite, not a style choice.
 
 ## Benefits of Phase 2
 
