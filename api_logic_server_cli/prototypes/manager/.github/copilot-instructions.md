@@ -23,8 +23,9 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.32
+version: 2.33
 changelog:
+  - 2.33 (Oct 27 2026) - "What are rules" now offers the extensibility point: new trigger (can I add code / what are events / how rules and Python fit together) answering that Python events are the extension mechanism and are integrated with the declarative rules. Same wording as the project CE (base 3.55).
   - 2.32 (Oct 24 2026) - New "Environment-Aware Steps" section: degrade (SQL security, simulated Kafka) instead of stopping when no container runtime runs, and say so up front; "add security" picks Keycloak or SQL; never install or download software; "create project X from <db>" is Method 1. From the first blind run of the clean demo_eai script, where these were done implicitly. create_script.txt is now that adaptive script (the level 1 diagnostic runs it).
   - 2.31 (Oct 24 2026) - Level 1: the final line now states why the verdict is DEGRADED or FAIL; the script runs its live Kafka step
     right after the build, before the tests, so the tests and the traceability report run with Kafka enabled (no live-only skip).
@@ -227,11 +228,29 @@ Taken together: 40x less code to write, maintain, and debug — see the [A/B tes
 
 &nbsp;
 
-*Want to know more? Ask about: debugging rules, performance, or how the engine works under the hood.*
+*Want to know more? Ask about: extending rules with Python events, debugging rules, performance, or how the engine works under the hood.*
 
 ---
 
 **FOLLOW-UP OFFER**: "Would you like to see how the engine works under the hood, or see the rules for this project?"
+
+**WHEN USER ASKS: "can I add code", "what if a rule can't express it", "extensibility", "what are events", "how do rules and Python fit together", "declarative vs procedural events"**
+**PRIMARY ANSWER**: Respond with exactly this:
+
+---
+Extensibility is part of the model. When a requirement does not fit a sum, count, formula, copy or constraint — publish a Kafka message, look up a value, call an AI or an external service — you write a Python **event** (`early_row_event`, `row_event`, `commit_row_event`, `after_flush_row_event`).
+
+&nbsp;
+
+Events are integrated with the declarative rules, not beside them. They run in the same transaction, in the engine's own phases (Row Logic, then Commit Logic, then After Flush), and receive `row`, `old_row` and `logic_row`. What an event sets or inserts is seen by the rules, which fire as usual. The phase is the design choice: an early event sets the flag or FK that a `Rule.count` reads, and an after-flush event publishes once database-assigned keys exist.
+
+&nbsp;
+
+That integration is the part to get right, which is why the context engineering is densest there: event timing, session handling, and making every row attribute visible to the engine's dependency scan. Rules and events together are the system; the reports quote an event's docstring and show its rule trace, so review events as code.
+
+---
+
+**FOLLOW-UP OFFER**: "Would you like to see how events work in a project, or create one and look at its events?"
 
 **NOTE — Manager context:** No project needs to exist for the deep-dive follow-up (debugging, performance, "how the engine works under the hood") — that content already lives in the installed package, in `prototypes/base/.github/.copilot-instructions.md` ("how do rules work" / 3-phase engine block) and `prototypes/base/docs/training/*.md` (logic_bank_api.md, logic_bank_patterns.md, etc.), reachable the moment ApiLogicServer is installed:
 - **Local Manager:** `venv/lib/python<ver>/site-packages/api_logic_server_cli/prototypes/base/...`

@@ -1,4 +1,5 @@
 ---
+version: 3.55 - 10/27/26 - "What are rules" now offers the extensibility point: new trigger (can I add code / what are events / how rules and Python fit together) answering that Python events are the extension mechanism and are integrated with the declarative rules (same transaction, engine phases, row/old_row/logic_row; the phase is the design choice). Events are not presented as a lesser or separate layer.
 version: 3.54 - 10/24/26 - Closes the remaining gaps from the blind demo_eai run: default Feature names (testing.md), the quantity>0 / unit_price>0 contradiction (now: asked about as a 🔴 ad-lib, not added silently), undefined-term ambiguity is 🔴 not 🟡, and Executable Requirements STEP 1 copies a requirements dir given from outside the project.
 version: 3.53 - 10/24/26 - From the first blind run of create_script_clean.txt (demo_eai): (1) new "Verify Message Subscriptions" command - topic reset BEFORE the first live start (stale broker messages were replayed as junk orders), Kafka enabled in config only when a broker answers, degraded/simulated otherwise; (2) Executable Requirements HAND-OFF step - print the rules file and ad-libs pointer (or the user's verbatim wording) as its own message right after the build; the run had paraphrased a "print this verbatim" line and skipped it. Also config/config.py: the default Kafka consumer sets session.timeout.ms 6000 (a restart no longer waits ~45 s for the old session; the run saw a 35 s cold join).
 version: 3.52 - 10/24/26 - B2B API template: a rejected order now raises safrs.ValidationError (HTTP 400). The template returned `{...}, 400`, which jsonapi_rpc wraps in an HTTP 200 response, so an over-limit partner order looked accepted (found by the level 1 diagnostic on demo_eai).
@@ -420,11 +421,29 @@ Taken together: ~40X less code to write, maintain, and debug (measured: ~220 lin
 
 &nbsp;
 
-*Want to know more? Ask about: how rules get created, debugging rules, performance, or how the engine works under the hood.*
+*Want to know more? Ask about: how rules get created, extending rules with Python events, debugging rules, performance, or how the engine works under the hood.*
 
 ---
 
 **FOLLOW-UP OFFER**: "Would you like to see how rules get created, how the engine works under the hood, or see the rules for this project?"
+
+**WHEN USER ASKS: "can I add code", "what if a rule can't express it", "extensibility", "what are events", "how do rules and Python fit together", "declarative vs procedural events"**
+**PRIMARY ANSWER**: Respond with exactly this:
+
+---
+Extensibility is part of the model. When a requirement does not fit a sum, count, formula, copy or constraint — publish a Kafka message, look up a value, call an AI or an external service — you write a Python **event** (`early_row_event`, `row_event`, `commit_row_event`, `after_flush_row_event`).
+
+&nbsp;
+
+Events are integrated with the declarative rules, not beside them. They run in the same transaction, in the engine's own phases (Row Logic, then Commit Logic, then After Flush), and receive `row`, `old_row` and `logic_row`. What an event sets or inserts is seen by the rules, which fire as usual. The phase is the design choice: an early event sets the flag or FK that a `Rule.count` reads, and an after-flush event publishes once database-assigned keys exist.
+
+&nbsp;
+
+That integration is the part to get right, which is why the context engineering is densest there: event timing, session handling, and making every row attribute visible to the engine's dependency scan. Rules and events together are the system; the reports quote an event's docstring and show its rule trace, so review events as code.
+
+---
+
+**FOLLOW-UP OFFER**: "Want to see the events in this project, or how to choose the phase for one?"
 
 **WHEN USER ASKS: "how does logic become rules", "how do rules get created", "how does the AI write rules", "how do I get from a requirement to a rule"**
 **PRIMARY ANSWER**: Respond with exactly this:
