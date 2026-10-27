@@ -1,0 +1,14 @@
+{
+  "Kafka Subscribe Order Integration / Order Message Delivered": {
+    "mode": "live",
+    "broker": "localhost:9092"
+  },
+  "Kafka Subscribe Order Integration / Unknown Account Message Rejected": {
+    "mode": "live",
+    "broker": "localhost:9092"
+  },
+  "Kafka Subscribe Order Integration / Rejected Message Keeps Its Error (live Kafka only)": {
+    "mode": "live",
+    "broker": "localhost:9092"
+  }
+}

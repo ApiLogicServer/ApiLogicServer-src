@@ -1,3 +1,10 @@
+"""
+Feature: Row-Level Security
+  Scenario: Sales role sees limited customers
+    Given a user with the sales role
+    When querying the Customer list
+    Then only return customers where credit_limit >= 3000 or balance > 0
+"""
 from security.system.authorization import Grant, Security, Security, DefaultRolePermission, GlobalFilter
 import logging
 from database import models
@@ -8,7 +15,7 @@ session = db.session
 
 app_logger = logging.getLogger(__name__)
 
-declare_security_message = "No Grants Yet"  # printed in api_logic_server.py
+declare_security_message = "Grants: sales sees limited Customers"  # printed in api_logic_server.py
 
 """
 First, Activate Security: https://apilogicserver.github.io/Docs/Security-Activation/
@@ -23,10 +30,11 @@ Your Code Goes Here - alter the starter code below to suit your needs
 """
 
 class Roles():
-    """ For code completion (auth data is the source of truth)
-
+    """ For code completion (auth data is the source of truth) 
+    
     Revise these for your app's roles"""
     manager = "manager"
+    sales = "sales"
     teller = "teller"
     tenant = "tenant"
     customer = "customer"
@@ -34,10 +42,9 @@ class Roles():
     admin = "CS_ADMIN"
     public="public"             # p1/p (no roles, but gets public)
     sa="sa"
-    sales = "sales"
     default_roles_kcals = "default-roles-kcals"
     uma_authorization = "uma_authorization"
-
+    
 DefaultRolePermission(to_role=Roles.sa, can_read=True, can_update=True, can_insert=True, can_delete=True)
 DefaultRolePermission(to_role=Roles.tenant, can_read=True, can_delete=True)
 DefaultRolePermission(to_role=Roles.admin, can_read=True, can_insert=True,can_update=True, can_delete=True)
@@ -46,17 +53,18 @@ DefaultRolePermission(to_role=Roles.teller, can_read=True, can_insert=True,can_u
 DefaultRolePermission(to_role=Roles.customer, can_read=True, can_insert=True,can_update=True, can_delete=False)
 DefaultRolePermission(to_role=Roles.read_only, can_read=True, can_insert=False,can_update=False, can_delete=False)
 DefaultRolePermission(to_role=Roles.public, can_read=True, can_insert=False,can_update=False, can_delete=False)
-DefaultRolePermission(to_role=Roles.sales, can_read=True, can_insert=False, can_update=False, can_delete=False)
 DefaultRolePermission(to_role=Roles.default_roles_kcals, can_read=True, can_insert=True,can_update=True, can_delete=False)
 DefaultRolePermission(to_role=Roles.uma_authorization, can_read=True, can_insert=True,can_update=True, can_delete=False)
 
-# Req §5: Row-Level Security
-# Feature: Row-Level Security
-#   Scenario: Sales role sees limited customers
-#     Given a user with the sales role
-#     When querying the Customer list
-#     Then only return customers where credit_limit >= 3000 or balance > 0
-Grant(on_entity=models.Customer,
-      to_role=Roles.sales,
-      filter=lambda: (models.Customer.credit_limit >= 3000) | (models.Customer.balance > 0),
-      filter_debug="credit_limit >= 3000 or balance > 0")
+DefaultRolePermission(to_role=Roles.sales, can_read=True, can_insert=False, can_update=False, can_delete=False)
+
+# Grants for the same role are OR'd: sales sees customers matching either filter
+Grant(  on_entity = models.Customer,
+        to_role = Roles.sales,
+        filter = lambda: models.Customer.credit_limit >= 3000,
+        filter_debug = "credit_limit >= 3000")
+
+Grant(  on_entity = models.Customer,
+        to_role = Roles.sales,
+        filter = lambda: models.Customer.balance > 0,
+        filter_debug = "balance > 0")

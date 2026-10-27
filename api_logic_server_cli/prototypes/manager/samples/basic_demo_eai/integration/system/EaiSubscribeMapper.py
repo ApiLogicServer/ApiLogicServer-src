@@ -308,3 +308,24 @@ def resolve_lookups(
         pk_cols = sa_inspect(lookup_model).mapper.primary_key
         pk_val = getattr(found, pk_cols[0].name)
         setattr(row, fk_col, pk_val)
+
+
+# ---------------------------------------------------------------------------
+# Public: record a Tx 2 failure on its blob row
+# ---------------------------------------------------------------------------
+
+def record_error_text(blob_model, blob_id: int, error_text: str) -> None:
+    """
+    Persist why Consumer 2 failed onto the blob row, in a NEW session and transaction.
+
+    Not safrs.DB.session: that scoped session still holds the failed Tx 2's pending rows, so any query on it
+    autoflushes them, runs the rules again and raises the original error - and an exception escaping a Kafka
+    handler would end up in the consumer loop.  A fresh Session on the same engine is unaffected.
+    """
+    import safrs
+    from sqlalchemy.orm import Session
+    with Session(safrs.DB.engine) as fresh_session:
+        blob = fresh_session.get(blob_model, blob_id)
+        if blob:
+            blob.error_text = error_text
+            fresh_session.commit()

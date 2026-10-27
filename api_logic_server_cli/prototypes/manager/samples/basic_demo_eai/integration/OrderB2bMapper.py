@@ -1,36 +1,37 @@
 """
-JSON → Order + Items mapper for Kafka topic order_b2b / Custom API OrderB2B (Req §2, §3).
+Kafka subscribe mapper: topic order_b2b (JSON) -> Order + Items.
 
-parse() returns (order_row, item_rows) — plain model rows, never (row, src_dict)
-tuples. The caller zips item_rows with the raw payload's Items array to call
-resolve_lookups() per item (Account/Items.Name are FK lookups, not columns).
+Tier 1 maps by lowercase name (Notes -> notes); the exceptions below skip or remap the rest.
+Name -> FK lookups (Account -> Customer, Items.Name -> Product) are done by resolve_lookups() in the topic handler.
 """
+
+import json
+
 from database import models
 from integration.system.EaiSubscribeMapper import populate_row_from_dict
 
-# Account (FK lookup) and Items (child array) are resolved outside Tier 1/2 mapping
+# parent-level fields: None = skip (handled by resolve_lookups or the child array)
 _PARENT_EXCEPTIONS = {
-    "Account": None,
-    "Items": None,
+    "Account": None,   # name -> customer_id, resolved by resolve_lookups
+    "Items": None,     # child array, processed below
 }
 
+# child-level fields: None = skip, str = remap to model column
 _CHILD_EXCEPTIONS = {
-    "Name": None,                    # name→FK resolved by resolve_lookups
-    "QuantityOrdered": "quantity",   # remap to model column
+    "Name": None,                      # name -> product_id, resolved by resolve_lookups
+    "QuantityOrdered": "quantity",
 }
 
 
-def parse(payload: str) -> tuple:
-    """Order mapper: parses an order_b2b JSON payload into (Order row, list of Item rows) — plain
-    model rows, NOT (row, src_dict) tuples."""
-    import json
+def parse(payload: str, exceptions: dict = None) -> tuple:
+    """Order mapper: returns (order_row, list[Item rows]) - plain model rows, not (row, src_dict) tuples."""
     data = json.loads(payload)
 
     order_row = models.Order()
     populate_row_from_dict(order_row, data, exceptions=_PARENT_EXCEPTIONS)
 
     item_rows = []
-    for item_dict in data.get('Items', []):
+    for item_dict in data.get("Items", []):
         item_row = models.Item()
         populate_row_from_dict(item_row, item_dict, exceptions=_CHILD_EXCEPTIONS)
         item_rows.append(item_row)

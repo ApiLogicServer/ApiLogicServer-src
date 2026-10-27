@@ -1,19 +1,17 @@
 """
-By-example publish mapper for Kafka topic order_shipping (Req §4).
+Feature: Kafka Publish Shipping Notification
 
-Output shape driven by message_formats/order_shipping.json:
-  order_id       ← Order.id                    (auto-match, renamed via FIELD_EXCEPTIONS)
-  order_date     ← Order.CreatedOn              (dot-notation not needed, simple rename)
-  customer_name  ← Order.customer.name          (dot-notation join)
-  total          ← Order.amount_total           (rename)
-  items          ← Order.ItemList (child list)
-    quantity     ← Item.quantity                (auto-match)
-    product_name ← Item.product.name            (dot-notation join)
-    unit_price   ← Item.unit_price               (auto-match)
+  Scenario: Notify shipping when an order is dispatched
+    Given an Order exists
+    When date_shipped is set
+    Then publish to Kafka topic order_shipping
+    And use message_formats/order_shipping.json as the message shape
+    And use by-example publish rather than key-only publish
 """
 
 from integration.system.EaiPublishMapper import serialize_row
 
+# Message shape, copied from docs/requirements/demo_eai/message_formats/order_shipping.json
 SAMPLE = {
     "order_id": 1,
     "order_date": "2026-04-06",
@@ -21,9 +19,10 @@ SAMPLE = {
     "total": 100.00,
     "items": [
         {"quantity": 2, "product_name": "Chai", "unit_price": 25.00}
-    ],
+    ]
 }
 
+# sample key -> model attribute (plain), "Relationship.column" (join), or relationship name (child list)
 FIELD_EXCEPTIONS = {
     "order_id": "id",
     "order_date": "CreatedOn",
@@ -34,7 +33,6 @@ FIELD_EXCEPTIONS = {
 }
 
 
-def row_to_dict(row):
-    """Order mapper: serializes an Order (with customer name and item lines) into the order_shipping
-    message, shaped by SAMPLE and renamed per FIELD_EXCEPTIONS."""
+def row_to_dict(row) -> dict:
+    """Order mapper: shapes an Order like order_shipping.json (by-example publish)."""
     return serialize_row(row, sample=SAMPLE, exceptions=FIELD_EXCEPTIONS)

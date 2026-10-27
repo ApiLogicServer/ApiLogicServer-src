@@ -36,7 +36,11 @@ Feature: Check Credit
     And sum item amounts to get the order total
     And sum unpaid order totals to get the customer balance
     And reject if balance exceeds the credit limit
+
+version: 1.0
+created: 2026-10-24
+created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
 ```
 
 ---
-_Generated 2026-10-19 19:46_
+_Generated 2026-10-24 15:06_

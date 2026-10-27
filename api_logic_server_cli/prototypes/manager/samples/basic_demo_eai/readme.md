@@ -1,7 +1,7 @@
 ---
 title: Sample_Basic_EAI
 do_process_code_block_titles: True
-version: 1.8 from docsite, for readme, for readme 4/21/2026 - message_formats auto-included in prototype, xr
+version: 1.11 from docsite, for readme, for readme 10/24/2026 - the no-container script is an opt-out of Docker/Podman, not only for machines without them; (1.10: 10/24/2026 - no-container script (Docker/Podman optional); (1.9: 10/20/2026 - no bootstrap prompt; Build It adds diagrams, tests, run tests, Behave Logic Report. (1.8: message_formats auto-included in prototype, xr))
 source: docs/Sample-Basic-EAI
 Propagation: see api_logic_server_cli/sample_mgr/create_readme.py
 ---
@@ -25,6 +25,8 @@ Propagation: see api_logic_server_cli/sample_mgr/create_readme.py
 
     This sample presumes you are familiar with basic GenAI-Logic services, as illustrated in the Basic Demo tutorial.
 
+    **The flow this page walks through:** *Executable Requirements* (the spec is a prompt your AI executes, so the requirements build the system) → *tests* (AI writes Behave tests from the rules, and runs them) → *documentation* (a Requirements Traceability Report traces each requirement to its rules, tests and the logic that actually ran). Requirements, system, tests and docs stay connected, and each step is one sentence to your AI assistant — see [Build It](#build-it).
+
     > This is the same system used in [Executable Requirements](https://apilogicserver.github.io/Docs/Exec-Reqmts), which focuses on how these prompts serve as the living spec — readable by business and IT, executable by AI.
 
 &nbsp;
@@ -35,7 +37,7 @@ This app illustrates using IntegrationServices for B2B push-style integrations w
 
 &nbsp;
 
-![demo-eai](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/demo-eai.png?raw=true)
+![demo-eai](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/demo-eai.png)
 
 **basic_demo_eai** is a single API Logic Server providing APIs *and logic* — it both
 subscribes and publishes, so there's no second project to stand up:
@@ -64,7 +66,7 @@ running if you want to see live message delivery (Section 6, Step 6 — optional
 Everything else — building, running, Check Credit, the Custom API, and even the
 Kafka Subscribe/Publish logic itself — works and is fully testable without one.
 If/when you do want live Kafka, the project includes everything to stand one up —
-see `integration/kafka/kafka_readme`'s **Live Kafka Test** section
+see `integration/kafka/kafka_readme.md`'s **Live Kafka Test** section
 (`docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`, Podman
 alternative included).
 
@@ -80,11 +82,14 @@ there.
 ## Build It
 
 One command creates the project; one command executes **every** requirement below
-(Check Credit, B2B API, Kafka Subscribe, Kafka Publish, Security) — this is the
-**entire build**, not the first of several steps:
+(Check Credit, B2B API, Kafka Subscribe, Kafka Publish, Security) — steps A-D are the
+**entire build**, not the first of several. Steps E-H (diagrams, tests, report) are
+optional extras that document and verify it. Here is the whole procedure, then what each step means:
 
-**Establish Initial State, Execute Requirements:**
-```bash title="Establish Initial State, Execute Requirements"
+> **Important:** be sure your AI assistant is in "Agent" mode ("Ask" will not work). No bootstrap prompt is needed: the Manager's context loads automatically when you open it in your AI assistant.
+
+**The entire procedure — Claude Code CLI: lines starting with ! run as shell commands, the rest are prompts:**
+```bash title="The entire procedure — Claude Code CLI: lines starting with ! run as shell commands, the rest are prompts"
 # A - Create Project
 !genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite
 
@@ -115,19 +120,49 @@ run the tests in demo_eai
 # H - Traceability Report (optional)
 run the requirements traceability report in demo_eai
 
-# Then OPEN the report: demo_eai/test/api_logic_server_behave/reports/Requirements Traceability Report.md
+# Then OPEN the report: demo_eai/docs/requirements/Requirements Traceability Report
 # (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)
 ```
+
+**Running it in the CLI:** start Claude Code in the Manager folder and paste one step at a time (a `!` line, or a prompt), not the whole block at once. A `!` line is run as a shell command by Claude Code. Each line names the project (`demo_eai`) so it works from the Manager root; if you would rather work inside the project, open `demo_eai` as the workspace and drop the `in demo_eai` and `cd demo_eai` parts. Steps E-H use triggers that live in the project's own context (`demo_eai/.github/copilot-instructions.md`); if the assistant does not recognise one from the Manager root, that is the reason, and opening `demo_eai` as the workspace fixes it.
 
 **Using Podman instead of Docker?** Step C's `docker compose up -d` can be `podman compose up -d`
 instead — `devops/keycloak/docker-compose.yml` works unchanged. One-time setup: see
 [DevOps-Podman](https://apilogicserver.github.io/Docs/DevOps-Podman).
 
-The full requirements spec that step D executes is
-[docs/requirements/demo_eai/requirements.md](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/requirements/demo_eai/docs/requirements/demo_eai/requirements.md)
-— 5 Gherkin features. **Sections 2-5b and 7 below are a tour of what that one command
-built** — each maps back to the requirement that produced it. They are not
-additional steps to run.
+**Skip Docker/Podman?** Use the no-container script, `samples/requirements/demo_eai/create_script_no_container.txt`,
+instead of the commands above. It never uses a container, so it works whether or not a container runtime is installed
+(a Codespace, say, has none). It builds the same system from the same requirements, with two differences:
+
+* **Security** uses the SQL authentication provider (no Keycloak), and Row-Level Security is still tested.
+* **Kafka** runs in fallback mode (`KAFKA_SERVER` unset). Subscribe is tested through the debug endpoint,
+  `/consume_debug/order_b2b`, which runs the same parse-and-save function the live consumer uses; the report labels
+  those scenarios *simulated*. Live Kafka delivery is not verified in this mode. Start a broker and set `KAFKA_SERVER`
+  and `KAFKA_CONSUMER_GROUP`, and the same endpoint publishes through the broker and the same tests run live.
+
+Either script ends with a line saying which mode ran.
+
+&nbsp;
+
+### What the steps mean
+
+| Step | What it does |
+|---|---|
+| **A - Create Project** | Creates a working, MCP-enabled API and Admin App from the existing database (and the `genai-logic` CLI to manage it). No logic yet. |
+| **B - Get Requirements** | Copies the requirements (5 Gherkin features, plus the message formats) into the project. |
+| **C - Add Security (optional)** | Turns on Keycloak security so the row-level security requirement (§5) is enforced. Skip it and everything else still runs. |
+| **D - Implement Requirements** | The build: your AI assistant reads the requirements and writes the rules, the Custom API, the Kafka subscribe and publish, and the security declarations. Sections 2-5b and 7 below tour what it produced. |
+| **E - Logic Diagrams (optional)** | Draws the rule chain for each requirement as an SVG; the report shows each one under its requirement. |
+| **F - Create Tests (optional)** | Writes Behave scenarios from the rules. Naming the Features exactly as the requirements do lets the report show, per requirement, which tests exercised it. |
+| **G - Run Tests (optional)** | Runs the scenarios against the live API and records the logic log for each. |
+| **H - Traceability Report (optional)** | Writes the report, `demo_eai/docs/requirements/Requirements Traceability Report.md`. **Open it** (VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview): requirements traced to rules, tests and logic logs, the data model, security and messages. See an example in [Requirements Traceability Report](https://apilogicserver.github.io/Docs/Behave-Logic_Report-bd-eai). |
+
+* Steps E-H are also said to your AI assistant with the created project as its workspace. Each is optional, and H works without the others (run it right after D for everything except test results).
+* The *Row-Level Security* scenarios only mean something once security is on (step C); without it the report shows that requirement as untested.
+* A scenario that reads a message back from the `order_shipping` topic needs a live broker (Section 6, Step 6); every other scenario runs with no Kafka.
+* The full requirements spec that step D executes is
+  [docs/requirements/demo_eai/requirements.md](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/requirements/demo_eai/docs/requirements/demo_eai/requirements.md).
+  **Sections 2-5b and 7 below are a tour of what step D built** — each maps back to the requirement that produced it. They are not additional steps to run.
 
 This is a real project: your IDE, your Python, your source control. The prompt creates it in minutes — but you own it fully and iterate from there. Change a rule; the engine determines execution order automatically. Add an endpoint; the rules are already there waiting for it.
 
@@ -147,7 +182,7 @@ This suggests a different way to think about requirements gathering. Instead of 
 
 <br>
 
-![basic_demo_data_model](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/basic_demo_data_model.jpeg?raw=true)
+![basic_demo_data_model](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/basic_demo/basic_demo_data_model.jpeg)
 
 </details markdown>
 
@@ -159,7 +194,7 @@ This suggests a different way to think about requirements gathering. Instead of 
 
 Your API is MCP enabled, and ready for custom app dev.  For more information, [click here](https://apilogicserver.github.io/Docs/API-Self-Serve).
 
-![swagger](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/api-swagger.jpeg?raw=true)
+![swagger](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/basic_demo/api-swagger.jpeg)
 </details>
 
 <br>
@@ -174,7 +209,7 @@ The Admin App is ready for **[business user agile collaboration](https://apilogi
 
 Explore the app - click Customer Alice, and see their Orders, and Items.  
 
-![admin-app-initial](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/admin-app-initial.jpeg?raw=true)
+![admin-app-initial](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/basic_demo/admin-app-initial.jpeg)
 </details>
 
 Now go to [Section 6, How to Test](#6-how-to-test) to exercise the EAI features
@@ -202,7 +237,14 @@ Use case: App Integration
     1. Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
 ```
 
-![Nat Lang Logic](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/copilot/copilot-logic-vibe.png?raw=true)
+![Nat Lang Logic](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/sample-ai/copilot/copilot-logic-vibe.png)
+
+> **These rules are declared once, on the data — not once per entry point.** LogicBank hooks
+> the database commit itself, so Check Credit fires on *every* write path that touches an
+> Order or Item: the Admin App, the standard JSON:API, the `OrderB2B` custom API (Section 4),
+> and the Kafka subscriber (Section 5) — all four call the same rules, automatically. Nothing
+> downstream has to (or even can) re-request "enforce Check Credit here too" — that's not a
+> phrase you'll find in this project's requirements.
 
 <br>
 
@@ -240,10 +282,10 @@ Feature: B2B Order Integration
     Then map Account to Customer by name
     And map Items.Name to Product by name
     And map Items.QuantityOrdered to Item.quantity
-    And create the order with all Check Credit rules enforced
 ```
 
-Result: `POST /api/OrderB2B` — see Section 6 to test it.
+Result: `POST /api/OrderB2B` — see Section 6 to test it. Note there's no clause here
+about enforcing Check Credit — see Section 2's callout for why not.
 
 <br>
 
@@ -259,14 +301,20 @@ Feature: Kafka Subscribe Order Integration
   Scenario: Accept inbound orders from sales channel
     Given an inbound order message in JSON format (message_formats/order_b2b.json)
     When the message is received from Kafka topic order_b2b
-    Then use the 2-message pattern
-    And save the raw payload as a blob in the first transaction
-    And parse and persist the order in the second transaction
-    And map Account to Customer by name
+    Then map Account to Customer by name
     And map Items.Name to Product by name
     And map Items.QuantityOrdered to Item.quantity
-    And create the order with all Check Credit rules enforced
 ```
+
+> **Notice what this requirement does *not* say.** It doesn't mention the 2-message
+> pattern, a blob table, error capture, or Check Credit — none of that is a decision
+> left to whoever writes the requirement. The EAI-consume Context Engineering treats
+> the 2-message pattern (raw payload saved first, parsed second) as mandatory for
+> every Kafka subscriber it builds — "single-transaction consumers cause data loss"
+> — and, just as mandatory, requires that a failed parse/lookup/constraint records
+> *why* on the blob row (`error_text`), not only in a server log. Both are structural
+> guarantees of how this platform builds Kafka subscribers, not something this
+> requirement asked for. See **What Got Built** below for what that produces.
 
 &nbsp;
 
@@ -291,7 +339,12 @@ topic: order_b2b
   → Consumer 2:  parse → Order + Items, resolve FKs, LogicBank rules  (Tx 2)
 ```
 
-Parse failures leave `is_processed = False` on the blob row — queryable and retryable.
+Parse or business-rule failures leave `is_processed = False` on the blob row —
+queryable and retryable — **and** write the failure reason to `error_text` on that
+same row, so you can tell *why* a message is stuck without cross-referencing server
+logs: `SELECT id, error_text FROM order_b2b_message WHERE is_processed = 0`. Neither
+of these — the 2-message split or the error capture — is something this project's
+requirements asked for; both are how this platform builds every Kafka subscriber.
 
 **Key Files**
 
@@ -299,11 +352,11 @@ See the module docstring in [integration/kafka/kafka_subscribe_discovery/order_b
 
 | File | Role |
 |------|------|
-| `logic/logic_discovery/place_order/order_b2b_consume.py` | `row_event` bridge — publishes blob to `order_b2b_processed` (no inline parse) |
+| `logic/logic_discovery/order_b2b_consume.py` | `row_event` bridge — publishes blob to `order_b2b_processed` (no inline parse) |
 | `integration/OrderB2bMapper.py` | JSON → Order + Items (3-tier mapping contract) |
-| `api/api_discovery/order_b2b_kafka_consume_debug.py` | `/consume_debug/order_b2b` — test without Kafka |
+| `api/api_discovery/order_b2b_consume_debug.py` | `/consume_debug/order_b2b` — test without Kafka |
 | `integration/kafka/message_formats/order_b2b.json` | Message format spec / test fixture |
-| `test/order_b2b_reset.sh` | Reset Kafka topics + log between runs |
+| `integration/kafka/order_b2b_reset.sh` | Reset Kafka topics + log between runs |
 
 **Quick Test (no Kafka needed)**
 
@@ -348,7 +401,7 @@ only activates once auth is configured; skip it and the rest of the system still
 >   up to ~10s for the broker, then logs a delivery failure. Nothing crashes; that
 >   PATCH will just feel a little slow. That's the timeout you're seeing, not a bug.
 >
-> Bring up Kafka only when you want to verify the wire-level integration (Step 3
+> Bring up Kafka only when you want to verify the wire-level integration (Step 6
 > below).
 
 **1. Start the server:** F5 (or `python api_logic_server_run.py`)
@@ -385,7 +438,7 @@ the API) and watch the log — `publish_kafka_message: delivered to topic
 **6. (Optional) Live Kafka, end-to-end:**
 
   1. Start Docker: `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
-     (https://apilogicserver.github.io/Docs/Podman instead of Docker? Use `podman compose` — same file, unchanged. See [DevOps-Podman](DevOps-Podman).)
+     (Podman instead of Docker? Use `podman compose` — same file, unchanged. See [DevOps-Podman](https://apilogicserver.github.io/Docs/DevOps-Podman).)
   2. Reset topics: `bash integration/kafka/order_b2b_reset.sh`
   3. Restart the server (after Docker/Podman is up, so it picks up Kafka env vars and subscribes to topics)
   4. Publish a real message to `order_b2b` and confirm it's consumed — same

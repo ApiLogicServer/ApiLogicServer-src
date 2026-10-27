@@ -17,37 +17,39 @@ not find them mentioned in the example prompt below, and that's deliberate:
    transaction (Tx 2). A single-transaction consumer that parses inline is never
    generated, whether or not your prompt mentions "2-message pattern" — it's the
    platform's mandatory design, not an option you opt into. See
-   `docs/training/eai_subscribe.md` § Critical Design Decision. This project's own
-   `integration/kafka/kafka_subscribe_discovery/order_b2b.py` is a working example.
+   `docs/training/eai_subscribe.md` § Critical Design Decision.
 2. **Failures are never silent.** If Tx 2 fails (a bad lookup, a rejected business
    rule), the blob row is left with `is_processed = False` **and** an `error_text`
    column recording *why* — queryable directly (`SELECT id, error_text FROM
-   order_b2b_message WHERE is_processed = 0`), not something you have to dig out of
+   <topic>_message WHERE is_processed = 0`), not something you have to dig out of
    a server log. This is as mandatory as the 2-message pattern itself.
 3. **Business logic is enforced automatically, on every path.** Whatever
-   declarative rules govern your domain (Check Credit, in this project) fire the
-   same way whether the triggering write came from this Kafka consumer, a REST
-   call, the `OrderB2B` custom API, or the Admin App — LogicBank hooks the database
-   commit itself, so there's no way to reach the database without going through the
-   rules. Your prompt never needs to say "and enforce the existing rules here too."
+   declarative rules govern your domain (constraints, derivations) fire the same
+   way whether the triggering write came from this Kafka consumer, a REST call, a
+   custom API, or the Admin App — LogicBank hooks the database commit itself, so
+   there's no way to reach the database without going through the rules. Your
+   prompt never needs to say "and enforce the existing rules here too."
 
 ## Testing helpers — quick reference
 
-These exist so you can develop and test this pipeline without ever standing up
+These exist so you can develop and test a Kafka pipeline without ever standing up
 Kafka, and so live-Kafka testing is repeatable once you do. Details for each are
 in the matching section below.
 
-- **No Kafka needed for development.** `/consume_debug/order_b2b` runs the
-  identical parse/persist code the live consumer uses — same `OrderB2bMapper`,
-  same lookups, same Check Credit rules — just triggered by a curl instead of a
-  topic message. Build and verify the whole pipeline before ever touching Docker.
+- **No Kafka needed for development.** The `/consume_debug/<topic>` endpoint runs
+  the identical parse/persist code the live consumer uses — same mapper, same
+  lookups, same LogicBank rules — just triggered by a curl instead of a topic
+  message. Build and verify the whole pipeline before ever touching Docker.
 - **The server tolerates Kafka being down.** No broker running is not an error
   condition: the server starts normally (`Kafka mode: FALLBACK` in the log) and a
   publish attempt logs a delivery failure after a short timeout instead of
-  crashing the request.
-- **Topic setup is one script.** `integration/kafka/order_b2b_reset.sh` both
-  *creates* the `order_b2b`/`order_b2b_processed` topics the first time and resets
-  them (delete + recreate) every time after — same command either way.
+  crashing the request. You will not get paged by "Kafka isn't up yet."
+- **Topic setup is one script, not a manual `kafka-topics.sh` dance.** The
+  generated `<topic>_reset.sh` both *creates* the topics the first time and resets
+  them (delete + recreate, so consumer offsets and old messages don't leak
+  between runs) every time after — same command either way.
+- **A DB-only reset script exists too**, separate from the topic reset, for
+  clearing domain/blob rows between reruns without touching Kafka at all.
 
 ## Example
 
@@ -179,7 +181,7 @@ In `config/default.env`:
 
 ```text
 KAFKA_SERVER = localhost:9092
-KAFKA_CONSUMER_GROUP = demo-eai-group1
+KAFKA_CONSUMER_GROUP = <project>-group1   # keep unique per project clone
 ```
 
 Without these, the app runs in debug/fallback mode only — see "What you don't have
@@ -188,22 +190,10 @@ to ask for" above; this is expected, not an error, if you haven't set them yet.
 ### 3. Reset topics, start the server, publish a test message
 
 ```bash
-bash integration/kafka/order_b2b_reset.sh   # creates the topics first time, resets after
+bash integration/kafka/<topic>_reset.sh    # creates the topic(s) fresh
 # F5 to start the server (after Kafka is up, so it picks up the env vars above)
+python test/send_<topic>.py
 ```
-
-This project has no `test/send_order_b2b.py` publisher script — publish a test
-message directly via the broker's console producer instead (`jq -c .` collapses
-the fixture to one line, since the console producer treats each input line as a
-separate message):
-
-```bash
-jq -c . integration/kafka/message_formats/order_b2b.json | \
-  docker exec -i broker1 /opt/kafka/bin/kafka-console-producer.sh \
-  --broker-list localhost:9092 --topic order_b2b
-```
-
-(Podman: same command, substitute `podman exec` for `docker exec`.)
 
 Runtime reminders:
 

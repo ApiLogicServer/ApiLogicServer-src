@@ -1,19 +1,19 @@
-# Logic Flow — samples/basic_demo_eai [app_integration]
+# Logic Flow — samples/basic_demo_eai [order_shipping_publish]
 
-> Scoped to requirement: **app_integration**
+> Scoped to requirement: **order_shipping_publish**
 
 <table>
 <tr valign="top">
 <td width="65%">
 
-![logic flow](logic_diagrams/logic_diagram_app_integration.svg)
+![logic flow](logic_diagrams/logic_diagram_order_shipping_publish.svg)
 
 </td>
 <td width="35%">
 
 ### Rules
 
-1. `Order` → `_send_order_to_kafka` (after_flush) — Order publish: sends the Order to Kafka topic order_shipping when date_shipped is first set
+1. `Order` → `_send_order_to_shipping` (after_flush) — Order event: publishes the Order to Kafka topic order_shipping (by-example, shape from
 
 </td>
 </tr>
@@ -30,7 +30,11 @@ Feature: Kafka Publish Shipping Notification
     Then publish to Kafka topic order_shipping
     And use message_formats/order_shipping.json as the message shape
     And use by-example publish rather than key-only publish
+
+version: 1.0
+created: 2026-10-24
+created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
 ```
 
 ---
-_Generated 2026-10-19 19:46_
+_Generated 2026-10-24 15:06_

@@ -5,7 +5,7 @@ The **Requirements Traceability Report** is written here by `../requirements_tra
 
 | File | What it is |
 |---|---|
-| `Requirements Traceability Report.md` | The report. Generated: don't edit it, regenerate it. |
+| `Requirements Traceability Report.md` | Not here: the report is written to `docs/requirements/` of the project (with `db_diagram.generated.*`). Generated: don't edit it, regenerate it. |
 | `Requirements Traceability Report Template.md` | The report's text, laid out in the report's own order. This is the file you edit. |
 | `db_diagram.generated.*` | The data model diagram, drawn from `docs/db.dbml` (needs Graphviz). |
 | `Behave Logic Report Sample.md` | An example of the older report format. |
@@ -74,6 +74,6 @@ the longer explanation in a fold. Folds do not print or export to PDF in some vi
 ```
 python requirements_traceability_report.py run --help
   --template   the template file     (default: reports/Requirements Traceability Report Template.md)
-  --wiki       the report to write   (default: reports/Requirements Traceability Report.md)
+  --wiki       the report to write   (default: ../../docs/requirements/Requirements Traceability Report.md)
   --behave_log the Behave run log    (default: logs/behave.log)
 ```

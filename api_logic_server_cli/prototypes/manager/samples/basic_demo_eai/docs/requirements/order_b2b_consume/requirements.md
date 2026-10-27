@@ -1,6 +1,9 @@
-## 3. Kafka Subscribe — Inbound orders from sales channel
+---
+created: 2026-10-24T15:10:00
+created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
+use_case: order_b2b_consume
+---
 
-```gherkin
 Feature: Kafka Subscribe Order Integration
 
   Scenario: Accept inbound orders from sales channel
@@ -9,4 +12,3 @@ Feature: Kafka Subscribe Order Integration
     Then map Account to Customer by name
     And map Items.Name to Product by name
     And map Items.QuantityOrdered to Item.quantity
-```

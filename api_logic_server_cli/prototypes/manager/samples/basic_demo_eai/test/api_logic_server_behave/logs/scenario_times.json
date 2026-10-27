@@ -1,0 +1,15 @@
+{
+  "About Sample / Transaction Processing": 0.006,
+  "B2B Order Integration / Partner Order Accepted": 0.054,
+  "B2B Order Integration / Unknown Account Rejected": 0.011,
+  "Check Credit / Good Order Placed": 0.013,
+  "Check Credit / Item Quantity Changed": 0.018,
+  "Check Credit / Shipped Order Leaves Balance": 0.023,
+  "Check Credit / Order Exceeding Credit Rejected": 0.013,
+  "Kafka Publish Shipping Notification / Shipping Notification Published": 0.015,
+  "Kafka Publish Shipping Notification / Unshipped Order Not Published": 0.009,
+  "Kafka Subscribe Order Integration / Order Message Delivered": 1.585,
+  "Kafka Subscribe Order Integration / Unknown Account Message Rejected": 0.528,
+  "Kafka Subscribe Order Integration / Rejected Message Keeps Its Error (live Kafka only)": 0.528,
+  "Row-Level Security / Sales Role Sees Limited Customers": 0.068
+}

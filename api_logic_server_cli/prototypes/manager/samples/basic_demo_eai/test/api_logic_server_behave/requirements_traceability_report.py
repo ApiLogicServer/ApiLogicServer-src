@@ -41,6 +41,19 @@ Tips
 * for tab: & emsp;
 
 Changelog:
+  2.12 - Messages and APIs now lists custom API methods (@jsonapi_rpc, served at /api/<Class>/<method>) and the EAI debug
+        endpoints (register_consume_debug / register_queue_reset in the project's thin debug file); before, only
+        @app.route functions were found, so a project whose API is a jsonapi_rpc class showed "0 HTTP endpoints". A use-case
+        folder's requirements.md is no longer counted as another requirement when its Feature lines are already in a numbered
+        section (demo_eai reported 8 requirements; there are 5). Found by the level 1 diagnostic (Oct 24 2026).
+  2.11 - Run time. behave_run.py writes "Behave run time: N s" into the log and features/environment.py records each
+        scenario's seconds (logs/scenario_times.json). The report shows the run's time in At a Glance, the Coverage
+        summary and the Tests and Results line, and each scenario's time next to its result.
+  2.10 - Skipped scenarios are reported as skipped (they were counted as passed): results are passed / failed /
+        skipped, a requirement whose scenarios all skipped is flagged, and the verdict is a warning. Messages and
+        APIs: a Kafka mode note above the table (simulated through /consume_debug, or live through a broker - read from the
+        per-scenario record the steps write to logs/delivery_modes.json, else from KAFKA_SERVER), the "Tests mention it" column moved next to Name and marked "simulated" for Kafka channels in
+        fallback mode, and a Kafka mode line in At a Glance.
   2.9 - Provenance section at the end: date, generator version, which text the report used (and its hash), when the
         tests last ran, source commit (if the project is in git), when the project was created, and the requirement files
         it read (with hashes).
@@ -55,7 +68,8 @@ Changelog:
   2.5 - The template is a skeleton of the report: same order, the report's own static text (including its folds) as
         <!-- text: name --> blocks, and <!-- generated: ... --> lines where generated content goes. Table notes
         are now a visible one-line cue plus a fold with the detail.
-  2.4 - The script is requirements_traceability_report.py, writing reports/Requirements Traceability Report.md and
+  2.4 - The script is requirements_traceability_report.py, writing docs/requirements/Requirements Traceability Report.md (was reports/; links are
+        relative to the report's folder) and
         reading reports/Requirements Traceability Report Template.md. behave_logic_report.py remains as a
         shim that runs it, and the older Template / Intro file names are still read.
   2.3 - Renamed "Requirements Traceability Report" (first section: "Requirements Coverage"). The template file
@@ -88,7 +102,7 @@ Changelog:
 
 """
 
-__version__ = "2.9"
+__version__ = "2.12"
 
 tab = "&emsp;"
 behave_debug_info = " # "
@@ -257,14 +271,22 @@ def get_docStrings(steps_dir: str):
                 if each_step_code_line.startswith('@when'):
                     comment_start = index + 2
                     if comment_start < len(step_code) and '"""' in step_code[comment_start]:
-                        doc_string_line = comment_start+1
                         doc_string = []
-                        while (True):
-                            if '"""' in step_code[doc_string_line]:
-                                break
-                            doc_string.append(step_code[doc_string_line][indent:])
-                            doc_string_line += 1
+                        if step_code[comment_start].count('"""') >= 2:
+                            # one-line docstring: """text""" - opening and closing on the same line
+                            one_line = step_code[comment_start].strip().strip('"').strip()
+                            doc_string.append(one_line + '\n')
+                            doc_string_line = comment_start
+                        else:
+                            doc_string_line = comment_start+1
+                            while doc_string_line < len(step_code):
+                                if '"""' in step_code[doc_string_line]:
+                                    break
+                                doc_string.append(step_code[doc_string_line][indent:])
+                                doc_string_line += 1
                         scenario_line = doc_string_line+1
+                        if scenario_line >= len(step_code):
+                            continue
                         if 'scenario_name' not in step_code[scenario_line]:
                             print(f'\n** Warning - scenario_name not found '
                                   f'in file {str(each_steps_dir_file_path)}, '
@@ -290,6 +312,7 @@ def build_test_evidence(behave_log: str, scenario_logs: str) -> list:
         contents = f.read().splitlines()
 
     results = scenario_results(behave_log) or {}
+    times = scenario_times(behave_log)
     skipping = False
     feature_name = None
     open_scenario = None   # scenario whose steps are being listed; its logic block follows when it ends
@@ -325,7 +348,10 @@ def build_test_evidence(behave_log: str, scenario_logs: str) -> list:
             close_scenario()
             name = m.group(1).strip()
             open_scenario = name
-            mark = {"passed": " ✅", "failed": " ❌ FAILED"}.get(results.get((feature_name, name)), "")
+            mark = {"passed": " ✅", "failed": " ❌ FAILED", "skipped": " ⚠ SKIPPED"}.get(results.get((feature_name, name)), "")
+            took = times.get(f"{feature_name} / {name}")
+            if took is not None:
+                mark += f" ({_secs(took)})"
             wiki_data += ["", "&nbsp;", "&nbsp;", "", f"#### Scenario: {name}{mark}",
                           f"{tab}  Scenario: {name}  "]
             continue
@@ -615,7 +641,15 @@ def parse_requirements(root: Path) -> list:
             if not item.get("text"):
                 item["text"] = _requirement_text(text)
             item["sources"].append(rel)
-    return sorted(items.values(), key=lambda i: (i["num"] is None, i["num"] or 0, i["title"]))
+    # A use-case folder's requirements.md is the verbatim excerpt that anchors its logic file; when its Feature lines are
+    # all in a numbered section, it is the same requirement, not another one (it would be counted twice).
+    numbered_features = set()
+    for each in items.values():
+        if each["num"] is not None:
+            numbered_features |= each["features"]
+    kept = [each for each in items.values()
+            if not (each["num"] is None and each["features"] and each["features"] <= numbered_features)]
+    return sorted(kept, key=lambda i: (i["num"] is None, i["num"] or 0, i["title"]))
 
 
 def implementation_files(root: Path) -> list:
@@ -706,9 +740,10 @@ def diagram_howto(root: Path, missing: bool) -> list:
 
 
 def scenario_results(behave_log: str):
-    """ {(feature, scenario): 'passed' | 'failed'} read from behave.log, or None if there is no run.
+    """ {(feature, scenario): 'passed' | 'failed' | 'skipped'} read from behave.log, or None if there is no run.
         Behave writes 'Assertion Failed: ...' or a Traceback under a failing step; a scenario with
-        neither passed. (The scaffold's placeholder feature is left out.) """
+        neither passed, unless some of its steps never ran (listed with no location, e.g. after
+        context.scenario.skip()): that scenario is skipped. (The scaffold's placeholder feature is left out.) """
     log = Path(behave_log)
     if not log.is_file() or log.stat().st_size == 0:
         return None
@@ -725,7 +760,15 @@ def scenario_results(behave_log: str):
             continue
         if current and re.match(r'^\s+(Assertion Failed|Traceback \(most recent call last\))', line):
             results[current] = "failed"
+        elif current and results[current] == "passed" \
+                and re.match(r'^\s+(Given|When|Then|And|But)\s.*#\s*None\s*$', line):
+            results[current] = "skipped"      # a step that never ran, and nothing failed
     return results or None
+
+
+def _count(results, status: str):
+    """ how many scenarios have this status (None when there is no test run) """
+    return None if results is None else list(results.values()).count(status)
 
 
 def _static_key(rule: dict):
@@ -809,9 +852,11 @@ def _tests_text(rec: dict, results, defined: bool) -> str:
         return "⚠ none defined" if defined else "none defined"
     text = f"{rec['scenarios']} scenario(s)"
     if results is not None:
-        ran = rec["passed"] + rec["failed"]
-        icon = "❌ " if rec["failed"] else ("✅ " if ran >= rec["scenarios"] else "")
+        ran = rec["passed"] + rec["failed"] + rec["skipped"]
+        icon = "❌ " if rec["failed"] else ("⚠ " if rec["skipped"] else ("✅ " if ran >= rec["scenarios"] else ""))
         text = icon + text + f": {rec['passed']} passed" + (f", **{rec['failed']} FAILED**" if rec["failed"] else "")
+        if rec["skipped"]:
+            text += f", **{rec['skipped']} skipped**"
         if ran < rec["scenarios"]:
             text += f", {rec['scenarios'] - ran} not run"
     return text
@@ -876,7 +921,7 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
     results = scenario_results(behave_log)
     for rec in records:
         mine = [status for (feature, _), status in (results or {}).items() if _norm(feature) in rec["wanted"]]
-        rec["passed"], rec["failed"] = mine.count("passed"), mine.count("failed")
+        rec["passed"], rec["failed"], rec["skipped"] = mine.count("passed"), mine.count("failed"), mine.count("skipped")
     lines += [f"### {title('coverage-summary')}", ""] + text("coverage-summary") + ["| Measure | Result |", "|---|---|"]
     n = len(records)
     lines.append(f"| Requirements | {n} |")
@@ -887,8 +932,9 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
     FACTS.clear()
     FACTS.update(n_req=n, no_impl=list(no_impl), no_tests=list(no_tests), n_rules=len(rules),
                  n_declarative=declarative, n_python=python_fn, n_events=events, seen=None,
-                 passed=None if results is None else list(results.values()).count("passed"),
-                 failed=None if results is None else list(results.values()).count("failed"))
+                 passed=_count(results, "passed"), failed=_count(results, "failed"),
+                 skipped=_count(results, "skipped") or 0,
+                 skipped_reqs=[r["label"] for r in records if r["skipped"] and not r["passed"] and not r["failed"]])
     untraced_all = list(untraced_files) + [f for f in dict.fromkeys(r["file"] for r in loose)
                                            if f not in untraced_files]
     lines.append(f"| Implementation not traced to a requirement | "
@@ -899,9 +945,14 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
     else:
         failing = [r["label"] for r in records if r["failed"]]
         n_failed = list(results.values()).count('failed')
-        lines.append(f"| Test results (last run) | {'❌' if n_failed else '✅'} "
+        n_skipped = list(results.values()).count('skipped')
+        lines.append(f"| Test results (last run) | {'❌' if n_failed else ('⚠' if n_skipped else '✅')} "
                      f"{list(results.values()).count('passed')} passed, {n_failed} failed"
-                     + (f" - failing: {_cell(_gap_list(failing))}" if failing else "") + " |")
+                     + (f", {n_skipped} skipped" if n_skipped else "")
+                     + (f"; took {_secs(run_seconds(behave_log))}" if run_seconds(behave_log) is not None else "")
+                     + (f" - failing: {_cell(_gap_list(failing))}" if failing else "")
+                     + (f" - skipped, not verified: {_cell(_gap_list(FACTS['skipped_reqs']))}" if FACTS["skipped_reqs"] else "")
+                     + " |")
     if coverage is None:
         lines.append("| Rules seen in a scenario's log | no test run found |")
     else:
@@ -1353,6 +1404,42 @@ def collect_messages(root: Path, rules: list, report_dir: Path) -> list:
                     rows.append({"direction": "in", "channel": "HTTP", "name": f"{methods} {dec.args[0].value}",
                                  "handler": f"{fn.name}()", "desc": _doc1(fn) or "(no docstring)",
                                  "tables": "", "shape": None, "file": _rel(each, root)})
+        # custom API methods: @jsonapi_rpc on a safrs class method is served at /api/<Class>/<method>
+        for cls in (n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)):
+            for fn in (n for n in cls.body if isinstance(n, ast.FunctionDef)):
+                for dec in fn.decorator_list:
+                    target = dec.func if isinstance(dec, ast.Call) else dec
+                    called = target.id if isinstance(target, ast.Name) else \
+                        target.attr if isinstance(target, ast.Attribute) else ""
+                    if called != "jsonapi_rpc":
+                        continue
+                    methods = "POST"
+                    for kw in (dec.keywords if isinstance(dec, ast.Call) else []):
+                        if kw.arg == "http_methods":
+                            methods = ",".join(_seg(src, kw.value).strip("[]\"' ").replace("'", "").split(","))
+                    rows.append({"direction": "in", "channel": "HTTP", "name": f"{methods} /api/{cls.name}/{fn.name}",
+                                 "handler": f"{fn.name}()", "desc": _doc1(cls) or _doc1(fn) or "(no docstring)",
+                                 "tables": "", "shape": None, "file": _rel(each, root)})
+        # EAI debug endpoints: registered inside integration/system/EaiDebug.py, so the project file has no route decorator
+        debug = {"register_consume_debug": ("topic", "GET /consume_debug/{key}",
+                                            "EAI debug (development only, no authentication): sends the message in ?file= "
+                                            "to the topic, live through Kafka or simulated"),
+                 "register_queue_reset": ("name", "POST /consume_debug/{key}/reset",
+                                          "EAI debug (development only, destructive): purges the messages in the "
+                                          "pipeline's topics")}
+        for call in (n for n in ast.walk(tree) if isinstance(n, ast.Call)):
+            called = call.func.id if isinstance(call.func, ast.Name) else \
+                call.func.attr if isinstance(call.func, ast.Attribute) else ""
+            if called not in debug:
+                continue
+            arg_name, route, desc = debug[called]
+            given = {kw.arg: kw.value for kw in call.keywords}.get(arg_name)
+            if given is None and len(call.args) > 1:
+                given = call.args[1]            # register_*(app, <topic or name>, ...)
+            if isinstance(given, ast.Constant) and isinstance(given.value, str):
+                rows.append({"direction": "in", "channel": "HTTP", "name": route.format(key=given.value),
+                             "handler": f"{called}()", "desc": desc,
+                             "tables": "", "shape": None, "file": _rel(each, root)})
     return rows
 
 
@@ -1363,10 +1450,66 @@ def _test_text(root: Path) -> str:
     return "\n".join(parts)
 
 
-def _tests_name(name: str, text: str) -> str:
-    """ does any test mention this topic or endpoint? (a mention is not proof of delivery, but no mention is) """
+def kafka_server(root: Path) -> str:
+    """ the Kafka broker address in use (environment, else config/default.env), or "" when KAFKA_SERVER is not set:
+        the platform then runs Kafka in fallback mode (no producer or consumer; /consume_debug is the test path) """
+    value = os.environ.get("KAFKA_SERVER")
+    if value is None:
+        env = root / "config" / "default.env"
+        for line in (_read(env).splitlines() if env.is_file() else []):
+            m = re.match(r'^\s*KAFKA_SERVER\s*=\s*(.*?)\s*$', line)
+            if m:
+                value = m.group(1)
+    value = (value or "").strip().strip('"\'')
+    return "" if value in ("", "None") else value
+
+
+def delivery_modes(root: Path) -> dict:
+    """ how the last test run delivered Kafka messages: {'Feature / Scenario': {'mode': 'live'|'simulated',
+        'broker': ...}}, written by the steps to test/api_logic_server_behave/logs/delivery_modes.json; {} if none """
+    path = root / "test" / "api_logic_server_behave" / "logs" / "delivery_modes.json"
+    if not path.is_file():
+        return {}
+    try:
+        import json
+        raw = json.loads(_read(path))
+    except ValueError:
+        return {}
+    return {k: (v if isinstance(v, dict) else {"mode": v}) for k, v in raw.items()}
+
+
+def kafka_delivery(root: Path, tests_text: str) -> tuple:
+    """ ('live' | 'simulated' | 'mixed', broker): how the tests reached Kafka. From the run's own record when there is
+        one; else tests that call /consume_debug are simulated; else KAFKA_SERVER decides """
+    modes = delivery_modes(root)
+    if modes:
+        kinds = {v.get("mode") for v in modes.values()}
+        broker = next((v.get("broker") for v in modes.values() if v.get("broker")), "") or kafka_server(root)
+        return ("live" if kinds == {"live"} else "simulated" if kinds == {"simulated"} else "mixed"), broker
+    if "consume_debug" in tests_text:
+        return "simulated", ""
+    server = kafka_server(root)
+    return ("live", server) if server else ("simulated", "")
+
+
+def _mentions(name: str, text: str) -> bool:
     key = name.split()[-1].rstrip("/").split("/")[-1]
-    return "✅" if key and re.search(rf'(?<![\w]){re.escape(key)}(?![\w])', text) else "⚠ no test mentions it"
+    return bool(key and re.search(rf'(?<![\w]){re.escape(key)}(?![\w])', text))
+
+
+def _tests_name(name: str, text: str, kafka: dict = None) -> str:
+    """ does any test mention this topic or endpoint? (a mention is not proof of delivery, but no mention is).
+        kafka: for a Kafka row, {'mode': 'live'|'simulated'|'mixed', 'publish': bool} """
+    mentioned = _mentions(name, text)
+    if kafka is None:
+        return "✅" if mentioned else "⚠ no test mentions it"
+    if kafka["publish"]:      # an outbound message the tests check in the server log, not on the topic
+        return "⚠ message checked in the log, not on the topic" if mentioned else "⚠ no test mentions it"
+    if kafka["mode"] == "live":
+        return "✅ live"      # the live scenarios cannot pass unless the consumers ran
+    if mentioned:
+        return "⚠ simulated (no broker)" if kafka["mode"] == "simulated" else "⚠ mixed: live and simulated"
+    return "⚠ no test mentions it"
 
 
 def sec_messages(root: Path, rows: list, req_by_file: dict, report_dir: Path) -> list:
@@ -1376,16 +1519,24 @@ def sec_messages(root: Path, rows: list, req_by_file: dict, report_dir: Path) ->
         return lines
     tests_text = _test_text(root)
     check = bool(tests_text.strip())
-    lines.append("| Direction | Channel | Name | Handler | Tables created | Message shape | Requirement |"
-                 + (" Tests mention it |" if check else ""))
-    lines.append("|---|---|---|---|---|---|---|" + ("---|" if check else ""))
+    kafka = any(m["channel"] == "Kafka" for m in rows)
+    mode, server = kafka_delivery(root, tests_text) if kafka else ("simulated", "")
+    if kafka:
+        lines.extend(text("kafka-mode-live", server=server or "broker") if mode == "live" else
+                     text("kafka-mode-mixed", server=server or "broker") if mode == "mixed" else text("kafka-mode-simulated"))
+    # the status column is next to the name, so it is still visible when a wide table is cut off
+    lines.append("| Direction | Channel | Name |" + (" Tests mention it |" if check else "")
+                 + " Handler | Tables created | Message shape | Requirement |")
+    lines.append("|---|---|---|" + ("---|" if check else "") + "---|---|---|---|")
     for m in rows:
         shape = f"[{m['name']}.json]({_link(m['shape'], report_dir)})" if m["shape"] else ""
         handler = f"`{m['handler']}` - {m['desc']}" if m["direction"] == "in" else f"{m['handler']} - {m['desc']}"
-        lines.append(f"| {'➡ in' if m['direction'] == 'in' else '⬅ out'} | {m['channel']} | `{_cell(m['name'])}` | "
-                     f"{_cell(handler)} | {_cell(m['tables'])} | {shape} | "
-                     f"{_cell('; '.join(req_by_file.get(m['file'], [])))} |"
-                     + (f" {_tests_name(m['name'], tests_text)} |" if check else ""))
+        kafka_row = {"mode": mode, "publish": m["direction"] == "out" and not m["name"].endswith("_processed")} \
+            if m["channel"] == "Kafka" else None
+        lines.append(f"| {'➡ in' if m['direction'] == 'in' else '⬅ out'} | {m['channel']} | `{_cell(m['name'])}` |"
+                     + (f" {_tests_name(m['name'], tests_text, kafka_row)} |" if check else "")
+                     + f" {_cell(handler)} | {_cell(m['tables'])} | {shape} | "
+                     f"{_cell('; '.join(req_by_file.get(m['file'], [])))} |")
     lines.append("")
     if check:
         lines.extend(text("tests-mention-note"))
@@ -1747,6 +1898,15 @@ _Generated from `docs/db.dbml` (parents above children; shaded rows are derived 
 
 <!-- (no introduction by default; add one here) -->
 
+<!-- text: kafka-mode-simulated -->
+**Kafka mode: simulated (no broker).** `KAFKA_SERVER` is not set, so no Kafka consumer or producer runs. The tests deliver inbound messages by calling `/consume_debug`, which runs the same parse-and-save function the live consumer uses, so lookups, rules and the saved message are exercised, but Kafka delivery itself is not. Outbound messages are built and logged, not sent. To test with a real broker, set `KAFKA_SERVER` and `KAFKA_CONSUMER_GROUP` (see `integration/kafka/kafka_readme.md`).
+
+<!-- text: kafka-mode-live -->
+**Kafka mode: live ({{server}}).** The tests sent inbound messages through a real broker: `/consume_debug` published them to topic `order_b2b`, the server's consumers processed them, and the tests then checked the results. Outbound `order_shipping` messages are checked in the server log, not read back from the topic.
+
+<!-- text: kafka-mode-mixed -->
+**Kafka mode: mixed.** Some scenarios sent messages through a live broker ({{server}}) and some were simulated through `/consume_debug`. The Scenario names and the table below say which.
+
 > ⚙ generated: messages and APIs table
 
 <!-- text: tests-mention-note -->
@@ -2030,6 +2190,38 @@ def tests_howto(root: Path, has_tests: bool) -> list:
     return fill(TEXT.get("tests-howto", []), howto_title=title, feature_prompt=prompt)
 
 
+def _secs(seconds) -> str:
+    """ 0.29 -> '0.29 s', 2.481 -> '2.5 s', 75 -> '1m 15s' """
+    if seconds is None:
+        return ""
+    if seconds < 1:
+        return f"{seconds:.2f} s"
+    if seconds < 60:
+        return f"{seconds:.1f} s"
+    return f"{int(seconds // 60)}m {int(round(seconds % 60)):02d}s"
+
+
+def run_seconds(behave_log: str):
+    """ how long the last run took, from the 'Behave run time: N s' line behave_run.py writes into the log; None if absent """
+    log = Path(behave_log)
+    if not log.is_file():
+        return None
+    m = re.findall(r'Behave run time:\s*([\d.]+)\s*s', _read(log))
+    return float(m[-1]) if m else None
+
+
+def scenario_times(behave_log: str) -> dict:
+    """ {'Feature / Scenario': seconds} from logs/scenario_times.json (written by features/environment.py), or {} """
+    path = Path(behave_log).parent / "scenario_times.json"
+    if not path.is_file():
+        return {}
+    try:
+        import json
+        return json.loads(_read(path))
+    except ValueError:
+        return {}
+
+
 def _run_info(root: Path, behave_log: str):
     """ (when the tests last ran, how long ago as text, files changed since), or None if there is no run """
     log = Path(behave_log)
@@ -2055,8 +2247,9 @@ def _run_stamp(root: Path, behave_log: str) -> list:
     if info is None:
         return []
     ran, ago, newer = info
-    text = (f"**Last test run:** {ran.strftime('%B %d, %Y %H:%M')} "
-            f"({ago} before this report; test results and logic logs below are from that run)")
+    took = run_seconds(behave_log)
+    text = (f"**Last test run:** {ran.strftime('%B %d, %Y %H:%M')}" + (f", took {_secs(took)}" if took is not None else "")
+            + f" ({ago} before this report; test results and logic logs below are from that run)")
     if newer:
         text += (f"  \n⚠ **{len(newer)} file(s) changed after that run** (e.g. `{newer[0]}`): "
                  f"re-run the tests before relying on the results.")
@@ -2101,7 +2294,7 @@ def scorecard(root: Path, msg_rows: list, behave_log: str) -> list:
     n_tested = f["n_req"] - len(f["no_tests"])
     if f["failed"]:
         icon = "❌"
-    elif f["n_req"] == 0 or f["passed"] is None or f["no_impl"] or f["no_tests"] or newer:
+    elif f["n_req"] == 0 or f["passed"] is None or f["no_impl"] or f["no_tests"] or f["skipped"] or newer:
         icon = "⚠"
     else:
         icon = "✅"
@@ -2112,8 +2305,10 @@ def scorecard(root: Path, msg_rows: list, behave_log: str) -> list:
     if f["passed"] is None:
         parts.append("no test run found")
     else:
-        parts.append(f"{f['passed']} of {f['passed'] + f['failed']} scenarios passed"
-                     + (f", {f['failed']} FAILED" if f["failed"] else ""))
+        parts.append(f"{f['passed']} of {f['passed'] + f['failed'] + f['skipped']} scenarios passed"
+                     + (f", {f['failed']} FAILED" if f["failed"] else "")
+                     + (f", {f['skipped']} skipped" + (f" (not verified: {_gap_list(f['skipped_reqs'])})" if f["skipped_reqs"] else "")
+                        if f["skipped"] else ""))
         if info:
             parts.append(f"last run {info[1]} ago" + (", files changed since" if newer else ""))
     lines = [f"**{icon} {'; '.join(parts)}.**", "", "| | |", "|---|---|"]
@@ -2123,8 +2318,10 @@ def scorecard(root: Path, msg_rows: list, behave_log: str) -> list:
     if f["passed"] is None:
         lines.append("| Last test run | none found |")
     else:
-        lines.append(f"| Last test run | {'❌' if f['failed'] else '✅'} {f['passed']} passed, {f['failed']} failed"
-                     + (f" ({info[0].strftime('%B %d, %Y %H:%M')}, {info[1]} ago)" if info else "") + " |")
+        lines.append(f"| Last test run | {'❌' if f['failed'] else ('⚠' if f['skipped'] else '✅')} {f['passed']} passed, {f['failed']} failed"
+                     + (f", {f['skipped']} skipped" if f["skipped"] else "")
+                     + (f" ({info[0].strftime('%B %d, %Y %H:%M')}, {info[1]} ago)" if info else "")
+                     + (f"; took {_secs(run_seconds(behave_log))}" if run_seconds(behave_log) is not None else "") + " |")
     lines.append(f"| Rules | {f['n_rules']} ({f['n_declarative']} declarative, {f['n_python']} Python functions, {f['n_events']} Python events) |")
     if f["seen"]:
         lines.append(f"| Rules shown running in a test log | {f['seen'][0]} of {f['seen'][1]} |")
@@ -2137,6 +2334,13 @@ def scorecard(root: Path, msg_rows: list, behave_log: str) -> list:
     http = sum(1 for m in msg_rows if m["channel"] == "HTTP")
     if msg_rows:
         lines.append(f"| Messages and APIs | {kafka_in} Kafka topic(s) in, {kafka_out} out; {http} HTTP endpoint(s) |")
+    if kafka_in or kafka_out:
+        mode, server = kafka_delivery(root, _test_text(root))
+        lines.append("| Kafka | " + (f"live ({server}): subscribe tested through the broker; outbound messages checked in the log"
+                                      if mode == "live" else
+                                      "mixed: some scenarios live, some simulated" if mode == "mixed" else
+                                      "simulated, no broker: messages are tested through /consume_debug; live delivery not verified")
+                     + " |")
     return lines + [""]
 
 
@@ -2177,8 +2381,11 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str, proj
         outcome = scenario_results(behave_log) or {}
         passed = list(outcome.values()).count("passed")
         failed = list(outcome.values()).count("failed")
-        evidence.append(f"**{'❌' if failed else '✅'} {n_scenarios} scenario(s): {passed} passed, "
-                        f"{failed} failed** (from the last run, `{behave_log}`).")
+        skipped = list(outcome.values()).count("skipped")
+        evidence.append(f"**{'❌' if failed else ('⚠' if skipped else '✅')} {n_scenarios} scenario(s): {passed} passed, "
+                        f"{failed} failed" + (f", {skipped} skipped (not verified)" if skipped else "")
+                        + (f"; took {_secs(run_seconds(behave_log))}" if run_seconds(behave_log) is not None else "")
+                        + f"** (from the last run, `{behave_log}`).")
         evidence.append("")
         evidence.extend(text("tests"))
         evidence.extend(tests_howto(root, has_tests=True))
@@ -2277,7 +2484,7 @@ def cli(ctx):
               default=f'logs/scenario_logic_logs',
               help="Per-scenario logic logs")
 @click.option('--wiki',
-              default=f'reports/Requirements Traceability Report.md',
+              default=f'../../docs/requirements/Requirements Traceability Report.md',  # all links are computed relative to this folder
               help="Report to write")
 @click.option('--template', '--prepend_wiki', 'prepend_wiki',
               default=f'reports/Requirements Traceability Report Template.md',

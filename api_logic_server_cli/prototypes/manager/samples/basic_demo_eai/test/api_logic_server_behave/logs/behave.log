@@ -5,124 +5,83 @@ Feature: About Sample # features/about.feature:6
     When Transactions are submitted                          # features/steps/about.py:12
     Then Enforce business policies with Logic (rules + code) # features/steps/about.py:16
 
-Feature: B2B Order Integration # features/b2b_order.feature:1
+Feature: B2B Order Integration # features/b2b_order_integration.feature:1
 
-  Scenario: Partner Order Is Accepted And Rules Derive The Totals  # features/b2b_order.feature:6
-    Given Customer "Acme" with balance 0 and credit limit 1000     # features/steps/check_credit.py:20
-    When B2B order is posted for "Acme" with 2 Widget and 1 Gadget # features/steps/b2b_and_kafka.py:47
-    Then B2B order is accepted                                     # features/steps/b2b_and_kafka.py:62
-    Then Order has 2 items                                         # features/steps/b2b_and_kafka.py:80
-    Then Order amount_total is 330                                 # features/steps/check_credit.py:197
-    Then Customer balance is 330                                   # features/steps/check_credit.py:204
+  Scenario: Partner Order Accepted                                                       # features/b2b_order_integration.feature:5
+    Given Customer "Erin" with credit limit 5000                                         # features/steps/check_credit_steps.py:9
+    When Partner order posted via OrderB2B for account "Erin" with 2 Widget and 1 Gadget # features/steps/b2b_order_integration_steps.py:9
+    Then OrderB2B reports an Order with 2 items for the customer                         # features/steps/b2b_order_integration_steps.py:32
+    And Items are mapped to Products Widget and Gadget with quantities 2 and 1           # features/steps/b2b_order_integration_steps.py:41
 
-  Scenario: Partner Order For An Unknown Customer Is Rejected   # features/b2b_order.feature:14
-    Given Customer "Beta" with balance 0 and credit limit 1000  # features/steps/check_credit.py:20
-    When B2B order is posted for unknown customer with 1 Widget # features/steps/b2b_and_kafka.py:52
-    Then B2B order is rejected with status 404                  # features/steps/b2b_and_kafka.py:68
-    Then Customer balance is 0                                  # features/steps/check_credit.py:204
-
-  Scenario: Partner Order Exceeding Credit Limit Is Rejected   # features/b2b_order.feature:20
-    Given Customer "Gamma" with balance 0 and credit limit 100 # features/steps/check_credit.py:20
-    When B2B order is posted for "Gamma" with 2 Widget         # features/steps/b2b_and_kafka.py:57
-    Then B2B order is not accepted                             # features/steps/b2b_and_kafka.py:75
-    Then Customer balance is 0                                 # features/steps/check_credit.py:204
+  Scenario: Unknown Account Rejected                                                            # features/b2b_order_integration.feature:11
+    When Partner order posted via OrderB2B for unknown account "No Such Customer" with 1 Widget # features/steps/b2b_order_integration_steps.py:20
+    Then OrderB2B answers HTTP 400 and no Order is created                                      # features/steps/b2b_order_integration_steps.py:51
 
 Feature: Check Credit # features/check_credit.feature:1
 
-  Scenario: Create Order Rolls Up To Customer Balance           # features/check_credit.feature:10
-    Given Customer "Alice" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
-    And Order is created for "Alice"                            # features/steps/check_credit.py:49
-    When Item is created with 5 Widget                          # features/steps/check_credit.py:74
-    Then Item unit_price is 90                                  # features/steps/check_credit.py:183
-    Then Item amount is 450                                     # features/steps/check_credit.py:190
-    Then Order amount_total is 450                              # features/steps/check_credit.py:197
-    Then Customer balance is 450                                # features/steps/check_credit.py:204
+  Scenario: Good Order Placed                       # features/check_credit.feature:6
+    Given Customer "Alice" with credit limit 5000   # features/steps/check_credit_steps.py:9
+    When B2B order placed for "Alice" with 2 Widget # features/steps/check_credit_steps.py:30
+    Then Customer balance should be 180             # features/steps/check_credit_steps.py:58
+    And Order amount_total should be 180            # features/steps/check_credit_steps.py:65
 
-  Scenario: Update Item Quantity Recalculates Amounts         # features/check_credit.feature:19
-    Given Customer "Bob" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
-    And Order is created for "Bob"                            # features/steps/check_credit.py:49
-    And Item is created with 2 Widget                         # features/steps/check_credit.py:74
-    When Item quantity is changed to 6                        # features/steps/check_credit.py:97
-    Then Item amount is 540                                   # features/steps/check_credit.py:190
-    Then Order amount_total is 540                            # features/steps/check_credit.py:197
-    Then Customer balance is 540                              # features/steps/check_credit.py:204
+  Scenario: Item Quantity Changed                # features/check_credit.feature:12
+    Given Customer "Bob" with credit limit 5000  # features/steps/check_credit_steps.py:9
+    And Order is created for "Bob" with 2 Widget # features/steps/check_credit_steps.py:19
+    When Item quantity changed to 3              # features/steps/check_credit_steps.py:41
+    Then Customer balance should be 270          # features/steps/check_credit_steps.py:58
 
-  Scenario: Update Item Product Recopies Unit Price             # features/check_credit.feature:28
-    Given Customer "Carol" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
-    And Order is created for "Carol"                            # features/steps/check_credit.py:49
-    And Item is created with 3 Widget                           # features/steps/check_credit.py:74
-    When Item product is changed to Gadget                      # features/steps/check_credit.py:110
-    Then Item unit_price is 150                                 # features/steps/check_credit.py:183
-    Then Item amount is 450                                     # features/steps/check_credit.py:190
-    Then Order amount_total is 450                              # features/steps/check_credit.py:197
-    Then Customer balance is 450                                # features/steps/check_credit.py:204
+  Scenario: Shipped Order Leaves Balance           # features/check_credit.feature:18
+    Given Customer "Carol" with credit limit 5000  # features/steps/check_credit_steps.py:9
+    And Order is created for "Carol" with 2 Widget # features/steps/check_credit_steps.py:19
+    When Order is shipped                          # features/steps/check_credit_steps.py:50
+    Then Customer balance should be 0              # features/steps/check_credit_steps.py:58
 
-  Scenario: Delete Item Reduces Order And Balance              # features/check_credit.feature:38
-    Given Customer "Dave" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
-    And Order is created for "Dave"                            # features/steps/check_credit.py:49
-    And Item is created with 4 Widget                          # features/steps/check_credit.py:74
-    When Item is deleted                                       # features/steps/check_credit.py:124
-    Then Order amount_total is 0                               # features/steps/check_credit.py:197
-    Then Customer balance is 0                                 # features/steps/check_credit.py:204
+  Scenario: Order Exceeding Credit Rejected            # features/check_credit.feature:24
+    Given Customer "Dave" with credit limit 100        # features/steps/check_credit_steps.py:9
+    When B2B order placed for "Dave" with 2 Widget     # features/steps/check_credit_steps.py:30
+    Then Order is rejected with a credit limit message # features/steps/check_credit_steps.py:73
+    And Customer balance should be 0                   # features/steps/check_credit_steps.py:58
 
-  Scenario: Change Order Customer Adjusts Both Balances        # features/check_credit.feature:46
-    Given Customer "Erin" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
-    And Customer "Frank" with balance 0 and credit limit 1000  # features/steps/check_credit.py:20
-    And Order is created for "Erin"                            # features/steps/check_credit.py:49
-    And Item is created with 5 Widget                          # features/steps/check_credit.py:74
-    When Order customer is changed to "Frank"                  # features/steps/check_credit.py:130
-    Then Customer "Erin" balance is 0                          # features/steps/check_credit.py:212
-    Then Customer "Frank" balance is 450                       # features/steps/check_credit.py:212
+Feature: Kafka Publish Shipping Notification # features/kafka_publish_shipping_notification.feature:1
 
-  Scenario: Ship Order Excludes From Balance                    # features/check_credit.feature:55
-    Given Customer "Grace" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
-    And Order is created for "Grace"                            # features/steps/check_credit.py:49
-    And Item is created with 5 Widget                           # features/steps/check_credit.py:74
-    When Order is shipped                                       # features/steps/check_credit.py:144
-    Then Customer balance is 0                                  # features/steps/check_credit.py:204
+  Scenario: Shipping Notification Published               # features/kafka_publish_shipping_notification.feature:6
+    Given Customer "Gina" with credit limit 5000          # features/steps/check_credit_steps.py:9
+    And Order is created for "Gina" with 1 Widget         # features/steps/check_credit_steps.py:19
+    When Order is shipped                                 # features/steps/check_credit_steps.py:50
+    Then Order is published to Kafka topic order_shipping # features/steps/kafka_publish_shipping_notification_steps.py:8
 
-  Scenario: Unship Order Includes In Balance                    # features/check_credit.feature:62
-    Given Customer "Heidi" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
-    And Order is created for "Heidi"                            # features/steps/check_credit.py:49
-    And Item is created with 5 Widget                           # features/steps/check_credit.py:74
-    And Order is shipped                                        # features/steps/check_credit.py:157
-    When Order is unshipped                                     # features/steps/check_credit.py:170
-    Then Customer balance is 450                                # features/steps/check_credit.py:204
+  Scenario: Unshipped Order Not Published         # features/kafka_publish_shipping_notification.feature:12
+    Given Customer "Hal" with credit limit 5000   # features/steps/check_credit_steps.py:9
+    When B2B order placed for "Hal" with 1 Widget # features/steps/check_credit_steps.py:30
+    Then no shipping notification is published    # features/steps/kafka_publish_shipping_notification_steps.py:18
 
-  Scenario: Order Within Credit Limit Is Accepted              # features/check_credit.feature:70
-    Given Customer "Ivan" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
-    And Order is created for "Ivan"                            # features/steps/check_credit.py:49
-    When Item is created with 10 Widget                        # features/steps/check_credit.py:74
-    Then Order creation succeeded                              # features/steps/check_credit.py:220
-    Then Customer balance is 900                               # features/steps/check_credit.py:204
+Feature: Kafka Subscribe Order Integration # features/kafka_subscribe_order_integration.feature:1
 
-  Scenario: Order Exceeding Credit Limit Is Rejected         # features/check_credit.feature:77
-    Given Customer "Judy" with balance 0 and credit limit 40 # features/steps/check_credit.py:20
-    And Order is created for "Judy"                          # features/steps/check_credit.py:49
-    When Item is created with 5 Widget                       # features/steps/check_credit.py:74
-    Then Item creation is rejected                           # features/steps/check_credit.py:225
-    Then Customer balance is 0                               # features/steps/check_credit.py:204
+  Scenario: Order Message Delivered                                                                            # features/kafka_subscribe_order_integration.feature:7
+    Given Customer "Frank" with credit limit 5000                                                              # features/steps/check_credit_steps.py:9
+    When an inbound order message for that customer is delivered to topic order_b2b with 2 Widget and 1 Gadget # features/steps/kafka_subscribe_order_integration_steps.py:10
+    Then the message is processed                                                                              # features/steps/kafka_subscribe_order_integration_steps.py:36
+    And an Order for the customer has 2 items totalling 330                                                    # features/steps/kafka_subscribe_order_integration_steps.py:43
 
-Feature: Kafka Publish Shipping Notification # features/kafka_publish.feature:1
+  Scenario: Unknown Account Message Rejected                                             # features/kafka_subscribe_order_integration.feature:13
+    When an inbound order message for an unknown account is delivered to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:18
+    Then the message is rejected with a reason                                           # features/steps/kafka_subscribe_order_integration_steps.py:57
 
-  Scenario: Shipping An Order Publishes To order_shipping      # features/kafka_publish.feature:7
-    Given Customer "Echo" with balance 0 and credit limit 1000 # features/steps/check_credit.py:20
-    And Order is created for "Echo"                            # features/steps/check_credit.py:49
-    And Item is created with 1 Widget                          # features/steps/check_credit.py:74
-    When Order is shipped                                      # features/steps/check_credit.py:144
-    Then The order_shipping publish event fired                # features/steps/b2b_and_kafka.py:145
-    Then A message for the order is on topic order_shipping    # features/steps/b2b_and_kafka.py:159
+  Scenario: Rejected Message Keeps Its Error (live Kafka only)                          # features/kafka_subscribe_order_integration.feature:17
+    When an inbound message for an unknown account is delivered live to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:27
+    Then the blob stays unprocessed with error_text                                     # features/steps/kafka_subscribe_order_integration_steps.py:64
 
-Feature: Kafka Subscribe Order Integration # features/kafka_subscribe.feature:1
+Feature: Row-Level Security # features/row_level_security.feature:1
 
-  Scenario: Inbound Order Message Creates The Order And Items                     # features/kafka_subscribe.feature:6
-    Given Customer "Delta" with balance 0 and credit limit 1000                   # features/steps/check_credit.py:20
-    When Inbound order message is consumed for "Delta" with 2 Widget and 1 Gadget # features/steps/b2b_and_kafka.py:114
-    Then Order is persisted from the message                                      # features/steps/b2b_and_kafka.py:124
-    Then Order has 2 items                                                        # features/steps/b2b_and_kafka.py:80
-    Then Order amount_total is 330                                                # features/steps/check_credit.py:197
-    Then Customer balance is 330                                                  # features/steps/check_credit.py:204
-    Then Message blob is marked processed                                         # features/steps/b2b_and_kafka.py:130
+  Scenario: Sales Role Sees Limited Customers              # features/row_level_security.feature:5
+    Given Customer "LowCredit" with credit limit 1000      # features/steps/check_credit_steps.py:9
+    And Customer "HighCredit" with credit limit 3000       # features/steps/check_credit_steps.py:9
+    And Customer "Owing" with credit limit 1000            # features/steps/check_credit_steps.py:9
+    And Order is created for "Owing" with 1 Widget         # features/steps/check_credit_steps.py:19
+    When Sales user queries each Customer by name          # features/steps/row_level_security_steps.py:9
+    Then Sales sees HighCredit and Owing but not LowCredit # features/steps/row_level_security_steps.py:20
 
 &nbsp;&nbsp;
-/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/samples/basic_demo_eai/test/api_logic_server_behave/behave_run.py completed at October 19, 2026 20:06:24
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py completed at October 24, 2026 15:10:03
+Behave run time: 3.051 s

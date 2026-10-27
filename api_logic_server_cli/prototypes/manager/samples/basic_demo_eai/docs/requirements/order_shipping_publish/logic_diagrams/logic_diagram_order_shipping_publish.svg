@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="813pt" height="131pt" viewBox="18.80 18.80 813.40 131.40">
+<svg xmlns="http://www.w3.org/2000/svg" width="766pt" height="131pt" viewBox="18.80 18.80 766.40 131.40">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 140.05)">
 <title>logic</title>
-<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-140.05 821.8,-140.05 821.8,28.8 -28.8,28.8" />
-<text xml:space="preserve" text-anchor="start" x="200.75" y="-95.9" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — samples/basic_demo_eai  [app_integration]</text>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-140.05 774.8,-140.05 774.8,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="200.5" y="-95.9" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_eai  [order_shipping_publish]</text>
 <g id="clust2" class="cluster">
 <title>cluster_events</title>
 </g>
@@ -30,17 +30,17 @@
 </g>
 
 <g id="node3" class="node">
-<title>evt__send_order_to_kafka</title>
-<polygon fill="#e8f5e9" stroke="none" points="547.62,-20 547.62,-48.25 670.38,-48.25 670.38,-20 547.62,-20" />
-<text xml:space="preserve" text-anchor="start" x="554.62" y="-30.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _send_order_to_kafka</text>
-<polygon fill="none" stroke="#27ae60" points="547.62,-20 547.62,-48.25 670.38,-48.25 670.38,-20 547.62,-20" />
+<title>evt__send_order_to_shipping</title>
+<polygon fill="#e8f5e9" stroke="none" points="518.62,-20 518.62,-48.25 653.38,-48.25 653.38,-20 518.62,-20" />
+<text xml:space="preserve" text-anchor="start" x="525.62" y="-30.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _send_order_to_shipping</text>
+<polygon fill="none" stroke="#27ae60" points="518.62,-20 518.62,-48.25 653.38,-48.25 653.38,-20 518.62,-20" />
 </g>
 
 <g id="edge2" class="edge">
-<title>Order-&gt;evt__send_order_to_kafka</title>
-<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M311.93,-34.12C360.08,-34.12 458.3,-34.12 528.62,-34.12" />
-<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="538.19,-34.13 528.19,-38.63 534.66,-34.23 528.19,-34.23 528.19,-34.13 528.19,-34.03 534.66,-34.03 528.19,-29.63 538.19,-34.13" />
-<text xml:space="preserve" text-anchor="middle" x="425.81" y="-38.88" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">after_flush</text>
+<title>Order-&gt;evt__send_order_to_shipping</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M311.78,-34.12C354.49,-34.12 436.42,-34.12 499.64,-34.12" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="509.35,-34.13 499.35,-38.63 505.82,-34.23 499.35,-34.23 499.35,-34.13 499.35,-34.03 505.82,-34.03 499.35,-29.63 509.35,-34.13" />
+<text xml:space="preserve" text-anchor="middle" x="411.31" y="-38.88" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">after_flush</text>
 </g>
 </g>
 </svg>

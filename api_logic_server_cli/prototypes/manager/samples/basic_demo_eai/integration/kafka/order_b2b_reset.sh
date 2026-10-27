@@ -1,19 +1,38 @@
 #!/usr/bin/env bash
-# integration/kafka/order_b2b_reset.sh — reset Kafka topics and log for the order_b2b pipeline.
+# integration/kafka/order_b2b_reset.sh - reset Kafka topics and log for the order_b2b pipeline.
 # Run from project root: bash integration/kafka/order_b2b_reset.sh
+#
+# WARNING: deletes and recreates topics order_b2b and order_b2b_processed on the broker, losing their messages (and any
+#          other project using the same topic names on that broker). order_shipping is only created if missing, never
+#          deleted. To purge messages WITHOUT deleting topics, use the debug endpoint instead:
+#          curl -X POST http://localhost:5656/consume_debug/order_b2b/reset
+# Broker container: BROKER_CONTAINER (default broker1); bootstrap server inside it: BROKER_BOOTSTRAP (default localhost:9092).
 
 set -e
 
-# Docker or Podman -- whichever is installed (same broker1 container either way)
+# Docker or Podman, whichever is installed (the broker container is the same either way)
 CONTAINER_CLI=$(command -v docker >/dev/null 2>&1 && echo docker || echo podman)
+BROKER_CONTAINER=${BROKER_CONTAINER:-broker1}
+BROKER_BOOTSTRAP=${BROKER_BOOTSTRAP:-localhost:9092}
+TOPICS="$CONTAINER_CLI exec $BROKER_CONTAINER /opt/kafka/bin/kafka-topics.sh --bootstrap-server $BROKER_BOOTSTRAP"
 
 # Truncate log
 if [ -f logs/als.log ]; then > logs/als.log && echo "Log cleared."; fi
 
-# Delete + recreate topics so consumer offsets start fresh
-$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic order_b2b --delete --if-exists || true
-$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic order_b2b_processed --delete --if-exists || true
+# Delete + recreate the subscribe topics so consumer offsets start fresh
+$TOPICS --topic order_b2b --delete --if-exists || true
+$TOPICS --topic order_b2b_processed --delete --if-exists || true
 sleep 2
-$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic order_b2b
-$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic order_b2b_processed
+$TOPICS --create --replication-factor 1 --partitions 1 --topic order_b2b
+$TOPICS --create --replication-factor 1 --partitions 1 --topic order_b2b_processed
+# publish topic: make sure it exists, keep its messages
+$TOPICS --create --if-not-exists --replication-factor 1 --partitions 1 --topic order_shipping
 echo "Kafka topics reset."
+
+# Inspection (substitute podman for docker if that is what is installed):
+#   docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+#   docker exec broker1 /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
+#     --topic order_shipping --from-beginning --group fresh-group-1      (use a new group number each time)
+#
+# For copied projects set KAFKA_CONSUMER_GROUP in config/default.env to a project-unique name, and keep exactly one
+# API server process running during consume tests.

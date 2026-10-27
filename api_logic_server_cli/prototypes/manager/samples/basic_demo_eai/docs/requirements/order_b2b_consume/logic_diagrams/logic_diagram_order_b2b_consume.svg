@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="876pt" height="131pt" viewBox="18.80 18.80 876.40 131.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 140.05)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-140.05 885.17,-140.05 885.17,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="266.56" y="-95.9" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_eai  [order_b2b_consume]</text>
+<g id="clust2" class="cluster">
+<title>cluster_events</title>
+</g>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="8,-17.62 8,-50.62 182.75,-50.62 182.75,-17.62 8,-17.62" />
+<text xml:space="preserve" text-anchor="start" x="17" y="-32.17" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ OrderB2bMessage inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-18.62 9,-49.62 181.75,-49.62 181.75,-18.62 9,-18.62" />
+</g>
+
+<g id="node2" class="node">
+<title>OrderB2bMessage</title>
+<polygon fill="#4a6fa5" stroke="none" points="329,-34.12 329,-50.12 435.75,-50.12 435.75,-34.12 329,-34.12" />
+<text xml:space="preserve" text-anchor="start" x="331" y="-38.67" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> OrderB2bMessage </text>
+<polygon fill="#dbe4f0" stroke="none" points="362.58,-18.12 362.58,-34.12 402.17,-34.12 402.17,-18.12 362.58,-18.12" />
+<text xml:space="preserve" text-anchor="start" x="379.38" y="-23.12" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e">  </text>
+<polygon fill="none" stroke="#4a6fa5" points="328,-17.12 328,-51.12 436.75,-51.12 436.75,-17.12 328,-17.12" />
+</g>
+
+<g id="edge1" class="edge">
+<title>TRIGGER-&gt;OrderB2bMessage</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M190.67,-34.12C229.72,-34.12 268.77,-34.12 307.82,-34.12" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="317.78,-34.13 307.78,-38.63 315.22,-34.63 307.78,-34.63 307.78,-34.13 307.78,-33.63 315.22,-33.63 307.78,-29.63 317.78,-34.13" />
+</g>
+
+<g id="node3" class="node">
+<title>evt__publish_order_b2b</title>
+<polygon fill="#e8f5e9" stroke="none" points="652,-20 652,-48.25 762.75,-48.25 762.75,-20 652,-20" />
+<text xml:space="preserve" text-anchor="start" x="659" y="-30.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _publish_order_b2b</text>
+<polygon fill="none" stroke="#27ae60" points="652,-20 652,-48.25 762.75,-48.25 762.75,-20 652,-20" />
+</g>
+
+<g id="edge2" class="edge">
+<title>OrderB2bMessage-&gt;evt__publish_order_b2b</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M444.65,-34.12C498.28,-34.12 575.8,-34.12 632.74,-34.12" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="642.74,-34.13 632.74,-38.63 639.2,-34.23 632.74,-34.23 632.74,-34.13 632.74,-34.03 639.2,-34.03 632.74,-29.63 642.74,-34.13" />
+<text xml:space="preserve" text-anchor="middle" x="544.38" y="-38.88" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">after_flush</text>
+</g>
+</g>
+</svg>

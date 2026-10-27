@@ -2,7 +2,7 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 404.8)">
 <title>logic</title>
 <polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-404.8 480.62,-404.8 480.62,28.8 -28.8,28.8" />
-<text xml:space="preserve" text-anchor="start" x="39.53" y="-360.65" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — samples/basic_demo_eai  [check_credit]</text>
+<text xml:space="preserve" text-anchor="start" x="89.03" y="-360.65" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_eai  [check_credit]</text>
 
 <g id="node1" class="node">
 <title>TRIGGER</title>

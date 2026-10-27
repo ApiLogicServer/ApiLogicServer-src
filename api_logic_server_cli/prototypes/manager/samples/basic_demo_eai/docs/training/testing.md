@@ -16,12 +16,13 @@
 Step 1a. Read database/models.py → Understand schema (IDs, aggregates, columns)
 Step 1b. Read logic/declare_logic.py → Identify rules to test  
 Step 1c. Scan api/api_discovery/*.py → Discover custom APIs (PHASE 2!)
+Step 1d. Scan integration/kafka/kafka_subscribe_discovery/*.py → Kafka subscribers: mode-aware scenarios (Step 1d below)
 Step 2.  Decide Phase 1 vs Phase 2 → Based on custom API existence
 Step 3.  Generate .feature files → Business language scenarios
 Step 4.  Implement steps/*.py → Using discovered APIs or CRUD
 Step 4b. VERIFY STEP ORDERING → Multi-item BEFORE single-item (Rule #0.5!)
 Step 4c. ADD LOGIC LOG INTEGRATION → prt once in Given, does_file_contain in Then
-Step 5.  SUGGEST how to run tests (DO NOT run automatically)
+Step 5.  SUGGEST "run the tests" (DO NOT run automatically as part of creating tests)
 ```
 
 **CRITICAL PRE-TEST CHECKLIST:**
@@ -42,19 +43,61 @@ Step 5.  SUGGEST how to run tests (DO NOT run automatically)
 
 **DO NOT skip Step 1c!** Custom APIs change the entire testing approach.
 
+**DO NOT skip Step 1d!** A Kafka subscribe test that only calls the simulated path never exercises Kafka.
+
 **DO NOT skip Step 4b!** Wrong step ordering causes silent failures with balance=0.
 
-**DO NOT run tests automatically!** Instead, suggest this workflow:
+**DO NOT run tests as part of "create tests from rules"!** Creating tests only writes files; end by suggesting
+the user say "run the tests". Running is a separate, explicit request - see "Running Tests and the Report" below.
 
-```bash
-# 1. Start the server (in separate terminal or background)
-python api_logic_server_run.py
+## Running Tests and the Report
 
-# 2. Run the tests (in another terminal)
-python test/api_logic_server_behave/behave_run.py
+**Triggers:** "run the tests", "run the behave tests" -> Part A. "run the behave report" -> Part B.
+"run the tests and the report" -> A then B. (Manual equivalent: the commands in each part.)
+
+### Part A - run the tests (`run the tests`)
+
+```
+Step 1. Is a server already up?   lsof -i :5656   (or: curl -s -o /dev/null -w "%{http_code}" http://localhost:5656/)
+        - Up: use it, and tell the user you did. (If logic/models changed since it started, say it may be stale.)
+        - Down: start it YOURSELF, from the project root, venv active:
+              source ../venv/bin/activate        # skip if no venv (e.g. Codespaces)
+              mkdir -p logs && python api_logic_server_run.py > logs/server_for_tests.log 2>&1 &
+          then WAIT until it answers (retry curl every 2s, up to ~30s). If it never answers, read
+          logs/server_for_tests.log (and logs/als.log), report the error, stop. Do not run the tests.
+          Remember that YOU started it.
+Step 2. Run the tests from test/api_logic_server_behave, ALWAYS with --outfile:
+              cd test/api_logic_server_behave && python behave_run.py --outfile=logs/behave.log
+          Without --outfile, logs/behave.log stays empty and the report shows no test results.
+Step 3. Read the result: behave's final "N scenarios passed, M failed" lines. For each failure, show the
+        failing scenario, the failing step and its message (also in logs/behave.log: "Assertion Failed").
+        Never say "passed" without having seen the counts.
+Step 4. If YOU started the server, stop it and confirm the port is free (server restart hygiene):
+              pkill -f "api_logic_server_run.py"; lsof -i :5656    # must return nothing
+        Leave a pre-existing server alone.
+Step 5. Offer: "Run the behave report?"
 ```
 
-**Why manual execution?** Tests require a running server. The AI cannot manage multiple terminals or background processes reliably.
+Notes: Kafka tests need the broker reachable if the project has Kafka enabled; a connection failure there
+is an environment problem to report, not a test failure to "fix". With security enabled the steps log in via
+`test_utils.login()` - nothing extra to do.
+
+### Part B - run the report (`run the behave report`)
+
+```
+Step 1. cd test/api_logic_server_behave && python requirements_traceability_report.py run
+        The server does NOT need to be running. Tests do not need to have been run: without
+        logs/behave.log the report still builds the requirements, rules, data model, security and
+        messages sections; it just has no test results.
+Step 2. Tell the user the output: docs/requirements/Requirements Traceability Report.md
+        (open it in the IDE's markdown preview, or: open "docs/requirements/Requirements Traceability Report.md").
+Step 3. Summarize from the generator's output / the report's header: rules, scenarios, passed/failed,
+        any "test scenarios FAILED" banner, and any requirement gaps listed under Coverage summary.
+Step 4. If logs/behave.log is old relative to the logic or tests, say so: "results are from the last run".
+```
+
+If the generator exits with an error or prints "0 rules" it was run from the wrong place or the project has
+no logic files - report that rather than presenting the report.
 
 ## Phase 1 vs Phase 2: The Core Decision
 
@@ -79,6 +122,10 @@ Custom API exists in api/api_discovery/?
 ## Step 1c: Discover Custom APIs (Phase 2)
 
 **CRITICAL:** Check for custom APIs BEFORE generating CRUD tests!
+
+**Read the URL and body shape from the discovered file — do not assume them.** Two styles exist:
+- `@jsonapi_rpc` class (example below): POST `/api/<Class>/<method>` with the `meta` wrapper.
+- Plain `@app.route('/api/<Name>', methods=['POST'])`: POST plain JSON (`{"Account": ..., "Items": [...]}`) to that route; no `meta` wrapper.
 
 **Discovery Process:**
 ```python
@@ -118,7 +165,7 @@ Without the `"method"` field, the API call will fail with a 500 error.
 **Example Discovery - OrderB2B:**
 ```python
 # api/api_discovery/order_b2b_service.py
-class OrderB2BEndPoint(safrs.JABase):
+class OrderB2B(safrs.JABase):
     @jsonapi_rpc(http_methods=["POST"])
     def OrderB2B(self, *args, **kwargs):
         """
@@ -135,7 +182,7 @@ class OrderB2BEndPoint(safrs.JABase):
 ```python
 {
     "order_b2b_service": {
-        "endpoint": "/api/OrderB2BEndPoint/OrderB2B",
+        "endpoint": "/api/OrderB2B/OrderB2B",
         "parameters": {
             "Account": "Customer name",
             "Items": [{"Name": "Product name", "QuantityOrdered": int}]
@@ -155,7 +202,7 @@ class OrderB2BEndPoint(safrs.JABase):
 # Phase 2: CREATE using custom API
 @when('B2B order placed for "{customer_name}" with items')
 def step_impl(context):
-    add_order_uri = 'http://localhost:5656/api/OrderB2BEndPoint/OrderB2B'
+    add_order_uri = 'http://localhost:5656/api/OrderB2B/OrderB2B'
     add_order_args = {
         "meta": {"method": "OrderB2B", "args": {"data": {
             "Account": customer_name,  # Business language!
@@ -171,6 +218,80 @@ def step_impl(context, qty):
     patch_data = {"data": {"attributes": {"quantity": qty}}}
     r = requests.patch(url=patch_uri, json=patch_data)
 ```
+
+## Step 1d: Discover Kafka subscribers (Phase 2)
+
+**CRITICAL:** if `integration/kafka/kafka_subscribe_discovery/*.py` has handlers (`@bus.handle('<topic>')`), generate the
+Kafka Subscribe scenarios in the **mode-aware** shape below. Do NOT write steps that only call the simulated path and
+word them "consumed from topic": that tests the parse-and-save function, not Kafka, and the word "consumed" claims more
+than was checked.
+
+**How a subscribe test reaches the pipeline.** The pipeline's debug endpoint, `GET /consume_debug/<topic>?file=...`
+(see `eai_subscribe.md`, "Debug endpoints"), takes the message from a file and either publishes it to the topic through a
+real broker (**live**) or runs the consumer's parse-and-save function directly (**simulated**). `mode=auto` (the
+default) picks live when a broker answers. The response says which: `"mode": "live" | "simulated"`. So the same
+scenarios run in both environments.
+
+**What the steps do:**
+
+```python
+import json, time, requests, test_utils
+from behave import *
+
+MODE_FILE = PROJECT_DIR / 'test' / 'api_logic_server_behave' / 'logs' / 'delivery_modes.json'
+
+def record_mode(context, mode, broker=None):
+    """Remember how this scenario's message was delivered, for the traceability report."""
+    modes = json.loads(MODE_FILE.read_text()) if MODE_FILE.is_file() else {}
+    modes[f'{context.feature.name} / {context.scenario.name}'] = {"mode": mode, **({"broker": broker} if broker else {})}
+    MODE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    MODE_FILE.write_text(json.dumps(modes, indent=2))
+
+def wait_for_blob(account, timeout=20):
+    """Live Kafka is asynchronous: poll until the blob for this (unique) account is processed or has error_text."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        r = requests.get(f'{BASE}/api/XyzMessage/', params={"sort": "-id", "page[limit]": 30}, headers=headers())
+        for each in r.json()['data']:
+            a = each['attributes']
+            if account in (a.get('payload') or '') and (a.get('is_processed') or a.get('error_text')):
+                return int(each['id']), a
+        time.sleep(0.5)
+    return None, None
+
+def deliver_message(context, account, mode='auto'):
+    """Send the message through the debug endpoint; set context.consumed / blob_id / error_text the same way for both modes."""
+    path = write_message(account)                       # a file the SERVER can read (path relative to the project root)
+    r = requests.get(f'{BASE}/consume_debug/xyz', params={"file": path, "mode": mode})
+    body = r.json()
+    context.consumed, context.blob_id, context.error_text = False, None, None
+    if r.status_code == 409:                            # live required, not available: NOT VERIFIED, not failed
+        context.scenario.skip(body.get('error', 'live Kafka is not available'))
+        return
+    record_mode(context, body['mode'], body.get('broker'))
+    if body['mode'] == 'simulated':
+        context.consumed, context.blob_id, context.error_text = bool(body.get('success')), body.get('blob_id'), body.get('error')
+        return
+    assert body.get('published'), f'live publish failed: {r.text}'
+    context.blob_id, a = wait_for_blob(account)
+    assert context.blob_id, ('no processed blob for ' + account + ' within 20 s - was the server started AFTER Kafka, '
+                             'with KAFKA_SERVER and a unique KAFKA_CONSUMER_GROUP?')
+    context.error_text = a.get('error_text')
+    context.consumed = bool(a.get('is_processed')) and not context.error_text
+```
+
+**Rules for these scenarios:**
+- **Neutral, honest wording**: "When an inbound order message for that customer is delivered to topic xyz". Never "consumed from topic" for a step that may be simulated.
+- **Then steps assert on the normalized result** (`context.consumed`, `context.error_text`, the blob via the API), so they hold in both modes. A rejected message: `error_text` (live) or the response's `error` (simulated) carries the rule's message.
+- **Unique data per scenario** (Rule #0): the account name is timestamped, so a live replay after a server restart cannot disturb the assertions.
+- **One live-only scenario** for what simulated cannot show: a rejected message leaves a blob with `is_processed = 0` and `error_text` set. Its When step calls `deliver_message(..., mode='live')`, which skips when Kafka is not available. Name it "(live Kafka only)".
+- **`features/environment.py` already exists** (shared by every project; do not regenerate or replace it). It times each
+  scenario (`logs/scenario_times.json`, shown next to each scenario in the report) and clears the previous run's records,
+  including `logs/delivery_modes.json`, so the report reads only this run. `behave_run.py` writes the whole run's time
+  into `behave.log` ("Behave run time: N s"); the report shows it in At a Glance.
+
+- **The report reads `logs/delivery_modes.json`** and labels the Kafka rows "simulated (no broker)" or "live", and a skipped live-only scenario shows as skipped, not passed. Do not hide a skip: skipped means "not verified".
+- **Outbound (publish) messages** are checked from the server log (`publish_kafka_message` logs the message JSON whether or not a broker answers), or read back from the topic when live. The log check proves the message content, not delivery.
 
 ## The Critical Rules (Read FIRST!)
 
@@ -459,6 +580,10 @@ def step_impl(context):
 ```
 
 ### Rule #7: Custom API Response Handling ⚠️ NEW
+A rejected request (a rule or constraint fails, an unknown Account) answers **HTTP 400** with a JSON:API body
+`{"errors": [{"title": "Validation Error: ...", "code": "400"}]}`, not HTTP 200 with an error inside it. Assert
+`r.status_code == 400` and look for the rule's message in `r.text`.
+
 ```python
 # Phase 2 APIs may return different formats - handle both!
 r = requests.post(url=api_uri, json=args, headers=get_headers())
@@ -660,7 +785,7 @@ def step_impl(context):
     items = [{"Name": row['Name'], "QuantityOrdered": int(row['Quantity'])} 
              for row in context.table]
     
-    add_order_uri = f'{BASE_URL}/api/OrderB2BEndPoint/OrderB2B'
+    add_order_uri = f'{BASE_URL}/api/OrderB2B/OrderB2B'
     add_order_args = {
         "meta": {"method": "OrderB2B", "args": {"data": {
             "Account": customer_name,
@@ -763,8 +888,8 @@ grep -n "@when('.*with.*{" features/steps/*.py
 4. Decide Phase 1 vs Phase 2 → Based on custom API existence
 5. Generate .feature files → Business language scenarios
 6. Implement steps/*.py → Using discovered APIs or CRUD
-7. Run tests → python behave_run.py
-8. Generate report → python behave_logic_report.py run
+7. Run tests → say "run the tests" (python behave_run.py --outfile=logs/behave.log)
+8. Generate report → say "run the behave report" (python requirements_traceability_report.py run)
 ```
 
 ## Key Testing Patterns
@@ -986,22 +1111,20 @@ Example strings from CBSA rules:
 
 #### Step 5 — Write logic-verification Then steps using does_file_contain
 
+`does_file_contain(search_for, in_file)` returns a bool (search text first, file second) and does not assert — wrap it in `assert ..., message`.
+
 ```python
 @then('Logic computes surtax applicable True for post-cutoff date')
 def step_logic_surtax_true(context):
     log_file = logic_log_file(context.scenario_name)
-    test_utils.does_file_contain(
-        log_file, "Surtax Applicable: True",
+    assert test_utils.does_file_contain("Surtax Applicable: True", log_file), \
         f"Logic Log missing 'Surtax Applicable: True' in {log_file}"
-    )
 
 @then('Logic computes surtax_amount {amount} from customs_value times surtax_rate')
 def step_logic_surtax_amount(context, amount):
     log_file = logic_log_file(context.scenario_name)
-    test_utils.does_file_contain(
-        log_file, f"Surtax Amount: {amount}",
+    assert test_utils.does_file_contain(f"Surtax Amount: {amount}", log_file), \
         f"Logic Log missing 'Surtax Amount: {amount}' in {log_file}"
-    )
 ```
 
 #### Step 6 — Add logic-verification steps to the feature file
