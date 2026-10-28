@@ -1,0 +1,6 @@
+{
+  "Kafka Subscribe Order Integration / Kafka Consume Valid order_b2b": {
+    "mode": "simulated",
+    "broker": null
+  }
+}

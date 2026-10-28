@@ -1,0 +1,94 @@
+Feature: About Sample # features/about.feature:6
+
+  Scenario: Transaction Processing                           # features/about.feature:8
+    Given Sample Database                                    # features/steps/about.py:8
+    When Transactions are submitted                          # features/steps/about.py:12
+    Then Enforce business policies with Logic (rules + code) # features/steps/about.py:16
+
+Feature: Check Credit # features/check_credit.feature:1
+
+  Scenario: Good Order within credit limit                           # features/check_credit.feature:3
+    Given a customer with credit_limit 1000 and balance 0            # features/steps/demo_eai_steps.py:35
+    When an unshipped order is placed with 2 items of unit_price 150 # features/steps/demo_eai_steps.py:99
+    Then the item amount is 300                                      # features/steps/demo_eai_steps.py:187
+    And the order amount_total is 300                                # features/steps/demo_eai_steps.py:194
+    And the customer balance is 300                                  # features/steps/demo_eai_steps.py:201
+
+  Scenario: Alter Item Quantity                                                                 # features/check_credit.feature:10
+    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150 # features/steps/demo_eai_steps.py:43
+    When the item quantity is updated to 4                                                      # features/steps/demo_eai_steps.py:124
+    Then the item amount is 600                                                                 # features/steps/demo_eai_steps.py:187
+    And the order amount_total is 600                                                           # features/steps/demo_eai_steps.py:194
+    And the customer balance is 600                                                             # features/steps/demo_eai_steps.py:201
+
+  Scenario: Change Order Customer                                                        # features/check_credit.feature:17
+    Given two customers with credit_limit 1000 and an order of 300 on the first customer # features/steps/demo_eai_steps.py:83
+    When the order is reassigned to the second customer                                  # features/steps/demo_eai_steps.py:138
+    Then the first customer balance is 0                                                 # features/steps/demo_eai_steps.py:208
+    And the second customer balance is 300                                               # features/steps/demo_eai_steps.py:215
+
+  Scenario: Delete Order Item                                                                   # features/check_credit.feature:23
+    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150 # features/steps/demo_eai_steps.py:43
+    When the item is deleted                                                                    # features/steps/demo_eai_steps.py:152
+    Then the order amount_total is 0                                                            # features/steps/demo_eai_steps.py:194
+    And the customer balance is 0                                                               # features/steps/demo_eai_steps.py:201
+
+  Scenario: Ship Order updates balance                                                          # features/check_credit.feature:29
+    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150 # features/steps/demo_eai_steps.py:43
+    When the order date_shipped is set to "2026-10-27"                                          # features/steps/demo_eai_steps.py:159
+    Then the customer balance is 0                                                              # features/steps/demo_eai_steps.py:201
+
+  Scenario: Unship Order updates balance                                                     # features/check_credit.feature:34
+    Given a customer with credit_limit 1000 and a shipped order of 2 items at unit_price 150 # features/steps/demo_eai_steps.py:58
+    When the order date_shipped is cleared                                                   # features/steps/demo_eai_steps.py:173
+    Then the customer balance is 300                                                         # features/steps/demo_eai_steps.py:201
+
+  Scenario: Exceed Credit Limit fails                                 # features/check_credit.feature:39
+    Given a customer with credit_limit 1000 and balance 0             # features/steps/demo_eai_steps.py:35
+    When an unshipped order is placed with 10 items of unit_price 150 # features/steps/demo_eai_steps.py:99
+    Then the transaction is rejected with credit limit constraint     # features/steps/demo_eai_steps.py:222
+
+Feature: Kafka Subscribe Order Integration # features/order_b2b_consume.feature:1
+
+  Scenario: Kafka Consume Valid order_b2b                           # features/order_b2b_consume.feature:3
+    Given a fresh customer for order_b2b with credit_limit 5000     # features/steps/demo_eai_steps.py:311
+    When a valid order_b2b message is delivered for that customer   # features/steps/demo_eai_steps.py:323
+    Then the OrderB2bMessage row is recorded with is_processed True # features/steps/demo_eai_steps.py:374
+    And an Order is created for that customer with amount_total 390 # features/steps/demo_eai_steps.py:381
+
+  Scenario: Kafka Consume Bad order_b2b (live Kafka only)                              # features/order_b2b_consume.feature:9
+    Given a fresh customer for order_b2b with credit_limit 100                         # features/steps/demo_eai_steps.py:311
+    When an over-limit order_b2b message is delivered via live Kafka for that customer # features/steps/demo_eai_steps.py:348
+    Then the OrderB2bMessage row is recorded with is_processed False and error_text    # None
+
+Feature: B2B Order Integration # features/order_b2b_service.feature:1
+
+  Scenario: B2B Valid Order via OrderB2B                                     # features/order_b2b_service.feature:3
+    Given a B2B customer with credit_limit 5000                              # features/steps/demo_eai_steps.py:236
+    When a B2B order payload is posted to OrderB2B for 2 Gadget and 1 Widget # features/steps/demo_eai_steps.py:249
+    Then the OrderB2B response status is 200                                 # features/steps/demo_eai_steps.py:271
+    And the B2B customer balance increases by 390                            # features/steps/demo_eai_steps.py:278
+
+  Scenario: B2B Exceed Credit via OrderB2B                                   # features/order_b2b_service.feature:9
+    Given a B2B customer with credit_limit 200                               # features/steps/demo_eai_steps.py:236
+    When a B2B order payload is posted to OrderB2B for 2 Gadget and 1 Widget # features/steps/demo_eai_steps.py:249
+    Then the OrderB2B response status is 400                                 # features/steps/demo_eai_steps.py:271
+
+Feature: Kafka Publish Shipping Notification # features/order_shipping_publish.feature:1
+
+  Scenario: Kafka Publish order_shipping on ship                                                # features/order_shipping_publish.feature:3
+    Given a customer with credit_limit 5000 and an unshipped order of 2 items at unit_price 150 # features/steps/demo_eai_steps.py:43
+    When the order date_shipped is updated to "2026-10-27" to trigger order_shipping            # features/steps/demo_eai_steps.py:407
+    Then the order_shipping message is published with order_id, customer_name, total, and items # features/steps/demo_eai_steps.py:421
+
+Feature: Row-Level Security # features/row_level_security.feature:1
+
+  Scenario: Sales role sees filtered customers                            # features/row_level_security.feature:3
+    Given a user logged in with the sales role                            # features/steps/demo_eai_steps.py:437
+    When the sales user requests the Customer list                        # features/steps/demo_eai_steps.py:443
+    Then every returned customer has credit_limit >= 3000 or balance > 0  # features/steps/demo_eai_steps.py:450
+    And customer "Diana" with balance 0 and credit_limit 1000 is excluded # features/steps/demo_eai_steps.py:462
+
+&nbsp;&nbsp;
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/samples/native_ai/demo_eai_modernized/test/api_logic_server_behave/behave_run.py completed at October 27, 2026 21:19:40
+Behave run time: 2.049 s

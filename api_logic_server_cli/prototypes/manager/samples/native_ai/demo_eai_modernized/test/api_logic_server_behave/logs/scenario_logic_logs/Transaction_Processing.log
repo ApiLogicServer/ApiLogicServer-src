@@ -1,0 +1,17 @@
+
+The following rules have been activated
+ - 2026-10-27 21:19:38,419 - logic_logger - DEBUG
+Rule Bank[0x10bb823c0] (loaded 2026-10-27 21:19:34.218093)		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+Mapped Class[OrderB2bMessage] rules:		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+  RowEvent OrderB2bMessage._publish_order_b2b() 		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+Mapped Class[Item] rules:		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+Mapped Class[Order] rules:		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+  RowEvent Order.send_order_to_shipping() 		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+Mapped Class[Customer] rules:		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10bd74360>)		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+  Constraint Function: None 		##   - 2026-10-27 21:19:38,419 - logic_logger - INFO
+Logic Bank - 12 rules loaded - 2026-10-27 21:19:38,419 - logic_logger - INFO
+Logic Bank - 12 rules loaded - 2026-10-27 21:19:38,419 - logic_logger - INFO

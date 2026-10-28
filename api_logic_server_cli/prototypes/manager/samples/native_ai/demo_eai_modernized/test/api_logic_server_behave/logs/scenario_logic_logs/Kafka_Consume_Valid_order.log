@@ -1,0 +1,64 @@
+ Kafka Consume Valid order_b2b  - 2026-10-27 21:19:39,508 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10be7bf00) (sqlalchemy before_flush)			 - 2026-10-27 21:19:39,545 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150  row: 0x10bef3070  session: 0x10be7bf00  ins_upd_dlt: upd, initial: upd - 2026-10-27 21:19:39,545 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10be7bf00)   										 - 2026-10-27 21:19:39,545 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10be7bf00)   										 - 2026-10-27 21:19:39,545 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-27 21:19:39,546 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10be7bf00))       	 - 2026-10-27 21:19:39,546 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10be7bdf0) (sqlalchemy before_flush)			 - 2026-10-27 21:19:39,582 - logic_logger - INFO
+..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90  row: 0x10bfe14e0  session: 0x10be7bdf0  ins_upd_dlt: upd, initial: upd - 2026-10-27 21:19:39,582 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10be7bdf0)   										 - 2026-10-27 21:19:39,582 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10be7bdf0)   										 - 2026-10-27 21:19:39,582 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-27 21:19:39,582 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10be7bdf0))       	 - 2026-10-27 21:19:39,582 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10bf62cf0) (sqlalchemy before_flush)			 - 2026-10-27 21:19:39,600 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: KafkaB2BCust 1793161179584, balance: None, credit_limit: 5000, email: None, email_opt_out: None  row: 0x10bf16550  session: 0x10bf62cf0  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,601 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: KafkaB2BCust 1793161179584, balance: 0, credit_limit: 5000, email: None, email_opt_out: None  row: 0x10bf16550  session: 0x10bf62cf0  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,601 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10bf62cf0)   										 - 2026-10-27 21:19:39,601 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10bf62cf0)   										 - 2026-10-27 21:19:39,601 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-27 21:19:39,601 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10bf62cf0))       	 - 2026-10-27 21:19:39,601 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10be7bf00) (sqlalchemy before_flush)			 - 2026-10-27 21:19:39,648 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: Valid order_b2b via consume_debug -> order_b2b_processed, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10bdd40d0  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,648 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Valid order_b2b via consume_debug -> order_b2b_processed, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10bdd40d0  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,648 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x10bc0bd50  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,649 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10bc0bd50  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,649 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10bc0bd50  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,649 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Valid order_b2b via consume_debug -> order_b2b_processed, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total:  [0-->] 300.0000000000  row: 0x10bdd40d0  session: 0x10be7bf00  ins_upd_dlt: upd, initial: upd - 2026-10-27 21:19:39,649 - logic_logger - INFO
+......Customer[40] {Update - Adjusting customer: balance} id: 40, name: KafkaB2BCust 1793161179584, balance:  [0E-10-->] 300.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10bf9a7d0  session: 0x10be7bf00  ins_upd_dlt: upd, initial: upd - 2026-10-27 21:19:39,649 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x10bf09750  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,650 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10bf09750  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,650 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10bf09750  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,650 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Valid order_b2b via consume_debug -> order_b2b_processed, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total:  [300.0000000000-->] 390.0000000000  row: 0x10bdd40d0  session: 0x10be7bf00  ins_upd_dlt: upd, initial: upd - 2026-10-27 21:19:39,650 - logic_logger - INFO
+......Customer[40] {Update - Adjusting customer: balance} id: 40, name: KafkaB2BCust 1793161179584, balance:  [300.0000000000-->] 390.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10bf9a7d0  session: 0x10be7bf00  ins_upd_dlt: upd, initial: upd - 2026-10-27 21:19:39,650 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, received_at: None, payload: {..., is_processed: True, error_text: None  row: 0x10c17d590  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,650 - logic_logger - INFO
+..OrderB2bMessage[None] {server_defaults: received_at } id: None, received_at: 2026-10-27, payload: {..., is_processed: True, error_text: None  row: 0x10c17d590  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,650 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10be7bf00)   										 - 2026-10-27 21:19:39,650 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10be7bf00)   										 - 2026-10-27 21:19:39,652 - logic_logger - INFO
+..Order[32] {AfterFlush Event} id: 32, notes: Valid order_b2b via consume_debug -> order_b2b_processed, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total: 390.0000000000  row: 0x10bdd40d0  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,652 - logic_logger - INFO
+..OrderB2bMessage[4] {AfterFlush Event} id: 4, received_at: 2026-10-27, payload: {..., is_processed: True, error_text: None  row: 0x10c17d590  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,652 - logic_logger - INFO
+..OrderB2bMessage[4] {_publish_order_b2b: skipping re-publish — blob.id=4 already is_processed=True (debug path)} id: 4, received_at: 2026-10-27, payload: {..., is_processed: True, error_text: None  row: 0x10c17d590  session: 0x10be7bf00  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,652 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-27 21:19:39,652 - logic_logger - INFO
+  Customer		## - 2026-10-27 21:19:39,652 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10bd74360>)		## - 2026-10-27 21:19:39,652 - logic_logger - INFO
+  Item		## - 2026-10-27 21:19:39,652 - logic_logger - INFO
+    2. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		## - 2026-10-27 21:19:39,652 - logic_logger - INFO
+    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		## - 2026-10-27 21:19:39,652 - logic_logger - INFO
+  Order		## - 2026-10-27 21:19:39,652 - logic_logger - INFO
+    4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		## - 2026-10-27 21:19:39,652 - logic_logger - INFO
+    5. RowEvent Order.send_order_to_shipping() 		## - 2026-10-27 21:19:39,652 - logic_logger - INFO
+  OrderB2bMessage		## - 2026-10-27 21:19:39,652 - logic_logger - INFO
+    6. RowEvent OrderB2bMessage._publish_order_b2b() 		## - 2026-10-27 21:19:39,652 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10be7bf00))       	 - 2026-10-27 21:19:39,652 - logic_logger - INFO

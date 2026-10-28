@@ -1,0 +1,9 @@
+{
+  "order_id": 1,
+  "order_date": "2023-02-22",
+  "customer_name": "Bob",
+  "total": 300,
+  "items": [
+    { "quantity": 2, "product_name": "Gadget", "unit_price": 150 }
+  ]
+}

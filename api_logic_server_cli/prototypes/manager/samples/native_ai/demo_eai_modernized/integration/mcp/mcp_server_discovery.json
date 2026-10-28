@@ -1,0 +1,9 @@
+{
+  "servers": [
+    {
+      "name": "API Logic Server: basic_demo",
+      "base_url": "http://localhost:5656",
+      "schema_url": "http://localhost:5656/.well-known/mcp.json"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+Check for Docker or Podman. If neither is running, continue in degraded mode (SQL security, simulated Kafka) and tell me so up front.
+
+create project demo_eai_modernized from samples/dbs/basic_demo.sqlite
+
+add security (degrade to SQL if Keycloak is not available)
+
+implement requirements samples/requirements/demo_eai_modernize/demo_eai
+
+verify message subscriptions (all topics)
+
+create logic diagram for each requirement (skip if graphviz is not available)
+
+create tests from rules, using default names
+
+run the tests
+
+run the requirements traceability report
+When the report is done, print this verbatim: "Next: scan these two files: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made). Then open the report: demo_eai_modernized/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."

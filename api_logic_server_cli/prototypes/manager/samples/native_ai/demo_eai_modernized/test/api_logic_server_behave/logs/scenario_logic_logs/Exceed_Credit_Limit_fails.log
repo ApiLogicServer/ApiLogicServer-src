@@ -1,0 +1,53 @@
+ Exceed Credit Limit fails  - 2026-10-27 21:19:39,408 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10bf607c0) (sqlalchemy before_flush)			 - 2026-10-27 21:19:39,425 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: CheckCredit Cust 1793161179408, balance: None, credit_limit: 1000, email: None, email_opt_out: None  row: 0x10bdc59d0  session: 0x10bf607c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,425 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: CheckCredit Cust 1793161179408, balance: 0, credit_limit: 1000, email: None, email_opt_out: None  row: 0x10bdc59d0  session: 0x10bf607c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,425 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10bf607c0)   										 - 2026-10-27 21:19:39,426 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10bf607c0)   										 - 2026-10-27 21:19:39,426 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-27 21:19:39,426 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10bf607c0))       	 - 2026-10-27 21:19:39,426 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10be7bf00) (sqlalchemy before_flush)			 - 2026-10-27 21:19:39,463 - logic_logger - INFO
+..Product[7] {Update - client} id: 7, name: Prod_150, count_suppliers: None, unit_price: 150  row: 0x10bfe2ac0  session: 0x10be7bf00  ins_upd_dlt: upd, initial: upd - 2026-10-27 21:19:39,463 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10be7bf00)   										 - 2026-10-27 21:19:39,463 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10be7bf00)   										 - 2026-10-27 21:19:39,463 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-27 21:19:39,463 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10be7bf00))       	 - 2026-10-27 21:19:39,463 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10bf62030) (sqlalchemy before_flush)			 - 2026-10-27 21:19:39,481 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: Test Order, customer_id: 39, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10bf0acd0  session: 0x10bf62030  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,481 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test Order, customer_id: 39, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10bf0acd0  session: 0x10bf62030  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,482 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10bf62030)   										 - 2026-10-27 21:19:39,482 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10bf62030)   										 - 2026-10-27 21:19:39,483 - logic_logger - INFO
+..Order[31] {AfterFlush Event} id: 31, notes: Test Order, customer_id: 39, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10bf0acd0  session: 0x10bf62030  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,483 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-27 21:19:39,483 - logic_logger - INFO
+  Customer		## - 2026-10-27 21:19:39,483 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10bd74360>)		## - 2026-10-27 21:19:39,483 - logic_logger - INFO
+  Order		## - 2026-10-27 21:19:39,483 - logic_logger - INFO
+    2. RowEvent Order.send_order_to_shipping() 		## - 2026-10-27 21:19:39,483 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10bf62030))       	 - 2026-10-27 21:19:39,483 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10bf61e10) (sqlalchemy before_flush)			 - 2026-10-27 21:19:39,501 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 31, product_id: 7, quantity: 10, amount: None, unit_price: None  row: 0x10bf34850  session: 0x10bf61e10  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,501 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 31, product_id: 7, quantity: 10, amount: None, unit_price: 150.0000000000  row: 0x10bf34850  session: 0x10bf61e10  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,502 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 31, product_id: 7, quantity: 10, amount: 1500.0000000000, unit_price: 150.0000000000  row: 0x10bf34850  session: 0x10bf61e10  ins_upd_dlt: ins, initial: ins - 2026-10-27 21:19:39,502 - logic_logger - INFO
+....Order[31] {Update - Adjusting order: amount_total} id: 31, notes: Test Order, customer_id: 39, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 1500.0000000000  row: 0x10bff15d0  session: 0x10bf61e10  ins_upd_dlt: upd, initial: upd - 2026-10-27 21:19:39,502 - logic_logger - INFO
+......Customer[39] {Update - Adjusting customer: balance} id: 39, name: CheckCredit Cust 1793161179408, balance:  [0E-10-->] 1500.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10bff0bd0  session: 0x10bf61e10  ins_upd_dlt: upd, initial: upd - 2026-10-27 21:19:39,502 - logic_logger - INFO
+......Customer[39] {Constraint Failure: balance (1500.0000000000) exceeds credit limit (1000.0000000000)} id: 39, name: CheckCredit Cust 1793161179408, balance:  [0E-10-->] 1500.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10bff0bd0  session: 0x10bf61e10  ins_upd_dlt: upd, initial: upd - 2026-10-27 21:19:39,502 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-10-27 21:19:39,502 - logic_logger - INFO
+  Customer		## - 2026-10-27 21:19:39,502 - logic_logger - INFO
+    1. Constraint Function: None 		## - 2026-10-27 21:19:39,502 - logic_logger - INFO
+    2. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10bd74360>)		## - 2026-10-27 21:19:39,503 - logic_logger - INFO
+  Item		## - 2026-10-27 21:19:39,503 - logic_logger - INFO
+    3. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		## - 2026-10-27 21:19:39,503 - logic_logger - INFO
+    4. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		## - 2026-10-27 21:19:39,503 - logic_logger - INFO
+  Order		## - 2026-10-27 21:19:39,503 - logic_logger - INFO
+    5. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		## - 2026-10-27 21:19:39,503 - logic_logger - INFO

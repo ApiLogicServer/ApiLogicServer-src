@@ -1,0 +1,16 @@
+{
+  "About Sample / Transaction Processing": 0.007,
+  "Check Credit / Good Order within credit limit": 0.196,
+  "Check Credit / Alter Item Quantity": 0.172,
+  "Check Credit / Change Order Customer": 0.173,
+  "Check Credit / Delete Order Item": 0.148,
+  "Check Credit / Ship Order updates balance": 0.136,
+  "Check Credit / Unship Order updates balance": 0.16,
+  "Check Credit / Exceed Credit Limit fails": 0.101,
+  "Kafka Subscribe Order Integration / Kafka Consume Valid order_b2b": 0.185,
+  "Kafka Subscribe Order Integration / Kafka Consume Bad order_b2b (live Kafka only)": 0.136,
+  "B2B Order Integration / B2B Valid Order via OrderB2B": 0.155,
+  "B2B Order Integration / B2B Exceed Credit via OrderB2B": 0.132,
+  "Kafka Publish Shipping Notification / Kafka Publish order_shipping on ship": 0.146,
+  "Row-Level Security / Sales role sees filtered customers": 0.022
+}

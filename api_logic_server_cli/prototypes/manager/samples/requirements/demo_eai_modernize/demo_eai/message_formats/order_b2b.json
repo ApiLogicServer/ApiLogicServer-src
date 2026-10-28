@@ -1,0 +1,8 @@
+{
+  "Account": "Alice",
+  "Notes": "Order from the sales channel",
+  "Items": [
+    { "Name": "Widget", "QuantityOrdered": 1 },
+    { "Name": "Gadget", "QuantityOrdered": 2 }
+  ]
+}
