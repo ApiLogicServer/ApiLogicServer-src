@@ -4,7 +4,7 @@ This project was created by `genai-logic create`.
 
 - **Project name:** demo_eai_modernized
 - **Database:** `sqlite:///samples/dbs/basic_demo.sqlite`
-- **Created:** October 27, 2026 18:03:07
+- **Created:** October 27, 2026 21:48:53
 
 ## Scaffold
 
@@ -43,4 +43,16 @@ You can still add business logic at any time - say **"implement requirements"** 
 ## Use Cases
 
 *(each `impl req` run appends a link here to its `docs/requirements/<use_case>/ad-libs.md`)*
-- [demo_eai](demo_eai/ad-libs.md) — Check Credit rules, OrderB2B custom API, 2-message Kafka subscribe, by-example Kafka publish, and sales RBAC grants, 2026-10-27
+
+- [demo_eai](demo_eai/ad-libs.md) — modernized EAI demo: credit rules, order_shipping publish, order_b2b consume + REST, Keycloak RLS, REST contract guard; live Kafka not verified, 2026-10-27
+
+## CE/Training Files Read
+
+Files loaded during this run (approximate sizes where known):
+
+- `.github/copilot-instructions.md` (project CE, ~217 KB) — read by section: Verify Message Subscriptions, Run Tests, Logic Diagram, Executable Requirements, Security, B2B API pattern, EAI publish step
+- `docs/training/eai_subscribe.md` (~46 KB) — read in full
+- `docs/training/implement_requirements.md` (~67 KB) — head, ad-libs template and linking rule
+- `docs/training/security.md` (~10 KB) — read in full
+- `docs/training/testing.md` (~52 KB) — Running Tests, Step 1c/1d, Rules #0/#5/#6, logic-log section
+- Not read: `logic_bank_api.md`, `logic_bank_patterns.md`, `RequestObjectPattern.md`

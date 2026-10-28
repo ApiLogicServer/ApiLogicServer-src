@@ -1,31 +1,33 @@
 """
-Standalone Kafka test publisher for topic order_b2b using confluent_kafka.Producer.
-Run from project root: python test/send_order_b2b.py [sample_file]
+Kafka test publisher: sends one message to a topic through a real broker (confluent_kafka.Producer).
+
+    python test/send_order_b2b.py [topic] [payload_file]
+    defaults: order_b2b  docs/requirements/demo_eai/message_formats/order_b2b.json
+
+The debug endpoint's live mode is the usual way to send (see api/api_discovery/order_b2b_kafka_consume_debug.py);
+this is the standalone tool.  Broker: KAFKA_SERVER (default localhost:9092).
 """
-from pathlib import Path
+import os
 import sys
+from pathlib import Path
 from confluent_kafka import Producer
 
-TOPIC = "order_b2b"
-BOOTSTRAP_SERVERS = "localhost:9092"
-DEFAULT_SAMPLE = Path(__file__).parent.parent / "docs" / "requirements" / "demo_eai" / "message_formats" / "order_b2b.json"
+topic = sys.argv[1] if len(sys.argv) > 1 else "order_b2b"
+payload_file = Path(sys.argv[2] if len(sys.argv) > 2 else "docs/requirements/demo_eai/message_formats/order_b2b.json")
+payload = payload_file.read_text()
+
+outcome = {}
 
 
-def _delivery_report(err, msg):
-    if err is not None:
-        print(f"Delivery failed: {err}")
-    else:
-        print(f"Delivered to {msg.topic()} [partition {msg.partition()}] @ offset {msg.offset()}")
+def delivered(err, msg):
+    outcome["error"] = str(err) if err else None
+    outcome["where"] = None if err else f"{msg.topic()} [{msg.partition()}] @ {msg.offset()}"
 
 
-def main():
-    sample_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_SAMPLE
-    payload = sample_path.read_text(encoding="utf-8")
-    producer = Producer({"bootstrap.servers": BOOTSTRAP_SERVERS})
-    producer.produce(TOPIC, value=payload.encode("utf-8"), callback=_delivery_report)
-    producer.flush(timeout=10)
-
-
-if __name__ == "__main__":
-    main()
-
+producer = Producer({"bootstrap.servers": os.getenv("KAFKA_SERVER", "localhost:9092")})
+producer.produce(topic, value=payload.encode("utf-8"), callback=delivered)
+producer.flush(timeout=10)
+if outcome.get("error") or "where" not in outcome:
+    print(f"NOT delivered: {outcome}")
+    sys.exit(1)
+print(f"delivered to {outcome['where']}")

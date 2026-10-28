@@ -1,43 +1,70 @@
 Feature: Check Credit
 
-  Scenario: Good Order within credit limit
-    Given a customer with credit_limit 1000 and balance 0
-    When an unshipped order is placed with 2 items of unit_price 150
-    Then the item amount is 300
-    And the order amount_total is 300
-    And the customer balance is 300
+  Scenario: Order placed within the credit limit
+    Given a new customer with credit limit 1000
+    When an order is placed with 2 Widget
+    Then the item amount is 180
+    And the order total is 180
+    And the customer balance is 180
+    And Logic adjusts the customer balance from the order total
 
-  Scenario: Alter Item Quantity
-    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150
-    When the item quantity is updated to 4
-    Then the item amount is 600
-    And the order amount_total is 600
-    And the customer balance is 600
+  Scenario: Item quantity change flows to the order total and balance
+    Given a new customer with credit limit 1000
+    And an order is placed with 2 Widget
+    When the item quantity is changed to 5
+    Then the item amount is 450
+    And the order total is 450
+    And the customer balance is 450
 
-  Scenario: Change Order Customer
-    Given two customers with credit_limit 1000 and an order of 300 on the first customer
-    When the order is reassigned to the second customer
-    Then the first customer balance is 0
-    And the second customer balance is 300
-
-  Scenario: Delete Order Item
-    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150
-    When the item is deleted
-    Then the order amount_total is 0
-    And the customer balance is 0
-
-  Scenario: Ship Order updates balance
-    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150
-    When the order date_shipped is set to "2026-10-27"
+  Scenario: Shipping an order removes it from the balance
+    Given a new customer with credit limit 1000
+    And an order is placed with 2 Widget
+    When the order is shipped
     Then the customer balance is 0
 
-  Scenario: Unship Order updates balance
-    Given a customer with credit_limit 1000 and a shipped order of 2 items at unit_price 150
-    When the order date_shipped is cleared
-    Then the customer balance is 300
+  Scenario: Moving an order to another customer moves the balance
+    Given a new customer with credit limit 1000
+    And a second customer with credit limit 1000
+    And an order is placed with 2 Widget
+    When the order is moved to the second customer
+    Then the customer balance is 0
+    And the second customer balance is 180
 
-  Scenario: Exceed Credit Limit fails
-    Given a customer with credit_limit 1000 and balance 0
-    When an unshipped order is placed with 10 items of unit_price 150
-    Then the transaction is rejected with credit limit constraint
+  Scenario: Order over the credit limit is rejected
+    Given a new customer with credit limit 100
+    When an order is placed with 2 Widget
+    Then the request is rejected with "exceeds credit limit"
+    And the customer balance is 0
 
+  Scenario: Balance equal to the credit limit is accepted
+    Given a new customer with credit limit 180
+    When an order is placed with 2 Widget
+    Then the request is accepted
+    And the customer balance is 180
+
+  Scenario: Lowering the credit limit below the balance is rejected
+    Given a new customer with credit limit 1000
+    And an order is placed with 2 Widget
+    When the credit limit is changed to 100
+    Then the request is rejected with "exceeds credit limit"
+
+  Scenario: Product price change does not alter existing items
+    Given a new customer with credit limit 1000
+    And a new product priced 50
+    And an order is placed with 2 of the new product
+    When the product price is changed to 80
+    Then the item unit price is 50
+    And the item amount is 100
+
+  Scenario: Deleting an order deletes its items
+    Given a new customer with credit limit 1000
+    And an order is placed with 2 Widget
+    When the order is deleted
+    Then the order has no items
+    And the customer balance is 0
+
+  Scenario: Item for an unknown product is rejected
+    Given a new customer with credit limit 1000
+    And an empty order
+    When an item is added for product id 999999
+    Then the request is rejected with "Missing Parent"

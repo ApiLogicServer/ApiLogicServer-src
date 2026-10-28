@@ -1,6 +1,14 @@
 {
-  "Kafka Subscribe Order Integration / Kafka Consume Valid order_b2b": {
-    "mode": "simulated",
-    "broker": null
+  "Order B2B Intake / Inbound order message is persisted as an order": {
+    "mode": "live",
+    "broker": "localhost:9092"
+  },
+  "Order B2B Intake / Inbound order message for an unknown account is rejected": {
+    "mode": "live",
+    "broker": "localhost:9092"
+  },
+  "Order B2B Intake / A rejected inbound order message stays on its blob with the reason (live Kafka only)": {
+    "mode": "live",
+    "broker": "localhost:9092"
   }
 }

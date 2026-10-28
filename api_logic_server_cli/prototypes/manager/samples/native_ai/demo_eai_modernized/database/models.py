@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  October 27, 2026 18:05:45
+# Created:  October 27, 2026 21:50:31
 # Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/samples/native_ai/demo_eai_modernized/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -67,7 +67,7 @@ class OrderB2bMessage(Base):  # type: ignore
     _s_collection_name = 'OrderB2bMessage'  # type: ignore
 
     id = Column(Integer, primary_key=True)
-    received_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
+    received_at = Column(DateTime)
     payload = Column(Text, nullable=False)
     is_processed = Column(Boolean, default=False)
     error_text = Column(Text)
@@ -128,7 +128,7 @@ class Order(Base):  # type: ignore
     customer : Mapped["Customer"] = relationship(back_populates=("OrderList"))
 
     # child relationships (access children)
-    ItemList : Mapped[List["Item"]] = relationship(back_populates="order")
+    ItemList : Mapped[List["Item"]] = relationship(back_populates="order", cascade="all, delete-orphan")
 
 
 

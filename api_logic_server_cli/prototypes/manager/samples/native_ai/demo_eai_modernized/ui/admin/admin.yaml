@@ -1,5 +1,5 @@
 about:
-  date: October 27, 2026 18:03:08
+  date: October 27, 2026 21:48:53
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -87,6 +87,20 @@ resources:
       resource: Customer
     type: Order
     user_key: id
+  OrderB2bMessage:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: received_at
+      type: DATETIME
+    - name: is_processed
+    - name: error_text
+    - name: payload
+      type: textarea
+    type: OrderB2bMessage
+    user_key: id
   Product:
     attributes:
     - label: ' name*'
@@ -154,20 +168,6 @@ resources:
       resource: ProductSupplier
     type: Supplier
     user_key: name
-  OrderB2bMessage:
-    attributes:
-    - label: ' id*'
-      name: id
-      search: true
-      sort: true
-    - name: received_at
-      type: DATETIME
-    - name: is_processed
-    - name: error_text
-    - name: payload
-      type: textarea
-    type: OrderB2bMessage
-    user_key: id
 settings:
   HomeJS: /admin-app/home.js
   max_list_columns: 8

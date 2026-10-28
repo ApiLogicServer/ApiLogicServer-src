@@ -7,88 +7,217 @@ Feature: About Sample # features/about.feature:6
 
 Feature: Check Credit # features/check_credit.feature:1
 
-  Scenario: Good Order within credit limit                           # features/check_credit.feature:3
-    Given a customer with credit_limit 1000 and balance 0            # features/steps/demo_eai_steps.py:35
-    When an unshipped order is placed with 2 items of unit_price 150 # features/steps/demo_eai_steps.py:99
-    Then the item amount is 300                                      # features/steps/demo_eai_steps.py:187
-    And the order amount_total is 300                                # features/steps/demo_eai_steps.py:194
-    And the customer balance is 300                                  # features/steps/demo_eai_steps.py:201
+  Scenario: Order placed within the credit limit                # features/check_credit.feature:3
+    Given a new customer with credit limit 1000                 # features/steps/check_credit.py:7
+    When an order is placed with 2 Widget                       # features/steps/check_credit.py:44
+    Then the item amount is 180                                 # features/steps/check_credit.py:94
+    And the order total is 180                                  # features/steps/check_credit.py:106
+    And the customer balance is 180                             # features/steps/check_credit.py:112
+    And Logic adjusts the customer balance from the order total # features/steps/check_credit.py:142
 
-  Scenario: Alter Item Quantity                                                                 # features/check_credit.feature:10
-    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150 # features/steps/demo_eai_steps.py:43
-    When the item quantity is updated to 4                                                      # features/steps/demo_eai_steps.py:124
-    Then the item amount is 600                                                                 # features/steps/demo_eai_steps.py:187
-    And the order amount_total is 600                                                           # features/steps/demo_eai_steps.py:194
-    And the customer balance is 600                                                             # features/steps/demo_eai_steps.py:201
+  Scenario: Item quantity change flows to the order total and balance  # features/check_credit.feature:11
+    Given a new customer with credit limit 1000                        # features/steps/check_credit.py:7
+    And an order is placed with 2 Widget                               # features/steps/check_credit.py:44
+    When the item quantity is changed to 5                             # features/steps/check_credit.py:54
+    Then the item amount is 450                                        # features/steps/check_credit.py:94
+    And the order total is 450                                         # features/steps/check_credit.py:106
+    And the customer balance is 450                                    # features/steps/check_credit.py:112
 
-  Scenario: Change Order Customer                                                        # features/check_credit.feature:17
-    Given two customers with credit_limit 1000 and an order of 300 on the first customer # features/steps/demo_eai_steps.py:83
-    When the order is reassigned to the second customer                                  # features/steps/demo_eai_steps.py:138
-    Then the first customer balance is 0                                                 # features/steps/demo_eai_steps.py:208
-    And the second customer balance is 300                                               # features/steps/demo_eai_steps.py:215
+  Scenario: Shipping an order removes it from the balance  # features/check_credit.feature:19
+    Given a new customer with credit limit 1000            # features/steps/check_credit.py:7
+    And an order is placed with 2 Widget                   # features/steps/check_credit.py:44
+    When the order is shipped                              # features/steps/check_credit.py:60
+    Then the customer balance is 0                         # features/steps/check_credit.py:112
 
-  Scenario: Delete Order Item                                                                   # features/check_credit.feature:23
-    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150 # features/steps/demo_eai_steps.py:43
-    When the item is deleted                                                                    # features/steps/demo_eai_steps.py:152
-    Then the order amount_total is 0                                                            # features/steps/demo_eai_steps.py:194
-    And the customer balance is 0                                                               # features/steps/demo_eai_steps.py:201
+  Scenario: Moving an order to another customer moves the balance  # features/check_credit.feature:25
+    Given a new customer with credit limit 1000                    # features/steps/check_credit.py:7
+    And a second customer with credit limit 1000                   # features/steps/check_credit.py:15
+    And an order is placed with 2 Widget                           # features/steps/check_credit.py:44
+    When the order is moved to the second customer                 # features/steps/check_credit.py:66
+    Then the customer balance is 0                                 # features/steps/check_credit.py:112
+    And the second customer balance is 180                         # features/steps/check_credit.py:118
 
-  Scenario: Ship Order updates balance                                                          # features/check_credit.feature:29
-    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150 # features/steps/demo_eai_steps.py:43
-    When the order date_shipped is set to "2026-10-27"                                          # features/steps/demo_eai_steps.py:159
-    Then the customer balance is 0                                                              # features/steps/demo_eai_steps.py:201
+  Scenario: Order over the credit limit is rejected          # features/check_credit.feature:33
+    Given a new customer with credit limit 100               # features/steps/check_credit.py:7
+    When an order is placed with 2 Widget                    # features/steps/check_credit.py:44
+    Then the request is rejected with "exceeds credit limit" # features/steps/check_credit.py:124
+    And the customer balance is 0                            # features/steps/check_credit.py:112
 
-  Scenario: Unship Order updates balance                                                     # features/check_credit.feature:34
-    Given a customer with credit_limit 1000 and a shipped order of 2 items at unit_price 150 # features/steps/demo_eai_steps.py:58
-    When the order date_shipped is cleared                                                   # features/steps/demo_eai_steps.py:173
-    Then the customer balance is 300                                                         # features/steps/demo_eai_steps.py:201
+  Scenario: Balance equal to the credit limit is accepted  # features/check_credit.feature:39
+    Given a new customer with credit limit 180             # features/steps/check_credit.py:7
+    When an order is placed with 2 Widget                  # features/steps/check_credit.py:44
+    Then the request is accepted                           # features/steps/check_credit.py:131
+    And the customer balance is 180                        # features/steps/check_credit.py:112
 
-  Scenario: Exceed Credit Limit fails                                 # features/check_credit.feature:39
-    Given a customer with credit_limit 1000 and balance 0             # features/steps/demo_eai_steps.py:35
-    When an unshipped order is placed with 10 items of unit_price 150 # features/steps/demo_eai_steps.py:99
-    Then the transaction is rejected with credit limit constraint     # features/steps/demo_eai_steps.py:222
+  Scenario: Lowering the credit limit below the balance is rejected  # features/check_credit.feature:45
+    Given a new customer with credit limit 1000                      # features/steps/check_credit.py:7
+    And an order is placed with 2 Widget                             # features/steps/check_credit.py:44
+    When the credit limit is changed to 100                          # features/steps/check_credit.py:72
+    Then the request is rejected with "exceeds credit limit"         # features/steps/check_credit.py:124
 
-Feature: Kafka Subscribe Order Integration # features/order_b2b_consume.feature:1
+  Scenario: Product price change does not alter existing items  # features/check_credit.feature:51
+    Given a new customer with credit limit 1000                 # features/steps/check_credit.py:7
+    And a new product priced 50                                 # features/steps/check_credit.py:20
+    And an order is placed with 2 of the new product            # features/steps/check_credit.py:49
+    When the product price is changed to 80                     # features/steps/check_credit.py:77
+    Then the item unit price is 50                              # features/steps/check_credit.py:100
+    And the item amount is 100                                  # features/steps/check_credit.py:94
 
-  Scenario: Kafka Consume Valid order_b2b                           # features/order_b2b_consume.feature:3
-    Given a fresh customer for order_b2b with credit_limit 5000     # features/steps/demo_eai_steps.py:311
-    When a valid order_b2b message is delivered for that customer   # features/steps/demo_eai_steps.py:323
-    Then the OrderB2bMessage row is recorded with is_processed True # features/steps/demo_eai_steps.py:374
-    And an Order is created for that customer with amount_total 390 # features/steps/demo_eai_steps.py:381
+  Scenario: Deleting an order deletes its items  # features/check_credit.feature:59
+    Given a new customer with credit limit 1000  # features/steps/check_credit.py:7
+    And an order is placed with 2 Widget         # features/steps/check_credit.py:44
+    When the order is deleted                    # features/steps/check_credit.py:83
+    Then the order has no items                  # features/steps/check_credit.py:136
+    And the customer balance is 0                # features/steps/check_credit.py:112
 
-  Scenario: Kafka Consume Bad order_b2b (live Kafka only)                              # features/order_b2b_consume.feature:9
-    Given a fresh customer for order_b2b with credit_limit 100                         # features/steps/demo_eai_steps.py:311
-    When an over-limit order_b2b message is delivered via live Kafka for that customer # features/steps/demo_eai_steps.py:348
-    Then the OrderB2bMessage row is recorded with is_processed False and error_text    # None
+  Scenario: Item for an unknown product is rejected    # features/check_credit.feature:66
+    Given a new customer with credit limit 1000        # features/steps/check_credit.py:7
+    And an empty order                                 # features/steps/check_credit.py:27
+    When an item is added for product id 999999        # features/steps/check_credit.py:89
+    Then the request is rejected with "Missing Parent" # features/steps/check_credit.py:124
 
-Feature: B2B Order Integration # features/order_b2b_service.feature:1
+Feature: Order B2B Intake # features/order_b2b_intake.feature:1
 
-  Scenario: B2B Valid Order via OrderB2B                                     # features/order_b2b_service.feature:3
-    Given a B2B customer with credit_limit 5000                              # features/steps/demo_eai_steps.py:236
-    When a B2B order payload is posted to OrderB2B for 2 Gadget and 1 Widget # features/steps/demo_eai_steps.py:249
-    Then the OrderB2B response status is 200                                 # features/steps/demo_eai_steps.py:271
-    And the B2B customer balance increases by 390                            # features/steps/demo_eai_steps.py:278
+  Scenario: Partner order through the REST API is created                      # features/order_b2b_intake.feature:3
+    Given a new customer with credit limit 1000                                # features/steps/check_credit.py:7
+    When a partner order for the customer with 1 Widget and 2 Gadget is posted # features/steps/order_b2b_intake.py:24
+    Then the partner request answers 201                                       # features/steps/order_b2b_intake.py:55
+    And the partner order total is 390                                         # features/steps/order_b2b_intake.py:61
+    And the customer balance is 390                                            # features/steps/check_credit.py:112
 
-  Scenario: B2B Exceed Credit via OrderB2B                                   # features/order_b2b_service.feature:9
-    Given a B2B customer with credit_limit 200                               # features/steps/demo_eai_steps.py:236
-    When a B2B order payload is posted to OrderB2B for 2 Gadget and 1 Widget # features/steps/demo_eai_steps.py:249
-    Then the OrderB2B response status is 400                                 # features/steps/demo_eai_steps.py:271
+  Scenario: Partner order for an unknown account is refused                    # features/order_b2b_intake.feature:10
+    Given a new customer with credit limit 1000                                # features/steps/check_credit.py:7
+    When a partner order for account "No Such Account" with 1 Widget is posted # features/steps/order_b2b_intake.py:30
+    Then the partner request answers 422                                       # features/steps/order_b2b_intake.py:55
 
-Feature: Kafka Publish Shipping Notification # features/order_shipping_publish.feature:1
+  Scenario: Partner order for an unknown product is refused                  # features/order_b2b_intake.feature:15
+    Given a new customer with credit limit 1000                              # features/steps/check_credit.py:7
+    When a partner order for the customer with 1 "No Such Product" is posted # features/steps/order_b2b_intake.py:35
+    Then the partner request answers 422                                     # features/steps/order_b2b_intake.py:55
 
-  Scenario: Kafka Publish order_shipping on ship                                                # features/order_shipping_publish.feature:3
-    Given a customer with credit_limit 5000 and an unshipped order of 2 items at unit_price 150 # features/steps/demo_eai_steps.py:43
-    When the order date_shipped is updated to "2026-10-27" to trigger order_shipping            # features/steps/demo_eai_steps.py:407
-    Then the order_shipping message is published with order_id, customer_name, total, and items # features/steps/demo_eai_steps.py:421
+  Scenario: Partner order with no items is refused                # features/order_b2b_intake.feature:20
+    Given a new customer with credit limit 1000                   # features/steps/check_credit.py:7
+    When a partner order for the customer with no items is posted # features/steps/order_b2b_intake.py:40
+    Then the partner request answers 400                          # features/steps/order_b2b_intake.py:55
 
-Feature: Row-Level Security # features/row_level_security.feature:1
+  Scenario: Partner order with a zero quantity is refused         # features/order_b2b_intake.feature:25
+    Given a new customer with credit limit 1000                   # features/steps/check_credit.py:7
+    When a partner order for the customer with 0 Widget is posted # features/steps/order_b2b_intake.py:45
+    Then the partner request answers 400                          # features/steps/order_b2b_intake.py:55
 
-  Scenario: Sales role sees filtered customers                            # features/row_level_security.feature:3
-    Given a user logged in with the sales role                            # features/steps/demo_eai_steps.py:437
-    When the sales user requests the Customer list                        # features/steps/demo_eai_steps.py:443
-    Then every returned customer has credit_limit >= 3000 or balance > 0  # features/steps/demo_eai_steps.py:450
-    And customer "Diana" with balance 0 and credit_limit 1000 is excluded # features/steps/demo_eai_steps.py:462
+  Scenario: Partner order over the credit limit is refused                     # features/order_b2b_intake.feature:30
+    Given a new customer with credit limit 100                                 # features/steps/check_credit.py:7
+    When a partner order for the customer with 1 Widget and 2 Gadget is posted # features/steps/order_b2b_intake.py:24
+    Then the partner request answers 400                                       # features/steps/order_b2b_intake.py:55
+    And the partner error mentions "exceeds credit limit"                      # features/steps/order_b2b_intake.py:67
+    And the customer balance is 0                                              # features/steps/check_credit.py:112
+
+  Scenario: Partner order without a token is refused                              # features/order_b2b_intake.feature:37
+    Given a new customer with credit limit 1000                                   # features/steps/check_credit.py:7
+    When a partner order for the customer with 1 Widget is posted without a token # features/steps/order_b2b_intake.py:50
+    Then the partner request answers 401                                          # features/steps/order_b2b_intake.py:55
+
+  Scenario: Inbound order message is persisted as an order                         # features/order_b2b_intake.feature:42
+    Given a new customer with credit limit 1000                                    # features/steps/check_credit.py:7
+    When an inbound order message for the customer is delivered to topic order_b2b # features/steps/order_b2b_intake.py:125
+    Then the inbound message is processed                                          # features/steps/order_b2b_intake.py:140
+    And the customer balance is 390                                                # features/steps/check_credit.py:112
+
+  Scenario: Inbound order message for an unknown account is rejected                     # features/order_b2b_intake.feature:48
+    Given a new customer with credit limit 1000                                          # features/steps/check_credit.py:7
+    When an inbound order message for an unknown account is delivered to topic order_b2b # features/steps/order_b2b_intake.py:130
+    Then the inbound message is rejected with "no Customer"                              # features/steps/order_b2b_intake.py:145
+
+  Scenario: A rejected inbound order message stays on its blob with the reason (live Kafka only)  # features/order_b2b_intake.feature:53
+    Given a new customer with credit limit 100                                                    # features/steps/check_credit.py:7
+    When an inbound order message for the customer is delivered live to topic order_b2b           # features/steps/order_b2b_intake.py:135
+    Then the inbound message blob is unprocessed and has error_text "exceeds credit limit"        # features/steps/order_b2b_intake.py:151
+
+Feature: Order Shipping Notification # features/order_shipping_notification.feature:1
+
+  Scenario: Shipping an order publishes a shipping message  # features/order_shipping_notification.feature:3
+    Given a new customer with credit limit 1000             # features/steps/check_credit.py:7
+    And an order is placed with 2 Widget                    # features/steps/check_credit.py:44
+    When the order is shipped                               # features/steps/check_credit.py:60
+    Then a shipping message is published for the order      # features/steps/order_shipping_notification.py:24
+
+  Scenario: An unshipped order publishes nothing  # features/order_shipping_notification.feature:9
+    Given a new customer with credit limit 1000   # features/steps/check_credit.py:7
+    When an order is placed with 2 Widget         # features/steps/check_credit.py:44
+    Then no shipping message is published         # features/steps/order_shipping_notification.py:30
+
+  Scenario: An order created already shipped publishes a shipping message  # features/order_shipping_notification.feature:14
+    Given a new customer with credit limit 1000                            # features/steps/check_credit.py:7
+    When an order is created already shipped                               # features/steps/order_shipping_notification.py:11
+    Then a shipping message is published for the order                     # features/steps/order_shipping_notification.py:24
+
+  Scenario: Changing a shipped order does not publish again  # features/order_shipping_notification.feature:19
+    Given a new customer with credit limit 1000              # features/steps/check_credit.py:7
+    And an order is placed with 2 Widget                     # features/steps/check_credit.py:44
+    And the order is shipped                                 # features/steps/check_credit.py:60
+    When the order notes are changed                         # features/steps/order_shipping_notification.py:18
+    Then one shipping message was published                  # features/steps/order_shipping_notification.py:35
+
+Feature: REST API Contract # features/rest_api_contract.feature:1
+
+  Scenario: A client value for a derived column is ignored on create  # features/rest_api_contract.feature:3
+    When a customer is created with a balance of 9999                 # features/steps/rest_api_contract.py:7
+    Then the new customer balance is 0                                # features/steps/rest_api_contract.py:42
+
+  Scenario: A client value for a derived column is ignored on update  # features/rest_api_contract.feature:7
+    Given a new customer with credit limit 1000                       # features/steps/check_credit.py:7
+    And an order is placed with 2 Widget                              # features/steps/check_credit.py:44
+    When the customer balance is patched to 777                       # features/steps/rest_api_contract.py:21
+    Then the request is accepted                                      # features/steps/check_credit.py:131
+    And the customer balance is 180                                   # features/steps/check_credit.py:112
+
+  Scenario: A client value for a derived item column is ignored on update  # features/rest_api_contract.feature:14
+    Given a new customer with credit limit 1000                            # features/steps/check_credit.py:7
+    And an order is placed with 2 Widget                                   # features/steps/check_credit.py:44
+    When the item amount is patched to 1                                   # features/steps/rest_api_contract.py:26
+    Then the request is accepted                                           # features/steps/check_credit.py:131
+    And the item amount is 180                                             # features/steps/check_credit.py:94
+
+  Scenario: An unknown column is rejected              # features/rest_api_contract.feature:21
+    When a customer is created with an unknown column  # features/steps/rest_api_contract.py:15
+    Then the request is rejected with "Unknown column" # features/steps/check_credit.py:124
+
+  Scenario: An order for a missing customer is rejected  # features/rest_api_contract.feature:25
+    When an order is created for customer id 999999      # features/steps/rest_api_contract.py:31
+    Then the request is rejected with "Missing Parent"   # features/steps/check_credit.py:124
+
+  Scenario: An unknown table is not found  # features/rest_api_contract.feature:29
+    When the unknown table is requested    # features/steps/rest_api_contract.py:37
+    Then the request answers 404           # features/steps/rest_api_contract.py:48
+
+Feature: Security and Row Level Access # features/security_and_row_level_access.feature:1
+
+  Scenario: A request without a token is refused  # features/security_and_row_level_access.feature:3
+    When customers are listed without a token     # features/steps/security_and_row_level_access.py:25
+    Then the security request answers 401         # features/steps/security_and_row_level_access.py:50
+
+  Scenario: Sales sees only customers with credit limit 3000 or more, or a balance                  # features/security_and_row_level_access.feature:7
+    Given customers with credit limit 1000, credit limit 3000, and credit limit 1000 with a balance # features/steps/security_and_row_level_access.py:13
+    When customers are listed by the sales user                                                     # features/steps/security_and_row_level_access.py:30
+    Then the sales list includes the credit limit 3000 customer                                     # features/steps/security_and_row_level_access.py:56
+    And the sales list includes the customer with a balance                                         # features/steps/security_and_row_level_access.py:61
+    And the sales list excludes the credit limit 1000 customer                                      # features/steps/security_and_row_level_access.py:66
+
+  Scenario: A customer outside the sales filter is not found                                        # features/security_and_row_level_access.feature:14
+    Given customers with credit limit 1000, credit limit 3000, and credit limit 1000 with a balance # features/steps/security_and_row_level_access.py:13
+    When the credit limit 1000 customer is requested by the sales user                              # features/steps/security_and_row_level_access.py:40
+    Then the security request answers 404                                                           # features/steps/security_and_row_level_access.py:50
+
+  Scenario: A customer outside the sales filter cannot be updated by sales                          # features/security_and_row_level_access.feature:19
+    Given customers with credit limit 1000, credit limit 3000, and credit limit 1000 with a balance # features/steps/security_and_row_level_access.py:13
+    When the credit limit 1000 customer is updated by the sales user                                # features/steps/security_and_row_level_access.py:45
+    Then the security request answers 404                                                           # features/steps/security_and_row_level_access.py:50
+
+  Scenario: A manager sees every customer                                                           # features/security_and_row_level_access.feature:24
+    Given customers with credit limit 1000, credit limit 3000, and credit limit 1000 with a balance # features/steps/security_and_row_level_access.py:13
+    When customers are listed by the admin user                                                     # features/steps/security_and_row_level_access.py:35
+    Then the admin list includes the credit limit 1000 customer                                     # features/steps/security_and_row_level_access.py:71
 
 &nbsp;&nbsp;
-/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/samples/native_ai/demo_eai_modernized/test/api_logic_server_behave/behave_run.py completed at October 27, 2026 21:19:40
-Behave run time: 2.049 s
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/samples/native_ai/demo_eai_modernized/test/api_logic_server_behave/behave_run.py completed at October 27, 2026 22:07:41
+Behave run time: 2.370 s

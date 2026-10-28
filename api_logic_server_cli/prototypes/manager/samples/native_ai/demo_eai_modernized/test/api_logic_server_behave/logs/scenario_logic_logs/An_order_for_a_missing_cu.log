@@ -1,0 +1,6 @@
+ An order for a missing customer is rejected - starting test  - 2026-10-27 22:07:41,192 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf020) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,194 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 999999, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10a072e50  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,194 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 999999, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a072e50  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,194 - logic_logger - INFO
+..Order[None] {Missing Parent: customer} id: None, notes: None, customer_id: 999999, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a072e50  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,195 - logic_logger - INFO

@@ -39,13 +39,10 @@ See readme files under api, logic and security.
 
 # 📋 Project Summary
 
-<!-- PROJECT_SUMMARY_PLACEHOLDER — replaced at creation time (Manager CE STEP 5) with
-     a 2-4 sentence, plain-English description of what THIS project's schema and rules
-     actually do. Left as this placeholder for projects created outside Method 4 (e.g.
-     `genai-logic create` with no domain prompt) — those have no logic yet to summarize. -->
-This project's schema and business logic have not been summarized yet — see
-[`docs/requirements/project_creation_report.md`](docs/requirements/project_creation_report.md)
-for what was created.
+This is a modernized order-management and integration service built on the basic_demo database. Five declarative rules keep each item's price, each order's total and each customer's balance (unshipped orders only) current, and reject any change that pushes a balance over the credit limit; shipping an order publishes a message to the `order_shipping` topic. Partner orders arrive as JSON on the `order_b2b` Kafka topic or `POST /OrderB2B`, are validated and resolved by name, and run through the same rules. Keycloak authenticates every call, and the `sales` role sees only customers with a credit limit of 3000 or more, or a balance.
+
+See [project_creation_report.md](docs/requirements/project_creation_report.md)
+for how this was built.
 
 ---
 

@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024pt" height="131pt" viewBox="18.80 18.80 1024.40 131.40">
+<svg xmlns="http://www.w3.org/2000/svg" width="959pt" height="131pt" viewBox="18.80 18.80 959.40 131.40">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 140.05)">
 <title>logic</title>
-<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-140.05 1033.17,-140.05 1033.17,28.8 -28.8,28.8" />
-<text xml:space="preserve" text-anchor="start" x="266.69" y="-95.9" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_eai_modernized  [order_b2b_consume]</text>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-140.05 968.17,-140.05 968.17,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="266.81" y="-95.9" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_eai_modernized  [order_b2b_consume]</text>
 <g id="clust2" class="cluster">
 <title>cluster_events</title>
 </g>
@@ -31,16 +31,16 @@
 
 <g id="node3" class="node">
 <title>evt__publish_order_b2b</title>
-<polygon fill="#e8f5e9" stroke="none" points="726,-20 726,-48.25 836.75,-48.25 836.75,-20 726,-20" />
-<text xml:space="preserve" text-anchor="start" x="733" y="-30.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _publish_order_b2b</text>
-<polygon fill="none" stroke="#27ae60" points="726,-20 726,-48.25 836.75,-48.25 836.75,-20 726,-20" />
+<polygon fill="#e8f5e9" stroke="none" points="693,-20 693,-48.25 803.75,-48.25 803.75,-20 693,-20" />
+<text xml:space="preserve" text-anchor="start" x="700" y="-30.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _publish_order_b2b</text>
+<polygon fill="none" stroke="#27ae60" points="693,-20 693,-48.25 803.75,-48.25 803.75,-20 693,-20" />
 </g>
 
 <g id="edge2" class="edge">
 <title>OrderB2bMessage-&gt;evt__publish_order_b2b</title>
-<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M444.72,-34.12C515.6,-34.12 631.25,-34.12 706.84,-34.12" />
-<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="716.69,-34.13 706.69,-38.63 713.15,-34.23 706.69,-34.23 706.69,-34.13 706.69,-34.03 713.15,-34.03 706.69,-29.63 716.69,-34.13" />
-<text xml:space="preserve" text-anchor="middle" x="581.38" y="-38.88" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">after_flush</text>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M444.46,-34.12C507.79,-34.12 606.1,-34.12 673.66,-34.12" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="683.6,-34.13 673.6,-38.63 680.06,-34.23 673.6,-34.23 673.6,-34.13 673.6,-34.03 680.06,-34.03 673.6,-29.63 683.6,-34.13" />
+<text xml:space="preserve" text-anchor="middle" x="564.88" y="-38.88" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">after_flush</text>
 </g>
 </g>
 </svg>

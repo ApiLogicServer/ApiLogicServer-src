@@ -9,9 +9,9 @@ A governable system is one you can **read**, **trust**, and **maintain**: each r
 It is generated from the project's own files, nothing written by hand, so it is as current as the last run and covers the whole project, not a sample. Open **Background** (below the summary) for what the terms mean, how to read the report, and what it can and can't tell you.
 
 
-**Project:** demo_eai_modernized &nbsp;|&nbsp; **Generated:** October 27, 2026 18:17 &nbsp;|&nbsp; **Rules:** 8 &nbsp;|&nbsp; **Test scenarios:** 13 &nbsp;|&nbsp; **Generator:** requirements_traceability_report.py 2.13
+**Project:** demo_eai_modernized &nbsp;|&nbsp; **Generated:** October 27, 2026 22:08 &nbsp;|&nbsp; **Rules:** 8 &nbsp;|&nbsp; **Test scenarios:** 35 &nbsp;|&nbsp; **Generator:** requirements_traceability_report.py 2.13
 
-**Last test run:** October 27, 2026 18:17, took 2.3 s (0m before this report; test results and logic logs below are from that run)
+**Last test run:** October 27, 2026 22:07, took 2.4 s (0m before this report; test results and logic logs below are from that run)
 
 
 &nbsp;
@@ -19,17 +19,17 @@ It is generated from the project's own files, nothing written by hand, so it is 
 
 ## At a Glance
 
-**✅ 5 requirement(s), all implemented; 5 tested; 13 of 13 scenarios passed; last run 0m ago.**
+**✅ 5 requirement(s), all implemented; 5 tested; 35 of 35 scenarios passed; last run 0m ago.**
 
 | | |
 |---|---|
 | Requirements | 5 (5 implemented) |
 | Tested | 5 of 5 |
-| Last test run | ✅ 13 passed, 0 failed (October 27, 2026 18:17, 0m ago); took 2.3 s |
+| Last test run | ✅ 35 passed, 0 failed (October 27, 2026 22:07, 0m ago); took 2.4 s |
 | Rules | 8 (5 declarative, 0 Python functions, 3 Python events) |
 | Rules shown running in a test log | 7 of 8 |
 | Security | enabled (Keycloak provider); 11 role(s), 2 row-level grant(s) |
-| Messages and APIs | 2 Kafka topic(s) in, 2 out; 3 HTTP endpoint(s) |
+| Messages and APIs | 2 Kafka topic(s) in, 2 out; 2 HTTP endpoint(s) |
 | Kafka | live (localhost:9092): subscribe tested through the broker; outbound messages checked in the log |
 
 _Status: ✅ every requirement is implemented and tested, all scenarios pass, and the results are current. ⚠ a requirement is untested or unimplemented, there is no test run, or files changed since the last run. ❌ a scenario failed. This reports what was traced and tested, not that the system is correct._
@@ -244,8 +244,8 @@ Every requirement should have rules that implement it, and tests that prove it. 
 | Tested (at least one scenario) | 5 of 5 |
 | Implementation not traced to a requirement | `logic/logic_discovery/system/all_classes_stamping.py` |
 | Tests not traced to a requirement | none |
-| Test results (last run) | ✅ 13 passed, 0 failed; took 2.3 s |
-| Scenarios with a logic log | 13 of 13 |
+| Test results (last run) | ✅ 35 passed, 0 failed; took 2.4 s |
+| Scenarios with a logic log | 33 of 35 |
 | Rules seen in at least one scenario's log | 7 of 8 (1 not counted: the engine's log does not name `all classes.early_row_event → handle_all()`, so it cannot be matched) |
 
 _Test results are as current as the last run (see the header). A gap is any requirement with no implementation or no test._
@@ -265,11 +265,11 @@ Test results are read from `logs/behave.log`, so they are only as current as tha
 
 | Requirement | Implemented by | Rules | Tests |
 |---|---|---|---|
-| §1 Business Logic — Check Credit | [logic/logic_discovery/check_credit.py](../../logic/logic_discovery/check_credit.py) | 5 | ✅ 7 scenario(s): 7 passed |
-| §2 B2B API — Accept orders from external partners | [api/api_discovery/order_b2b_service.py](../../api/api_discovery/order_b2b_service.py) | 0 | ✅ 2 scenario(s): 2 passed |
-| §3 Kafka Subscribe — Inbound orders from sales channel | [logic/logic_discovery/order_b2b_consume.py](../../logic/logic_discovery/order_b2b_consume.py)<br>[integration/kafka/kafka_subscribe_discovery/order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py)<br>[integration/OrderB2bMapper.py](../../integration/OrderB2bMapper.py)<br>[api/api_discovery/order_b2b_kafka_consume_debug.py](../../api/api_discovery/order_b2b_kafka_consume_debug.py) | 1 | ✅ 2 scenario(s): 2 passed |
-| §4 Kafka Publish — Notify shipping on dispatch | [logic/logic_discovery/order_shipping_publish.py](../../logic/logic_discovery/order_shipping_publish.py)<br>[integration/kafka/kafka_publish_discovery/order_shipping.py](../../integration/kafka/kafka_publish_discovery/order_shipping.py) | 1 | ✅ 1 scenario(s): 1 passed |
-| §5 Security | [security/declare_security.py](../../security/declare_security.py) | 0 | ✅ 1 scenario(s): 1 passed |
+| §2 Core Business Logic & Reactive Integrity Rules (`app/logic.py`) | [logic/logic_discovery/check_credit.py](../../logic/logic_discovery/check_credit.py) | 5 | ✅ 10 scenario(s): 10 passed |
+| §3 Event-Driven Order Shipping Notifications (`app/logic.py`, `app/messaging.py`) | [logic/logic_discovery/order_shipping.py](../../logic/logic_discovery/order_shipping.py)<br>[integration/kafka/kafka_publish_discovery/order_shipping.py](../../integration/kafka/kafka_publish_discovery/order_shipping.py) | 1 | ✅ 4 scenario(s): 4 passed |
+| §4 B2B Order Intake & Kafka Integration (`app/integration.py`) | [logic/logic_discovery/order_b2b_consume.py](../../logic/logic_discovery/order_b2b_consume.py)<br>[integration/kafka/kafka_subscribe_discovery/order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py)<br>[integration/OrderB2bMapper.py](../../integration/OrderB2bMapper.py)<br>[api/api_discovery/order_b2b_kafka_consume_debug.py](../../api/api_discovery/order_b2b_kafka_consume_debug.py)<br>[api/api_discovery/order_b2b_service.py](../../api/api_discovery/order_b2b_service.py) | 1 | ✅ 10 scenario(s): 10 passed |
+| §5 Security: Authentication & Row-Level Security (`app/security.py`) | [security/declare_security.py](../../security/declare_security.py) | 0 | ✅ 5 scenario(s): 5 passed |
+| §6 REST API Contract (`app/api.py`) | [api/api_discovery/rest_api_contract.py](../../api/api_discovery/rest_api_contract.py) | 0 | ✅ 6 scenario(s): 6 passed |
 
 
 &nbsp;
@@ -278,13 +278,13 @@ Test results are read from `logs/behave.log`, so they are only as current as tha
 
 | Rule | Requirement | Seen in |
 |---|---|---|
-| `Item.unit_price = copy of Product.unit_price` | §1 Business Logic — Check Credit | 12: Good Order within credit limit; Alter Item Quantity; Change Order Customer; +9 more |
-| `Item.amount = quantity * unit_price` | §1 Business Logic — Check Credit | 12: Good Order within credit limit; Alter Item Quantity; Change Order Customer; +9 more |
-| `Order.amount_total = sum(Item.amount)` | §1 Business Logic — Check Credit | 12: Good Order within credit limit; Alter Item Quantity; Change Order Customer; +9 more |
-| `Customer.balance = sum(Order.amount_total) where date_shipped is None` | §1 Business Logic — Check Credit | 12: Good Order within credit limit; Alter Item Quantity; Change Order Customer; +9 more |
-| `Customer: balance is None or credit_limit is None or balance <= credit_limit` | §1 Business Logic — Check Credit | 3: Exceed Credit Limit fails; Kafka Consume Bad order_b2b (live Kafka only); B2B Exceed Credit via OrderB2B |
-| `OrderB2bMessage.after_flush_row_event → _publish_order_b2b()` | §3 Kafka Subscribe — Inbound orders from sales channel | 2: Kafka Consume Valid order_b2b; Kafka Consume Bad order_b2b (live Kafka only) |
-| `Order.after_flush_row_event → send_order_to_shipping()` | §4 Kafka Publish — Notify shipping on dispatch | 10: Good Order within credit limit; Alter Item Quantity; Change Order Customer; +7 more |
+| `Customer: credit_limit is None or balance <= credit_limit` | §2 Core Business Logic & Reactive Integrity Rules (`app/logic.py`) | 4: Order over the credit limit is rejected; Lowering the credit limit below the balance is rejected; Partner order over the credit limit is refused; +1 more |
+| `Customer.balance = sum(Order.amount_total) where date_shipped is None` | §2 Core Business Logic & Reactive Integrity Rules (`app/logic.py`) | 25: Order placed within the credit limit; Item quantity change flows to the order total and balance; Shipping an order removes it from the balance; +22 more |
+| `Order.amount_total = sum(Item.amount)` | §2 Core Business Logic & Reactive Integrity Rules (`app/logic.py`) | 23: Order placed within the credit limit; Item quantity change flows to the order total and balance; Shipping an order removes it from the balance; +20 more |
+| `Item.amount = quantity * unit_price` | §2 Core Business Logic & Reactive Integrity Rules (`app/logic.py`) | 23: Order placed within the credit limit; Item quantity change flows to the order total and balance; Shipping an order removes it from the balance; +20 more |
+| `Item.unit_price = copy of Product.unit_price` | §2 Core Business Logic & Reactive Integrity Rules (`app/logic.py`) | 23: Order placed within the credit limit; Item quantity change flows to the order total and balance; Shipping an order removes it from the balance; +20 more |
+| `OrderB2bMessage.after_flush_row_event → _publish_order_b2b()` | §4 B2B Order Intake & Kafka Integration (`app/integration.py`) | 3: Inbound order message is persisted as an order; Inbound order message for an unknown account is rejected; A rejected inbound order message stays on its blob with the reason (live Kafka only) |
+| `Order.after_flush_row_event → send_order_shipping()` | §3 Event-Driven Order Shipping Notifications (`app/logic.py`, `app/messaging.py`) | 23: Order placed within the credit limit; Item quantity change flows to the order total and balance; Shipping an order removes it from the balance; +20 more |
 | `all classes.early_row_event → handle_all()` | (none) | n/a - cannot be matched to the engine's log |
 
 _"Seen" means the engine's log shows the rule ran, not proof that it took effect._
@@ -330,30 +330,31 @@ Each diagram is saved under `docs/requirements/<name>/logic_diagrams/`. Then reg
 &nbsp;
 
 
-#### §1 Business Logic — Check Credit
+#### §2 Core Business Logic & Reactive Integrity Rules (`app/logic.py`)
 
-Tests: ✅ 7 scenario(s): 7 passed
+Tests: ✅ 10 scenario(s): 10 passed
 
 ```
 Feature: Check Credit
+Implemented via SQLAlchemy session hooks (`before_flush` and `after_flush`) so that every write path (REST CRUD, B2B endpoint, and Kafka consumer) enforces identical rules within a transaction:
 
-  Scenario: Place an order
-    Given a customer with a credit limit
-    When an order is placed
-    Then copy the price from the product
-    And multiply by quantity to get the item amount
-    And sum item amounts to get the order total
-    And sum unpaid order totals to get the customer balance
-    And reject if balance exceeds the credit limit
+1. **Product Price Snapshot**: When an `Item` is created or its `product_id` changes, `Item.unit_price` is copied from `Product.unit_price`. Subsequent changes to `Product.unit_price` do not retroactively alter existing items.
+2. **Line-Item Extended Amount**: `Item.amount` is always calculated as `Item.quantity * Item.unit_price`.
+3. **Order Total Rollup**: `Order.amount_total` is recalculated as the sum of `Item.amount` for all items on the order (defaulting to `0`) whenever items are added, updated, reassigned to another order, or deleted.
+4. **Customer Balance Rollup (Unshipped Orders Only)**: `Customer.balance` is recalculated as the sum of `Order.amount_total` across all **unshipped** orders (`date_shipped IS NULL`) for that customer whenever affected orders or items change, an order is reassigned to a different customer, `date_shipped` is set/cleared, or an order is deleted.
+5. **Credit Limit Enforcement**: Whenever a customer's `balance` is recalculated or an existing customer's `credit_limit` is updated, the system verifies `balance <= credit_limit`. If exceeded, `CreditError` is raised (`"{name}: balance {balance} exceeds credit limit {limit}"`), aborting the transaction.
+6. **Referential & Cascade Rules**:
+   * Creating/updating an `Item` with a non-existent `product_id` or an `Order` with a non-existent `customer_id` raises a `ValueError`.
+   * Deleting an `Order` cascades deletion to all associated `Item` records.
 ```
 
 | Rule / item | Type | Logic | Description | Where |
 |---|---|---|---|---|
-| `Item.unit_price = copy of Product.unit_price` | copy | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
-| `Item.amount = quantity * unit_price` | formula | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
-| `Order.amount_total = sum(Item.amount)` | sum | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
+| `Customer: credit_limit is None or balance <= credit_limit` | constraint | declarative | Error: {row.name}: balance {row.balance} exceeds credit limit {row.credit_limit} | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
 | `Customer.balance = sum(Order.amount_total) where date_shipped is None` | sum | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
-| `Customer: balance is None or credit_limit is None or balance <= credit_limit` | constraint | declarative | Error: balance ({row.balance}) exceeds credit limit ({row.credit_limit}) | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
+| `Order.amount_total = sum(Item.amount)` | sum | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
+| `Item.amount = quantity * unit_price` | formula | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
+| `Item.unit_price = copy of Product.unit_price` | copy | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
 
 <details markdown>
 <summary>Logic diagram: check_credit</summary>
@@ -362,48 +363,67 @@ Feature: Check Credit
 
 </details>
 
-#### §2 B2B API — Accept orders from external partners
+#### §3 Event-Driven Order Shipping Notifications (`app/logic.py`, `app/messaging.py`)
 
-Tests: ✅ 2 scenario(s): 2 passed
+Tests: ✅ 4 scenario(s): 4 passed
 
 ```
-Feature: B2B Order Integration
+Feature: Order Shipping Notification
+* **Shipping Trigger**: When an `Order` is created with a non-null `date_shipped` or updated so `date_shipped` transitions to a non-null date, an outbound message is queued in a session outbox.
+* **Transactional Outbox Delivery**: Messages are only published in `after_commit` and discarded in `after_rollback`, preventing phantom notifications on failed transactions.
+* **Payload Format**: `_shipping_message` publishes to the `order_shipping` topic with:
+  {
+    "order_id": 1,
+    "order_date": "YYYY-MM-DD",
+    "customer_name": "...",
+    "total": 123.45,
+    "items": [{"quantity": 2, "product_name": "...", "unit_price": 61.725}]
+  }
+* **Simulated vs. Live Broker Mode**: `publish` always records messages in the in-memory `published` list (inspectable via `GET /kafka_log`) and additionally produces to a live Kafka broker when `KAFKA_SERVER` is configured.
 
-  Scenario: Accept order from external partner
-    Given an inbound B2B order in partner format (message_formats/order_b2b.json)
-    When the order is received via a Custom API endpoint named OrderB2B
-    Then map Account to Customer by name
-    And map Items.Name to Product by name
-    And map Items.QuantityOrdered to Item.quantity
+---
 ```
 
 | Rule / item | Type | Logic | Description | Where |
 |---|---|---|---|---|
-| `HTTP in: POST /api/OrderB2B/OrderB2B` | http | handler (Python) | API service OrderB2B: accepts external partner orders and maps Account/Items into Order and Item rows. | [order_b2b_service.py](../../api/api_discovery/order_b2b_service.py) |
+| `Order.after_flush_row_event → send_order_shipping()` | after_flush_row_event | event (Python) | Order event: publish to topic order_shipping when date_shipped is set on insert or changes to a non-null date (old_row is None on insert). Runs after the flush, so the Order id and its items are final. | [order_shipping.py](../../logic/logic_discovery/order_shipping.py) |
+| `order_shipping.py` | module |  | Feature: Order Shipping Notification | [order_shipping.py](../../integration/kafka/kafka_publish_discovery/order_shipping.py) |
 
-#### §3 Kafka Subscribe — Inbound orders from sales channel
+<details markdown>
+<summary>Logic diagram: order_shipping</summary>
 
-Tests: ✅ 2 scenario(s): 2 passed
+![logic diagram: order_shipping](order_shipping/logic_diagrams/logic_diagram_order_shipping.svg)
+
+</details>
+
+#### §4 B2B Order Intake & Kafka Integration (`app/integration.py`)
+
+Tests: ✅ 10 scenario(s): 10 passed
 
 ```
-Feature: Kafka Subscribe Order Integration
+Feature: Order B2B Intake
+* **Partner Payload Transformation (`process_order_b2b`)**:
+  * Accepts `{ "Account": "<customer name>", "Notes": "...", "Items": [{ "Name": "<product name>", "QuantityOrdered": <int> }] }`.
+  * Resolves `Account` by `Customer.name` and each item's `Name` by `Product.name`; raises `LookupError` (mapped to HTTP `422`) if either is unknown.
+  * Validates that `Items` is non-empty and every `QuantityOrdered` is a positive integer (`> 0`); raises `ValueError` (mapped to HTTP `400`) otherwise.
+  * Sets `Order.CreatedOn` to `date.today()` and commits the order and items atomically (rolling back if credit check or validation fails in `consume`).
+* **Multi-Channel Intake**:
+  1. **Synchronous REST (`POST /OrderB2B`)**: Processes a JSON request body and returns the created order (`201 Created`).
+  2. **Asynchronous Kafka Consumer (`start_consumer`)**: Background daemon thread subscribed to topic `order_b2b` (consumer group `demo_eai_native`); logs and skips poison/rejected messages so a bad payload never halts the consumer.
+  3. **Brokerless Debug Endpoint (`GET /consume_debug/<topic>?file=<path>`)**: Reads a payload file located within the project directory and runs the exact same `consume` pipeline.
 
-  Scenario: Accept inbound orders from sales channel
-    Given an inbound order message in JSON format (message_formats/order_b2b.json)
-    When the message is received from Kafka topic order_b2b
-    Then map Account to Customer by name
-    And map Items.Name to Product by name
-    And map Items.QuantityOrdered to Item.quantity
+---
 ```
 
 | Rule / item | Type | Logic | Description | Where |
 |---|---|---|---|---|
 | `OrderB2bMessage.after_flush_row_event → _publish_order_b2b()` | after_flush_row_event | event (Python) | OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so Consumer 2 can parse it in a clean Tx 2 (2-message pattern). | [order_b2b_consume.py](../../logic/logic_discovery/order_b2b_consume.py) |
-| `Kafka in: order_b2b` | kafka | handler (Python) | Kafka subscribe order_b2b: Consumer 1 saves the raw payload into OrderB2bMessage (Tx 1) so the row_event bridge publishes to order_b2b_processed. | [order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py) |
-| `Kafka in: order_b2b_processed` | kafka | handler (Python) | Kafka subscribe order_b2b: Consumer 2 parses the payload, persists Order and Item rows, and marks OrderB2bMessage processed (Tx 2). | [order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py) |
-| `OrderB2bMapper.py` | module |  | Feature: Kafka Subscribe Order Integration | [OrderB2bMapper.py](../../integration/OrderB2bMapper.py) |
+| `Kafka in: order_b2b` | kafka | handler (Python) | Consumer 1: save blob, commit. The row event publishes to order_b2b_processed. | [order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py) |
+| `Kafka in: order_b2b_processed` | kafka | handler (Python) | Consumer 2: parse + persist the order, mark blob processed (atomic Tx 2). A poison or rejected message is logged and recorded on its blob (error_text); it never stops the consumer. | [order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py) |
+| `OrderB2bMapper.py` | module |  | Feature: Order B2B Intake | [OrderB2bMapper.py](../../integration/OrderB2bMapper.py) |
 | `HTTP in: GET /consume_debug/order_b2b` | http | handler (Python) | EAI debug (development only, no authentication): sends the message in ?file= to the topic, live through Kafka or simulated | [order_b2b_kafka_consume_debug.py](../../api/api_discovery/order_b2b_kafka_consume_debug.py) |
 | `HTTP in: POST /consume_debug/order_b2b/reset` | http | handler (Python) | EAI debug (development only, destructive): purges the messages in the pipeline's topics | [order_b2b_kafka_consume_debug.py](../../api/api_discovery/order_b2b_kafka_consume_debug.py) |
+| `order_b2b_service.py` | module |  | Feature: Order B2B Intake | [order_b2b_service.py](../../api/api_discovery/order_b2b_service.py) |
 
 <details markdown>
 <summary>Logic diagram: order_b2b_consume</summary>
@@ -412,49 +432,49 @@ Feature: Kafka Subscribe Order Integration
 
 </details>
 
-#### §4 Kafka Publish — Notify shipping on dispatch
+#### §5 Security: Authentication & Row-Level Security (`app/security.py`)
 
-Tests: ✅ 1 scenario(s): 1 passed
-
-```
-Feature: Kafka Publish Shipping Notification
-
-  Scenario: Notify shipping when an order is dispatched
-    Given an Order exists
-    When date_shipped is set
-    Then publish to Kafka topic order_shipping
-    And use message_formats/order_shipping.json as the message shape
-    And use by-example publish rather than key-only publish
-```
-
-| Rule / item | Type | Logic | Description | Where |
-|---|---|---|---|---|
-| `Order.after_flush_row_event → send_order_to_shipping()` | after_flush_row_event | event (Python) | Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set and differs from its prior value (old_row is None on insert), using the by-example message in message_formats/order_shipping.json. | [order_shipping_publish.py](../../logic/logic_discovery/order_shipping_publish.py) |
-| `order_shipping.py` | module |  | Feature: Kafka Publish Shipping Notification | [order_shipping.py](../../integration/kafka/kafka_publish_discovery/order_shipping.py) |
-
-<details markdown>
-<summary>Logic diagram: order_shipping_publish</summary>
-
-![logic diagram: order_shipping_publish](order_shipping_publish/logic_diagrams/logic_diagram_order_shipping_publish.svg)
-
-</details>
-
-#### §5 Security
-
-Tests: ✅ 1 scenario(s): 1 passed
+Tests: ✅ 5 scenario(s): 5 passed
 
 ```
-Feature: Row-Level Security
-  Scenario: Sales role sees limited customers
-    Given a user with the sales role
-    When querying the Customer list
-    Then only return customers where credit_limit >= 3000 or balance > 0
+Feature: Security and Row Level Access
+* **Keycloak RS256 Bearer Authentication (`authenticate`)**:
+  * Validates `Authorization: Bearer <token>` against the Keycloak realm's JWKS endpoint (`{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/certs`, defaulting to `http://localhost:8080` and realm `kcals`).
+  * Unauthenticated requests receive `401 Unauthorized`, except for open operational/test routes: `/health`, `/kafka_log`, and `/consume_debug/<topic>`.
+* **Role Assignment & Row-Level Security (`row_filter`)**:
+  * Roles are extracted from JWT `realm_access.roles`, and usernames listed in `SALES_USERS` (default `"u1"`) are automatically granted the `sales` role.
+  * When a user has the `sales` role, all queries, single-row lookups, updates, and deletes on `Customer` are restricted to rows satisfying:
+    `credit_limit >= 3000 OR balance > 0`
+  * Filtered-out customers are omitted from `GET /api/customer` list responses and return `404 Not Found` on `/api/customer/<id>` operations.
+
+---
 ```
 
 | Rule / item | Type | Logic | Description | Where |
 |---|---|---|---|---|
 | `Grant on Customer to role sales: credit_limit >= 3000` | grant | declarative |  | [declare_security.py](../../security/declare_security.py) |
 | `Grant on Customer to role sales: balance > 0` | grant | declarative |  | [declare_security.py](../../security/declare_security.py) |
+
+#### §6 REST API Contract (`app/api.py`)
+
+Tests: ✅ 6 scenario(s): 6 passed
+
+```
+Feature: REST API Contract
+* **Generic CRUD (`/api/<table>` & `/api/<table>/<int:id>`)**:
+  * Supports `GET` (list with exact-match attribute filtering, `limit` default `100`, `offset` default `0`, ordered by `id`), `GET` by ID, `POST` (`201`), `PATCH`/`PUT` (`200`), and `DELETE` (`204`).
+* **Write Protection on Derived Columns (`DERIVED`, `writable`)**:
+  * Client-supplied values for `id`, `customer.balance`, `order.amount_total`, `item.amount`, and `item.unit_price` are silently ignored on create/update; unknown column names are rejected with `400 Bad Request`.
+* **Error Mapping**:
+  * `ValueError` and `CreditError` → `400 Bad Request`
+  * Missing/invalid JWT → `401 Unauthorized`
+  * Unknown table or row (including RLS-hidden rows) → `404 Not Found`
+  * `LookupError` (unknown B2B `Account` or `Product`) → `422 Unprocessable Entity`
+```
+
+| Rule / item | Type | Logic | Description | Where |
+|---|---|---|---|---|
+| `rest_api_contract.py` | module |  | Feature: REST API Contract | [rest_api_contract.py](../../api/api_discovery/rest_api_contract.py) |
 
 #### Rules not traced to a requirement
 
@@ -482,10 +502,10 @@ _Generated from `docs/db.dbml` (parents above children; shaded rows are derived 
 
 | Table | Column | Rule | Definition |
 |---|---|---|---|
-| Item | unit_price | copy | `Item.unit_price = copy of Product.unit_price` |
-| Item | amount | formula | `Item.amount = quantity * unit_price` |
-| Order | amount_total | sum | `Order.amount_total = sum(Item.amount)` |
 | Customer | balance | sum | `Customer.balance = sum(Order.amount_total) where date_shipped is None` |
+| Order | amount_total | sum | `Order.amount_total = sum(Item.amount)` |
+| Item | amount | formula | `Item.amount = quantity * unit_price` |
+| Item | unit_price | copy | `Item.unit_price = copy of Product.unit_price` |
 
 
 &nbsp;
@@ -508,13 +528,13 @@ Who can do what: each role's permissions, and which rows each role can see.
 | tenant | ✅ | — | — | ✅ |
 | CS_ADMIN | ✅ | ✅ | ✅ | ✅ |
 | manager | ✅ | ✅ | ✅ | — |
-| sales | ✅ | — | — | — |
 | teller | ✅ | ✅ | ✅ | — |
 | customer | ✅ | ✅ | ✅ | — |
 | readonly | ✅ | — | — | — |
 | public | ✅ | — | — | — |
 | default-roles-kcals | ✅ | ✅ | ✅ | — |
 | uma_authorization | ✅ | ✅ | ✅ | — |
+| sales | ✅ | ✅ | ✅ | ✅ |
 
 
 &nbsp;
@@ -523,8 +543,8 @@ Who can do what: each role's permissions, and which rows each role can see.
 
 | Table | Role | Filter | Requirement |
 |---|---|---|---|
-| Customer | sales | `credit_limit >= 3000` | §5 |
-| Customer | sales | `balance > 0` | §5 |
+| Customer | sales | `credit_limit >= 3000` |  |
+| Customer | sales | `balance > 0` |  |
 
 
 &nbsp;
@@ -538,13 +558,12 @@ How data enters and leaves beyond the standard API: Kafka topics in and out, cus
 
 | Direction | Channel | Name | Tests mention it | Handler | Tables created | Message shape | Requirement |
 |---|---|---|---|---|---|---|---|
-| ➡ in | Kafka | `order_b2b` | ✅ live | `order_b2b()` - Kafka subscribe order_b2b: Consumer 1 saves the raw payload into OrderB2bMessage (Tx 1) so the row_event bridge publishes to order_b2b_processed. | OrderB2bMessage | [order_b2b.json](../../integration/kafka/message_formats/order_b2b.json) | §3 Kafka Subscribe — Inbound orders from sales channel |
-| ➡ in | Kafka | `order_b2b_processed` | ✅ live | `order_b2b_processed()` - Kafka subscribe order_b2b: Consumer 2 parses the payload, persists Order and Item rows, and marks OrderB2bMessage processed (Tx 2). | Item, Order, OrderB2bMessage |  | §3 Kafka Subscribe — Inbound orders from sales channel |
-| ⬅ out | Kafka | `order_b2b_processed` | ✅ live | OrderB2bMessage.after_flush_row_event → _publish_order_b2b() - OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so Consumer 2 can parse it in a clean Tx 2 (2-message pattern). |  |  | §3 Kafka Subscribe — Inbound orders from sales channel |
-| ⬅ out | Kafka | `order_shipping` | ⚠ message checked in the log, not on the topic | Order.after_flush_row_event → send_order_to_shipping() - Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set and differs from its prior value (old_row is None on insert), using the by-example message in message_formats/order_shipping.json. |  | [order_shipping.json](../../integration/kafka/message_formats/order_shipping.json) | §4 Kafka Publish — Notify shipping on dispatch |
-| ➡ in | HTTP | `GET /consume_debug/order_b2b` | ✅ | `register_consume_debug()` - EAI debug (development only, no authentication): sends the message in ?file= to the topic, live through Kafka or simulated |  |  | §3 Kafka Subscribe — Inbound orders from sales channel |
-| ➡ in | HTTP | `POST /consume_debug/order_b2b/reset` | ✅ | `register_queue_reset()` - EAI debug (development only, destructive): purges the messages in the pipeline's topics |  |  | §3 Kafka Subscribe — Inbound orders from sales channel |
-| ➡ in | HTTP | `POST /api/OrderB2B/OrderB2B` | ✅ | `OrderB2B()` - API service OrderB2B: accepts external partner orders and maps Account/Items into Order and Item rows. |  |  | §2 B2B API — Accept orders from external partners |
+| ➡ in | Kafka | `order_b2b` | ✅ live | `order_b2b()` - Consumer 1: save blob, commit. The row event publishes to order_b2b_processed. | OrderB2bMessage | [order_b2b.json](../../integration/kafka/message_formats/order_b2b.json) | §4 B2B Order Intake & Kafka Integration (`app/integration.py`) |
+| ➡ in | Kafka | `order_b2b_processed` | ✅ live | `order_b2b_processed()` - Consumer 2: parse + persist the order, mark blob processed (atomic Tx 2). A poison or rejected message is logged and recorded on its blob (error_text); it never stops the consumer. | Item, Order, OrderB2bMessage |  | §4 B2B Order Intake & Kafka Integration (`app/integration.py`) |
+| ⬅ out | Kafka | `order_b2b_processed` | ✅ live | OrderB2bMessage.after_flush_row_event → _publish_order_b2b() - OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so Consumer 2 can parse it in a clean Tx 2 (2-message pattern). |  |  | §4 B2B Order Intake & Kafka Integration (`app/integration.py`) |
+| ⬅ out | Kafka | `order_shipping` | ⚠ message checked in the log, not on the topic | Order.after_flush_row_event → send_order_shipping() - Order event: publish to topic order_shipping when date_shipped is set on insert or changes to a non-null date (old_row is None on insert). Runs after the flush, so the Order id and its items are final. |  | [order_shipping.json](../../integration/kafka/message_formats/order_shipping.json) | §3 Event-Driven Order Shipping Notifications (`app/logic.py`, `app/messaging.py`) |
+| ➡ in | HTTP | `GET /consume_debug/order_b2b` | ✅ | `register_consume_debug()` - EAI debug (development only, no authentication): sends the message in ?file= to the topic, live through Kafka or simulated |  |  | §4 B2B Order Intake & Kafka Integration (`app/integration.py`) |
+| ➡ in | HTTP | `POST /consume_debug/order_b2b/reset` | ⚠ no test mentions it | `register_queue_reset()` - EAI debug (development only, destructive): purges the messages in the pipeline's topics |  |  | §4 B2B Order Intake & Kafka Integration (`app/integration.py`) |
 
 _"Tests mention it" checks the test sources, not delivery._
 
@@ -600,7 +619,7 @@ Topics and endpoints are read from the discovery folders. The condition that tri
 
 ## Tests and Results
 
-**✅ 13 scenario(s): 13 passed, 0 failed; took 2.3 s** (from the last run, `logs/behave.log`).
+**✅ 35 scenario(s): 35 passed, 0 failed; took 2.4 s** (from the last run, `logs/behave.log`).
 
 Each test drives the running system the way any client would — create an order, change a quantity, ship it — and checks the result.
 
@@ -651,10 +670,10 @@ Or, to have each requirement's tests linked in the Tests column above (it matche
 
 create tests from rules, one Feature per requirement, named exactly:
 - Check Credit
-- B2B Order Integration
-- Kafka Subscribe Order Integration
-- Kafka Publish Shipping Notification
-- Row-Level Security
+- Order Shipping Notification
+- Order B2B Intake
+- Security and Row Level Access
+- REST API Contract
 
 ```
 
@@ -681,13 +700,14 @@ python requirements_traceability_report.py run
 &nbsp;
 &nbsp;
 
-#### Scenario: Good Order within credit limit ✅ (0.20 s)
-&emsp;  Scenario: Good Order within credit limit  
-&emsp;&emsp;    Given a customer with credit_limit 1000 and balance 0  
-&emsp;&emsp;    When an unshipped order is placed with 2 items of unit_price 150  
-&emsp;&emsp;    Then the item amount is 300  
-&emsp;&emsp;    And the order amount_total is 300  
-&emsp;&emsp;    And the customer balance is 300  
+#### Scenario: Order placed within the credit limit ✅ (0.06 s)
+&emsp;  Scenario: Order placed within the credit limit  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    When an order is placed with 2 Widget  
+&emsp;&emsp;    Then the item amount is 180  
+&emsp;&emsp;    And the order total is 180  
+&emsp;&emsp;    And the customer balance is 180  
+&emsp;&emsp;    And Logic adjusts the customer balance from the order total  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -697,36 +717,36 @@ python requirements_traceability_report.py run
 &nbsp;
 
 
-**Rules Used** in Scenario: Good Order within credit limit
+**Rules Used** in Scenario: Order placed within the credit limit
 ```
   Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
   Order  
-    2. RowEvent Order.send_order_to_shipping()  
+    2. RowEvent Order.send_order_shipping()  
     3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
   Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. Derive Item.unit_price as Copy(product.unit_price)  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
 ```
-**Logic Log** in Scenario: Good Order within credit limit (2 transactions)
+**Logic Log** in Scenario: Order placed within the credit limit (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10ca716e0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,148 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: Test Order, customer_id: 19, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10ca0a650  session: 0x10ca716e0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,149 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test Order, customer_id: 19, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10ca0a650  session: 0x10ca716e0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,149 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca716e0)   										 - 2026-10-27 18:17:28,150 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca716e0)   										 - 2026-10-27 18:17:28,150 - logic_logger - INFO
-..Order[15] {AfterFlush Event} id: 15, notes: Test Order, customer_id: 19, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10ca0a650  session: 0x10ca716e0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,150 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109e03410) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,196 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 124, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109e1cb50  session: 0x109e03410  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,196 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 124, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e1cb50  session: 0x109e03410  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,196 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109e03410)   										 - 2026-10-27 22:07:39,196 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109e03410)   										 - 2026-10-27 22:07:39,197 - logic_logger - INFO
+..Order[72] {AfterFlush Event} id: 72, notes: None, customer_id: 124, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e1cb50  session: 0x109e03410  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,197 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c710710) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,174 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 15, product_id: 7, quantity: 2, amount: None, unit_price: None  row: 0x10ca0a8d0  session: 0x10c710710  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,175 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 15, product_id: 7, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10ca0a8d0  session: 0x10c710710  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,176 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 15, product_id: 7, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10ca0a8d0  session: 0x10c710710  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,176 - logic_logger - INFO
-....Order[15] {Update - Adjusting order: amount_total} id: 15, notes: Test Order, customer_id: 19, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10cade950  session: 0x10c710710  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,176 - logic_logger - INFO
-......Customer[19] {Update - Adjusting customer: balance} id: 19, name: CheckCredit Cust 1793150248042, balance:  [0E-10-->] 300.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10cadeed0  session: 0x10c710710  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,177 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c710710)   										 - 2026-10-27 18:17:28,177 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c710710)   										 - 2026-10-27 18:17:28,178 - logic_logger - INFO
-....Order[15] {AfterFlush Event} id: 15, notes: Test Order, customer_id: 19, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10cade950  session: 0x10c710710  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,178 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109dce360) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,200 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 72, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x109cabdd0  session: 0x109dce360  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,200 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 72, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x109cabdd0  session: 0x109dce360  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,201 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 72, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x109cabdd0  session: 0x109dce360  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,201 - logic_logger - INFO
+....Order[72] {Update - Adjusting order: amount_total} id: 72, notes: None, customer_id: 124, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x109cba9d0  session: 0x109dce360  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,201 - logic_logger - INFO
+......Customer[124] {Update - Adjusting customer: balance} id: 124, name: Credit Test 1793164059153, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109e5d850  session: 0x109dce360  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,202 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dce360)   										 - 2026-10-27 22:07:39,202 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dce360)   										 - 2026-10-27 22:07:39,203 - logic_logger - INFO
+....Order[72] {AfterFlush Event} id: 72, notes: None, customer_id: 124, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x109cba9d0  session: 0x109dce360  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,203 - logic_logger - INFO
 
 ```
 </details>
@@ -734,13 +754,14 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c710710)   										 - 2026-10-27 
 &nbsp;
 &nbsp;
 
-#### Scenario: Alter Item Quantity ✅ (0.18 s)
-&emsp;  Scenario: Alter Item Quantity  
-&emsp;&emsp;    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150  
-&emsp;&emsp;    When the item quantity is updated to 4  
-&emsp;&emsp;    Then the item amount is 600  
-&emsp;&emsp;    And the order amount_total is 600  
-&emsp;&emsp;    And the customer balance is 600  
+#### Scenario: Item quantity change flows to the order total and balance ✅ (0.03 s)
+&emsp;  Scenario: Item quantity change flows to the order total and balance  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    And an order is placed with 2 Widget  
+&emsp;&emsp;    When the item quantity is changed to 5  
+&emsp;&emsp;    Then the item amount is 450  
+&emsp;&emsp;    And the order total is 450  
+&emsp;&emsp;    And the customer balance is 450  
 
 <details markdown>
 <summary>Rules exercised and logic log (3 transactions)</summary>
@@ -750,46 +771,46 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c710710)   										 - 2026-10-27 
 &nbsp;
 
 
-**Rules Used** in Scenario: Alter Item Quantity
+**Rules Used** in Scenario: Item quantity change flows to the order total and balance
 ```
   Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
   Order  
-    2. RowEvent Order.send_order_to_shipping()  
+    2. RowEvent Order.send_order_shipping()  
     3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
   Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. Derive Item.unit_price as Copy(product.unit_price)  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
 ```
-**Logic Log** in Scenario: Alter Item Quantity (3 transactions)
+**Logic Log** in Scenario: Item quantity change flows to the order total and balance (3 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10ca7e030) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,316 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: Test Order, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c9b5450  session: 0x10ca7e030  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,316 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test Order, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c9b5450  session: 0x10ca7e030  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,317 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7e030)   										 - 2026-10-27 18:17:28,317 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7e030)   										 - 2026-10-27 18:17:28,318 - logic_logger - INFO
-..Order[16] {AfterFlush Event} id: 16, notes: Test Order, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c9b5450  session: 0x10ca7e030  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,318 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109dcdbf0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,219 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 125, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109d2c0d0  session: 0x109dcdbf0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,219 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 125, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109d2c0d0  session: 0x109dcdbf0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,220 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcdbf0)   										 - 2026-10-27 22:07:39,220 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcdbf0)   										 - 2026-10-27 22:07:39,220 - logic_logger - INFO
+..Order[73] {AfterFlush Event} id: 73, notes: None, customer_id: 125, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109d2c0d0  session: 0x109dcdbf0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,220 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10ca7c6b0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,338 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 16, product_id: 7, quantity: 2, amount: None, unit_price: None  row: 0x10cadfdd0  session: 0x10ca7c6b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,339 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 16, product_id: 7, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10cadfdd0  session: 0x10ca7c6b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,340 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 16, product_id: 7, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10cadfdd0  session: 0x10ca7c6b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,340 - logic_logger - INFO
-....Order[16] {Update - Adjusting order: amount_total} id: 16, notes: Test Order, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10cb38850  session: 0x10ca7c6b0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,340 - logic_logger - INFO
-......Customer[20] {Update - Adjusting customer: balance} id: 20, name: CheckCredit OrderCust 1793150248243, balance:  [0E-10-->] 300.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10ccd0250  session: 0x10ca7c6b0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,340 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7c6b0)   										 - 2026-10-27 18:17:28,340 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7c6b0)   										 - 2026-10-27 18:17:28,341 - logic_logger - INFO
-....Order[16] {AfterFlush Event} id: 16, notes: Test Order, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10cb38850  session: 0x10ca7c6b0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,341 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109dcf020) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,223 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 73, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x109d78c50  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,223 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 73, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x109d78c50  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,223 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 73, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x109d78c50  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,224 - logic_logger - INFO
+....Order[73] {Update - Adjusting order: amount_total} id: 73, notes: None, customer_id: 125, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a0700d0  session: 0x109dcf020  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,224 - logic_logger - INFO
+......Customer[125] {Update - Adjusting customer: balance} id: 125, name: Credit Test 1793164059213, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a070c50  session: 0x109dcf020  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,224 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf020)   										 - 2026-10-27 22:07:39,224 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf020)   										 - 2026-10-27 22:07:39,224 - logic_logger - INFO
+....Order[73] {AfterFlush Event} id: 73, notes: None, customer_id: 125, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a0700d0  session: 0x109dcf020  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,225 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10ca7d370) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,362 - logic_logger - INFO
-..Item[16] {Update - client} id: 16, order_id: 16, product_id: 7, quantity:  [2-->] 4, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10cadcd50  session: 0x10ca7d370  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,362 - logic_logger - INFO
-..Item[16] {Formula amount} id: 16, order_id: 16, product_id: 7, quantity:  [2-->] 4, amount:  [300.0000000000-->] 600.0000000000, unit_price: 150.0000000000  row: 0x10cadcd50  session: 0x10ca7d370  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,362 - logic_logger - INFO
-....Order[16] {Update - Adjusting order: amount_total} id: 16, notes: Test Order, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total:  [300.0000000000-->] 600.0000000000  row: 0x10c9fdb50  session: 0x10ca7d370  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,363 - logic_logger - INFO
-......Customer[20] {Update - Adjusting customer: balance} id: 20, name: CheckCredit OrderCust 1793150248243, balance:  [300.0000000000-->] 600.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10ca551d0  session: 0x10ca7d370  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,363 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7d370)   										 - 2026-10-27 18:17:28,363 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7d370)   										 - 2026-10-27 18:17:28,364 - logic_logger - INFO
-....Order[16] {AfterFlush Event} id: 16, notes: Test Order, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total:  [300.0000000000-->] 600.0000000000  row: 0x10c9fdb50  session: 0x10ca7d370  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,364 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109dce7a0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,228 - logic_logger - INFO
+..Item[71] {Update - client} id: 71, order_id: 73, product_id: 2, quantity:  [2-->] 5, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x109e5e9d0  session: 0x109dce7a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,228 - logic_logger - INFO
+..Item[71] {Formula amount} id: 71, order_id: 73, product_id: 2, quantity:  [2-->] 5, amount:  [180.0000000000-->] 450.0000000000, unit_price: 90.0000000000  row: 0x109e5e9d0  session: 0x109dce7a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,228 - logic_logger - INFO
+....Order[73] {Update - Adjusting order: amount_total} id: 73, notes: None, customer_id: 125, CreatedOn: None, date_shipped: None, amount_total:  [180.0000000000-->] 450.0000000000  row: 0x10a071750  session: 0x109dce7a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,228 - logic_logger - INFO
+......Customer[125] {Update - Adjusting customer: balance} id: 125, name: Credit Test 1793164059213, balance:  [180.0000000000-->] 450.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a072450  session: 0x109dce7a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,228 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dce7a0)   										 - 2026-10-27 22:07:39,229 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dce7a0)   										 - 2026-10-27 22:07:39,229 - logic_logger - INFO
+....Order[73] {AfterFlush Event} id: 73, notes: None, customer_id: 125, CreatedOn: None, date_shipped: None, amount_total:  [180.0000000000-->] 450.0000000000  row: 0x10a071750  session: 0x109dce7a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,229 - logic_logger - INFO
 
 ```
 </details>
@@ -797,132 +818,11 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7d370)   										 - 2026-10-27 
 &nbsp;
 &nbsp;
 
-#### Scenario: Change Order Customer ✅ (0.17 s)
-&emsp;  Scenario: Change Order Customer  
-&emsp;&emsp;    Given two customers with credit_limit 1000 and an order of 300 on the first customer  
-&emsp;&emsp;    When the order is reassigned to the second customer  
-&emsp;&emsp;    Then the first customer balance is 0  
-&emsp;&emsp;    And the second customer balance is 300  
-
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Change Order Customer
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_order_to_shipping()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. Derive Item.unit_price as Copy(product.unit_price)  
-```
-**Logic Log** in Scenario: Change Order Customer (3 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c9a3570) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,512 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: Test Order, customer_id: 21, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10ca0b3d0  session: 0x10c9a3570  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,512 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test Order, customer_id: 21, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10ca0b3d0  session: 0x10c9a3570  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,512 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c9a3570)   										 - 2026-10-27 18:17:28,512 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c9a3570)   										 - 2026-10-27 18:17:28,513 - logic_logger - INFO
-..Order[17] {AfterFlush Event} id: 17, notes: Test Order, customer_id: 21, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10ca0b3d0  session: 0x10c9a3570  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,513 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10ca7d8c0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,531 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 17, product_id: 7, quantity: 2, amount: None, unit_price: None  row: 0x10c9d86d0  session: 0x10ca7d8c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,531 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 17, product_id: 7, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10c9d86d0  session: 0x10ca7d8c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,532 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 17, product_id: 7, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10c9d86d0  session: 0x10ca7d8c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,532 - logic_logger - INFO
-....Order[17] {Update - Adjusting order: amount_total} id: 17, notes: Test Order, customer_id: 21, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10cb3b5d0  session: 0x10ca7d8c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,532 - logic_logger - INFO
-......Customer[21] {Update - Adjusting customer: balance} id: 21, name: First Cust 1793150248421, balance:  [0E-10-->] 300.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10cb3b3d0  session: 0x10ca7d8c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,533 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7d8c0)   										 - 2026-10-27 18:17:28,533 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7d8c0)   										 - 2026-10-27 18:17:28,533 - logic_logger - INFO
-....Order[17] {AfterFlush Event} id: 17, notes: Test Order, customer_id: 21, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10cb3b5d0  session: 0x10ca7d8c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,534 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10ca7d150) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,552 - logic_logger - INFO
-..Order[17] {Update - client} id: 17, notes: Test Order, customer_id:  [21-->] 22, CreatedOn: None, date_shipped: None, amount_total: 300.0000000000  row: 0x10cb39fd0  session: 0x10ca7d150  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,553 - logic_logger - INFO
-....Customer[22] {Update - Adjusting customer: balance, balance} id: 22, name: Second Cust 1793150248440, balance:  [0E-10-->] 300.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10cadf5d0  session: 0x10ca7d150  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,553 - logic_logger - INFO
-....Customer[21] {Update - Adjusting Old customer} id: 21, name: First Cust 1793150248421, balance:  [300.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10caddc50  session: 0x10ca7d150  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,554 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7d150)   										 - 2026-10-27 18:17:28,554 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7d150)   										 - 2026-10-27 18:17:28,554 - logic_logger - INFO
-..Order[17] {AfterFlush Event} id: 17, notes: Test Order, customer_id:  [21-->] 22, CreatedOn: None, date_shipped: None, amount_total: 300.0000000000  row: 0x10cb39fd0  session: 0x10ca7d150  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,554 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Delete Order Item ✅ (0.16 s)
-&emsp;  Scenario: Delete Order Item  
-&emsp;&emsp;    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150  
-&emsp;&emsp;    When the item is deleted  
-&emsp;&emsp;    Then the order amount_total is 0  
-&emsp;&emsp;    And the customer balance is 0  
-
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Delete Order Item
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_order_to_shipping()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. Derive Item.unit_price as Copy(product.unit_price)  
-```
-**Logic Log** in Scenario: Delete Order Item (3 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10ca7d370) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,664 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: Test Order, customer_id: 23, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c8c8e50  session: 0x10ca7d370  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,665 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test Order, customer_id: 23, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c8c8e50  session: 0x10ca7d370  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,665 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7d370)   										 - 2026-10-27 18:17:28,665 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7d370)   										 - 2026-10-27 18:17:28,665 - logic_logger - INFO
-..Order[18] {AfterFlush Event} id: 18, notes: Test Order, customer_id: 23, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c8c8e50  session: 0x10ca7d370  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,666 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10ca7e9c0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,684 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 18, product_id: 7, quantity: 2, amount: None, unit_price: None  row: 0x10c9fff50  session: 0x10ca7e9c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,684 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 18, product_id: 7, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10c9fff50  session: 0x10ca7e9c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,685 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 18, product_id: 7, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10c9fff50  session: 0x10ca7e9c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,685 - logic_logger - INFO
-....Order[18] {Update - Adjusting order: amount_total} id: 18, notes: Test Order, customer_id: 23, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10cb3a550  session: 0x10ca7e9c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,685 - logic_logger - INFO
-......Customer[23] {Update - Adjusting customer: balance} id: 23, name: CheckCredit OrderCust 1793150248593, balance:  [0E-10-->] 300.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10cadcb50  session: 0x10ca7e9c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,685 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7e9c0)   										 - 2026-10-27 18:17:28,686 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7e9c0)   										 - 2026-10-27 18:17:28,686 - logic_logger - INFO
-....Order[18] {AfterFlush Event} id: 18, notes: Test Order, customer_id: 23, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10cb3a550  session: 0x10ca7e9c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,686 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10ca7e690) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,706 - logic_logger - INFO
-..Item[18] {Delete - client} id: 18, order_id: 18, product_id: 7, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10cb3a2d0  session: 0x10ca7e690  ins_upd_dlt: dlt, initial: dlt - 2026-10-27 18:17:28,707 - logic_logger - INFO
-....Order[18] {Update - Adjusting order: amount_total} id: 18, notes: Test Order, customer_id: 23, CreatedOn: None, date_shipped: None, amount_total:  [300.0000000000-->] 0E-10  row: 0x10cadc550  session: 0x10ca7e690  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,707 - logic_logger - INFO
-......Customer[23] {Update - Adjusting customer: balance} id: 23, name: CheckCredit OrderCust 1793150248593, balance:  [300.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10ca0a9d0  session: 0x10ca7e690  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,707 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7e690)   										 - 2026-10-27 18:17:28,708 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7e690)   										 - 2026-10-27 18:17:28,708 - logic_logger - INFO
-....Order[18] {AfterFlush Event} id: 18, notes: Test Order, customer_id: 23, CreatedOn: None, date_shipped: None, amount_total:  [300.0000000000-->] 0E-10  row: 0x10cadc550  session: 0x10ca7e690  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,708 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Ship Order updates balance ✅ (0.16 s)
-&emsp;  Scenario: Ship Order updates balance  
-&emsp;&emsp;    Given a customer with credit_limit 1000 and an unshipped order of 2 items at unit_price 150  
-&emsp;&emsp;    When the order date_shipped is set to "2026-10-27"  
+#### Scenario: Shipping an order removes it from the balance ✅ (0.03 s)
+&emsp;  Scenario: Shipping an order removes it from the balance  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    And an order is placed with 2 Widget  
+&emsp;&emsp;    When the order is shipped  
 &emsp;&emsp;    Then the customer balance is 0  
 
 <details markdown>
@@ -933,45 +833,45 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7e690)   										 - 2026-10-27 
 &nbsp;
 
 
-**Rules Used** in Scenario: Ship Order updates balance
+**Rules Used** in Scenario: Shipping an order removes it from the balance
 ```
   Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
   Order  
-    2. RowEvent Order.send_order_to_shipping()  
+    2. RowEvent Order.send_order_shipping()  
     3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
   Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. Derive Item.unit_price as Copy(product.unit_price)  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
 ```
-**Logic Log** in Scenario: Ship Order updates balance (3 transactions)
+**Logic Log** in Scenario: Shipping an order removes it from the balance (3 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10ca7e8b0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,831 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: Test Order, customer_id: 24, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c98ac50  session: 0x10ca7e8b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,831 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test Order, customer_id: 24, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c98ac50  session: 0x10ca7e8b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,831 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7e8b0)   										 - 2026-10-27 18:17:28,832 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7e8b0)   										 - 2026-10-27 18:17:28,832 - logic_logger - INFO
-..Order[19] {AfterFlush Event} id: 19, notes: Test Order, customer_id: 24, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c98ac50  session: 0x10ca7e8b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,832 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109dcdae0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,254 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 126, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109d7bed0  session: 0x109dcdae0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,254 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 126, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109d7bed0  session: 0x109dcdae0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,254 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcdae0)   										 - 2026-10-27 22:07:39,255 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcdae0)   										 - 2026-10-27 22:07:39,255 - logic_logger - INFO
+..Order[74] {AfterFlush Event} id: 74, notes: None, customer_id: 126, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109d7bed0  session: 0x109dcdae0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,255 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10ca7c5a0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,853 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 19, product_id: 7, quantity: 2, amount: None, unit_price: None  row: 0x10c967f50  session: 0x10ca7c5a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,853 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 19, product_id: 7, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10c967f50  session: 0x10ca7c5a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,854 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 19, product_id: 7, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10c967f50  session: 0x10ca7c5a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,854 - logic_logger - INFO
-....Order[19] {Update - Adjusting order: amount_total} id: 19, notes: Test Order, customer_id: 24, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10cb383d0  session: 0x10ca7c5a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,855 - logic_logger - INFO
-......Customer[24] {Update - Adjusting customer: balance} id: 24, name: CheckCredit OrderCust 1793150248749, balance:  [0E-10-->] 300.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10cb38050  session: 0x10ca7c5a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,855 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7c5a0)   										 - 2026-10-27 18:17:28,855 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7c5a0)   										 - 2026-10-27 18:17:28,856 - logic_logger - INFO
-....Order[19] {AfterFlush Event} id: 19, notes: Test Order, customer_id: 24, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10cb383d0  session: 0x10ca7c5a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,856 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109dce7a0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,258 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 74, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x109c6b550  session: 0x109dce7a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,258 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 74, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x109c6b550  session: 0x109dce7a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,259 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 74, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x109c6b550  session: 0x109dce7a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,259 - logic_logger - INFO
+....Order[74] {Update - Adjusting order: amount_total} id: 74, notes: None, customer_id: 126, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x109e1f250  session: 0x109dce7a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,259 - logic_logger - INFO
+......Customer[126] {Update - Adjusting customer: balance} id: 126, name: Credit Test 1793164059243, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a0730d0  session: 0x109dce7a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,259 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dce7a0)   										 - 2026-10-27 22:07:39,259 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dce7a0)   										 - 2026-10-27 22:07:39,260 - logic_logger - INFO
+....Order[74] {AfterFlush Event} id: 74, notes: None, customer_id: 126, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x109e1f250  session: 0x109dce7a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,260 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10ca7d8c0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,878 - logic_logger - INFO
-..Order[19] {Update - client} id: 19, notes: Test Order, customer_id: 24, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 300.0000000000  row: 0x10c9752d0  session: 0x10ca7d8c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,879 - logic_logger - INFO
-....Customer[24] {Update - Adjusting customer: balance} id: 24, name: CheckCredit OrderCust 1793150248749, balance:  [300.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10ccd0050  session: 0x10ca7d8c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,879 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7d8c0)   										 - 2026-10-27 18:17:28,879 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7d8c0)   										 - 2026-10-27 18:17:28,880 - logic_logger - INFO
-..Order[19] {AfterFlush Event} id: 19, notes: Test Order, customer_id: 24, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 300.0000000000  row: 0x10c9752d0  session: 0x10ca7d8c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,880 - logic_logger - INFO
-..Order[19] {publish_kafka_message: topic='order_shipping', key={'id': 19}} id: 19, notes: Test Order, customer_id: 24, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 300.0000000000  row: 0x10c9752d0  session: 0x10ca7d8c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:28,888 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109dce360) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,264 - logic_logger - INFO
+..Order[74] {Update - client} id: 74, notes: None, customer_id: 126, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 180.0000000000  row: 0x109d0aed0  session: 0x109dce360  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,264 - logic_logger - INFO
+....Customer[126] {Update - Adjusting customer: balance} id: 126, name: Credit Test 1793164059243, balance:  [180.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a070ed0  session: 0x109dce360  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,264 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dce360)   										 - 2026-10-27 22:07:39,264 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dce360)   										 - 2026-10-27 22:07:39,265 - logic_logger - INFO
+..Order[74] {AfterFlush Event} id: 74, notes: None, customer_id: 126, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 180.0000000000  row: 0x109d0aed0  session: 0x109dce360  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,265 - logic_logger - INFO
+..Order[74] {publish_kafka_message: topic='order_shipping', key={'id': 74}} id: 74, notes: None, customer_id: 126, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 180.0000000000  row: 0x109d0aed0  session: 0x109dce360  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,267 - logic_logger - INFO
 
 ```
 </details>
@@ -979,11 +879,864 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7d8c0)   										 - 2026-10-27 
 &nbsp;
 &nbsp;
 
-#### Scenario: Unship Order updates balance ✅ (0.17 s)
-&emsp;  Scenario: Unship Order updates balance  
-&emsp;&emsp;    Given a customer with credit_limit 1000 and a shipped order of 2 items at unit_price 150  
-&emsp;&emsp;    When the order date_shipped is cleared  
-&emsp;&emsp;    Then the customer balance is 300  
+#### Scenario: Moving an order to another customer moves the balance ✅ (0.03 s)
+&emsp;  Scenario: Moving an order to another customer moves the balance  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    And a second customer with credit limit 1000  
+&emsp;&emsp;    And an order is placed with 2 Widget  
+&emsp;&emsp;    When the order is moved to the second customer  
+&emsp;&emsp;    Then the customer balance is 0  
+&emsp;&emsp;    And the second customer balance is 180  
+
+<details markdown>
+<summary>Rules exercised and logic log (3 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Moving an order to another customer moves the balance
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: Moving an order to another customer moves the balance (3 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf020) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,283 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 127, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109c38250  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,283 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 127, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109c38250  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,283 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf020)   										 - 2026-10-27 22:07:39,284 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf020)   										 - 2026-10-27 22:07:39,284 - logic_logger - INFO
+..Order[75] {AfterFlush Event} id: 75, notes: None, customer_id: 127, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109c38250  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,284 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf130) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,287 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 75, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x109c04150  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,287 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 75, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x109c04150  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,287 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 75, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x109c04150  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,287 - logic_logger - INFO
+....Order[75] {Update - Adjusting order: amount_total} id: 75, notes: None, customer_id: 127, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x109e5ed50  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,288 - logic_logger - INFO
+......Customer[127] {Update - Adjusting customer: balance} id: 127, name: Credit Test 1793164059273, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109e5f9d0  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,288 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf130)   										 - 2026-10-27 22:07:39,288 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf130)   										 - 2026-10-27 22:07:39,288 - logic_logger - INFO
+....Order[75] {AfterFlush Event} id: 75, notes: None, customer_id: 127, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x109e5ed50  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,288 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf790) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,291 - logic_logger - INFO
+..Order[75] {Update - client} id: 75, notes: None, customer_id:  [127-->] 128, CreatedOn: None, date_shipped: None, amount_total: 180.0000000000  row: 0x10a071450  session: 0x109dcf790  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,292 - logic_logger - INFO
+....Customer[128] {Update - Adjusting customer: balance, balance} id: 128, name: Credit Test 2 1793164059276, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a0ac5d0  session: 0x109dcf790  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,292 - logic_logger - INFO
+....Customer[127] {Update - Adjusting Old customer} id: 127, name: Credit Test 1793164059273, balance:  [180.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a0ac850  session: 0x109dcf790  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,292 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf790)   										 - 2026-10-27 22:07:39,292 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf790)   										 - 2026-10-27 22:07:39,293 - logic_logger - INFO
+..Order[75] {AfterFlush Event} id: 75, notes: None, customer_id:  [127-->] 128, CreatedOn: None, date_shipped: None, amount_total: 180.0000000000  row: 0x10a071450  session: 0x109dcf790  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,293 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Order over the credit limit is rejected ✅ (0.02 s)
+&emsp;  Scenario: Order over the credit limit is rejected  
+&emsp;&emsp;    Given a new customer with credit limit 100  
+&emsp;&emsp;    When an order is placed with 2 Widget  
+&emsp;&emsp;    Then the request is rejected with "exceeds credit limit"  
+&emsp;&emsp;    And the customer balance is 0  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Order over the credit limit is rejected
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+    2. Constraint Function: None  
+  Order  
+    3. RowEvent Order.send_order_shipping()  
+    4. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    5. Derive Item.unit_price as Copy(product.unit_price)  
+    6. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: Order over the credit limit is rejected (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcfce0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,306 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 129, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109e5ef50  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,306 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 129, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e5ef50  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,306 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcfce0)   										 - 2026-10-27 22:07:39,306 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcfce0)   										 - 2026-10-27 22:07:39,307 - logic_logger - INFO
+..Order[76] {AfterFlush Event} id: 76, notes: None, customer_id: 129, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e5ef50  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,307 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf130) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,309 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 76, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x109e5c350  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,309 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 76, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x109e5c350  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,310 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 76, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x109e5c350  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,310 - logic_logger - INFO
+....Order[76] {Update - Adjusting order: amount_total} id: 76, notes: None, customer_id: 129, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x109e1d350  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,310 - logic_logger - INFO
+......Customer[129] {Update - Adjusting customer: balance} id: 129, name: Credit Test 1793164059299, balance:  [0E-10-->] 180.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10a073c50  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,310 - logic_logger - INFO
+......Customer[129] {Constraint Failure: Credit Test 1793164059299: balance 180.0000000000 exceeds credit limit 100.0000000000} id: 129, name: Credit Test 1793164059299, balance:  [0E-10-->] 180.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10a073c50  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,311 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Balance equal to the credit limit is accepted ✅ (0.02 s)
+&emsp;  Scenario: Balance equal to the credit limit is accepted  
+&emsp;&emsp;    Given a new customer with credit limit 180  
+&emsp;&emsp;    When an order is placed with 2 Widget  
+&emsp;&emsp;    Then the request is accepted  
+&emsp;&emsp;    And the customer balance is 180  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Balance equal to the credit limit is accepted
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: Balance equal to the credit limit is accepted (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcdae0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,323 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 130, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109e5fdd0  session: 0x109dcdae0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,323 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 130, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e5fdd0  session: 0x109dcdae0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,323 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcdae0)   										 - 2026-10-27 22:07:39,323 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcdae0)   										 - 2026-10-27 22:07:39,323 - logic_logger - INFO
+..Order[77] {AfterFlush Event} id: 77, notes: None, customer_id: 130, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e5fdd0  session: 0x109dcdae0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,323 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dce7a0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,326 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 77, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x109d78c50  session: 0x109dce7a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,326 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 77, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x109d78c50  session: 0x109dce7a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,327 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 77, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x109d78c50  session: 0x109dce7a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,327 - logic_logger - INFO
+....Order[77] {Update - Adjusting order: amount_total} id: 77, notes: None, customer_id: 130, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a18ded0  session: 0x109dce7a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,327 - logic_logger - INFO
+......Customer[130] {Update - Adjusting customer: balance} id: 130, name: Credit Test 1793164059316, balance:  [0E-10-->] 180.0000000000, credit_limit: 180.0000000000, email: None, email_opt_out: None  row: 0x109cd2c50  session: 0x109dce7a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,327 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dce7a0)   										 - 2026-10-27 22:07:39,327 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dce7a0)   										 - 2026-10-27 22:07:39,328 - logic_logger - INFO
+....Order[77] {AfterFlush Event} id: 77, notes: None, customer_id: 130, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a18ded0  session: 0x109dce7a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,328 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Lowering the credit limit below the balance is rejected ✅ (0.02 s)
+&emsp;  Scenario: Lowering the credit limit below the balance is rejected  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    And an order is placed with 2 Widget  
+&emsp;&emsp;    When the credit limit is changed to 100  
+&emsp;&emsp;    Then the request is rejected with "exceeds credit limit"  
+
+<details markdown>
+<summary>Rules exercised and logic log (3 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Lowering the credit limit below the balance is rejected
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+    2. Constraint Function: None  
+  Order  
+    3. RowEvent Order.send_order_shipping()  
+    4. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    5. Derive Item.unit_price as Copy(product.unit_price)  
+    6. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: Lowering the credit limit below the balance is rejected (3 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf460) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,339 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 131, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10a070dd0  session: 0x109dcf460  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,339 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 131, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a070dd0  session: 0x109dcf460  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,339 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf460)   										 - 2026-10-27 22:07:39,339 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf460)   										 - 2026-10-27 22:07:39,340 - logic_logger - INFO
+..Order[78] {AfterFlush Event} id: 78, notes: None, customer_id: 131, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a070dd0  session: 0x109dcf460  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,340 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dce580) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,342 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 78, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10a0733d0  session: 0x109dce580  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,342 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 78, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10a0733d0  session: 0x109dce580  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,343 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 78, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a0733d0  session: 0x109dce580  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,343 - logic_logger - INFO
+....Order[78] {Update - Adjusting order: amount_total} id: 78, notes: None, customer_id: 131, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a18d850  session: 0x109dce580  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,343 - logic_logger - INFO
+......Customer[131] {Update - Adjusting customer: balance} id: 131, name: Credit Test 1793164059333, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a18c850  session: 0x109dce580  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,343 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dce580)   										 - 2026-10-27 22:07:39,343 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dce580)   										 - 2026-10-27 22:07:39,344 - logic_logger - INFO
+....Order[78] {AfterFlush Event} id: 78, notes: None, customer_id: 131, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a18d850  session: 0x109dce580  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,344 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf020) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,347 - logic_logger - INFO
+..Customer[131] {Update - client} id: 131, name: Credit Test 1793164059333, balance: 180.0000000000, credit_limit:  [1000.0000000000-->] 100, email: None, email_opt_out: None  row: 0x109e5e1d0  session: 0x109dcf020  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,347 - logic_logger - INFO
+..Customer[131] {Constraint Failure: Credit Test 1793164059333: balance 180.0000000000 exceeds credit limit 100} id: 131, name: Credit Test 1793164059333, balance: 180.0000000000, credit_limit:  [1000.0000000000-->] 100, email: None, email_opt_out: None  row: 0x109e5e1d0  session: 0x109dcf020  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,347 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Product price change does not alter existing items ✅ (0.02 s)
+&emsp;  Scenario: Product price change does not alter existing items  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    And a new product priced 50  
+&emsp;&emsp;    And an order is placed with 2 of the new product  
+&emsp;&emsp;    When the product price is changed to 80  
+&emsp;&emsp;    Then the item unit price is 50  
+&emsp;&emsp;    And the item amount is 100  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Product price change does not alter existing items
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: Product price change does not alter existing items (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x10a1a88d0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,358 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 132, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109e5ed50  session: 0x10a1a88d0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,358 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 132, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e5ed50  session: 0x10a1a88d0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,358 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a1a88d0)   										 - 2026-10-27 22:07:39,358 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a1a88d0)   										 - 2026-10-27 22:07:39,359 - logic_logger - INFO
+..Order[79] {AfterFlush Event} id: 79, notes: None, customer_id: 132, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e5ed50  session: 0x10a1a88d0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,359 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf8a0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,361 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 79, product_id: 10, quantity: 2, amount: None, unit_price: None  row: 0x109a03750  session: 0x109dcf8a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,361 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 79, product_id: 10, quantity: 2, amount: None, unit_price: 50.0000000000  row: 0x109a03750  session: 0x109dcf8a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,362 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 79, product_id: 10, quantity: 2, amount: 100.0000000000, unit_price: 50.0000000000  row: 0x109a03750  session: 0x109dcf8a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,362 - logic_logger - INFO
+....Order[79] {Update - Adjusting order: amount_total} id: 79, notes: None, customer_id: 132, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 100.0000000000  row: 0x109e5ddd0  session: 0x109dcf8a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,362 - logic_logger - INFO
+......Customer[132] {Update - Adjusting customer: balance} id: 132, name: Credit Test 1793164059350, balance:  [0E-10-->] 100.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109cb8ad0  session: 0x109dcf8a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,362 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf8a0)   										 - 2026-10-27 22:07:39,362 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf8a0)   										 - 2026-10-27 22:07:39,363 - logic_logger - INFO
+....Order[79] {AfterFlush Event} id: 79, notes: None, customer_id: 132, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 100.0000000000  row: 0x109e5ddd0  session: 0x109dcf8a0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,363 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Deleting an order deletes its items ✅ (0.02 s)
+&emsp;  Scenario: Deleting an order deletes its items  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    And an order is placed with 2 Widget  
+&emsp;&emsp;    When the order is deleted  
+&emsp;&emsp;    Then the order has no items  
+&emsp;&emsp;    And the customer balance is 0  
+
+<details markdown>
+<summary>Rules exercised and logic log (3 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Deleting an order deletes its items
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: Deleting an order deletes its items (3 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf020) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,379 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 133, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109e1cb50  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,379 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 133, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e1cb50  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,379 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf020)   										 - 2026-10-27 22:07:39,379 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf020)   										 - 2026-10-27 22:07:39,380 - logic_logger - INFO
+..Order[80] {AfterFlush Event} id: 80, notes: None, customer_id: 133, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e1cb50  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,380 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf570) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,382 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 80, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x109e47dd0  session: 0x109dcf570  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,382 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 80, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x109e47dd0  session: 0x109dcf570  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,383 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 80, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x109e47dd0  session: 0x109dcf570  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,383 - logic_logger - INFO
+....Order[80] {Update - Adjusting order: amount_total} id: 80, notes: None, customer_id: 133, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a18f950  session: 0x109dcf570  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,383 - logic_logger - INFO
+......Customer[133] {Update - Adjusting customer: balance} id: 133, name: Credit Test 1793164059372, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a1b01d0  session: 0x109dcf570  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,383 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf570)   										 - 2026-10-27 22:07:39,383 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf570)   										 - 2026-10-27 22:07:39,384 - logic_logger - INFO
+....Order[80] {AfterFlush Event} id: 80, notes: None, customer_id: 133, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a18f950  session: 0x109dcf570  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,384 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf130) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,387 - logic_logger - INFO
+..Order[80] {Delete - client} id: 80, notes: None, customer_id: 133, CreatedOn: None, date_shipped: None, amount_total: 180.0000000000  row: 0x10a18ca50  session: 0x109dcf130  ins_upd_dlt: dlt, initial: dlt - 2026-10-27 22:07:39,387 - logic_logger - INFO
+....Customer[133] {Update - Adjusting customer: balance} id: 133, name: Credit Test 1793164059372, balance:  [180.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a18fb50  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,387 - logic_logger - INFO
+..Item[77] {Delete - client} id: 77, order_id: 80, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a18e250  session: 0x109dcf130  ins_upd_dlt: dlt, initial: dlt - 2026-10-27 22:07:39,387 - logic_logger - INFO
+..Item[77] {No adjustment on deleted parent: order} id: 77, order_id: 80, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a18e250  session: 0x109dcf130  ins_upd_dlt: dlt, initial: dlt - 2026-10-27 22:07:39,387 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf130)   										 - 2026-10-27 22:07:39,388 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf130)   										 - 2026-10-27 22:07:39,388 - logic_logger - INFO
+..Order[80] {AfterFlush Event} id: 80, notes: None, customer_id: 133, CreatedOn: None, date_shipped: None, amount_total: 180.0000000000  row: 0x10a18ca50  session: 0x109dcf130  ins_upd_dlt: dlt, initial: dlt - 2026-10-27 22:07:39,388 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Item for an unknown product is rejected ✅ (0.01 s)
+&emsp;  Scenario: Item for an unknown product is rejected  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    And an empty order  
+&emsp;&emsp;    When an item is added for product id 999999  
+&emsp;&emsp;    Then the request is rejected with "Missing Parent"  
+
+<details markdown>
+<summary>Rules exercised and logic log (1 transaction)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Item for an unknown product is rejected
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+```
+**Logic Log** in Scenario: Item for an unknown product is rejected (1 transaction)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf570) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,399 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 134, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109cba1d0  session: 0x109dcf570  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,399 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 134, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109cba1d0  session: 0x109dcf570  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,399 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf570)   										 - 2026-10-27 22:07:39,400 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf570)   										 - 2026-10-27 22:07:39,400 - logic_logger - INFO
+..Order[81] {AfterFlush Event} id: 81, notes: None, customer_id: 134, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109cba1d0  session: 0x109dcf570  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,400 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+### Feature: Order B2B Intake  
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Partner order through the REST API is created ✅ (0.01 s)
+&emsp;  Scenario: Partner order through the REST API is created  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    When a partner order for the customer with 1 Widget and 2 Gadget is posted  
+&emsp;&emsp;    Then the partner request answers 201  
+&emsp;&emsp;    And the partner order total is 390  
+&emsp;&emsp;    And the customer balance is 390  
+
+<details markdown>
+<summary>Rules exercised and logic log (1 transaction)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Partner order through the REST API is created
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Item  
+    2. Derive Item.unit_price as Copy(product.unit_price)  
+    3. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+  Order  
+    4. RowEvent Order.send_order_shipping()  
+    5. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: Partner order through the REST API is created (1 transaction)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcfce0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,410 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: Test order, customer_id: 135, CreatedOn: 2026-10-27, date_shipped: None, amount_total: None  row: 0x109e1f3d0  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,410 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test order, customer_id: 135, CreatedOn: 2026-10-27, date_shipped: None, amount_total: 0  row: 0x109e1f3d0  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,411 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x109e1f350  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,411 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x109e1f350  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,411 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x109e1f350  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,411 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Test order, customer_id: 135, CreatedOn: 2026-10-27, date_shipped: None, amount_total:  [0-->] 90.0000000000  row: 0x109e1f3d0  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,412 - logic_logger - INFO
+......Customer[135] {Update - Adjusting customer: balance} id: 135, name: Credit Test 1793164059406, balance:  [0E-10-->] 90.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109cabdd0  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,412 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x10a18d8d0  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,412 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10a18d8d0  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,412 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10a18d8d0  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,412 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Test order, customer_id: 135, CreatedOn: 2026-10-27, date_shipped: None, amount_total:  [90.0000000000-->] 390.0000000000  row: 0x109e1f3d0  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,412 - logic_logger - INFO
+......Customer[135] {Update - Adjusting customer: balance} id: 135, name: Credit Test 1793164059406, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109cabdd0  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,412 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcfce0)   										 - 2026-10-27 22:07:39,413 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcfce0)   										 - 2026-10-27 22:07:39,413 - logic_logger - INFO
+..Order[82] {AfterFlush Event} id: 82, notes: Test order, customer_id: 135, CreatedOn: 2026-10-27, date_shipped: None, amount_total: 390.0000000000  row: 0x109e1f3d0  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,413 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Partner order for an unknown account is refused ✅ (0.01 s)
+&emsp;  Scenario: Partner order for an unknown account is refused  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    When a partner order for account "No Such Account" with 1 Widget is posted  
+&emsp;&emsp;    Then the partner request answers 422  
+
+_No rules fired in this scenario's logic log._
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Partner order for an unknown product is refused ✅ (0.01 s)
+&emsp;  Scenario: Partner order for an unknown product is refused  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    When a partner order for the customer with 1 "No Such Product" is posted  
+&emsp;&emsp;    Then the partner request answers 422  
+
+_No rules fired in this scenario's logic log._
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Partner order with no items is refused ✅ (0.01 s)
+&emsp;  Scenario: Partner order with no items is refused  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    When a partner order for the customer with no items is posted  
+&emsp;&emsp;    Then the partner request answers 400  
+
+_No rules fired in this scenario's logic log._
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Partner order with a zero quantity is refused ✅ (0.01 s)
+&emsp;  Scenario: Partner order with a zero quantity is refused  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    When a partner order for the customer with 0 Widget is posted  
+&emsp;&emsp;    Then the partner request answers 400  
+
+_No rules fired in this scenario's logic log._
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Partner order over the credit limit is refused ✅ (0.01 s)
+&emsp;  Scenario: Partner order over the credit limit is refused  
+&emsp;&emsp;    Given a new customer with credit limit 100  
+&emsp;&emsp;    When a partner order for the customer with 1 Widget and 2 Gadget is posted  
+&emsp;&emsp;    Then the partner request answers 400  
+&emsp;&emsp;    And the partner error mentions "exceeds credit limit"  
+&emsp;&emsp;    And the customer balance is 0  
+
+<details markdown>
+<summary>Rules exercised and logic log (1 transaction)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Partner order over the credit limit is refused
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+    2. Constraint Function: None  
+  Item  
+    3. Derive Item.unit_price as Copy(product.unit_price)  
+    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+  Order  
+    5. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: Partner order over the credit limit is refused (1 transaction)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf020) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,446 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: Test order, customer_id: 140, CreatedOn: 2026-10-27, date_shipped: None, amount_total: None  row: 0x109c06d50  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,447 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test order, customer_id: 140, CreatedOn: 2026-10-27, date_shipped: None, amount_total: 0  row: 0x109c06d50  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,447 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x109cd1fd0  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,447 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x109cd1fd0  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,447 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x109cd1fd0  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,447 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Test order, customer_id: 140, CreatedOn: 2026-10-27, date_shipped: None, amount_total:  [0-->] 90.0000000000  row: 0x109c06d50  session: 0x109dcf020  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,447 - logic_logger - INFO
+......Customer[140] {Update - Adjusting customer: balance} id: 140, name: Credit Test 1793164059442, balance:  [0E-10-->] 90.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10a1b31d0  session: 0x109dcf020  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,447 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x109e47cd0  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,448 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x109e47cd0  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,448 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x109e47cd0  session: 0x109dcf020  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,448 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Test order, customer_id: 140, CreatedOn: 2026-10-27, date_shipped: None, amount_total:  [90.0000000000-->] 390.0000000000  row: 0x109c06d50  session: 0x109dcf020  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,448 - logic_logger - INFO
+......Customer[140] {Update - Adjusting customer: balance} id: 140, name: Credit Test 1793164059442, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10a1b31d0  session: 0x109dcf020  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,448 - logic_logger - INFO
+......Customer[140] {Constraint Failure: Credit Test 1793164059442: balance 390.0000000000 exceeds credit limit 100.0000000000} id: 140, name: Credit Test 1793164059442, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10a1b31d0  session: 0x109dcf020  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,448 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Partner order without a token is refused ✅ (0.01 s)
+&emsp;  Scenario: Partner order without a token is refused  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    When a partner order for the customer with 1 Widget is posted without a token  
+&emsp;&emsp;    Then the partner request answers 401  
+
+_No rules fired in this scenario's logic log._
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Inbound order message is persisted as an order ✅ (0.53 s)
+&emsp;  Scenario: Inbound order message is persisted as an order  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    When an inbound order message for the customer is delivered to topic order_b2b  
+&emsp;&emsp;    Then the inbound message is processed  
+&emsp;&emsp;    And the customer balance is 390  
+
+<details markdown>
+<summary>Rules exercised and logic log (3 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Inbound order message is persisted as an order
+```
+  OrderB2bMessage  
+    1. RowEvent OrderB2bMessage._publish_order_b2b()  
+  Customer  
+    2. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Item  
+    3. Derive Item.unit_price as Copy(product.unit_price)  
+    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+  Order  
+    5. RowEvent Order.send_order_shipping()  
+    6. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: Inbound order message is persisted as an order (3 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf790) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,463 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, received_at: 2026-10-28 05:07:39.463648, payload: {"Account": "Credit Test 1793164059457", "Notes": "Test order", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x109ddf120  session: 0x109dcf790  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,463 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf790)   										 - 2026-10-27 22:07:39,463 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf790)   										 - 2026-10-27 22:07:39,464 - logic_logger - INFO
+..OrderB2bMessage[5] {AfterFlush Event} id: 5, received_at: 2026-10-28 05:07:39.463648, payload: {"Account": "Credit Test 1793164059457", "Notes": "Test order", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x109ddf120  session: 0x109dcf790  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,464 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcff00) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,466 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: Test order, customer_id: 142, CreatedOn: 2026-10-27, date_shipped: None, amount_total: None  row: 0x109d7b950  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,467 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test order, customer_id: 142, CreatedOn: 2026-10-27, date_shipped: None, amount_total: 0  row: 0x109d7b950  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,468 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x109e5ef50  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,468 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x109e5ef50  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,468 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x109e5ef50  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,468 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Test order, customer_id: 142, CreatedOn: 2026-10-27, date_shipped: None, amount_total:  [0-->] 90.0000000000  row: 0x109d7b950  session: 0x109dcff00  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,468 - logic_logger - INFO
+......Customer[142] {Update - Adjusting customer: balance} id: 142, name: Credit Test 1793164059457, balance:  [0E-10-->] 90.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109e1c9d0  session: 0x109dcff00  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,469 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x109e5dd50  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,469 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x109e5dd50  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,469 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x109e5dd50  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,469 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Test order, customer_id: 142, CreatedOn: 2026-10-27, date_shipped: None, amount_total:  [90.0000000000-->] 390.0000000000  row: 0x109d7b950  session: 0x109dcff00  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,469 - logic_logger - INFO
+......Customer[142] {Update - Adjusting customer: balance} id: 142, name: Credit Test 1793164059457, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109e1c9d0  session: 0x109dcff00  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,469 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcff00)   										 - 2026-10-27 22:07:39,469 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcff00)   										 - 2026-10-27 22:07:39,470 - logic_logger - INFO
+..Order[83] {AfterFlush Event} id: 83, notes: Test order, customer_id: 142, CreatedOn: 2026-10-27, date_shipped: None, amount_total: 390.0000000000  row: 0x109d7b950  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:39,470 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcff00) (sqlalchemy before_flush)			 - 2026-10-27 22:07:39,470 - logic_logger - INFO
+..OrderB2bMessage[5] {Update - client} id: 5, received_at: 2026-10-28 05:07:39.463648, payload: {"Account": "Credit Test 1793164059457", "Notes": "Test order", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10a1dd590  session: 0x109dcff00  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,471 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcff00)   										 - 2026-10-27 22:07:39,471 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcff00)   										 - 2026-10-27 22:07:39,471 - logic_logger - INFO
+..OrderB2bMessage[5] {AfterFlush Event} id: 5, received_at: 2026-10-28 05:07:39.463648, payload: {"Account": "Credit Test 1793164059457", "Notes": "Test order", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10a1dd590  session: 0x109dcff00  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:39,471 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Inbound order message for an unknown account is rejected ✅ (0.53 s)
+&emsp;  Scenario: Inbound order message for an unknown account is rejected  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    When an inbound order message for an unknown account is delivered to topic order_b2b  
+&emsp;&emsp;    Then the inbound message is rejected with "no Customer"  
+
+<details markdown>
+<summary>Rules exercised and logic log (1 transaction)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Inbound order message for an unknown account is rejected
+```
+  OrderB2bMessage  
+    1. RowEvent OrderB2bMessage._publish_order_b2b()  
+```
+**Logic Log** in Scenario: Inbound order message for an unknown account is rejected (1 transaction)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf460) (sqlalchemy before_flush)			 - 2026-10-27 22:07:40,003 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, received_at: 2026-10-28 05:07:40.002851, payload: {"Account": "No Such Account 1793164059997", "Notes": "Test order", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x109c77a70  session: 0x109dcf460  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,003 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf460)   										 - 2026-10-27 22:07:40,003 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf460)   										 - 2026-10-27 22:07:40,003 - logic_logger - INFO
+..OrderB2bMessage[6] {AfterFlush Event} id: 6, received_at: 2026-10-28 05:07:40.002851, payload: {"Account": "No Such Account 1793164059997", "Notes": "Test order", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x109c77a70  session: 0x109dcf460  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,004 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: A rejected inbound order message stays on its blob with the reason (live Kafka only) ✅ (0.53 s)
+&emsp;  Scenario: A rejected inbound order message stays on its blob with the reason (live Kafka only)  
+&emsp;&emsp;    Given a new customer with credit limit 100  
+&emsp;&emsp;    When an inbound order message for the customer is delivered live to topic order_b2b  
+&emsp;&emsp;    Then the inbound message blob is unprocessed and has error_text "exceeds credit limit"  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: A rejected inbound order message stays on its blob with the reason (live Kafka only)
+```
+  OrderB2bMessage  
+    1. RowEvent OrderB2bMessage._publish_order_b2b()  
+  Customer  
+    2. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+    3. Constraint Function: None  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+  Order  
+    6. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: A rejected inbound order message stays on its blob with the reason (live Kafka only) (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf9b0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:40,529 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, received_at: 2026-10-28 05:07:40.529064, payload: {"Account": "Credit Test 1793164060519", "Notes": "Test order", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10a0c0e10  session: 0x109dcf9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,529 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf9b0)   										 - 2026-10-27 22:07:40,529 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf9b0)   										 - 2026-10-27 22:07:40,530 - logic_logger - INFO
+..OrderB2bMessage[7] {AfterFlush Event} id: 7, received_at: 2026-10-28 05:07:40.529064, payload: {"Account": "Credit Test 1793164060519", "Notes": "Test order", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10a0c0e10  session: 0x109dcf9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,530 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcebe0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:40,536 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: Test order, customer_id: 144, CreatedOn: 2026-10-27, date_shipped: None, amount_total: None  row: 0x10a0acad0  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,536 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test order, customer_id: 144, CreatedOn: 2026-10-27, date_shipped: None, amount_total: 0  row: 0x10a0acad0  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,536 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x109a03750  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,536 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x109a03750  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,537 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x109a03750  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,537 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Test order, customer_id: 144, CreatedOn: 2026-10-27, date_shipped: None, amount_total:  [0-->] 90.0000000000  row: 0x10a0acad0  session: 0x109dcebe0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:40,537 - logic_logger - INFO
+......Customer[144] {Update - Adjusting customer: balance} id: 144, name: Credit Test 1793164060519, balance:  [0E-10-->] 90.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10a18e050  session: 0x109dcebe0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:40,537 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x109c5ff50  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,537 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x109c5ff50  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,538 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x109c5ff50  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:40,538 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Test order, customer_id: 144, CreatedOn: 2026-10-27, date_shipped: None, amount_total:  [90.0000000000-->] 390.0000000000  row: 0x10a0acad0  session: 0x109dcebe0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:40,538 - logic_logger - INFO
+......Customer[144] {Update - Adjusting customer: balance} id: 144, name: Credit Test 1793164060519, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10a18e050  session: 0x109dcebe0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:40,538 - logic_logger - INFO
+......Customer[144] {Constraint Failure: Credit Test 1793164060519: balance 390.0000000000 exceeds credit limit 100.0000000000} id: 144, name: Credit Test 1793164060519, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10a18e050  session: 0x109dcebe0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:40,538 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+### Feature: Order Shipping Notification  
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Shipping an order publishes a shipping message ✅ (0.04 s)
+&emsp;  Scenario: Shipping an order publishes a shipping message  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    And an order is placed with 2 Widget  
+&emsp;&emsp;    When the order is shipped  
+&emsp;&emsp;    Then a shipping message is published for the order  
+
+<details markdown>
+<summary>Rules exercised and logic log (3 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Shipping an order publishes a shipping message
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: Shipping an order publishes a shipping message (3 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcff00) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,065 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 145, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10a267450  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,065 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 145, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a267450  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,065 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcff00)   										 - 2026-10-27 22:07:41,066 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcff00)   										 - 2026-10-27 22:07:41,066 - logic_logger - INFO
+..Order[84] {AfterFlush Event} id: 84, notes: None, customer_id: 145, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a267450  session: 0x109dcff00  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,066 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf570) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,071 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 84, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10a1b3bd0  session: 0x109dcf570  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,071 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 84, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10a1b3bd0  session: 0x109dcf570  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,072 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 84, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a1b3bd0  session: 0x109dcf570  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,072 - logic_logger - INFO
+....Order[84] {Update - Adjusting order: amount_total} id: 84, notes: None, customer_id: 145, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a2805d0  session: 0x109dcf570  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,072 - logic_logger - INFO
+......Customer[145] {Update - Adjusting customer: balance} id: 145, name: Credit Test 1793164061051, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a267f50  session: 0x109dcf570  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,074 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf570)   										 - 2026-10-27 22:07:41,074 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf570)   										 - 2026-10-27 22:07:41,075 - logic_logger - INFO
+....Order[84] {AfterFlush Event} id: 84, notes: None, customer_id: 145, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a2805d0  session: 0x109dcf570  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,075 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcef10) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,079 - logic_logger - INFO
+..Order[84] {Update - client} id: 84, notes: None, customer_id: 145, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 180.0000000000  row: 0x10a1b32d0  session: 0x109dcef10  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,080 - logic_logger - INFO
+....Customer[145] {Update - Adjusting customer: balance} id: 145, name: Credit Test 1793164061051, balance:  [180.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a1b2b50  session: 0x109dcef10  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,080 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcef10)   										 - 2026-10-27 22:07:41,080 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcef10)   										 - 2026-10-27 22:07:41,080 - logic_logger - INFO
+..Order[84] {AfterFlush Event} id: 84, notes: None, customer_id: 145, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 180.0000000000  row: 0x10a1b32d0  session: 0x109dcef10  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,081 - logic_logger - INFO
+..Order[84] {publish_kafka_message: topic='order_shipping', key={'id': 84}} id: 84, notes: None, customer_id: 145, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 180.0000000000  row: 0x10a1b32d0  session: 0x109dcef10  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,083 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: An unshipped order publishes nothing ✅ (0.02 s)
+&emsp;  Scenario: An unshipped order publishes nothing  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    When an order is placed with 2 Widget  
+&emsp;&emsp;    Then no shipping message is published  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: An unshipped order publishes nothing
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: An unshipped order publishes nothing (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcebe0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,096 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 146, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109cb8d50  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,096 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 146, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109cb8d50  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,096 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcebe0)   										 - 2026-10-27 22:07:41,097 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcebe0)   										 - 2026-10-27 22:07:41,097 - logic_logger - INFO
+..Order[85] {AfterFlush Event} id: 85, notes: None, customer_id: 146, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109cb8d50  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,097 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcecf0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,100 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 85, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10a2677d0  session: 0x109dcecf0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,100 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 85, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10a2677d0  session: 0x109dcecf0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,101 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 85, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a2677d0  session: 0x109dcecf0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,101 - logic_logger - INFO
+....Order[85] {Update - Adjusting order: amount_total} id: 85, notes: None, customer_id: 146, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a18e250  session: 0x109dcecf0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,101 - logic_logger - INFO
+......Customer[146] {Update - Adjusting customer: balance} id: 146, name: Credit Test 1793164061088, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109e5e2d0  session: 0x109dcecf0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,101 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcecf0)   										 - 2026-10-27 22:07:41,102 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcecf0)   										 - 2026-10-27 22:07:41,102 - logic_logger - INFO
+....Order[85] {AfterFlush Event} id: 85, notes: None, customer_id: 146, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a18e250  session: 0x109dcecf0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,102 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: An order created already shipped publishes a shipping message ✅ (0.01 s)
+&emsp;  Scenario: An order created already shipped publishes a shipping message  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    When an order is created already shipped  
+&emsp;&emsp;    Then a shipping message is published for the order  
+
+<details markdown>
+<summary>Rules exercised and logic log (1 transaction)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: An order created already shipped publishes a shipping message
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+```
+**Logic Log** in Scenario: An order created already shipped publishes a shipping message (1 transaction)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf9b0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,110 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 147, CreatedOn: None, date_shipped: 2026-10-27 00:00:00, amount_total: None  row: 0x10a2673d0  session: 0x109dcf9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,111 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 147, CreatedOn: None, date_shipped: 2026-10-27 00:00:00, amount_total: 0  row: 0x10a2673d0  session: 0x109dcf9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,111 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf9b0)   										 - 2026-10-27 22:07:41,111 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf9b0)   										 - 2026-10-27 22:07:41,111 - logic_logger - INFO
+..Order[86] {AfterFlush Event} id: 86, notes: None, customer_id: 147, CreatedOn: None, date_shipped: 2026-10-27 00:00:00, amount_total: 0  row: 0x10a2673d0  session: 0x109dcf9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,111 - logic_logger - INFO
+..Order[86] {publish_kafka_message: topic='order_shipping', key={'id': 86}} id: 86, notes: None, customer_id: 147, CreatedOn: None, date_shipped: 2026-10-27 00:00:00, amount_total: 0  row: 0x10a2673d0  session: 0x109dcf9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,113 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Changing a shipped order does not publish again ✅ (0.02 s)
+&emsp;  Scenario: Changing a shipped order does not publish again  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    And an order is placed with 2 Widget  
+&emsp;&emsp;    And the order is shipped  
+&emsp;&emsp;    When the order notes are changed  
+&emsp;&emsp;    Then one shipping message was published  
 
 <details markdown>
 <summary>Rules exercised and logic log (4 transactions)</summary>
@@ -993,176 +1746,52 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7d8c0)   										 - 2026-10-27 
 &nbsp;
 
 
-**Rules Used** in Scenario: Unship Order updates balance
+**Rules Used** in Scenario: Changing a shipped order does not publish again
 ```
   Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
   Order  
-    2. RowEvent Order.send_order_to_shipping()  
+    2. RowEvent Order.send_order_shipping()  
     3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
   Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. Derive Item.unit_price as Copy(product.unit_price)  
-```
-**Logic Log** in Scenario: Unship Order updates balance (4 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10ca7f9b0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:28,992 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: Test Order, customer_id: 25, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10cb39750  session: 0x10ca7f9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,992 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test Order, customer_id: 25, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10cb39750  session: 0x10ca7f9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,992 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7f9b0)   										 - 2026-10-27 18:17:28,993 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7f9b0)   										 - 2026-10-27 18:17:28,993 - logic_logger - INFO
-..Order[20] {AfterFlush Event} id: 20, notes: Test Order, customer_id: 25, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10cb39750  session: 0x10ca7f9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:28,993 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10ca7f790) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,014 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 20, product_id: 7, quantity: 2, amount: None, unit_price: None  row: 0x10cb396d0  session: 0x10ca7f790  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,014 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 20, product_id: 7, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10cb396d0  session: 0x10ca7f790  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,015 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 20, product_id: 7, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10cb396d0  session: 0x10ca7f790  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,015 - logic_logger - INFO
-....Order[20] {Update - Adjusting order: amount_total} id: 20, notes: Test Order, customer_id: 25, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10ccd26d0  session: 0x10ca7f790  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,015 - logic_logger - INFO
-......Customer[25] {Update - Adjusting customer: balance} id: 25, name: CheckCredit ShippedCust 1793150248914, balance:  [0E-10-->] 300.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c9fff50  session: 0x10ca7f790  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,015 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7f790)   										 - 2026-10-27 18:17:29,015 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7f790)   										 - 2026-10-27 18:17:29,016 - logic_logger - INFO
-....Order[20] {AfterFlush Event} id: 20, notes: Test Order, customer_id: 25, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10ccd26d0  session: 0x10ca7f790  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,016 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10ca7f570) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,037 - logic_logger - INFO
-..Order[20] {Update - client} id: 20, notes: Test Order, customer_id: 25, CreatedOn: None, date_shipped:  [None-->] 2026-10-26 00:00:00, amount_total: 300.0000000000  row: 0x10ca0b750  session: 0x10ca7f570  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,037 - logic_logger - INFO
-....Customer[25] {Update - Adjusting customer: balance} id: 25, name: CheckCredit ShippedCust 1793150248914, balance:  [300.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10cd34ed0  session: 0x10ca7f570  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,038 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7f570)   										 - 2026-10-27 18:17:29,038 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7f570)   										 - 2026-10-27 18:17:29,038 - logic_logger - INFO
-..Order[20] {AfterFlush Event} id: 20, notes: Test Order, customer_id: 25, CreatedOn: None, date_shipped:  [None-->] 2026-10-26 00:00:00, amount_total: 300.0000000000  row: 0x10ca0b750  session: 0x10ca7f570  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,038 - logic_logger - INFO
-..Order[20] {publish_kafka_message: topic='order_shipping', key={'id': 20}} id: 20, notes: Test Order, customer_id: 25, CreatedOn: None, date_shipped:  [None-->] 2026-10-26 00:00:00, amount_total: 300.0000000000  row: 0x10ca0b750  session: 0x10ca7f570  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,040 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10ca7fac0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,060 - logic_logger - INFO
-..Order[20] {Update - client} id: 20, notes: Test Order, customer_id: 25, CreatedOn: None, date_shipped:  [2026-10-26-->] None, amount_total: 300.0000000000  row: 0x10ccd3ad0  session: 0x10ca7fac0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,061 - logic_logger - INFO
-....Customer[25] {Update - Adjusting customer: balance} id: 25, name: CheckCredit ShippedCust 1793150248914, balance:  [0E-10-->] 300.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10cd378d0  session: 0x10ca7fac0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,061 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7fac0)   										 - 2026-10-27 18:17:29,061 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7fac0)   										 - 2026-10-27 18:17:29,062 - logic_logger - INFO
-..Order[20] {AfterFlush Event} id: 20, notes: Test Order, customer_id: 25, CreatedOn: None, date_shipped:  [2026-10-26-->] None, amount_total: 300.0000000000  row: 0x10ccd3ad0  session: 0x10ca7fac0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,062 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Exceed Credit Limit fails ✅ (0.11 s)
-&emsp;  Scenario: Exceed Credit Limit fails  
-&emsp;&emsp;    Given a customer with credit_limit 1000 and balance 0  
-&emsp;&emsp;    When an unshipped order is placed with 10 items of unit_price 150  
-&emsp;&emsp;    Then the transaction is rejected with credit limit constraint  
-
-<details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Exceed Credit Limit fails
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-    2. Constraint Function: None  
-  Order  
-    3. RowEvent Order.send_order_to_shipping()  
-    4. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
     5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    6. Derive Item.unit_price as Copy(product.unit_price)  
 ```
-**Logic Log** in Scenario: Exceed Credit Limit fails (2 transactions)
+**Logic Log** in Scenario: Changing a shipped order does not publish again (4 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10ca7e140) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,168 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: Test Order, customer_id: 26, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c8f82d0  session: 0x10ca7e140  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,169 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test Order, customer_id: 26, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c8f82d0  session: 0x10ca7e140  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,169 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7e140)   										 - 2026-10-27 18:17:29,169 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7e140)   										 - 2026-10-27 18:17:29,170 - logic_logger - INFO
-..Order[21] {AfterFlush Event} id: 21, notes: Test Order, customer_id: 26, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c8f82d0  session: 0x10ca7e140  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,170 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109dcf8a0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,123 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 148, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109e5e2d0  session: 0x109dcf8a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,124 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 148, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e5e2d0  session: 0x109dcf8a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,124 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf8a0)   										 - 2026-10-27 22:07:41,124 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf8a0)   										 - 2026-10-27 22:07:41,124 - logic_logger - INFO
+..Order[87] {AfterFlush Event} id: 87, notes: None, customer_id: 148, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e5e2d0  session: 0x109dcf8a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,124 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10ca7f680) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,190 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 21, product_id: 7, quantity: 10, amount: None, unit_price: None  row: 0x10ca33c50  session: 0x10ca7f680  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,190 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 21, product_id: 7, quantity: 10, amount: None, unit_price: 150.0000000000  row: 0x10ca33c50  session: 0x10ca7f680  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,191 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 21, product_id: 7, quantity: 10, amount: 1500.0000000000, unit_price: 150.0000000000  row: 0x10ca33c50  session: 0x10ca7f680  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,191 - logic_logger - INFO
-....Order[21] {Update - Adjusting order: amount_total} id: 21, notes: Test Order, customer_id: 26, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 1500.0000000000  row: 0x10cade550  session: 0x10ca7f680  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,191 - logic_logger - INFO
-......Customer[26] {Update - Adjusting customer: balance} id: 26, name: CheckCredit Cust 1793150249090, balance:  [0E-10-->] 1500.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10cb3bcd0  session: 0x10ca7f680  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,191 - logic_logger - INFO
-......Customer[26] {Constraint Failure: balance (1500.0000000000) exceeds credit limit (1000.0000000000)} id: 26, name: CheckCredit Cust 1793150249090, balance:  [0E-10-->] 1500.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10cb3bcd0  session: 0x10ca7f680  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,192 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-### Feature: Kafka Subscribe Order Integration  
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Kafka Consume Valid order_b2b ✅ (0.26 s)
-&emsp;  Scenario: Kafka Consume Valid order_b2b  
-&emsp;&emsp;    Given a fresh customer for order_b2b with credit_limit 5000  
-&emsp;&emsp;    When a valid order_b2b message is delivered for that customer  
-&emsp;&emsp;    Then the OrderB2bMessage row is recorded with is_processed True  
-&emsp;&emsp;    And an Order is created for that customer with amount_total 390  
-
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
+Logic Phase:		ROW LOGIC		(session=0x109dcfbd0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,127 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 87, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x109e5f150  session: 0x109dcfbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,127 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 87, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x109e5f150  session: 0x109dcfbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,128 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 87, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x109e5f150  session: 0x109dcfbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,128 - logic_logger - INFO
+....Order[87] {Update - Adjusting order: amount_total} id: 87, notes: None, customer_id: 148, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a18fa50  session: 0x109dcfbd0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,128 - logic_logger - INFO
+......Customer[148] {Update - Adjusting customer: balance} id: 148, name: Credit Test 1793164061116, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a267d50  session: 0x109dcfbd0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,128 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcfbd0)   										 - 2026-10-27 22:07:41,128 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcfbd0)   										 - 2026-10-27 22:07:41,129 - logic_logger - INFO
+....Order[87] {AfterFlush Event} id: 87, notes: None, customer_id: 148, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a18fa50  session: 0x109dcfbd0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,129 - logic_logger - INFO
 
 
-&nbsp;
-&nbsp;
+Logic Phase:		ROW LOGIC		(session=0x109dcf9b0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,132 - logic_logger - INFO
+..Order[87] {Update - client} id: 87, notes: None, customer_id: 148, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 180.0000000000  row: 0x109c06d50  session: 0x109dcf9b0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,132 - logic_logger - INFO
+....Customer[148] {Update - Adjusting customer: balance} id: 148, name: Credit Test 1793164061116, balance:  [180.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a1b13d0  session: 0x109dcf9b0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,132 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf9b0)   										 - 2026-10-27 22:07:41,132 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf9b0)   										 - 2026-10-27 22:07:41,132 - logic_logger - INFO
+..Order[87] {AfterFlush Event} id: 87, notes: None, customer_id: 148, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 180.0000000000  row: 0x109c06d50  session: 0x109dcf9b0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,133 - logic_logger - INFO
+..Order[87] {publish_kafka_message: topic='order_shipping', key={'id': 87}} id: 87, notes: None, customer_id: 148, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 180.0000000000  row: 0x109c06d50  session: 0x109dcf9b0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,134 - logic_logger - INFO
 
 
-**Rules Used** in Scenario: Kafka Consume Valid order_b2b
-```
-  OrderB2bMessage  
-    1. RowEvent OrderB2bMessage._publish_order_b2b()  
-  Customer  
-    2. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    3. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    4. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    5. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-    6. RowEvent Order.send_order_to_shipping()  
-```
-**Logic Log** in Scenario: Kafka Consume Valid order_b2b (3 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10ca7f570) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,414 - logic_logger - INFO
-..OrderB2bMessage[None] {Insert - client} id: None, received_at: None, payload: {..., is_processed: False, error_text: None  row: 0x10c75b800  session: 0x10ca7f570  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,414 - logic_logger - INFO
-..OrderB2bMessage[None] {server_defaults: received_at } id: None, received_at: 2026-10-27, payload: {..., is_processed: False, error_text: None  row: 0x10c75b800  session: 0x10ca7f570  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,414 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7f570)   										 - 2026-10-27 18:17:29,414 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7f570)   										 - 2026-10-27 18:17:29,415 - logic_logger - INFO
-..OrderB2bMessage[2] {AfterFlush Event} id: 2, received_at: 2026-10-27, payload: {..., is_processed: False, error_text: None  row: 0x10c75b800  session: 0x10ca7f570  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,415 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10ca7fce0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,421 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: Valid order_b2b via consume_debug -> order_b2b_processed, customer_id: 27, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10ca56dd0  session: 0x10ca7fce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,421 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Valid order_b2b via consume_debug -> order_b2b_processed, customer_id: 27, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10ca56dd0  session: 0x10ca7fce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,421 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x10ca56850  session: 0x10ca7fce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,422 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10ca56850  session: 0x10ca7fce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,422 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10ca56850  session: 0x10ca7fce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,422 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Valid order_b2b via consume_debug -> order_b2b_processed, customer_id: 27, CreatedOn: None, date_shipped: None, amount_total:  [0-->] 300.0000000000  row: 0x10ca56dd0  session: 0x10ca7fce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,422 - logic_logger - INFO
-......Customer[27] {Update - Adjusting customer: balance} id: 27, name: KafkaB2BCust 1793150249281, balance:  [0E-10-->] 300.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cd36f50  session: 0x10ca7fce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,422 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x10c8ca950  session: 0x10ca7fce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,423 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10c8ca950  session: 0x10ca7fce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,423 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10c8ca950  session: 0x10ca7fce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,423 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Valid order_b2b via consume_debug -> order_b2b_processed, customer_id: 27, CreatedOn: None, date_shipped: None, amount_total:  [300.0000000000-->] 390.0000000000  row: 0x10ca56dd0  session: 0x10ca7fce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,423 - logic_logger - INFO
-......Customer[27] {Update - Adjusting customer: balance} id: 27, name: KafkaB2BCust 1793150249281, balance:  [300.0000000000-->] 390.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cd36f50  session: 0x10ca7fce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,423 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7fce0)   										 - 2026-10-27 18:17:29,423 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7fce0)   										 - 2026-10-27 18:17:29,424 - logic_logger - INFO
-..Order[22] {AfterFlush Event} id: 22, notes: Valid order_b2b via consume_debug -> order_b2b_processed, customer_id: 27, CreatedOn: None, date_shipped: None, amount_total: 390.0000000000  row: 0x10ca56dd0  session: 0x10ca7fce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,424 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10ca7fce0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,425 - logic_logger - INFO
-..OrderB2bMessage[2] {Update - client} id: 2, received_at: 2026-10-27 00:00:00, payload: {..., is_processed:  [False-->] True, error_text: None  row: 0x10c75b330  session: 0x10ca7fce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,425 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7fce0)   										 - 2026-10-27 18:17:29,425 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7fce0)   										 - 2026-10-27 18:17:29,425 - logic_logger - INFO
-..OrderB2bMessage[2] {AfterFlush Event} id: 2, received_at: 2026-10-27 00:00:00, payload: {..., is_processed:  [False-->] True, error_text: None  row: 0x10c75b330  session: 0x10ca7fce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,425 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109dcfce0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,137 - logic_logger - INFO
+..Order[87] {Update - client} id: 87, notes:  [None-->] changed after shipping, customer_id: 148, CreatedOn: None, date_shipped: 2026-10-27, amount_total: 180.0000000000  row: 0x109e5c550  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,137 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcfce0)   										 - 2026-10-27 22:07:41,137 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcfce0)   										 - 2026-10-27 22:07:41,138 - logic_logger - INFO
+..Order[87] {AfterFlush Event} id: 87, notes:  [None-->] changed after shipping, customer_id: 148, CreatedOn: None, date_shipped: 2026-10-27, amount_total: 180.0000000000  row: 0x109e5c550  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,138 - logic_logger - INFO
 
 ```
 </details>
@@ -1170,11 +1799,15 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7fce0)   										 - 2026-10-27 
 &nbsp;
 &nbsp;
 
-#### Scenario: Kafka Consume Bad order_b2b (live Kafka only) ✅ (0.17 s)
-&emsp;  Scenario: Kafka Consume Bad order_b2b (live Kafka only)  
-&emsp;&emsp;    Given a fresh customer for order_b2b with credit_limit 100  
-&emsp;&emsp;    When an over-limit order_b2b message is delivered via live Kafka for that customer  
-&emsp;&emsp;    Then the OrderB2bMessage row is recorded with is_processed False and error_text  
+### Feature: REST API Contract  
+
+&nbsp;
+&nbsp;
+
+#### Scenario: A client value for a derived column is ignored on create ✅ (0.01 s)
+&emsp;  Scenario: A client value for a derived column is ignored on create  
+&emsp;&emsp;    When a customer is created with a balance of 9999  
+&emsp;&emsp;    Then the new customer balance is 0  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -1184,204 +1817,36 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7fce0)   										 - 2026-10-27 
 &nbsp;
 
 
-**Rules Used** in Scenario: Kafka Consume Bad order_b2b (live Kafka only)
-```
-  OrderB2bMessage  
-    1. RowEvent OrderB2bMessage._publish_order_b2b()  
-  Customer  
-    2. Constraint Function: None  
-    3. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    6. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-```
-**Logic Log** in Scenario: Kafka Consume Bad order_b2b (live Kafka only) (2 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10ca7f9b0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,610 - logic_logger - INFO
-..OrderB2bMessage[None] {Insert - client} id: None, received_at: None, payload: {..., is_processed: False, error_text: None  row: 0x10c86e850  session: 0x10ca7f9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,610 - logic_logger - INFO
-..OrderB2bMessage[None] {server_defaults: received_at } id: None, received_at: 2026-10-27, payload: {..., is_processed: False, error_text: None  row: 0x10c86e850  session: 0x10ca7f9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,610 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7f9b0)   										 - 2026-10-27 18:17:29,611 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7f9b0)   										 - 2026-10-27 18:17:29,611 - logic_logger - INFO
-..OrderB2bMessage[3] {AfterFlush Event} id: 3, received_at: 2026-10-27, payload: {..., is_processed: False, error_text: None  row: 0x10c86e850  session: 0x10ca7f9b0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,611 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10ca7f680) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,616 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: Over-limit order_b2b via live Kafka -> order_b2b_processed, customer_id: 28, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10cb39dd0  session: 0x10ca7f680  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,616 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Over-limit order_b2b via live Kafka -> order_b2b_processed, customer_id: 28, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10cb39dd0  session: 0x10ca7f680  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,616 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x10ccd29d0  session: 0x10ca7f680  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,617 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10ccd29d0  session: 0x10ca7f680  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,617 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10ccd29d0  session: 0x10ca7f680  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,617 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Over-limit order_b2b via live Kafka -> order_b2b_processed, customer_id: 28, CreatedOn: None, date_shipped: None, amount_total:  [0-->] 300.0000000000  row: 0x10cb39dd0  session: 0x10ca7f680  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,617 - logic_logger - INFO
-......Customer[28] {Update - Adjusting customer: balance} id: 28, name: KafkaB2BCust 1793150249540, balance:  [0E-10-->] 300.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10cd37850  session: 0x10ca7f680  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,618 - logic_logger - INFO
-......Customer[28] {Constraint Failure: balance (300.0000000000) exceeds credit limit (100.0000000000)} id: 28, name: KafkaB2BCust 1793150249540, balance:  [0E-10-->] 300.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10cd37850  session: 0x10ca7f680  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,618 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-### Feature: B2B Order Integration  
-
-&nbsp;
-&nbsp;
-
-#### Scenario: B2B Valid Order via OrderB2B ✅ (0.17 s)
-&emsp;  Scenario: B2B Valid Order via OrderB2B  
-&emsp;&emsp;    Given a B2B customer with credit_limit 5000  
-&emsp;&emsp;    When a B2B order payload is posted to OrderB2B for 2 Gadget and 1 Widget  
-&emsp;&emsp;    Then the OrderB2B response status is 200  
-&emsp;&emsp;    And the B2B customer balance increases by 390  
-
-<details markdown>
-<summary>Rules exercised and logic log (1 transaction)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: B2B Valid Order via OrderB2B
+**Rules Used** in Scenario: A client value for a derived column is ignored on create
 ```
   Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    2. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    3. Derive Item.unit_price as Copy(product.unit_price)  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
   Order  
-    4. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-    5. RowEvent Order.send_order_to_shipping()  
-```
-**Logic Log** in Scenario: B2B Valid Order via OrderB2B (1 transaction)
-```
-Logic Phase:		ROW LOGIC		(session=0x10ca7fbd0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,777 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10d86f9a0  session: 0x10ca7fbd0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,778 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: B2B Endpoint Test Order, customer_id: 29, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10d867e50  session: 0x10ca7fbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,778 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: B2B Endpoint Test Order, customer_id: 29, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10d867e50  session: 0x10ca7fbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,778 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x10cadded0  session: 0x10ca7fbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,778 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10cadded0  session: 0x10ca7fbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,778 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10cadded0  session: 0x10ca7fbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,778 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: B2B Endpoint Test Order, customer_id: 29, CreatedOn: None, date_shipped: None, amount_total:  [0-->] 300.0000000000  row: 0x10d867e50  session: 0x10ca7fbd0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,778 - logic_logger - INFO
-......Customer[29] {Update - Adjusting customer: balance} id: 29, name: B2B Cust 1793150249716, balance:  [0E-10-->] 300.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ca32ad0  session: 0x10ca7fbd0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,778 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10cd375d0  session: 0x10ca7fbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,779 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10cd375d0  session: 0x10ca7fbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,779 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10cd375d0  session: 0x10ca7fbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,779 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: B2B Endpoint Test Order, customer_id: 29, CreatedOn: None, date_shipped: None, amount_total:  [300.0000000000-->] 390.0000000000  row: 0x10d867e50  session: 0x10ca7fbd0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,779 - logic_logger - INFO
-......Customer[29] {Update - Adjusting customer: balance} id: 29, name: B2B Cust 1793150249716, balance:  [300.0000000000-->] 390.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ca32ad0  session: 0x10ca7fbd0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,779 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7fbd0)   										 - 2026-10-27 18:17:29,779 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7fbd0)   										 - 2026-10-27 18:17:29,780 - logic_logger - INFO
-..Order[23] {AfterFlush Event} id: 23, notes: B2B Endpoint Test Order, customer_id: 29, CreatedOn: None, date_shipped: None, amount_total: 390.0000000000  row: 0x10d867e50  session: 0x10ca7fbd0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,780 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: B2B Exceed Credit via OrderB2B ✅ (0.14 s)
-&emsp;  Scenario: B2B Exceed Credit via OrderB2B  
-&emsp;&emsp;    Given a B2B customer with credit_limit 200  
-&emsp;&emsp;    When a B2B order payload is posted to OrderB2B for 2 Gadget and 1 Widget  
-&emsp;&emsp;    Then the OrderB2B response status is 400  
-
-<details markdown>
-<summary>Rules exercised and logic log (1 transaction)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: B2B Exceed Credit via OrderB2B
-```
-  Customer  
-    1. Constraint Function: None  
-    2. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    3. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    4. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    5. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-```
-**Logic Log** in Scenario: B2B Exceed Credit via OrderB2B (1 transaction)
-```
-Logic Phase:		ROW LOGIC		(session=0x10ca7f570) (sqlalchemy before_flush)			 - 2026-10-27 18:17:29,939 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10ce4fa10  session: 0x10ca7f570  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,940 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: B2B Endpoint Test Order, customer_id: 30, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10ce4bd50  session: 0x10ca7f570  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,940 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: B2B Endpoint Test Order, customer_id: 30, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10ce4bd50  session: 0x10ca7f570  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,940 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x10c977750  session: 0x10ca7f570  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,940 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10c977750  session: 0x10ca7f570  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,940 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10c977750  session: 0x10ca7f570  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:29,940 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: B2B Endpoint Test Order, customer_id: 30, CreatedOn: None, date_shipped: None, amount_total:  [0-->] 300.0000000000  row: 0x10ce4bd50  session: 0x10ca7f570  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,940 - logic_logger - INFO
-......Customer[30] {Update - Adjusting customer: balance} id: 30, name: B2B Cust 1793150249881, balance:  [0E-10-->] 300.0000000000, credit_limit: 200.0000000000, email: None, email_opt_out: None  row: 0x10d867dd0  session: 0x10ca7f570  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,940 - logic_logger - INFO
-......Customer[30] {Constraint Failure: balance (300.0000000000) exceeds credit limit (200.0000000000)} id: 30, name: B2B Cust 1793150249881, balance:  [0E-10-->] 300.0000000000, credit_limit: 200.0000000000, email: None, email_opt_out: None  row: 0x10d867dd0  session: 0x10ca7f570  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:29,941 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-### Feature: Kafka Publish Shipping Notification  
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Kafka Publish order_shipping on ship ✅ (0.14 s)
-&emsp;  Scenario: Kafka Publish order_shipping on ship  
-&emsp;&emsp;    Given a customer with credit_limit 5000 and an unshipped order of 2 items at unit_price 150  
-&emsp;&emsp;    When the order date_shipped is updated to "2026-10-27" to trigger order_shipping  
-&emsp;&emsp;    Then the order_shipping message is published with order_id, customer_name, total, and items  
-
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Kafka Publish order_shipping on ship
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_order_to_shipping()  
+    2. RowEvent Order.send_order_shipping()  
     3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
   Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. Derive Item.unit_price as Copy(product.unit_price)  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
 ```
-**Logic Log** in Scenario: Kafka Publish order_shipping on ship (3 transactions)
+**Logic Log** in Scenario: A client value for a derived column is ignored on create (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10ca7d8c0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:30,021 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: Test Order, customer_id: 31, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10ca577d0  session: 0x10ca7d8c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:30,021 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test Order, customer_id: 31, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10ca577d0  session: 0x10ca7d8c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:30,021 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7d8c0)   										 - 2026-10-27 18:17:30,021 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7d8c0)   										 - 2026-10-27 18:17:30,022 - logic_logger - INFO
-..Order[24] {AfterFlush Event} id: 24, notes: Test Order, customer_id: 31, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10ca577d0  session: 0x10ca7d8c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:30,022 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109dcf790) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,173 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109e470d0  session: 0x109dcf790  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,173 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e470d0  session: 0x109dcf790  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,173 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf790)   										 - 2026-10-27 22:07:41,174 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf790)   										 - 2026-10-27 22:07:41,174 - logic_logger - INFO
+..Order[89] {AfterFlush Event} id: 89, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e470d0  session: 0x109dcf790  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,174 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10ca7e9c0) (sqlalchemy before_flush)			 - 2026-10-27 18:17:30,040 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 24, product_id: 7, quantity: 2, amount: None, unit_price: None  row: 0x10ca0b050  session: 0x10ca7e9c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:30,041 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 24, product_id: 7, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10ca0b050  session: 0x10ca7e9c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:30,041 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 24, product_id: 7, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10ca0b050  session: 0x10ca7e9c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 18:17:30,041 - logic_logger - INFO
-....Order[24] {Update - Adjusting order: amount_total} id: 24, notes: Test Order, customer_id: 31, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10d887bd0  session: 0x10ca7e9c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:30,042 - logic_logger - INFO
-......Customer[31] {Update - Adjusting customer: balance} id: 31, name: CheckCredit OrderCust 1793150249945, balance:  [0E-10-->] 300.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c9ffa50  session: 0x10ca7e9c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:30,042 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7e9c0)   										 - 2026-10-27 18:17:30,043 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7e9c0)   										 - 2026-10-27 18:17:30,043 - logic_logger - INFO
-....Order[24] {AfterFlush Event} id: 24, notes: Test Order, customer_id: 31, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x10d887bd0  session: 0x10ca7e9c0  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:30,043 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10ca7f460) (sqlalchemy before_flush)			 - 2026-10-27 18:17:30,063 - logic_logger - INFO
-..Order[24] {Update - client} id: 24, notes: Test Order, customer_id: 31, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 300.0000000000  row: 0x10cb399d0  session: 0x10ca7f460  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:30,063 - logic_logger - INFO
-....Customer[31] {Update - Adjusting customer: balance} id: 31, name: CheckCredit OrderCust 1793150249945, balance:  [300.0000000000-->] 0E-10, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ce6e950  session: 0x10ca7f460  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:30,064 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10ca7f460)   										 - 2026-10-27 18:17:30,064 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7f460)   										 - 2026-10-27 18:17:30,064 - logic_logger - INFO
-..Order[24] {AfterFlush Event} id: 24, notes: Test Order, customer_id: 31, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 300.0000000000  row: 0x10cb399d0  session: 0x10ca7f460  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:30,064 - logic_logger - INFO
-..Order[24] {publish_kafka_message: topic='order_shipping', key={'id': 24}} id: 24, notes: Test Order, customer_id: 31, CreatedOn: None, date_shipped:  [None-->] 2026-10-27 00:00:00, amount_total: 300.0000000000  row: 0x10cb399d0  session: 0x10ca7f460  ins_upd_dlt: upd, initial: upd - 2026-10-27 18:17:30,066 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x109dcfce0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,177 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 89, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10a219050  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,177 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 89, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10a219050  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,178 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 89, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a219050  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,178 - logic_logger - INFO
+....Order[89] {Update - Adjusting order: amount_total} id: 89, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a070950  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,178 - logic_logger - INFO
+......Customer[151] {Update - Adjusting customer: balance} id: 151, name: Credit Test 1793164061167, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109e5d0d0  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,178 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcfce0)   										 - 2026-10-27 22:07:41,178 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcfce0)   										 - 2026-10-27 22:07:41,179 - logic_logger - INFO
+....Order[89] {AfterFlush Event} id: 89, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a070950  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,179 - logic_logger - INFO
 
 ```
 </details>
@@ -1389,22 +1854,363 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10ca7f460)   										 - 2026-10-27 
 &nbsp;
 &nbsp;
 
-### Feature: Row-Level Security  
+#### Scenario: A client value for a derived column is ignored on update ✅ (0.02 s)
+&emsp;  Scenario: A client value for a derived column is ignored on update  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    And an order is placed with 2 Widget  
+&emsp;&emsp;    When the customer balance is patched to 777  
+&emsp;&emsp;    Then the request is accepted  
+&emsp;&emsp;    And the customer balance is 180  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
 
 &nbsp;
 &nbsp;
 
-#### Scenario: Sales role sees filtered customers ✅ (0.02 s)
-&emsp;  Scenario: Sales role sees filtered customers  
-&emsp;&emsp;    Given a user logged in with the sales role  
-&emsp;&emsp;    When the sales user requests the Customer list  
-&emsp;&emsp;    Then every returned customer has credit_limit >= 3000 or balance > 0  
-&emsp;&emsp;    And customer "Diana" with balance 0 and credit_limit 1000 is excluded  
+
+**Rules Used** in Scenario: A client value for a derived column is ignored on update
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: A client value for a derived column is ignored on update (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf790) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,173 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109e470d0  session: 0x109dcf790  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,173 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e470d0  session: 0x109dcf790  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,173 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf790)   										 - 2026-10-27 22:07:41,174 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf790)   										 - 2026-10-27 22:07:41,174 - logic_logger - INFO
+..Order[89] {AfterFlush Event} id: 89, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e470d0  session: 0x109dcf790  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,174 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcfce0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,177 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 89, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10a219050  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,177 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 89, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10a219050  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,178 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 89, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a219050  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,178 - logic_logger - INFO
+....Order[89] {Update - Adjusting order: amount_total} id: 89, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a070950  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,178 - logic_logger - INFO
+......Customer[151] {Update - Adjusting customer: balance} id: 151, name: Credit Test 1793164061167, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109e5d0d0  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,178 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcfce0)   										 - 2026-10-27 22:07:41,178 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcfce0)   										 - 2026-10-27 22:07:41,179 - logic_logger - INFO
+....Order[89] {AfterFlush Event} id: 89, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a070950  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,179 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: A client value for a derived item column is ignored on update ✅ (0.02 s)
+&emsp;  Scenario: A client value for a derived item column is ignored on update  
+&emsp;&emsp;    Given a new customer with credit limit 1000  
+&emsp;&emsp;    And an order is placed with 2 Widget  
+&emsp;&emsp;    When the item amount is patched to 1  
+&emsp;&emsp;    Then the request is accepted  
+&emsp;&emsp;    And the item amount is 180  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: A client value for a derived item column is ignored on update
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: A client value for a derived item column is ignored on update (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf790) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,173 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109e470d0  session: 0x109dcf790  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,173 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e470d0  session: 0x109dcf790  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,173 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf790)   										 - 2026-10-27 22:07:41,174 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf790)   										 - 2026-10-27 22:07:41,174 - logic_logger - INFO
+..Order[89] {AfterFlush Event} id: 89, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e470d0  session: 0x109dcf790  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,174 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcfce0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,177 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 89, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10a219050  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,177 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 89, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10a219050  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,178 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 89, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a219050  session: 0x109dcfce0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,178 - logic_logger - INFO
+....Order[89] {Update - Adjusting order: amount_total} id: 89, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a070950  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,178 - logic_logger - INFO
+......Customer[151] {Update - Adjusting customer: balance} id: 151, name: Credit Test 1793164061167, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109e5d0d0  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,178 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcfce0)   										 - 2026-10-27 22:07:41,178 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcfce0)   										 - 2026-10-27 22:07:41,179 - logic_logger - INFO
+....Order[89] {AfterFlush Event} id: 89, notes: None, customer_id: 151, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a070950  session: 0x109dcfce0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,179 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: An unknown column is rejected ✅ (0.00 s)
+&emsp;  Scenario: An unknown column is rejected  
+&emsp;&emsp;    When a customer is created with an unknown column  
+&emsp;&emsp;    Then the request is rejected with "Unknown column"  
 
 _No rules fired in this scenario's logic log._
+
+&nbsp;
+&nbsp;
+
+#### Scenario: An order for a missing customer is rejected ✅ (0.01 s)
+&emsp;  Scenario: An order for a missing customer is rejected  
+&emsp;&emsp;    When an order is created for customer id 999999  
+&emsp;&emsp;    Then the request is rejected with "Missing Parent"  
+
+_No rules fired in this scenario's logic log._
+
+&nbsp;
+&nbsp;
+
+#### Scenario: An unknown table is not found ✅ (0.00 s)
+&emsp;  Scenario: An unknown table is not found  
+&emsp;&emsp;    When the unknown table is requested  
+&emsp;&emsp;    Then the request answers 404  
+
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
+
+&nbsp;
+&nbsp;
+
+### Feature: Security and Row Level Access  
+
+&nbsp;
+&nbsp;
+
+#### Scenario: A request without a token is refused ✅ (0.00 s)
+&emsp;  Scenario: A request without a token is refused  
+&emsp;&emsp;    When customers are listed without a token  
+&emsp;&emsp;    Then the security request answers 401  
+
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Sales sees only customers with credit limit 3000 or more, or a balance ✅ (0.06 s)
+&emsp;  Scenario: Sales sees only customers with credit limit 3000 or more, or a balance  
+&emsp;&emsp;    Given customers with credit limit 1000, credit limit 3000, and credit limit 1000 with a balance  
+&emsp;&emsp;    When customers are listed by the sales user  
+&emsp;&emsp;    Then the sales list includes the credit limit 3000 customer  
+&emsp;&emsp;    And the sales list includes the customer with a balance  
+&emsp;&emsp;    And the sales list excludes the credit limit 1000 customer  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Sales sees only customers with credit limit 3000 or more, or a balance
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: Sales sees only customers with credit limit 3000 or more, or a balance (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dce7a0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,216 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 154, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109e5ed50  session: 0x109dce7a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,217 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 154, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e5ed50  session: 0x109dce7a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,217 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dce7a0)   										 - 2026-10-27 22:07:41,217 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dce7a0)   										 - 2026-10-27 22:07:41,217 - logic_logger - INFO
+..Order[90] {AfterFlush Event} id: 90, notes: None, customer_id: 154, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109e5ed50  session: 0x109dce7a0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,217 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf130) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,222 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 90, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x109e5fd50  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,222 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 90, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x109e5fd50  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,223 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 90, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x109e5fd50  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,223 - logic_logger - INFO
+....Order[90] {Update - Adjusting order: amount_total} id: 90, notes: None, customer_id: 154, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a1b3cd0  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,223 - logic_logger - INFO
+......Customer[154] {Update - Adjusting customer: balance} id: 154, name: RLS indebted 1793164061212, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a1b0050  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,223 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf130)   										 - 2026-10-27 22:07:41,223 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf130)   										 - 2026-10-27 22:07:41,224 - logic_logger - INFO
+....Order[90] {AfterFlush Event} id: 90, notes: None, customer_id: 154, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a1b3cd0  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,224 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: A customer outside the sales filter is not found ✅ (0.03 s)
+&emsp;  Scenario: A customer outside the sales filter is not found  
+&emsp;&emsp;    Given customers with credit limit 1000, credit limit 3000, and credit limit 1000 with a balance  
+&emsp;&emsp;    When the credit limit 1000 customer is requested by the sales user  
+&emsp;&emsp;    Then the security request answers 404  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: A customer outside the sales filter is not found
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: A customer outside the sales filter is not found (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf460) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,300 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 160, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10a18d7d0  session: 0x109dcf460  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,300 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 160, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a18d7d0  session: 0x109dcf460  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,300 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf460)   										 - 2026-10-27 22:07:41,300 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf460)   										 - 2026-10-27 22:07:41,301 - logic_logger - INFO
+..Order[92] {AfterFlush Event} id: 92, notes: None, customer_id: 160, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a18d7d0  session: 0x109dcf460  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,301 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf130) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,305 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 92, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10a267d50  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,305 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 92, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10a267d50  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,306 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 92, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a267d50  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,306 - logic_logger - INFO
+....Order[92] {Update - Adjusting order: amount_total} id: 92, notes: None, customer_id: 160, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a1b12d0  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,306 - logic_logger - INFO
+......Customer[160] {Update - Adjusting customer: balance} id: 160, name: RLS indebted 1793164061296, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109e5edd0  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,306 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf130)   										 - 2026-10-27 22:07:41,306 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf130)   										 - 2026-10-27 22:07:41,307 - logic_logger - INFO
+....Order[92] {AfterFlush Event} id: 92, notes: None, customer_id: 160, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a1b12d0  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,307 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: A customer outside the sales filter cannot be updated by sales ✅ (0.02 s)
+&emsp;  Scenario: A customer outside the sales filter cannot be updated by sales  
+&emsp;&emsp;    Given customers with credit limit 1000, credit limit 3000, and credit limit 1000 with a balance  
+&emsp;&emsp;    When the credit limit 1000 customer is updated by the sales user  
+&emsp;&emsp;    Then the security request answers 404  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: A customer outside the sales filter cannot be updated by sales
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: A customer outside the sales filter cannot be updated by sales (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x109dcf460) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,300 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 160, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10a18d7d0  session: 0x109dcf460  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,300 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 160, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a18d7d0  session: 0x109dcf460  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,300 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf460)   										 - 2026-10-27 22:07:41,300 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf460)   										 - 2026-10-27 22:07:41,301 - logic_logger - INFO
+..Order[92] {AfterFlush Event} id: 92, notes: None, customer_id: 160, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a18d7d0  session: 0x109dcf460  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,301 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcf130) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,305 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 92, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10a267d50  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,305 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 92, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10a267d50  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,306 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 92, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a267d50  session: 0x109dcf130  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,306 - logic_logger - INFO
+....Order[92] {Update - Adjusting order: amount_total} id: 92, notes: None, customer_id: 160, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a1b12d0  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,306 - logic_logger - INFO
+......Customer[160] {Update - Adjusting customer: balance} id: 160, name: RLS indebted 1793164061296, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109e5edd0  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,306 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcf130)   										 - 2026-10-27 22:07:41,306 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcf130)   										 - 2026-10-27 22:07:41,307 - logic_logger - INFO
+....Order[92] {AfterFlush Event} id: 92, notes: None, customer_id: 160, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a1b12d0  session: 0x109dcf130  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,307 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: A manager sees every customer ✅ (0.03 s)
+&emsp;  Scenario: A manager sees every customer  
+&emsp;&emsp;    Given customers with credit limit 1000, credit limit 3000, and credit limit 1000 with a balance  
+&emsp;&emsp;    When customers are listed by the admin user  
+&emsp;&emsp;    Then the admin list includes the credit limit 1000 customer  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: A manager sees every customer
+```
+  Customer  
+    1. Derive Customer.balance as Sum(Order.amount_total Where lambda row: row.date_shipped is None))  
+  Order  
+    2. RowEvent Order.send_order_shipping()  
+    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+  Item  
+    4. Derive Item.unit_price as Copy(product.unit_price)  
+    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+```
+**Logic Log** in Scenario: A manager sees every customer (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x10a2887c0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,322 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: None, customer_id: 163, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10a18ce50  session: 0x10a2887c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,322 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: None, customer_id: 163, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a18ce50  session: 0x10a2887c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,322 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a2887c0)   										 - 2026-10-27 22:07:41,323 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a2887c0)   										 - 2026-10-27 22:07:41,323 - logic_logger - INFO
+..Order[93] {AfterFlush Event} id: 93, notes: None, customer_id: 163, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10a18ce50  session: 0x10a2887c0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,323 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x109dcebe0) (sqlalchemy before_flush)			 - 2026-10-27 22:07:41,328 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 93, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10a267ad0  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,328 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 93, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10a267ad0  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,329 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 93, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a267ad0  session: 0x109dcebe0  ins_upd_dlt: ins, initial: ins - 2026-10-27 22:07:41,329 - logic_logger - INFO
+....Order[93] {Update - Adjusting order: amount_total} id: 93, notes: None, customer_id: 163, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a1b14d0  session: 0x109dcebe0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,329 - logic_logger - INFO
+......Customer[163] {Update - Adjusting customer: balance} id: 163, name: RLS indebted 1793164061318, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a1b34d0  session: 0x109dcebe0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,329 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109dcebe0)   										 - 2026-10-27 22:07:41,329 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109dcebe0)   										 - 2026-10-27 22:07:41,330 - logic_logger - INFO
+....Order[93] {AfterFlush Event} id: 93, notes: None, customer_id: 163, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 180.0000000000  row: 0x10a1b14d0  session: 0x109dcebe0  ins_upd_dlt: upd, initial: upd - 2026-10-27 22:07:41,330 - logic_logger - INFO
+
+```
+</details>
+
 &nbsp;&nbsp;  
-/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/samples/native_ai/demo_eai_modernized/test/api_logic_server_behave/behave_run.py completed at October 27, 2026 18:17:30  
-Behave run time: 2.261 s  
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/samples/native_ai/demo_eai_modernized/test/api_logic_server_behave/behave_run.py completed at October 27, 2026 22:07:41  
+Behave run time: 2.370 s  
 
 
 &nbsp;
@@ -1414,13 +2220,13 @@ Behave run time: 2.261 s
 
 | | |
 |---|---|
-| Generated | October 27, 2026 18:17 |
+| Generated | October 27, 2026 22:08 |
 | Generator | `requirements_traceability_report.py` 2.13 |
 | Report text from | reports/Requirements Traceability Report Template.md (sha256 ccda5d97612c) |
-| Tests last ran | October 27, 2026 18:17 |
+| Tests last ran | October 27, 2026 22:07 |
 | Project | demo_eai_modernized |
-| Project created | October 27, 2026 18:03:07 |
-| Requirement files read | `docs/requirements/check_credit/requirements.md` (sha256 2ce6b340)<br>`docs/requirements/demo_eai/requirements.md` (sha256 9b9f797f)<br>`docs/requirements/order_b2b_consume/requirements.md` (sha256 e9c4bc11)<br>`docs/requirements/order_shipping_publish/requirements.md` (sha256 c0f83958) |
+| Project created | October 27, 2026 21:48:53 |
+| Requirement files read | `docs/requirements/check_credit/requirements.md` (sha256 fe942035)<br>`docs/requirements/demo_eai/requirements.md` (sha256 56f80b26)<br>`docs/requirements/order_b2b_consume/requirements.md` (sha256 c849caca)<br>`docs/requirements/order_shipping/requirements.md` (sha256 cccee47a) |
 | Regenerate | `python requirements_traceability_report.py run`, from `test/api_logic_server_behave` |
 
 _The report is derived from the project's files and the last test run; nothing in it is stored anywhere else, so regenerating it always reflects the project as it is now._
