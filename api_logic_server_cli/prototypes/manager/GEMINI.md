@@ -2,13 +2,12 @@
 
 This workspace is the **Project Manager** for GenAI-Logic (ApiLogicServer), equipped with extensive Context Engineering (CE).
 
-## Mandatory Context Engineering (CE) References
+## Mandatory Session Bootstrap & Context Engineering (CE)
 
-Whenever you are asked to create projects, declare logic rules, or run dev workflows, read and adhere to the relevant CE files:
-
-1. **Manager CE (System Creation Services & Project Lifecycle)**:
+1. **Manager CE — Mandatory Session Bootstrap (Read First, Every Session)**:
    - File: [.github/copilot-instructions.md](.github/copilot-instructions.md)
-   - Read this file when creating projects from prompts (Method 4 / System Creation Services), creating databases, or managing projects.
+   - **UNCONDITIONAL BOOTSTRAP RULE**: On the very first turn of every session — before answering ANY question (e.g. "what are rules", "what can I do here?") or running any workflow — silently read `.github/copilot-instructions.md` in full and adhere to all of its protocols (User Activation Protocol, Content Organization Protocol, System Creation Services, etc.).
+   - *(Note: Do not rely on `@` inline expansion for `.github/copilot-instructions.md`, as Antigravity caps inline rule files at 24 KB and `.github/copilot-instructions.md` is ~51 KB; reading it via `read_file` loads the full file without truncation.)*
    - **Key Rules from Manager CE:**
      - **Active Project Context**: Always determine and announce the active project directory `<project_name>/`. Prefix all file paths and CLI commands with `<project_name>/`.
      - **Path Rule**: Run CLI commands from `<project_name>` or Manager root as specified in CE (e.g., `sqlite3 <project_name>/database/db.sqlite`, `cd <project_name> && genai-logic rebuild-from-database ...`).
