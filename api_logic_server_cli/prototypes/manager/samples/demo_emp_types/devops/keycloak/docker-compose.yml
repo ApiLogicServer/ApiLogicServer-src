@@ -1,6 +1,9 @@
 version: '3'
 
 # cd devops/keycloak; docker compose up -d
+#
+# Using Podman instead of Docker? Substitute `podman compose up -d` — this file works
+# unchanged. One-time Podman setup: https://apilogicserver.github.io/Docs/DevOps-Podman/
 
 services:
 

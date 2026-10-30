@@ -642,19 +642,10 @@ Events are appropriate for:
 
 **✅ Valid Event Uses:**
 
-1. **Audit Trail Creation** (side effect, not calculation):
-```python
-def create_audit_record(row: models.CustomsEntry, old_row, logic_row):
-    audit = models.SysSurtaxReq(
-        customs_entry_id=row.id,
-        hs_code=row.hs_code.code,
-        surtax_rate_found=row.surtax_rate,
-        lookup_timestamp=datetime.utcnow()
-    )
-    logic_row.session.add(audit)
-
-Rule.early_row_event(on_class=models.CustomsEntry, calling=create_audit_record)
-```
+1. **Audit Trail Creation** (side effect, not calculation): recording changes to existing data is its own pattern -
+   see PATTERN 3c "Recording Changes (Auditing)" in `logic_bank_patterns.md` (`RuleExtension.copy_row`, or a
+   `commit_row_event` that inserts the audit row with old and new values, who and when). Do NOT create a `Sys*Req` table
+   and `session.add` it from an `early_row_event` for this: nobody inserts a request when a value is edited.
 
 2. **External Integrations** (Kafka, webhooks, email):
 ```python

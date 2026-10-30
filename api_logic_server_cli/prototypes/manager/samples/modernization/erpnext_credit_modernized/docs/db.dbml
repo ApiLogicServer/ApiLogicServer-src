@@ -1,0 +1,186 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Table Company {
+    id INTEGER [primary key]
+    name TEXT 
+    credit_limit NUMERIC(15, 2) 
+    }
+
+Table Customer {
+    id INTEGER [primary key]
+    name TEXT 
+    customer_group_id INTEGER 
+    }
+
+Table CustomerGroup {
+    id INTEGER [primary key]
+    name TEXT 
+    }
+
+Table CustomerCompany {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    company_id INTEGER 
+    ledger_balance NUMERIC(15, 2) 
+    open_sales_order_amount NUMERIC(15, 2) 
+    unbilled_delivery_amount NUMERIC(15, 2) 
+    outstanding NUMERIC(15, 2) 
+    outstanding_ignoring_sales_orders NUMERIC(15, 2) 
+    customer_credit_limit NUMERIC(15, 2) 
+    bypass_credit_limit_check INTEGER 
+    }
+
+Table CustomerCreditLimit {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    company_id INTEGER 
+    customer_company_id INTEGER 
+    credit_limit NUMERIC(15, 2) 
+    bypass_credit_limit_check INTEGER 
+    }
+
+Table CustomerGroupCreditLimit {
+    id INTEGER [primary key]
+    customer_group_id INTEGER 
+    company_id INTEGER 
+    credit_limit NUMERIC(15, 2) 
+    bypass_credit_limit_check INTEGER 
+    }
+
+Table DeliveryNote {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    company_id INTEGER 
+    customer_company_id INTEGER 
+    grand_total NUMERIC(15, 2) 
+    net_total NUMERIC(15, 2) 
+    status TEXT 
+    is_return INTEGER 
+    per_billed NUMERIC(7, 4) 
+    docstatus INTEGER 
+    unbilled_line_total NUMERIC(15, 2) 
+    unbilled_amount NUMERIC(15, 2) 
+    unlinked_line_count INTEGER 
+    no_invoice_line_count INTEGER 
+    uninvoiced_share NUMERIC(15, 2) 
+    bypass_extra_amount NUMERIC(15, 2) 
+    so_linked_uninvoiced_share NUMERIC(15, 2) 
+    }
+
+Table DeliveryNoteItem {
+    id INTEGER [primary key]
+    delivery_note_id INTEGER 
+    qty NUMERIC(15, 4) 
+    returned_qty NUMERIC(15, 4) 
+    net_amount NUMERIC(15, 2) 
+    sales_order_id INTEGER 
+    sales_invoice_id INTEGER 
+    billed_qty NUMERIC(15, 4) 
+    unbilled_amount NUMERIC(15, 2) 
+    grand_total_share NUMERIC(15, 2) 
+    }
+
+Table SalesInvoice {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    company_id INTEGER 
+    grand_total NUMERIC(15, 2) 
+    is_return INTEGER 
+    is_opening INTEGER 
+    docstatus INTEGER 
+    unlinked_line_count INTEGER 
+    }
+
+Table SalesOrder {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    company_id INTEGER 
+    customer_company_id INTEGER 
+    grand_total NUMERIC(15, 2) 
+    per_billed NUMERIC(7, 4) 
+    status TEXT 
+    docstatus INTEGER 
+    open_amount NUMERIC(15, 2) 
+    }
+
+Table JournalEntry {
+    id INTEGER [primary key]
+    company_id INTEGER 
+    docstatus INTEGER 
+    }
+
+Table JournalEntryAccount {
+    id INTEGER [primary key]
+    journal_entry_id INTEGER 
+    party_type TEXT 
+    customer_id INTEGER 
+    debit NUMERIC(15, 2) 
+    credit NUMERIC(15, 2) 
+    }
+
+Table LedgerEntry {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    company_id INTEGER 
+    customer_company_id INTEGER 
+    debit NUMERIC(15, 2) 
+    credit NUMERIC(15, 2) 
+    is_cancelled INTEGER 
+    amount NUMERIC(15, 2) 
+    sales_invoice_id INTEGER 
+    journal_entry_account_id INTEGER 
+    }
+
+Table SalesInvoiceItem {
+    id INTEGER [primary key]
+    sales_invoice_id INTEGER 
+    qty NUMERIC(15, 4) 
+    sales_order_id INTEGER 
+    delivery_note_item_id INTEGER 
+    counts_as_billed INTEGER 
+    }
+
+Table SysConfig {
+    id INTEGER [primary key]
+    name TEXT 
+    discount_rate FLOAT 
+    tax_rate FLOAT 
+    notes TEXT 
+    credit_controller TEXT 
+    }
+
+
+
+// Relationships
+    Ref: Customer.(customer_group_id) > CustomerGroup.(id)
+    Ref: CustomerCompany.(company_id) > Company.(id)
+    Ref: CustomerCompany.(customer_id) > Customer.(id)
+    Ref: CustomerCreditLimit.(company_id) > Company.(id)
+    Ref: CustomerCreditLimit.(customer_company_id) > CustomerCompany.(id)
+    Ref: CustomerCreditLimit.(customer_id) > Customer.(id)
+    Ref: CustomerGroupCreditLimit.(company_id) > Company.(id)
+    Ref: CustomerGroupCreditLimit.(customer_group_id) > CustomerGroup.(id)
+    Ref: DeliveryNote.(company_id) > Company.(id)
+    Ref: DeliveryNote.(customer_company_id) > CustomerCompany.(id)
+    Ref: DeliveryNote.(customer_id) > Customer.(id)
+    Ref: DeliveryNoteItem.(delivery_note_id) > DeliveryNote.(id)
+    Ref: DeliveryNoteItem.(sales_invoice_id) > SalesInvoice.(id)
+    Ref: DeliveryNoteItem.(sales_order_id) > SalesOrder.(id)
+    Ref: SalesInvoice.(company_id) > Company.(id)
+    Ref: SalesInvoice.(customer_id) > Customer.(id)
+    Ref: SalesOrder.(company_id) > Company.(id)
+    Ref: SalesOrder.(customer_company_id) > CustomerCompany.(id)
+    Ref: SalesOrder.(customer_id) > Customer.(id)
+    Ref: JournalEntry.(company_id) > Company.(id)
+    Ref: JournalEntryAccount.(customer_id) > Customer.(id)
+    Ref: JournalEntryAccount.(journal_entry_id) > JournalEntry.(id)
+    Ref: LedgerEntry.(company_id) > Company.(id)
+    Ref: LedgerEntry.(customer_company_id) > CustomerCompany.(id)
+    Ref: LedgerEntry.(customer_id) > Customer.(id)
+    Ref: LedgerEntry.(journal_entry_account_id) > JournalEntryAccount.(id)
+    Ref: LedgerEntry.(sales_invoice_id) > SalesInvoice.(id)
+    Ref: SalesInvoiceItem.(delivery_note_item_id) > DeliveryNoteItem.(id)
+    Ref: SalesInvoiceItem.(sales_invoice_id) > SalesInvoice.(id)
+    Ref: SalesInvoiceItem.(sales_order_id) > SalesOrder.(id)

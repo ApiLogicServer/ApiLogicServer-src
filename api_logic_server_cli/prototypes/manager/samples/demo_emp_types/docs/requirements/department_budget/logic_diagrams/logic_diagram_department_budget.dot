@@ -1,0 +1,27 @@
+digraph logic {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=13,
+         label=<<B>Logic Diagram — demo_emp_types  [department_budget]</B>>, labelloc=t,
+         pad=0.4, nodesep=0.90, ranksep=1.10, bgcolor="white",
+         splines=spline]
+  node  [fontname="Helvetica", fontsize=11, shape=plaintext]
+  edge  [fontname="Helvetica", fontsize=10]
+
+  // ── trigger ─────────────────────────────────────────────────────
+  TRIGGER [label=<<TABLE BORDER="2" CELLBORDER="0" CELLPADDING="5" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60"><B>&#9889; Employee inserted</B></FONT></TD></TR></TABLE>>, shape=plaintext]
+
+  // ── schema layer ──────────────────────────────────────────────────
+  Department [label=<<TABLE BORDER="3" CELLBORDER="0" CELLSPACING="0" COLOR="#c0392b"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Department </B></FONT></TD></TR><TR><TD PORT="Department_total_salary_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Department_total_salary" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> total_salary </FONT></TD><TD PORT="Department_total_salary_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  Employee [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Employee </B></FONT></TD></TR><TR><TD PORT="Employee_salary_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_salary" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> salary </FONT></TD><TD PORT="Employee_salary_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  // ── rank groupings ────────────────────────────────────────────────
+  { rank=min; Department }
+  { rank=max; Employee; TRIGGER }
+
+  // ── FK relationships ───────────────────────────────────────────
+  Employee -> Department [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+
+  // ── trigger edge ──────────────────────────────────────────────
+  TRIGGER -> Employee [color="#27ae60", style=bold, arrowhead=vee, penwidth=2, weight=10]
+
+  // ── logic edges ────────────────────────────────────────────────────
+  Employee:Employee_salary_w -> Department:Department_total_salary_w [label="1", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8]
+}

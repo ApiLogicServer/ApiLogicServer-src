@@ -1,0 +1,29 @@
+digraph logic {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=13,
+         label=<<B>Logic Diagram — erpnext_credit_modernized  [credit_limit_maintenance]</B>>, labelloc=t,
+         pad=0.4, nodesep=0.90, ranksep=1.10, bgcolor="white",
+         splines=spline]
+  node  [fontname="Helvetica", fontsize=11, shape=plaintext]
+  edge  [fontname="Helvetica", fontsize=10]
+
+  // ── trigger ─────────────────────────────────────────────────────
+  TRIGGER [label=<<TABLE BORDER="2" CELLBORDER="0" CELLPADDING="5" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60"><B>&#9889; CustomerCreditLimit inserted</B></FONT></TD></TR></TABLE>>, shape=plaintext]
+
+  // ── schema layer ──────────────────────────────────────────────────
+  CustomerCompany [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> CustomerCompany </B></FONT></TD></TR><TR><TD PORT="CustomerCompany_customer_credit_limit_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="CustomerCompany_customer_credit_limit" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> customer_credit_limit </FONT></TD><TD PORT="CustomerCompany_customer_credit_limit_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="CustomerCompany_bypass_credit_limit_check_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="CustomerCompany_bypass_credit_limit_check" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> bypass_credit_limit_check </FONT></TD><TD PORT="CustomerCompany_bypass_credit_limit_check_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  CustomerCreditLimit [label=<<TABLE BORDER="3" CELLBORDER="0" CELLSPACING="0" COLOR="#c0392b"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> CustomerCreditLimit </B></FONT></TD></TR><TR><TD PORT="CustomerCreditLimit_credit_limit_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="CustomerCreditLimit_credit_limit" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> credit_limit </FONT></TD><TD PORT="CustomerCreditLimit_credit_limit_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="CustomerCreditLimit_bypass_credit_limit_check_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="CustomerCreditLimit_bypass_credit_limit_check" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> bypass_credit_limit_check </FONT></TD><TD PORT="CustomerCreditLimit_bypass_credit_limit_check_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  CustomerGroupCreditLimit [label=<<TABLE BORDER="3" CELLBORDER="0" CELLSPACING="0" COLOR="#c0392b"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> CustomerGroupCreditLimit </B></FONT></TD></TR><TR><TD></TD><TD BGCOLOR="#dbe4f0"><FONT COLOR="#1a1a2e">  </FONT></TD><TD></TD></TR></TABLE>>]
+  // ── rank groupings ────────────────────────────────────────────────
+  { rank=min; CustomerCompany; CustomerGroupCreditLimit }
+  { rank=max; CustomerCreditLimit; TRIGGER }
+
+  // ── FK relationships ───────────────────────────────────────────
+  CustomerCreditLimit -> CustomerCompany [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+
+  // ── trigger edge ──────────────────────────────────────────────
+  TRIGGER -> CustomerCreditLimit [color="#27ae60", style=bold, arrowhead=vee, penwidth=2, weight=10]
+
+  // ── logic edges ────────────────────────────────────────────────────
+  CustomerCreditLimit:CustomerCreditLimit_credit_limit_w -> CustomerCompany:CustomerCompany_customer_credit_limit_w [label="1", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8]
+  CustomerCreditLimit:CustomerCreditLimit_bypass_credit_limit_check_w -> CustomerCompany:CustomerCompany_bypass_credit_limit_check_w [label="2", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8]
+}

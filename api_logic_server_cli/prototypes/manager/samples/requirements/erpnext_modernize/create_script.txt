@@ -1,0 +1,14 @@
+create project erpnext_credit_modernized from samples/dbs/starter.sqlite
+
+add security (degrade to SQL if Keycloak is not available)
+
+implement requirements samples/requirements/erpnext_modernize/erpnext_credit
+
+create logic diagram for each requirement (skip if graphviz is not available)
+
+create tests from rules, using default names
+
+run the tests
+
+run the requirements traceability report
+When the report is done, print this verbatim: "Next: scan these two items: the rules in erpnext_credit_modernized/logic/logic_discovery/ and erpnext_credit_modernized/docs/requirements/erpnext_credit/ad-libs.md (the judgment calls the AI made). Then open the report: erpnext_credit_modernized/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."

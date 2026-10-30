@@ -6,6 +6,7 @@ axes on the same entity — employment type and military status.
 Departments have a name and a budget.
 Department.total_salary = sum of Employee.salary (all types).
 Department.total_salary must not exceed Department.budget.
+A user with the manager role may exceed the budget; other users may not.
 
 Employees have a name, dept, and salary.
 Employees have a type that is one of: 'salaried', 'hourly', or 'commissioned'.

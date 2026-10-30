@@ -1,6 +1,15 @@
 ---
 title: Project Health Check — Vital Signs
-version: 1.7 (June 2026) — Effective LOC: hardcoded baselines for all api/api_discovery/ scaffold stubs; integration/system, integration/mcp, integration/n8n now framework-infrastructure (0)
+version: 1.9 (Oct 2026) — "Missing docstring" demerit now covers every action function (all event types, Allocate callbacks, Kafka publish/subscribe handlers, API services), not just Rule.formula/early_row_event calling= (see logic_bank_api.md); previously: 1.8 (July 2026) — Corrected "Broken dependency tracking" demerit: calling= itself is scanned correctly (not inherently suspect); clarified the actual failure is helper-hidden refs, and added the old_row.<attr>-never-tracked gap (see logic_bank_api.md v1.0.20)
+# Changelog:
+#   1.9 (Oct 2026) - Missing-docstring demerit widened from Rule.formula/early_row_event calling= to
+#     every function a Rule.*, Allocate, or integration discovery file calls. Reason: the Behave Logic
+#     Report and logic diagram describe each action by its docstring's first line.
+#   1.8 (Jul 2026) - Broken dependency tracking demerit reworded per LogicBank's own
+#     dependency-scanning.md: calling= functions are scanned exactly like as_expression lambdas
+#     (not a gap); real gaps are (a) helper-hidden row.attr refs (shallow/textual scan, doesn't
+#     follow calls) and (b) old_row.<attr> is never tracked as a dependency, only row.<attr> is.
+#   1.7 (June 2026) — Effective LOC: hardcoded baselines for all api/api_discovery/ scaffold stubs; integration/system, integration/mcp, integration/n8n now framework-infrastructure (0)
 usage: AI reads this when user asks for vital signs / health check
 overhead: zero until invoked — file is read on demand only
 governance: see docs/training/governance.md — thresholds, red flags, score ranges, manager roll-up
@@ -250,9 +259,16 @@ An event handler function whose body:
 Detection heuristic: event body has `row.<attr> =` assignment AND no external I/O (no Kafka, no HTTP, no session.query for lookup).
 
 #### -2: Broken dependency tracking
+LB's scan is textual/shallow (`inspect.getsource()` + token match on the function's own body) —
+it does not follow calls into helper functions. `calling=` itself is scanned correctly and is
+NOT inherently suspect; the failure mode is specifically when a scanned body's only `row.attr`
+references are hidden one level down, in a helper it calls.
 - `as_expression=lambda row: my_func(row)` — wraps a function; LB sees no `row.attr` refs
-- `calling=` function body has no direct `row.attr` refs (all hidden in a helper)
+- `calling=` function body has no direct `row.attr` refs (all hidden in a helper it calls)
 - Side-effect assignment inside a formula: `row.other_col = ...` inside a `calling=` function
+- Rule's only reference to an attribute is `old_row.X` with no `row.X` anywhere in the same
+  body — `old_row.<attr>` is never tracked as a dependency (only `row.<attr>` is), regardless
+  of expression form
 
 #### -1: Raw query in row_event (non-lookup)
 `session.query()` inside a row_event that computes an aggregate or iterates over
@@ -263,15 +279,26 @@ see Hall Passes below.
 Docstring contains implementation notes, field mappings, or AI paraphrase beyond
 the verbatim requirement text. (See Docstring Hygiene section.)
 
-#### -1: Missing docstring on calling= function
-A function wired via `calling=` has no docstring (or an empty one).
-The first docstring line appears in logic flow diagrams and reports — without it,
-the diagram shows only the function name with no indication of what it derives.
+#### -1: Missing docstring on an action function
+A function that a rule, `Allocate`, or an integration discovery file calls has no docstring
+(or an empty one). The first docstring line appears in logic flow diagrams and the Behave Logic
+Report — without it, the report shows only the function name with no indication of what it does.
 
-Detection: find all `Rule.formula(... calling=<func>)` and `Rule.early_row_event(... calling=<func>)`,
-then check each `<func>` for a non-empty one-line docstring.
+Detection: find every function reachable from any of these, and check each for a non-empty
+one-line docstring:
+- any `Rule.*(... calling=<func>)` — formula, constraint, and all four event types
+  (`early_row_event`, `row_event`, `commit_row_event`, `after_flush_row_event`)
+- `Allocate(... while_calling_allocator=<func>)` and its `recipients=<func>`
+- publish handlers called from an event (`kafka_producer.publish_kafka_message`, mappers in
+  `integration/kafka/kafka_publish_discovery/`)
+- `register(bus)` / topic handlers in `integration/kafka/kafka_subscribe_discovery/`
+- classes/functions exposed from `api/api_discovery/`
+Lambdas (`where=`, `as_condition=`, `as_expression=`) and private helpers called only from a
+function that already has a docstring are exempt. See `logic_bank_api.md` "THE SAME DOCSTRING
+RULE COVERS EVERY OTHER ACTION FUNCTION" for the format `<Object> <kind>: <what and why>`.
 
-Fix: add `"""Derive <column>: <brief description>."""` as the first line of each function.
+Fix: add a one-line docstring as the first line of each function, e.g. `"""Derive <column>: <brief
+description>."""` for a formula, `"""<Class> event: <what and why>."""` for an event.
 
 Example fix:
 ```python

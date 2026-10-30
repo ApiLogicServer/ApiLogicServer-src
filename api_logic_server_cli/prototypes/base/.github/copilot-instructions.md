@@ -1,4 +1,6 @@
 ---
+version: 3.57 - 10/29/26 - Audit / change recording: new Step 2.8 (signals: audit, auditing, history, track changes, who changed, before/after) routes to PATTERN 3c of logic_bank_patterns.md (RuleExtension.copy_row, or an event for old/new values and decisions) instead of defaulting to the Request Pattern; Step 3 and the Request Pattern use-case line no longer send "audit" to a SysAuditReq table.
+version: 3.56 - 10/29/26 - Security section points to the new "Roles inside business rules" section of security.md (Security.current_user_has_role in a rule or event; no-user case). A blind run found that method only by reading security/system/authorization.py.
 version: 3.55 - 10/27/26 - "What are rules" now offers the extensibility point: new trigger (can I add code / what are events / how rules and Python fit together) answering that Python events are the extension mechanism and are integrated with the declarative rules (same transaction, engine phases, row/old_row/logic_row; the phase is the design choice). Events are not presented as a lesser or separate layer.
 version: 3.54 - 10/24/26 - Closes the remaining gaps from the blind demo_eai run: default Feature names (testing.md), the quantity>0 / unit_price>0 contradiction (now: asked about as a 🔴 ad-lib, not added silently), undefined-term ambiguity is 🔴 not 🟡, and Executable Requirements STEP 1 copies a requirements dir given from outside the project.
 version: 3.53 - 10/24/26 - From the first blind run of create_script_clean.txt (demo_eai): (1) new "Verify Message Subscriptions" command - topic reset BEFORE the first live start (stale broker messages were replayed as junk orders), Kafka enabled in config only when a broker answers, degraded/simulated otherwise; (2) Executable Requirements HAND-OFF step - print the rules file and ad-libs pointer (or the user's verbatim wording) as its own message right after the build; the run had paraphrased a "print this verbatim" line and skipped it. Also config/config.py: the default Kafka consumer sets session.timeout.ms 6000 (a restart no longer waits ~45 s for the old session; the run saw a 35 s cold join).
@@ -1420,7 +1422,7 @@ The sections below provide complete details on each service. I'll reference thes
 - **Send email** - Insert SysMailReq row → event checks opt-out, sends email, logs activity
 - **Kafka integration** - Insert request row → event publishes message to topic
 - **AI Logic** - Insert SysSupplierReq → event calls AI to find optimal supplier based on cost, lead time, world conditions
-- **Audit trails** - Insert SysAuditReq → event captures operation details
+- **Audit of a service call** - Insert SysAuditReq → event captures the operation's details (to record CHANGES to existing data, use `RuleExtension.copy_row` or an audit event: Step 2.8)
 - **External API calls** - Insert request row → event calls external service, captures response
 
 **Implementation pattern:**
@@ -2256,12 +2258,31 @@ STEP 2.7: Check for Insert-Only Constraint (Grandfather Clause) pattern:
         - `Rule.constraint(calling=...)`, not `as_condition=` (need `old_row` access)
         - comparing `row.<count> > old_row.<count>` to detect "a new child was just
           added this transaction" vs. "some other parent attribute changed"
+   IF NO → Continue to Step 2.8
+
+STEP 2.8: Check for Audit / change-recording:
+   Signal phrases (ANY of these = record changes): "audit", "auditing", "audit trail", "audit log",
+   "history", "change history", "version history", "track changes", "keep a record of", "log who changed",
+   "who and when", "before and after", "old value", "record every override / approval / exception".
+   IF YES →
+      ⛔ STOP. Read PATTERN 3c "Recording Changes (Auditing)" in `docs/training/logic_bank_patterns.md` NOW,
+      even if you already read that file this session. Route by what is wanted:
+        - a copy of a row when attributes change      → `RuleExtension.copy_row` into an audit table (one rule)
+        - the OLD value too, a reason, who/when       → a hand-written `commit_row_event` that inserts the audit row
+        - a decision / override / approval recorded   → the same event form, where the decision is taken
+        - a caller asks and reads a result back       → Request Pattern (Step 3) - NOT an audit
+      ❌ Do NOT create a `Sys*Req` / `SysAuditReq` table for "record changes to existing data": nobody
+         inserts a request when a value is edited. ❌ Do not use `copy_row`'s `initialize_target` (never called).
+      The stamping handler is OFF by default: set who/when explicitly (see PATTERN 3c).
+      Add the audit table to the DDL analysis (step 4a-4c) BEFORE writing the DDL, and list the choice and any
+      unstated detail (deletes audited? retention? who may read?) in ad-libs.
    IF NO → Continue to Step 3
 
 STEP 3: Analyze the prompt for Request Pattern signals:
    - Does prompt say "calculate/determine/select [X] when [Y] is given"?
    - Integration service needed (AI, external API, messaging, email)?
-   - Compliance/audit domain (customs, finance, healthcare)?
+   - Compliance/audit domain (customs, finance, healthcare)? (this means an integration service whose result needs a
+     trail; recording changes to data is NOT this - see Step 2.8)
    - IF YES → Use Request Pattern (see RequestObjectPattern.md)
    - IF NO → Continue to Step 4
    ❌ NOT Request Pattern: a gate/constraint on new inserts based on a related record's
@@ -3013,6 +3034,7 @@ Read docs/training/security.md FIRST — it contains the full DSL reference:
   - NL → declaration mapping table
   - Complete example (basic_demo pattern)
   - Executable Requirements integration
+  - Roles inside business rules (a role may exceed a limit or skip a check): Security.current_user_has_role(...)
 THEN implement security/declare_security.py
 ```
 

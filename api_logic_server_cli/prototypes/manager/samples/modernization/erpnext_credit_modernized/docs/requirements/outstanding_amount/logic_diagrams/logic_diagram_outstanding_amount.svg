@@ -1,0 +1,353 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="862pt" height="651pt" viewBox="18.80 18.80 861.75 651.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 659.8)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-659.8 832.55,-659.8 832.55,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="182.88" y="-615.65" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — erpnext_credit_modernized  [outstanding_amount]</text>
+<g id="clust5" class="cluster">
+<title>cluster_events</title>
+</g>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="590.88,-572.5 590.88,-605.5 727.38,-605.5 727.38,-572.5 590.88,-572.5" />
+<text xml:space="preserve" text-anchor="start" x="599.88" y="-587.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ SalesOrder inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="591.88,-573.5 591.88,-604.5 726.38,-604.5 726.38,-573.5 591.88,-573.5" />
+</g>
+
+<g id="node7" class="node">
+<title>SalesOrder</title>
+<polygon fill="#4a6fa5" stroke="none" points="539.25,-498 539.25,-514 779,-514 779,-498 539.25,-498" />
+<text xml:space="preserve" text-anchor="start" x="626.88" y="-502.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> SalesOrder </text>
+<polygon fill="#b8cce8" stroke="none" points="539.25,-480 539.25,-498 546.25,-498 546.25,-480 539.25,-480" />
+<text xml:space="preserve" text-anchor="start" x="541.25" y="-486" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="546.25,-480 546.25,-498 772,-498 772,-480 546.25,-480" />
+<text xml:space="preserve" text-anchor="start" x="549.25" y="-485.55" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> open_amount </text>
+<text xml:space="preserve" text-anchor="start" x="621.25" y="-485.55" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="624.25" y="-485.55" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= _sales_order_open_amount(row)</text>
+<polygon fill="#b8cce8" stroke="none" points="772,-480 772,-498 779,-498 779,-480 772,-480" />
+<text xml:space="preserve" text-anchor="start" x="774" y="-486" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="539.25,-462 539.25,-480 546.25,-480 546.25,-462 539.25,-462" />
+<text xml:space="preserve" text-anchor="start" x="541.25" y="-468" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="546.25,-462 546.25,-480 772,-480 772,-462 546.25,-462" />
+<text xml:space="preserve" text-anchor="start" x="549.25" y="-468" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> docstatus </text>
+<polygon fill="#b8cce8" stroke="none" points="772,-462 772,-480 779,-480 779,-462 772,-462" />
+<text xml:space="preserve" text-anchor="start" x="774" y="-468" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="539.25,-444 539.25,-462 546.25,-462 546.25,-444 539.25,-444" />
+<text xml:space="preserve" text-anchor="start" x="541.25" y="-450" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="546.25,-444 546.25,-462 772,-462 772,-444 546.25,-444" />
+<text xml:space="preserve" text-anchor="start" x="549.25" y="-450" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> status </text>
+<polygon fill="#b8cce8" stroke="none" points="772,-444 772,-462 779,-462 779,-444 772,-444" />
+<text xml:space="preserve" text-anchor="start" x="774" y="-450" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="539.25,-426 539.25,-444 546.25,-444 546.25,-426 539.25,-426" />
+<text xml:space="preserve" text-anchor="start" x="541.25" y="-432" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="546.25,-426 546.25,-444 772,-444 772,-426 546.25,-426" />
+<text xml:space="preserve" text-anchor="start" x="549.25" y="-432" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> grand_total </text>
+<polygon fill="#b8cce8" stroke="none" points="772,-426 772,-444 779,-444 779,-426 772,-426" />
+<text xml:space="preserve" text-anchor="start" x="774" y="-432" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="539.25,-408 539.25,-426 546.25,-426 546.25,-408 539.25,-408" />
+<text xml:space="preserve" text-anchor="start" x="541.25" y="-414" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="546.25,-408 546.25,-426 772,-426 772,-408 546.25,-408" />
+<text xml:space="preserve" text-anchor="start" x="549.25" y="-414" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> per_billed </text>
+<polygon fill="#b8cce8" stroke="none" points="772,-408 772,-426 779,-426 779,-408 772,-408" />
+<text xml:space="preserve" text-anchor="start" x="774" y="-414" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="538.25,-407 538.25,-515 780,-515 780,-407 538.25,-407" />
+</g>
+
+<g id="edge8" class="edge">
+<title>TRIGGER-&gt;SalesOrder</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M659.12,-568.77C659.12,-556.19 659.12,-543.62 659.12,-531.05" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="659.13,-521.44 663.63,-531.44 659.63,-524 659.63,-531.44 659.13,-531.44 658.63,-531.44 658.63,-524 654.63,-531.44 659.13,-521.44" />
+</g>
+
+<g id="node2" class="node">
+<title>CustomerCompany</title>
+<polygon fill="#4a6fa5" stroke="none" points="65.38,-357 65.38,-373 387.62,-373 387.62,-357 65.38,-357" />
+<text xml:space="preserve" text-anchor="start" x="172.5" y="-361.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> CustomerCompany </text>
+<polygon fill="#b8cce8" stroke="none" points="65.38,-339 65.38,-357 72.38,-357 72.38,-339 65.38,-339" />
+<text xml:space="preserve" text-anchor="start" x="67.38" y="-345" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="72.38,-339 72.38,-357 380.62,-357 380.62,-339 72.38,-339" />
+<text xml:space="preserve" text-anchor="start" x="75.38" y="-345" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> ledger_balance </text>
+<polygon fill="#b8cce8" stroke="none" points="380.62,-339 380.62,-357 387.62,-357 387.62,-339 380.62,-339" />
+<text xml:space="preserve" text-anchor="start" x="382.62" y="-345" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="65.38,-321 65.38,-339 72.38,-339 72.38,-321 65.38,-321" />
+<text xml:space="preserve" text-anchor="start" x="67.38" y="-327" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="72.38,-321 72.38,-339 380.62,-339 380.62,-321 72.38,-321" />
+<text xml:space="preserve" text-anchor="start" x="75.38" y="-327" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> open_sales_order_amount </text>
+<polygon fill="#b8cce8" stroke="none" points="380.62,-321 380.62,-339 387.62,-339 387.62,-321 380.62,-321" />
+<text xml:space="preserve" text-anchor="start" x="382.62" y="-327" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="65.38,-303 65.38,-321 72.38,-321 72.38,-303 65.38,-303" />
+<text xml:space="preserve" text-anchor="start" x="67.38" y="-309" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="72.38,-303 72.38,-321 380.62,-321 380.62,-303 72.38,-303" />
+<text xml:space="preserve" text-anchor="start" x="75.38" y="-309" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> unbilled_delivery_amount </text>
+<polygon fill="#b8cce8" stroke="none" points="380.62,-303 380.62,-321 387.62,-321 387.62,-303 380.62,-303" />
+<text xml:space="preserve" text-anchor="start" x="382.62" y="-309" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="65.38,-285 65.38,-303 72.38,-303 72.38,-285 65.38,-285" />
+<text xml:space="preserve" text-anchor="start" x="67.38" y="-291" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="72.38,-285 72.38,-303 380.62,-303 380.62,-285 72.38,-285" />
+<text xml:space="preserve" text-anchor="start" x="75.38" y="-290.55" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> outstanding </text>
+<text xml:space="preserve" text-anchor="start" x="136.88" y="-290.55" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="139.88" y="-290.55" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= (ledger_balance or 0) + (op...</text>
+<polygon fill="#b8cce8" stroke="none" points="380.62,-285 380.62,-303 387.62,-303 387.62,-285 380.62,-285" />
+<text xml:space="preserve" text-anchor="start" x="382.62" y="-291" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="65.38,-267 65.38,-285 72.38,-285 72.38,-267 65.38,-267" />
+<text xml:space="preserve" text-anchor="start" x="67.38" y="-273" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="72.38,-267 72.38,-285 380.62,-285 380.62,-267 72.38,-267" />
+<text xml:space="preserve" text-anchor="start" x="75.38" y="-272.55" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> outstanding_ignoring_sales_orders </text>
+<text xml:space="preserve" text-anchor="start" x="248.62" y="-272.55" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="251.62" y="-272.55" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= (ledger_balance or 0) + (un...</text>
+<polygon fill="#b8cce8" stroke="none" points="380.62,-267 380.62,-285 387.62,-285 387.62,-267 380.62,-267" />
+<text xml:space="preserve" text-anchor="start" x="382.62" y="-273" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="64.38,-266 64.38,-374 388.62,-374 388.62,-266 64.38,-266" />
+</g>
+
+<g id="node3" class="node">
+<title>DeliveryNote</title>
+<polygon fill="#4a6fa5" stroke="none" points="523.5,-252 523.5,-268 794.75,-268 794.75,-252 523.5,-252" />
+<text xml:space="preserve" text-anchor="start" x="622.38" y="-256.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> DeliveryNote </text>
+<polygon fill="#b8cce8" stroke="none" points="523.5,-234 523.5,-252 530.5,-252 530.5,-234 523.5,-234" />
+<text xml:space="preserve" text-anchor="start" x="525.5" y="-240" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="530.5,-234 530.5,-252 787.75,-252 787.75,-234 530.5,-234" />
+<text xml:space="preserve" text-anchor="start" x="533.5" y="-240" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> unbilled_line_total </text>
+<polygon fill="#b8cce8" stroke="none" points="787.75,-234 787.75,-252 794.75,-252 794.75,-234 787.75,-234" />
+<text xml:space="preserve" text-anchor="start" x="789.75" y="-240" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="523.5,-216 523.5,-234 530.5,-234 530.5,-216 523.5,-216" />
+<text xml:space="preserve" text-anchor="start" x="525.5" y="-222" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="530.5,-216 530.5,-234 787.75,-234 787.75,-216 530.5,-216" />
+<text xml:space="preserve" text-anchor="start" x="533.5" y="-221.55" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> unbilled_amount </text>
+<text xml:space="preserve" text-anchor="start" x="618.25" y="-221.55" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="621.25" y="-221.55" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= _delivery_note_unbilled_amount(row)</text>
+<polygon fill="#b8cce8" stroke="none" points="787.75,-216 787.75,-234 794.75,-234 794.75,-216 787.75,-216" />
+<text xml:space="preserve" text-anchor="start" x="789.75" y="-222" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="523.5,-198 523.5,-216 530.5,-216 530.5,-198 523.5,-198" />
+<text xml:space="preserve" text-anchor="start" x="525.5" y="-204" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="530.5,-198 530.5,-216 787.75,-216 787.75,-198 530.5,-198" />
+<text xml:space="preserve" text-anchor="start" x="533.5" y="-204" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> docstatus </text>
+<polygon fill="#b8cce8" stroke="none" points="787.75,-198 787.75,-216 794.75,-216 794.75,-198 787.75,-198" />
+<text xml:space="preserve" text-anchor="start" x="789.75" y="-204" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="523.5,-180 523.5,-198 530.5,-198 530.5,-180 523.5,-180" />
+<text xml:space="preserve" text-anchor="start" x="525.5" y="-186" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="530.5,-180 530.5,-198 787.75,-198 787.75,-180 530.5,-180" />
+<text xml:space="preserve" text-anchor="start" x="533.5" y="-186" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> status </text>
+<polygon fill="#b8cce8" stroke="none" points="787.75,-180 787.75,-198 794.75,-198 794.75,-180 787.75,-180" />
+<text xml:space="preserve" text-anchor="start" x="789.75" y="-186" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="523.5,-162 523.5,-180 530.5,-180 530.5,-162 523.5,-162" />
+<text xml:space="preserve" text-anchor="start" x="525.5" y="-168" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="530.5,-162 530.5,-180 787.75,-180 787.75,-162 530.5,-162" />
+<text xml:space="preserve" text-anchor="start" x="533.5" y="-168" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> net_total </text>
+<polygon fill="#b8cce8" stroke="none" points="787.75,-162 787.75,-180 794.75,-180 794.75,-162 787.75,-162" />
+<text xml:space="preserve" text-anchor="start" x="789.75" y="-168" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="522.5,-161 522.5,-269 795.75,-269 795.75,-161 522.5,-161" />
+</g>
+
+<g id="edge1" class="edge">
+<title>DeliveryNote-&gt;CustomerCompany</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M519.69,-280.09C517.89,-282.01 516.16,-283.98 514.5,-286 487.35,-319.09 523.47,-352.96 489.5,-379 472.62,-391.94 434.48,-388.16 392.39,-377.94" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="519.64,-280.14 529.91,-276.31 523.36,-276.46 526.59,-273.27 526.59,-273.27 526.59,-273.27 523.36,-276.46 523.59,-269.91 519.64,-280.14" />
+</g>
+
+<g id="edge13" class="edge">
+<title>DeliveryNote:DeliveryNote_unbilled_amount_w-&gt;CustomerCompany:CustomerCompany_unbilled_delivery_amount_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M522.5,-225C318.67,-225 205.06,-113.56 65.38,-262 53.83,-274.27 46.45,-296.66 53.22,-306.78" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="62.17,-310.97 51.2,-310.81 59.63,-310.33 52.9,-307.18 53.11,-306.73 53.32,-306.28 60.06,-309.43 55.02,-302.65 62.17,-310.97" />
+<text xml:space="preserve" text-anchor="middle" x="484.25" y="-225.73" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">12</text>
+</g>
+
+<g id="node4" class="node">
+<title>DeliveryNoteItem</title>
+<polygon fill="#4a6fa5" stroke="none" points="92.38,-149 92.38,-165 360.62,-165 360.62,-149 92.38,-149" />
+<text xml:space="preserve" text-anchor="start" x="178.5" y="-153.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> DeliveryNoteItem </text>
+<polygon fill="#b8cce8" stroke="none" points="92.38,-131 92.38,-149 99.38,-149 99.38,-131 92.38,-131" />
+<text xml:space="preserve" text-anchor="start" x="94.38" y="-137" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="99.38,-131 99.38,-149 353.62,-149 353.62,-131 99.38,-131" />
+<text xml:space="preserve" text-anchor="start" x="102.38" y="-137" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> billed_qty </text>
+<polygon fill="#b8cce8" stroke="none" points="353.62,-131 353.62,-149 360.62,-149 360.62,-131 353.62,-131" />
+<text xml:space="preserve" text-anchor="start" x="355.62" y="-137" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="92.38,-113 92.38,-131 99.38,-131 99.38,-113 92.38,-113" />
+<text xml:space="preserve" text-anchor="start" x="94.38" y="-119" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="99.38,-113 99.38,-131 353.62,-131 353.62,-113 99.38,-113" />
+<text xml:space="preserve" text-anchor="start" x="102.38" y="-118.55" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> unbilled_amount </text>
+<text xml:space="preserve" text-anchor="start" x="187.12" y="-118.55" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="190.12" y="-118.55" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= _delivery_line_unbilled_amount(row)</text>
+<polygon fill="#b8cce8" stroke="none" points="353.62,-113 353.62,-131 360.62,-131 360.62,-113 353.62,-113" />
+<text xml:space="preserve" text-anchor="start" x="355.62" y="-119" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="92.38,-95 92.38,-113 99.38,-113 99.38,-95 92.38,-95" />
+<text xml:space="preserve" text-anchor="start" x="94.38" y="-101" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="99.38,-95 99.38,-113 353.62,-113 353.62,-95 99.38,-95" />
+<text xml:space="preserve" text-anchor="start" x="102.38" y="-101" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> sales_order_id </text>
+<polygon fill="#b8cce8" stroke="none" points="353.62,-95 353.62,-113 360.62,-113 360.62,-95 353.62,-95" />
+<text xml:space="preserve" text-anchor="start" x="355.62" y="-101" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="92.38,-77 92.38,-95 99.38,-95 99.38,-77 92.38,-77" />
+<text xml:space="preserve" text-anchor="start" x="94.38" y="-83" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="99.38,-77 99.38,-95 353.62,-95 353.62,-77 99.38,-77" />
+<text xml:space="preserve" text-anchor="start" x="102.38" y="-83" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> sales_invoice_id </text>
+<polygon fill="#b8cce8" stroke="none" points="353.62,-77 353.62,-95 360.62,-95 360.62,-77 353.62,-77" />
+<text xml:space="preserve" text-anchor="start" x="355.62" y="-83" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="92.38,-59 92.38,-77 99.38,-77 99.38,-59 92.38,-59" />
+<text xml:space="preserve" text-anchor="start" x="94.38" y="-65" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="99.38,-59 99.38,-77 353.62,-77 353.62,-59 99.38,-59" />
+<text xml:space="preserve" text-anchor="start" x="102.38" y="-65" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> qty </text>
+<polygon fill="#b8cce8" stroke="none" points="353.62,-59 353.62,-77 360.62,-77 360.62,-59 353.62,-59" />
+<text xml:space="preserve" text-anchor="start" x="355.62" y="-65" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="92.38,-41 92.38,-59 99.38,-59 99.38,-41 92.38,-41" />
+<text xml:space="preserve" text-anchor="start" x="94.38" y="-47" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="99.38,-41 99.38,-59 353.62,-59 353.62,-41 99.38,-41" />
+<text xml:space="preserve" text-anchor="start" x="102.38" y="-47" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> returned_qty </text>
+<polygon fill="#b8cce8" stroke="none" points="353.62,-41 353.62,-59 360.62,-59 360.62,-41 353.62,-41" />
+<text xml:space="preserve" text-anchor="start" x="355.62" y="-47" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="92.38,-23 92.38,-41 99.38,-41 99.38,-23 92.38,-23" />
+<text xml:space="preserve" text-anchor="start" x="94.38" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="99.38,-23 99.38,-41 353.62,-41 353.62,-23 99.38,-23" />
+<text xml:space="preserve" text-anchor="start" x="102.38" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> net_amount </text>
+<polygon fill="#b8cce8" stroke="none" points="353.62,-23 353.62,-41 360.62,-41 360.62,-23 353.62,-23" />
+<text xml:space="preserve" text-anchor="start" x="355.62" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="92.38,-5 92.38,-23 99.38,-23 99.38,-5 92.38,-5" />
+<text xml:space="preserve" text-anchor="start" x="94.38" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="99.38,-5 99.38,-23 353.62,-23 353.62,-5 99.38,-5" />
+<text xml:space="preserve" text-anchor="start" x="102.38" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> delivery_note </text>
+<polygon fill="#b8cce8" stroke="none" points="353.62,-5 353.62,-23 360.62,-23 360.62,-5 353.62,-5" />
+<text xml:space="preserve" text-anchor="start" x="355.62" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="91.38,-4 91.38,-166 361.62,-166 361.62,-4 91.38,-4" />
+</g>
+
+<g id="edge2" class="edge">
+<title>DeliveryNoteItem-&gt;DeliveryNote</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M343.34,-175.48C383.95,-201.96 431.37,-227.43 479,-241 490.48,-244.27 502.51,-246 514.65,-246.57" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="343.31,-175.46 337.45,-166.19 338.95,-172.57 335.17,-170.07 335.17,-170.07 335.17,-170.07 338.95,-172.57 332.49,-173.7 343.31,-175.46" />
+</g>
+
+<g id="edge10" class="edge">
+<title>DeliveryNoteItem:DeliveryNoteItem_unbilled_amount_w-&gt;DeliveryNote:DeliveryNote_unbilled_line_total_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M91.38,-122C70.04,-122 78.23,-154.03 92.38,-170 210.59,-303.47 319.16,-174.1 489.5,-226.75 500.24,-230.07 504.08,-236.5 510.75,-240.2" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="520.13,-242.44 509.36,-244.5 517.52,-242.33 510.29,-240.61 510.4,-240.12 510.52,-239.63 517.75,-241.36 511.44,-235.74 520.13,-242.44" />
+<text xml:space="preserve" text-anchor="middle" x="484.25" y="-228.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">9</text>
+</g>
+
+<g id="edge3" class="edge">
+<title>DeliveryNoteItem-&gt;SalesOrder</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M377.4,-167.16C407.2,-190.18 435.09,-217.86 454,-250 477.05,-289.17 445.63,-422.14 479,-453 493.28,-466.21 511.27,-473.45 530.3,-476.84" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="377.54,-167.26 372.26,-157.65 373.36,-164.11 369.74,-161.38 369.74,-161.38 369.74,-161.38 373.36,-164.11 366.84,-164.83 377.54,-167.26" />
+</g>
+
+<g id="node5" class="node">
+<title>LedgerEntry</title>
+<polygon fill="#4a6fa5" stroke="none" points="573.75,-357 573.75,-373 744.5,-373 744.5,-357 573.75,-357" />
+<text xml:space="preserve" text-anchor="start" x="623.5" y="-361.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> LedgerEntry </text>
+<polygon fill="#b8cce8" stroke="none" points="573.75,-339 573.75,-357 580.75,-357 580.75,-339 573.75,-339" />
+<text xml:space="preserve" text-anchor="start" x="575.75" y="-345" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="580.75,-339 580.75,-357 737.5,-357 737.5,-339 580.75,-339" />
+<text xml:space="preserve" text-anchor="start" x="583.75" y="-344.55" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> amount </text>
+<text xml:space="preserve" text-anchor="start" x="625.75" y="-344.55" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="628.75" y="-344.55" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= (debit or 0) - (credit or 0)</text>
+<polygon fill="#b8cce8" stroke="none" points="737.5,-339 737.5,-357 744.5,-357 744.5,-339 737.5,-339" />
+<text xml:space="preserve" text-anchor="start" x="739.5" y="-345" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="573.75,-321 573.75,-339 580.75,-339 580.75,-321 573.75,-321" />
+<text xml:space="preserve" text-anchor="start" x="575.75" y="-327" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="580.75,-321 580.75,-339 737.5,-339 737.5,-321 580.75,-321" />
+<text xml:space="preserve" text-anchor="start" x="583.75" y="-327" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> debit </text>
+<polygon fill="#b8cce8" stroke="none" points="737.5,-321 737.5,-339 744.5,-339 744.5,-321 737.5,-321" />
+<text xml:space="preserve" text-anchor="start" x="739.5" y="-327" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="573.75,-303 573.75,-321 580.75,-321 580.75,-303 573.75,-303" />
+<text xml:space="preserve" text-anchor="start" x="575.75" y="-309" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="580.75,-303 580.75,-321 737.5,-321 737.5,-303 580.75,-303" />
+<text xml:space="preserve" text-anchor="start" x="583.75" y="-309" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> credit </text>
+<polygon fill="#b8cce8" stroke="none" points="737.5,-303 737.5,-321 744.5,-321 744.5,-303 737.5,-303" />
+<text xml:space="preserve" text-anchor="start" x="739.5" y="-309" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="572.75,-302 572.75,-374 745.5,-374 745.5,-302 572.75,-302" />
+</g>
+
+<g id="edge5" class="edge">
+<title>LedgerEntry-&gt;CustomerCompany</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M555.74,-310.43C541.04,-303.85 526.77,-295.8 514.5,-286 498.41,-273.15 507.56,-256.88 489.5,-247 436.26,-217.89 370.46,-236.4 318.12,-262.05" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="555.52,-310.34 562.96,-318.39 560.34,-312.39 564.51,-314.16 564.51,-314.16 564.51,-314.16 560.34,-312.39 566.48,-310.11 555.52,-310.34" />
+</g>
+
+<g id="edge11" class="edge">
+<title>LedgerEntry:LedgerEntry_amount_w-&gt;CustomerCompany:CustomerCompany_ledger_balance_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M572.75,-348C493.34,-348 475.75,-371.31 396.62,-378 359.95,-381.1 91.83,-403.59 65.38,-378 59.98,-372.78 56.12,-363.94 56.14,-357.21" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="62.75,-349.82 59.44,-360.27 61.42,-352.06 56.46,-357.61 56.09,-357.27 55.71,-356.94 60.67,-351.39 52.73,-354.27 62.75,-349.82" />
+<text xml:space="preserve" text-anchor="middle" x="484.25" y="-363.39" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">10</text>
+</g>
+
+<g id="node6" class="node">
+<title>SalesInvoiceItem</title>
+<polygon fill="#4a6fa5" stroke="none" points="525.75,-111 525.75,-127 792.5,-127 792.5,-111 525.75,-111" />
+<text xml:space="preserve" text-anchor="start" x="611.88" y="-115.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> SalesInvoiceItem </text>
+<polygon fill="#b8cce8" stroke="none" points="525.75,-93 525.75,-111 532.75,-111 532.75,-93 525.75,-93" />
+<text xml:space="preserve" text-anchor="start" x="527.75" y="-99" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="532.75,-93 532.75,-111 785.5,-111 785.5,-93 532.75,-93" />
+<text xml:space="preserve" text-anchor="start" x="535.75" y="-99" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> qty </text>
+<polygon fill="#b8cce8" stroke="none" points="785.5,-93 785.5,-111 792.5,-111 792.5,-93 785.5,-93" />
+<text xml:space="preserve" text-anchor="start" x="787.5" y="-99" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="525.75,-75 525.75,-93 532.75,-93 532.75,-75 525.75,-75" />
+<text xml:space="preserve" text-anchor="start" x="527.75" y="-81" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="532.75,-75 532.75,-93 785.5,-93 785.5,-75 532.75,-75" />
+<text xml:space="preserve" text-anchor="start" x="535.75" y="-80.55" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> counts_as_billed </text>
+<text xml:space="preserve" text-anchor="start" x="621.25" y="-80.55" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="624.25" y="-80.55" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= _invoice_line_counts_as_billed(row)</text>
+<polygon fill="#b8cce8" stroke="none" points="785.5,-75 785.5,-93 792.5,-93 792.5,-75 785.5,-75" />
+<text xml:space="preserve" text-anchor="start" x="787.5" y="-81" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="525.75,-57 525.75,-75 532.75,-75 532.75,-57 525.75,-57" />
+<text xml:space="preserve" text-anchor="start" x="527.75" y="-63" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="532.75,-57 532.75,-75 785.5,-75 785.5,-57 532.75,-57" />
+<text xml:space="preserve" text-anchor="start" x="535.75" y="-63" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> sales_invoice </text>
+<polygon fill="#b8cce8" stroke="none" points="785.5,-57 785.5,-75 792.5,-75 792.5,-57 785.5,-57" />
+<text xml:space="preserve" text-anchor="start" x="787.5" y="-63" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="524.75,-56 524.75,-128 793.5,-128 793.5,-56 524.75,-56" />
+</g>
+
+<g id="edge6" class="edge">
+<title>SalesInvoiceItem-&gt;DeliveryNoteItem</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M507.09,-118.32C501.16,-118.96 495.28,-119.52 489.5,-120 450.4,-123.22 408.19,-120.39 369.31,-115.19" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="506.94,-118.33 517.39,-121.67 512.14,-117.74 516.64,-117.22 516.64,-117.22 516.64,-117.22 512.14,-117.74 516.36,-112.73 506.94,-118.33" />
+</g>
+
+<g id="edge9" class="edge">
+<title>SalesInvoiceItem:SalesInvoiceItem_qty_w-&gt;DeliveryNoteItem:DeliveryNoteItem_billed_qty_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M524.75,-102C504.41,-102 498.52,-97.06 479,-102.75 424.22,-118.73 424.54,-154.47 369.62,-170 251.05,-203.54 180.95,-255.67 92.38,-170 86.98,-164.78 83.12,-155.94 83.14,-149.21" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="89.75,-141.82 86.44,-152.27 88.42,-144.06 83.46,-149.61 83.09,-149.27 82.71,-148.94 87.67,-143.39 79.73,-146.27 89.75,-141.82" />
+<text xml:space="preserve" text-anchor="middle" x="484.25" y="-104.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">8</text>
+</g>
+
+<g id="edge7" class="edge">
+<title>SalesInvoiceItem-&gt;SalesOrder</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M508.85,-130.93C499.34,-138.07 490.93,-146.52 484.25,-156.5 456.82,-197.51 457.84,-336.83 484.25,-378.5 495.66,-396.5 512.17,-410.65 530.55,-421.75" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="508.67,-131.06 519.45,-129.07 512.97,-128.08 516.7,-125.5 516.7,-125.5 516.7,-125.5 512.97,-128.08 514.33,-121.67 508.67,-131.06" />
+</g>
+
+<g id="edge4" class="edge">
+<title>SalesOrder-&gt;CustomerCompany</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M520.45,-489.71C505.54,-487.31 491.33,-482.13 479,-473 448.38,-450.32 480.84,-418.05 454,-391 437.75,-374.62 417.76,-362.01 396.46,-352.3" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="520.17,-489.68 529.56,-495.34 525.37,-490.3 529.87,-490.85 529.87,-490.85 529.87,-490.85 525.37,-490.3 530.64,-486.41 520.17,-489.68" />
+</g>
+
+<g id="edge12" class="edge">
+<title>SalesOrder:SalesOrder_open_amount_w-&gt;CustomerCompany:CustomerCompany_open_sales_order_amount_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M538.25,-489C480.81,-489 505.79,-415.83 454,-391 415.04,-372.32 95.73,-408.74 65.38,-378 54.13,-366.61 47.19,-345.31 53.42,-335.36" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="62.19,-331.07 55.19,-339.51 60.1,-332.65 53.43,-335.92 53.21,-335.47 52.99,-335.02 59.66,-331.75 51.23,-331.43 62.19,-331.07" />
+<text xml:space="preserve" text-anchor="middle" x="484.25" y="-437.97" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">11</text>
+</g>
+
+<g id="node8" class="node">
+<title>each_class</title>
+<polygon fill="#4a6fa5" stroke="none" points="192.62,-424 192.62,-440 260.38,-440 260.38,-424 192.62,-424" />
+<text xml:space="preserve" text-anchor="start" x="194.62" y="-428.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> each_class </text>
+<polygon fill="#dbe4f0" stroke="none" points="213.21,-408 213.21,-424 239.79,-424 239.79,-408 213.21,-408" />
+<text xml:space="preserve" text-anchor="start" x="223.5" y="-413" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e">  </text>
+<polygon fill="none" stroke="#4a6fa5" points="191.62,-407 191.62,-441 261.38,-441 261.38,-407 191.62,-407" />
+</g>
+
+<g id="node9" class="node">
+<title>evt__link_customer_company</title>
+<polygon fill="#e8f5e9" stroke="none" points="157.62,-498.88 157.62,-527.12 295.38,-527.12 295.38,-498.88 157.62,-498.88" />
+<text xml:space="preserve" text-anchor="start" x="164.62" y="-509.62" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _link_customer_company</text>
+<polygon fill="none" stroke="#27ae60" points="157.62,-498.88 157.62,-527.12 295.38,-527.12 295.38,-498.88 157.62,-498.88" />
+</g>
+
+<g id="edge14" class="edge">
+<title>each_class-&gt;evt__link_customer_company</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M226.5,-444.64C226.5,-456.28 226.5,-471.01 226.5,-483.81" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="226.5,-493.42 222,-483.42 226.4,-489.88 226.4,-483.42 226.5,-483.42 226.6,-483.42 226.6,-489.88 231,-483.42 226.5,-493.42" />
+<text xml:space="preserve" text-anchor="middle" x="217.88" y="-466.06" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">early</text>
+</g>
+<path d="M745.5,-309.0 C767.5,-309.0 767.5,-344.55 745.5,-344.55" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="745.5,-344.55 749.5,-348.55 749.5,-340.55" stroke="#445544" fill="#445544" /><text x="770.5" y="-322.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">1</text><path d="M388.62,-345.0 C410.62,-345.0 410.62,-290.55 388.62,-290.55" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="388.62,-290.55 392.62,-294.55 392.62,-286.55" stroke="#445544" fill="#445544" /><text x="413.6" y="-313.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">2</text><path d="M388.62,-345.0 C434.62,-345.0 434.62,-272.55 388.62,-272.55" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="388.62,-272.55 392.62,-276.55 392.62,-268.55" stroke="#445544" fill="#445544" /><text x="437.6" y="-304.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">3</text><path d="M780.0,-414.0 C802.0,-414.0 802.0,-485.55 780.0,-485.55" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="780.0,-485.55 784.0,-489.55 784.0,-481.55" stroke="#445544" fill="#445544" /><text x="805.0" y="-445.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">4</text><path d="M793.5,-63.0 C815.5,-63.0 815.5,-80.55 793.5,-80.55" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="793.5,-80.55 797.5,-84.55 797.5,-76.55" stroke="#445544" fill="#445544" /><text x="818.5" y="-67.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">5</text><path d="M361.62,-137.0 C383.62,-137.0 383.62,-118.55 361.62,-118.55" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="361.62,-118.55 365.62,-122.55 365.62,-114.55" stroke="#445544" fill="#445544" /><text x="386.6" y="-123.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">6</text><path d="M361.62,-11.0 C407.62,-11.0 407.62,-118.55 361.62,-118.55" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="361.62,-118.55 365.62,-122.55 365.62,-114.55" stroke="#445544" fill="#445544" /><text x="410.6" y="-60.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">6</text><path d="M795.75,-240.0 C817.75,-240.0 817.75,-221.55 795.75,-221.55" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="795.75,-221.55 799.75,-225.55 799.75,-217.55" stroke="#445544" fill="#445544" /><text x="820.8" y="-226.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">7</text><path d="M795.75,-168.0 C841.75,-168.0 841.75,-221.55 795.75,-221.55" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="795.75,-221.55 799.75,-225.55 799.75,-217.55" stroke="#445544" fill="#445544" /><text x="844.8" y="-190.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">7</text></g>
+</svg>

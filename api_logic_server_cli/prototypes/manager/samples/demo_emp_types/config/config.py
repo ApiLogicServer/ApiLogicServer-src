@@ -157,7 +157,7 @@ class Config:
     # als add-auth --provider-type=sql --db-url=
     # als add-auth --provider-type=keycloak --db-url=localhost
     # als add-auth --provider-type=keycloak --db-url=http://10.0.0.77:8080
-    kc_base = os.getenv('KEYCLOAK_BASE','https://localhost:8080')
+    kc_base = 'http://localhost:8080'
     #kc_base = 'http://localhost:8080'
     ''' keycloak location '''
     KEYCLOAK_REALM =  os.getenv('KEYCLOAK_REALM','kcals')
@@ -190,7 +190,7 @@ class Config:
         # rewrite the matching import line (the one containing the from-provider path string).  After
         # a switch both aliases resolve to the target provider; the alias names become misleading
         # (SQL_Authentication_Provider may import from keycloak) but are functionally equivalent.
-        from security.authentication_provider.sql.auth_provider import Authentication_Provider as SQL_Authentication_Provider
+        from security.authentication_provider.keycloak.auth_provider import Authentication_Provider as SQL_Authentication_Provider
         from security.authentication_provider.keycloak.auth_provider import Authentication_Provider as KC_Authentication_Provider
         # typically, authentication_provider is [ keycloak | sql ]
         SECURITY_PROVIDER = KC_Authentication_Provider if "keycloak" in str(SECURITY_PROVIDER).lower() else SQL_Authentication_Provider
@@ -233,7 +233,7 @@ class Config:
         KAFKA_PRODUCER = os.getenv('KAFKA_PRODUCER',{"bootstrap.servers": f"{KAFKA_SERVER}"})  #  , "client.id": "aaa.b.c.d"}'
         KAFKA_CONSUMER_GROUP = os.getenv('KAFKA_CONSUMER_GROUP') #'als-default-group1'
         if KAFKA_CONSUMER_GROUP is not None: # and KAFKA_CONSUMER_GROUP != "None":
-            KAFKA_CONSUMER =  os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest"})
+            KAFKA_CONSUMER =  os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest", "session.timeout.ms": "6000", "heartbeat.interval.ms": "2000"})  # short session: a restart does not wait ~45 s for the old one to expire
     else:
         app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER} - not set, no kafka producer/consumer')
     producer_is_empty = "" == KAFKA_PRODUCER

@@ -1,0 +1,426 @@
+{
+    "tool_type": "json-api",
+    "schema_version": "1.0",
+    "base_url": "http://localhost:5656/api",
+    "description": "API Logic Project: erpnext_credit_modernized",
+    "resources": [
+        {
+            "name": "Company",
+            "path": "/Company",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "credit_limit"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "credit_limit"
+            ]
+        },
+        {
+            "name": "Customer",
+            "path": "/Customer",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "customer_group_id"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "customer_group_id"
+            ]
+        },
+        {
+            "name": "CustomerGroup",
+            "path": "/CustomerGroup",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name"
+            ],
+            "filterable": [
+                "id",
+                "name"
+            ]
+        },
+        {
+            "name": "CustomerCompany",
+            "path": "/CustomerCompany",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "customer_id",
+                "company_id",
+                "ledger_balance",
+                "open_sales_order_amount",
+                "unbilled_delivery_amount",
+                "outstanding",
+                "outstanding_ignoring_sales_orders",
+                "customer_credit_limit",
+                "bypass_credit_limit_check"
+            ],
+            "filterable": [
+                "id",
+                "customer_id",
+                "company_id",
+                "ledger_balance",
+                "open_sales_order_amount",
+                "unbilled_delivery_amount",
+                "outstanding",
+                "outstanding_ignoring_sales_orders",
+                "customer_credit_limit",
+                "bypass_credit_limit_check"
+            ]
+        },
+        {
+            "name": "CustomerCreditLimit",
+            "path": "/CustomerCreditLimit",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "customer_id",
+                "company_id",
+                "customer_company_id",
+                "credit_limit",
+                "bypass_credit_limit_check"
+            ],
+            "filterable": [
+                "id",
+                "customer_id",
+                "company_id",
+                "customer_company_id",
+                "credit_limit",
+                "bypass_credit_limit_check"
+            ]
+        },
+        {
+            "name": "CustomerGroupCreditLimit",
+            "path": "/CustomerGroupCreditLimit",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "customer_group_id",
+                "company_id",
+                "credit_limit",
+                "bypass_credit_limit_check"
+            ],
+            "filterable": [
+                "id",
+                "customer_group_id",
+                "company_id",
+                "credit_limit",
+                "bypass_credit_limit_check"
+            ]
+        },
+        {
+            "name": "DeliveryNote",
+            "path": "/DeliveryNote",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "customer_id",
+                "company_id",
+                "customer_company_id",
+                "grand_total",
+                "net_total",
+                "status",
+                "is_return",
+                "per_billed",
+                "docstatus",
+                "unbilled_line_total",
+                "unbilled_amount",
+                "unlinked_line_count",
+                "no_invoice_line_count",
+                "uninvoiced_share",
+                "bypass_extra_amount",
+                "so_linked_uninvoiced_share"
+            ],
+            "filterable": [
+                "id",
+                "customer_id",
+                "company_id",
+                "customer_company_id",
+                "grand_total",
+                "net_total",
+                "status",
+                "is_return",
+                "per_billed",
+                "docstatus",
+                "unbilled_line_total",
+                "unbilled_amount",
+                "unlinked_line_count",
+                "no_invoice_line_count",
+                "uninvoiced_share",
+                "bypass_extra_amount",
+                "so_linked_uninvoiced_share"
+            ]
+        },
+        {
+            "name": "DeliveryNoteItem",
+            "path": "/DeliveryNoteItem",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "delivery_note_id",
+                "qty",
+                "returned_qty",
+                "net_amount",
+                "sales_order_id",
+                "sales_invoice_id",
+                "billed_qty",
+                "unbilled_amount",
+                "grand_total_share"
+            ],
+            "filterable": [
+                "id",
+                "delivery_note_id",
+                "qty",
+                "returned_qty",
+                "net_amount",
+                "sales_order_id",
+                "sales_invoice_id",
+                "billed_qty",
+                "unbilled_amount",
+                "grand_total_share"
+            ]
+        },
+        {
+            "name": "SalesInvoice",
+            "path": "/SalesInvoice",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "customer_id",
+                "company_id",
+                "grand_total",
+                "is_return",
+                "is_opening",
+                "docstatus",
+                "unlinked_line_count"
+            ],
+            "filterable": [
+                "id",
+                "customer_id",
+                "company_id",
+                "grand_total",
+                "is_return",
+                "is_opening",
+                "docstatus",
+                "unlinked_line_count"
+            ]
+        },
+        {
+            "name": "SalesOrder",
+            "path": "/SalesOrder",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "customer_id",
+                "company_id",
+                "customer_company_id",
+                "grand_total",
+                "per_billed",
+                "status",
+                "docstatus",
+                "open_amount"
+            ],
+            "filterable": [
+                "id",
+                "customer_id",
+                "company_id",
+                "customer_company_id",
+                "grand_total",
+                "per_billed",
+                "status",
+                "docstatus",
+                "open_amount"
+            ]
+        },
+        {
+            "name": "JournalEntry",
+            "path": "/JournalEntry",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "company_id",
+                "docstatus"
+            ],
+            "filterable": [
+                "id",
+                "company_id",
+                "docstatus"
+            ]
+        },
+        {
+            "name": "JournalEntryAccount",
+            "path": "/JournalEntryAccount",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "journal_entry_id",
+                "party_type",
+                "customer_id",
+                "debit",
+                "credit"
+            ],
+            "filterable": [
+                "id",
+                "journal_entry_id",
+                "party_type",
+                "customer_id",
+                "debit",
+                "credit"
+            ]
+        },
+        {
+            "name": "LedgerEntry",
+            "path": "/LedgerEntry",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "customer_id",
+                "company_id",
+                "customer_company_id",
+                "debit",
+                "credit",
+                "is_cancelled",
+                "amount",
+                "sales_invoice_id",
+                "journal_entry_account_id"
+            ],
+            "filterable": [
+                "id",
+                "customer_id",
+                "company_id",
+                "customer_company_id",
+                "debit",
+                "credit",
+                "is_cancelled",
+                "amount",
+                "sales_invoice_id",
+                "journal_entry_account_id"
+            ]
+        },
+        {
+            "name": "SalesInvoiceItem",
+            "path": "/SalesInvoiceItem",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "sales_invoice_id",
+                "qty",
+                "sales_order_id",
+                "delivery_note_item_id",
+                "counts_as_billed"
+            ],
+            "filterable": [
+                "id",
+                "sales_invoice_id",
+                "qty",
+                "sales_order_id",
+                "delivery_note_item_id",
+                "counts_as_billed"
+            ]
+        },
+        {
+            "name": "SysConfig",
+            "path": "/SysConfig",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "credit_controller"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "credit_controller"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,595 @@
+about:
+  date: October 29, 2026 18:10:36
+  merged:
+    at: October 29, 2026 18:18:33
+    new_attributes: 'SysConfig.credit_controller '
+    new_resources: 'Company Customer CustomerGroup CustomerCompany CustomerCreditLimit
+      CustomerGroupCreditLimit DeliveryNote DeliveryNoteItem SalesInvoice SalesOrder
+      JournalEntry JournalEntryAccount LedgerEntry SalesInvoiceItem '
+    new_tab_groups: ''
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 0
+  number_tables: 1
+info_toggle_checked: true
+resources:
+  Company:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: credit_limit
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - company_id
+      name: CustomerCompanyList
+      resource: CustomerCompany
+    - direction: tomany
+      fks:
+      - company_id
+      name: CustomerCreditLimitList
+      resource: CustomerCreditLimit
+    - direction: tomany
+      fks:
+      - company_id
+      name: CustomerGroupCreditLimitList
+      resource: CustomerGroupCreditLimit
+    - direction: tomany
+      fks:
+      - company_id
+      name: DeliveryNoteList
+      resource: DeliveryNote
+    - direction: tomany
+      fks:
+      - company_id
+      name: JournalEntryList
+      resource: JournalEntry
+    - direction: tomany
+      fks:
+      - company_id
+      name: LedgerEntryList
+      resource: LedgerEntry
+    - direction: tomany
+      fks:
+      - company_id
+      name: SalesInvoiceList
+      resource: SalesInvoice
+    - direction: tomany
+      fks:
+      - company_id
+      name: SalesOrderList
+      resource: SalesOrder
+    type: Company
+    user_key: name
+  Customer:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: customer_group_id
+      required: true
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_id
+      name: CustomerCompanyList
+      resource: CustomerCompany
+    - direction: tomany
+      fks:
+      - customer_id
+      name: CustomerCreditLimitList
+      resource: CustomerCreditLimit
+    - direction: tomany
+      fks:
+      - customer_id
+      name: DeliveryNoteList
+      resource: DeliveryNote
+    - direction: tomany
+      fks:
+      - customer_id
+      name: JournalEntryAccountList
+      resource: JournalEntryAccount
+    - direction: tomany
+      fks:
+      - customer_id
+      name: LedgerEntryList
+      resource: LedgerEntry
+    - direction: tomany
+      fks:
+      - customer_id
+      name: SalesInvoiceList
+      resource: SalesInvoice
+    - direction: tomany
+      fks:
+      - customer_id
+      name: SalesOrderList
+      resource: SalesOrder
+    - direction: toone
+      fks:
+      - customer_group_id
+      name: customer_group
+      resource: CustomerGroup
+    type: Customer
+    user_key: name
+  CustomerCompany:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: customer_id
+      required: true
+    - name: ledger_balance
+    - name: open_sales_order_amount
+    - name: unbilled_delivery_amount
+    - name: outstanding
+    - name: outstanding_ignoring_sales_orders
+    - name: customer_credit_limit
+    - name: bypass_credit_limit_check
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_company_id
+      name: CustomerCreditLimitList
+      resource: CustomerCreditLimit
+    - direction: tomany
+      fks:
+      - customer_company_id
+      name: DeliveryNoteList
+      resource: DeliveryNote
+    - direction: tomany
+      fks:
+      - customer_company_id
+      name: LedgerEntryList
+      resource: LedgerEntry
+    - direction: tomany
+      fks:
+      - customer_company_id
+      name: SalesOrderList
+      resource: SalesOrder
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: Company
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: CustomerCompany
+    user_key: id
+  CustomerCreditLimit:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: customer_company_id
+    - name: customer_id
+      required: true
+    - name: credit_limit
+    - name: bypass_credit_limit_check
+    tab_groups:
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: Company
+    - direction: toone
+      fks:
+      - customer_company_id
+      name: customer_company
+      resource: CustomerCompany
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: CustomerCreditLimit
+    user_key: id
+  CustomerGroup:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_group_id
+      name: CustomerList
+      resource: Customer
+    - direction: tomany
+      fks:
+      - customer_group_id
+      name: CustomerGroupCreditLimitList
+      resource: CustomerGroupCreditLimit
+    type: CustomerGroup
+    user_key: name
+  CustomerGroupCreditLimit:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: customer_group_id
+      required: true
+    - name: credit_limit
+    - name: bypass_credit_limit_check
+    tab_groups:
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: Company
+    - direction: toone
+      fks:
+      - customer_group_id
+      name: customer_group
+      resource: CustomerGroup
+    type: CustomerGroupCreditLimit
+    user_key: id
+  DeliveryNote:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: customer_company_id
+    - name: customer_id
+      required: true
+    - name: grand_total
+    - name: net_total
+    - name: status
+    - name: is_return
+    - name: docstatus
+    - name: unbilled_line_total
+    - name: unbilled_amount
+    - name: unlinked_line_count
+    - name: no_invoice_line_count
+    - name: uninvoiced_share
+    - name: bypass_extra_amount
+    - name: so_linked_uninvoiced_share
+    - name: per_billed
+    tab_groups:
+    - direction: tomany
+      fks:
+      - delivery_note_id
+      name: DeliveryNoteItemList
+      resource: DeliveryNoteItem
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: Company
+    - direction: toone
+      fks:
+      - customer_company_id
+      name: customer_company
+      resource: CustomerCompany
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: DeliveryNote
+    user_key: id
+  DeliveryNoteItem:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: delivery_note_id
+      required: true
+    - name: sales_invoice_id
+    - name: sales_order_id
+    - name: qty
+    - name: returned_qty
+    - name: net_amount
+    - name: billed_qty
+    - name: unbilled_amount
+    - name: grand_total_share
+    tab_groups:
+    - direction: tomany
+      fks:
+      - delivery_note_item_id
+      name: SalesInvoiceItemList
+      resource: SalesInvoiceItem
+    - direction: toone
+      fks:
+      - delivery_note_id
+      name: delivery_note
+      resource: DeliveryNote
+    - direction: toone
+      fks:
+      - sales_invoice_id
+      name: sales_invoice
+      resource: SalesInvoice
+    - direction: toone
+      fks:
+      - sales_order_id
+      name: sales_order
+      resource: SalesOrder
+    type: DeliveryNoteItem
+    user_key: id
+  JournalEntry:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: docstatus
+    tab_groups:
+    - direction: tomany
+      fks:
+      - journal_entry_id
+      name: JournalEntryAccountList
+      resource: JournalEntryAccount
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: Company
+    type: JournalEntry
+    user_key: id
+  JournalEntryAccount:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+    - name: journal_entry_id
+      required: true
+    - name: party_type
+    - name: debit
+    - name: credit
+    tab_groups:
+    - direction: tomany
+      fks:
+      - journal_entry_account_id
+      name: LedgerEntryList
+      resource: LedgerEntry
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    - direction: toone
+      fks:
+      - journal_entry_id
+      name: journal_entry
+      resource: JournalEntry
+    type: JournalEntryAccount
+    user_key: id
+  LedgerEntry:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: customer_company_id
+    - name: customer_id
+      required: true
+    - name: journal_entry_account_id
+    - name: sales_invoice_id
+    - name: debit
+    - name: credit
+    - name: amount
+    - name: is_cancelled
+    tab_groups:
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: Company
+    - direction: toone
+      fks:
+      - customer_company_id
+      name: customer_company
+      resource: CustomerCompany
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    - direction: toone
+      fks:
+      - journal_entry_account_id
+      name: journal_entry_account
+      resource: JournalEntryAccount
+    - direction: toone
+      fks:
+      - sales_invoice_id
+      name: sales_invoice
+      resource: SalesInvoice
+    type: LedgerEntry
+    user_key: id
+  SalesInvoice:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: customer_id
+      required: true
+    - name: grand_total
+    - name: is_return
+    - name: is_opening
+    - name: docstatus
+    - name: unlinked_line_count
+    tab_groups:
+    - direction: tomany
+      fks:
+      - sales_invoice_id
+      name: DeliveryNoteItemList
+      resource: DeliveryNoteItem
+    - direction: tomany
+      fks:
+      - sales_invoice_id
+      name: LedgerEntryList
+      resource: LedgerEntry
+    - direction: tomany
+      fks:
+      - sales_invoice_id
+      name: SalesInvoiceItemList
+      resource: SalesInvoiceItem
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: Company
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: SalesInvoice
+    user_key: id
+  SalesInvoiceItem:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: delivery_note_item_id
+    - name: sales_invoice_id
+      required: true
+    - name: sales_order_id
+    - name: qty
+    - name: counts_as_billed
+    tab_groups:
+    - direction: toone
+      fks:
+      - delivery_note_item_id
+      name: delivery_note_item
+      resource: DeliveryNoteItem
+    - direction: toone
+      fks:
+      - sales_invoice_id
+      name: sales_invoice
+      resource: SalesInvoice
+    - direction: toone
+      fks:
+      - sales_order_id
+      name: sales_order
+      resource: SalesOrder
+    type: SalesInvoiceItem
+    user_key: id
+  SalesOrder:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: customer_company_id
+    - name: customer_id
+      required: true
+    - name: grand_total
+    - name: status
+    - name: docstatus
+    - name: open_amount
+    - name: per_billed
+    tab_groups:
+    - direction: tomany
+      fks:
+      - sales_order_id
+      name: DeliveryNoteItemList
+      resource: DeliveryNoteItem
+    - direction: tomany
+      fks:
+      - sales_order_id
+      name: SalesInvoiceItemList
+      resource: SalesInvoiceItem
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: Company
+    - direction: toone
+      fks:
+      - customer_company_id
+      name: customer_company
+      resource: CustomerCompany
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: SalesOrder
+    user_key: id
+  SysConfig:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: discount_rate
+    - name: tax_rate
+    - name: notes
+    - name: id
+    - name: credit_controller
+    type: SysConfig
+    user_key: name
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '2'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

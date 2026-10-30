@@ -5,82 +5,6 @@
     "description": "API Logic Project: demo_emp_types",
     "resources": [
         {
-            "name": "CommissionOrder",
-            "path": "/CommissionOrder",
-            "methods": [
-                "GET",
-                "PATCH",
-                "POST",
-                "DELETE"
-            ],
-            "fields": [
-                "id",
-                "employee_id",
-                "amount",
-                "customer_name"
-            ],
-            "filterable": [
-                "id",
-                "employee_id",
-                "amount",
-                "customer_name"
-            ]
-        },
-        {
-            "name": "Employee",
-            "path": "/Employee",
-            "methods": [
-                "GET",
-                "PATCH",
-                "POST",
-                "DELETE"
-            ],
-            "fields": [
-                "id",
-                "Type",
-                "name",
-                "dept_id",
-                "sys_config_id",
-                "max_hourly_weekly_salary",
-                "military_stipend_rate_per_year",
-                "salary",
-                "hours_worked",
-                "hourly_rate",
-                "union_id",
-                "union_dues",
-                "base_salary",
-                "commission_total",
-                "is_military",
-                "branch",
-                "rank",
-                "service_years",
-                "military_stipend",
-                "total_compensation"
-            ],
-            "filterable": [
-                "id",
-                "Type",
-                "name",
-                "dept_id",
-                "sys_config_id",
-                "max_hourly_weekly_salary",
-                "military_stipend_rate_per_year",
-                "salary",
-                "hours_worked",
-                "hourly_rate",
-                "union_id",
-                "union_dues",
-                "base_salary",
-                "commission_total",
-                "is_military",
-                "branch",
-                "rank",
-                "service_years",
-                "military_stipend",
-                "total_compensation"
-            ]
-        },
-        {
             "name": "Department",
             "path": "/Department",
             "methods": [
@@ -103,8 +27,8 @@
             ]
         },
         {
-            "name": "SysConfig",
-            "path": "/SysConfig",
+            "name": "Employee",
+            "path": "/Employee",
             "methods": [
                 "GET",
                 "PATCH",
@@ -114,20 +38,42 @@
             "fields": [
                 "id",
                 "name",
-                "discount_rate",
-                "tax_rate",
-                "notes",
-                "max_hourly_weekly_salary",
-                "military_stipend_rate_per_year"
+                "dept_id",
+                "Type",
+                "salary",
+                "hours_worked",
+                "hourly_rate",
+                "union_id",
+                "union_dues",
+                "base_salary",
+                "commission_total",
+                "order_count",
+                "military",
+                "branch",
+                "rank",
+                "service_years",
+                "military_stipend",
+                "total_compensation"
             ],
             "filterable": [
                 "id",
                 "name",
-                "discount_rate",
-                "tax_rate",
-                "notes",
-                "max_hourly_weekly_salary",
-                "military_stipend_rate_per_year"
+                "dept_id",
+                "Type",
+                "salary",
+                "hours_worked",
+                "hourly_rate",
+                "union_id",
+                "union_dues",
+                "base_salary",
+                "commission_total",
+                "order_count",
+                "military",
+                "branch",
+                "rank",
+                "service_years",
+                "military_stipend",
+                "total_compensation"
             ]
         },
         {
@@ -148,6 +94,56 @@
                 "id",
                 "name",
                 "dues_rate"
+            ]
+        },
+        {
+            "name": "Order",
+            "path": "/Order",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "employee_id",
+                "customer_name",
+                "amount"
+            ],
+            "filterable": [
+                "id",
+                "employee_id",
+                "customer_name",
+                "amount"
+            ]
+        },
+        {
+            "name": "SysConfig",
+            "path": "/SysConfig",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "max_hourly_weekly_salary",
+                "military_stipend_per_service_year"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "max_hourly_weekly_salary",
+                "military_stipend_per_service_year"
             ]
         }
     ]

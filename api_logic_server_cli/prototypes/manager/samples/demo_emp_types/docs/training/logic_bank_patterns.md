@@ -11,6 +11,15 @@ related:
 changelog:
   - 1.0 (Nov 14, 2025): Extracted general patterns from probabilistic prompt for reuse
   - 1.1 (Feb 16, 2026): Request Object Pattern
+  - 1.2 (Oct 13, 2026): PATTERN 1 - added a warning that copying a signature from
+    existing/commented-out code in the same file does not exempt it from this pattern's
+    own typed-signature requirement. Real case (students_courses_attendance_sweep, Oct
+    2026): a re-enabled early_row_event's signature was copied verbatim from a
+    commented-out reference implementation already sitting in the file
+    (def _update_absence_streak_and_alert(row, old_row, logic_row) - no type hints) -
+    this PATTERN already showed the typed form as the required signature, but the
+    AI followed the file's own existing precedent instead of this file. Caught live by
+    the developer reviewing the diff, not by the authoring pass itself.
 ---
 
 # LogicBank Patterns - The Hitchhiker's Guide
@@ -44,6 +53,17 @@ def my_handler(row: models.MyTable, old_row: models.MyTable, logic_row: LogicRow
     logic_row.log(f"Processing {row.__class__.__name__}")
     # Your logic here
 ```
+
+⚠️ The typed signature above is REQUIRED even when writing a function whose shape you're
+copying from elsewhere in the same file — e.g. a commented-out reference implementation,
+or an earlier draft. "This file already has a similar function, written untyped" is not an
+exemption from this pattern; it means that existing code is itself non-conforming. Re-type
+the signature per this pattern regardless of what the copied-from code looks like.
+REAL CASE (students_courses_attendance_sweep, Oct 2026): a re-enabled `early_row_event` was
+copied verbatim from a commented-out reference implementation already sitting in the same
+file, carrying that reference's untyped `(row, old_row, logic_row)` signature forward
+unchanged — caught only by the developer reviewing the diff afterward, not by the
+authoring pass itself, even though this PATTERN already stated the typed form as required.
 
 ❌ WRONG: Trying to "get" logic_row
 ```python
@@ -230,6 +250,74 @@ COMMON USE CASES:
 2. **Workflows** - Create approval requests, notifications
 3. **AI integration** - Create request objects for AI to populate
 4. **Derived objects** - Generate summary records, reports
+
+---
+
+=============================================================================
+PATTERN 3b: set_same_named_attributes() - Copying Between Same-Shaped Rows
+=============================================================================
+
+**Quick Definition:**
+A copy mechanism, not a trigger mechanism. Inside an event handler (any kind - row_event,
+commit_row_event, early_row_event, or a Request Pattern's own event), when the source row
+and the new target row share column names, `set_same_named_attributes()` copies by
+iterating the source row's actual attributes at runtime and matching names - not by a
+hand-written list of `new_row.x = source.x` assignments.
+
+**Why this matters more than it looks:** a hand-written list of assignments silently goes
+stale the moment a new shared column is added to both tables later - nobody remembers to add
+the new line. `set_same_named_attributes()` has no such list to forget; it reflects whatever
+attributes exist on both rows at the moment it runs. This is the same "declarative beats
+enumerated-procedural" argument the rest of this stack is built on, applied at the row-copy
+level instead of the rule level.
+
+**NOT the Request Pattern:** Request Pattern (PATTERN 3 above) exists for *data-driven*
+triggers - a caller inserts a row with response fields to be read back. This is a *copy*
+technique used once an event has already fired, for whatever reason (including inside a
+Request Pattern's own event, when populating a response row from a source row that happens to
+share its column names). Do not reach for a `Sys*`/Request Pattern table just because a copy
+is needed - the copy and the trigger are separate concerns.
+
+**Reference implementation:** `samples/nw_sample/logic/logic_discovery/employee_auditing/
+employee_audit.py` - copies `Employee` into `EmployeeAudit` (same-shaped audit table) whenever
+`Salary` or `Title` changes:
+
+```python
+RuleExtension.copy_row(copy_from=Employee,
+                copy_to=EmployeeAudit,
+                copy_when=lambda logic_row: logic_row.ins_upd_dlt == "upd" and
+                        logic_row.are_attributes_changed([Employee.Salary, Employee.Title]))
+```
+
+The same file's commented-out manual equivalent shows the underlying mechanism explicitly -
+useful when the copy needs to happen mid-handler rather than declared up front via
+`RuleExtension.copy_row`:
+
+```python
+def audit_by_event(row: Employee, old_row: Employee, logic_row: LogicRow):
+    if logic_row.ins_upd_dlt == "upd" and logic_row.are_attributes_changed([Employee.Salary, Employee.Title]):
+        copy_to_logic_row = logic_row.new_logic_row(EmployeeAudit)
+        copy_to_logic_row.link(to_parent=logic_row)
+        copy_to_logic_row.set_same_named_attributes(logic_row)
+        # copy_to_logic_row.row.attribute_name = value   # set any non-matching fields manually
+        copy_to_logic_row.insert(reason="Manual Copy " + copy_to_logic_row.name)  # triggers rules...
+
+Rule.commit_row_event(on_class=Employee, calling=audit_by_event)
+```
+
+**Also applies outside events** - e.g. a scheduled sweep (ordinary application code, not a
+LogicBank rule) that queries for rows needing a companion insert: if the query result is
+already shaped like the target row (same attribute names), `set_same_named_attributes()` is
+the right tool for moving the query result's values onto the new row before inserting it,
+same mechanical move as the audit case above.
+
+**Where it stops helping - degrades at mismatched shapes:** this only helps for columns both
+sides already agree on by name. The moment a source is a join or a differently-named result
+(e.g. `student.id`, `session.id` from a query, not already named to match the target table's
+`student_id`/`class_schedule_id`), there is nothing for `set_same_named_attributes()` to match
+on for those fields - fall back to manual assignment for the mismatched ones. It is a
+convenience for same-named columns, not a general-purpose field-mapping tool (for that, see
+Row Dict Mapper in the project CE's B2B Integration section).
 
 ---
 

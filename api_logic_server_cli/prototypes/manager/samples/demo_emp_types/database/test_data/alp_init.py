@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-import os, logging, logging.config, sys
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))  # ensure project root on path
+import os, logging, logging.config
 from config import server_setup
 import api.system.api_utils as api_utils
 from flask import Flask
@@ -31,50 +34,30 @@ os.environ['AGGREGATE_DEFAULTS'] = 'True'
 with flask_app.app_context():
     safrs.DB.create_all()
     session = safrs.DB.session
+    from decimal import Decimal
 
-    try:
-        # Parents committed first so their real integer ids are available below —
-        # a formula like union_dues reads row.union_id directly (not via Rule.sum's
-        # aggregate-adjustment machinery), so the FK must already be resolved when
-        # the employee row is inserted, not merely linked via an unflushed relationship.
-        engineering = Department(name="Engineering", budget=200000)
-        sales = Department(name="Sales", budget=150000)
-        session.add_all([engineering, sales])
-        local_42 = LaborUnion(name="Local 42", dues_rate=5.0)
-        session.add(local_42)
-        session.commit()
+    # 1. lookup / parent rows first, committed, so children reference real ids
+    engineering = Department(name="Engineering", budget=Decimal("20000"))
+    sales = Department(name="Sales", budget=Decimal("15000"))
+    local_42 = LaborUnion(name="Local 42", dues_rate=1.5)
+    teamsters = LaborUnion(name="Teamsters", dues_rate=2.0)
+    session.add_all([engineering, sales, local_42, teamsters])
+    session.commit()
 
-        # salaried — one plain, one military
-        alice = Employee(type="salaried", name="Alice Johnson", dept_id=engineering.id, salary=8000)
-        bob = Employee(type="salaried", name="Bob Martinez", dept_id=sales.id, salary=7500,
-                       military="yes", branch="Army", rank="Sergeant", service_years=6)
+    # 2. employees (salaries are weekly amounts - see ad-libs)
+    alice = Employee(name="Alice Salaried", dept_id=engineering.id, type="salaried", salary=Decimal("4000"),
+                     military="yes", branch="Army", rank="Captain", service_years=6)
+    bob = Employee(name="Bob Hourly", dept_id=engineering.id, type="hourly", hours_worked=40, hourly_rate=50,
+                   union_id=local_42.id, military="no")
+    carol = Employee(name="Carol Hourly", dept_id=sales.id, type="hourly", hours_worked=35, hourly_rate=30,
+                     military="yes", branch="Navy", rank="Petty Officer", service_years=3)
+    dan = Employee(name="Dan Commissioned", dept_id=sales.id, type="commissioned", base_salary=Decimal("1500"), military="no")
+    eve = Employee(name="Eve Salaried", dept_id=sales.id, type="salaried", salary=Decimal("3000"), military="no")
+    session.add_all([alice, bob, carol, dan, eve])
+    session.commit()
 
-        # hourly — one union member, one non-union + military
-        carol = Employee(type="hourly", name="Carol Nguyen", dept_id=engineering.id,
-                         hours_worked=40, hourly_rate=50, union_id=local_42.id)
-        david = Employee(type="hourly", name="David Kim", dept_id=sales.id,
-                         hours_worked=35, hourly_rate=45,
-                         military="yes", branch="Navy", rank="Petty Officer", service_years=4)
-
-        # commissioned — one plain, one military
-        erin = Employee(type="commissioned", name="Erin Walsh", dept_id=engineering.id, base_salary=3000)
-        frank = Employee(type="commissioned", name="Frank Osei", dept_id=sales.id, base_salary=2500,
-                         military="yes", branch="Marines", rank="Captain", service_years=10)
-
-        session.add_all([alice, bob, carol, david, erin, frank])
-        session.commit()
-
-        # Orders reference the now-committed commissioned employees by id
-        session.add_all([
-            CommissionOrder(employee_id=erin.id, amount=1200, customer_name="Acme Corp"),
-            CommissionOrder(employee_id=erin.id, amount=800, customer_name="Globex Inc"),
-            CommissionOrder(employee_id=frank.id, amount=1500, customer_name="Initech"),
-        ])
-        session.commit()
-        app_logger.info("demo_emp_types: seeded 2 departments, 1 union, 6 employees, 3 commission orders")
-    except Exception as e:
-        session.rollback()
-        app_logger.error(f"demo_emp_types seed error: {e}")
-        raise
-
-
+    # 3. orders for the commissioned employee
+    session.add_all([Order(employee_id=dan.id, customer_name="Acme Corp", amount=Decimal("1200")),
+                     Order(employee_id=dan.id, customer_name="Globex", amount=Decimal("800"))])
+    session.commit()
+    print("Seed data loaded")

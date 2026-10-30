@@ -1,0 +1,24 @@
+digraph logic {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=13,
+         label=<<B>Logic Diagram — demo_emp_types  [military_compensation]</B>>, labelloc=t,
+         pad=0.4, nodesep=0.90, ranksep=1.10, bgcolor="white",
+         splines=spline]
+  node  [fontname="Helvetica", fontsize=11, shape=plaintext]
+  edge  [fontname="Helvetica", fontsize=10]
+
+  // ── trigger ─────────────────────────────────────────────────────
+  TRIGGER [label=<<TABLE BORDER="2" CELLBORDER="0" CELLPADDING="5" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60"><B>&#9889; Employee inserted</B></FONT></TD></TR></TABLE>>, shape=plaintext]
+
+  // ── schema layer ──────────────────────────────────────────────────
+  Employee [label=<<TABLE BORDER="3" CELLBORDER="0" CELLSPACING="0" COLOR="#c0392b"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Employee </B></FONT></TD></TR><TR><TD PORT="Employee_military_stipend_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_military_stipend" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> military_stipend </FONT> <FONT COLOR="#e67e22" POINT-SIZE="9">= _military_stipend(row)</FONT></TD><TD PORT="Employee_military_stipend_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_military_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_military" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> military </FONT></TD><TD PORT="Employee_military_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_service_years_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_service_years" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> service_years </FONT></TD><TD PORT="Employee_service_years_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_session_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_session" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> session </FONT></TD><TD PORT="Employee_session_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_salary_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_salary" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> salary </FONT></TD><TD PORT="Employee_salary_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_branch_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_branch" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> branch </FONT></TD><TD PORT="Employee_branch_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_rank_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_rank" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> rank </FONT></TD><TD PORT="Employee_rank_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_total_compensation_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_total_compensation" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> total_compensation </FONT> <FONT COLOR="#e67e22" POINT-SIZE="9">= _total_compensation(row)</FONT></TD><TD PORT="Employee_total_compensation_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  // ── rank groupings ────────────────────────────────────────────────
+  { rank=min; Employee; TRIGGER }
+
+  // ── trigger edge ──────────────────────────────────────────────
+  TRIGGER -> Employee [color="#27ae60", style=bold, arrowhead=vee, penwidth=2, weight=10]
+
+  // ── logic edges ────────────────────────────────────────────────────
+  // INTRA:Employee:rank:military_stipend:1:0
+  // INTRA:Employee:military_stipend:total_compensation:2:1
+  // INTRA:Employee:service_years:total_compensation:2:2
+}

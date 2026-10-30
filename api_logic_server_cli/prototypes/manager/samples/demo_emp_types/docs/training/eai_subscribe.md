@@ -3,13 +3,39 @@ title: EAI Consume Pattern — Kafka + XML/JSON → DB
 description: Two-message Kafka consume pattern with generic by-name XML/JSON mapper. Covers blob-row bridge, 3-tier mapping contract, local debug mode, and generated test data.
 source: Generic training for ApiLogicServer projects with GenAI integration
 usage: AI assistants read this when detecting Kafka consume, EAI, or XML/JSON-to-DB patterns in a user prompt
-version: 1.2
+version: 1.6
 date: April 4, 2026
 related:
   - implement_requirements.md (Kafka outbound, row_event patterns)
   - logic_bank_patterns.md (row_event, commit_row_event)
   - logic_bank_api.md (full rule API)
 changelog:
+  - 1.6 (Oct 24, 2026): Found by running the pipeline against a REAL broker (the simulated tests could not):
+    (1) the `_record_error_text` helper in this file's template used `safrs.DB.session` and called it "fresh" - it is
+    the same session that still holds the failed Tx 2's rows, so its first query autoflushed them and raised the
+    original error again; that exception then escaped the handler and FlaskKafka ended the consumer thread, so every
+    later message was silently never processed. Now `EaiSubscribeMapper.record_error_text` (system code, new Session
+    on the engine) is called inside its own try/except; FlaskKafka logs and continues. (2) /consume_debug moved into
+    system code (`integration/system/EaiDebug.py`): the per-topic file is ~10 lines, has two modes (live through the
+    broker when one answers, else simulated), a reset (purge) endpoint, a boolean env switch (`false` used to leave it
+    ON: `os.getenv` returned the string "false"), and copy-paste curl commands in its docstring. (3) The bridge and
+    every publish check `kafka_producer.kafka_available()` (cached): a configured-but-down broker no longer costs a 10 s
+    flush per publish. (4) New "Artifact completeness check": artifacts 8 (reset script) and 9 (test publisher) were
+    skipped by a no-container build because they looked container-only; the list is now a closing check.
+  - 1.5 (Sep 23, 2026): Added `error_text` column to the blob table and a mandatory
+    `_record_error_text()` helper, called from every consumer 2 `except` block — same
+    mandatory weight as the 2-message pattern itself. Root cause: `is_processed=False`
+    alone tells an operator only that a message is stuck, not why; without a text field,
+    diagnosing failures meant grepping server logs and cross-referencing timestamps by
+    hand (found via basic_demo_eai testing: invalid-lookup and business-rule-rejection
+    failures both left blobs indistinguishable at the DB level). The helper writes in its
+    own clean transaction/session scope rather than calling `session.rollback()` inline,
+    per the existing § CONSUMER ROLLBACKS rule (framework relies on implicit rollbacks).
+  - 1.4 (Aug 6, 2026): Added artifact #9 (test/send_xyz.py, Kafka test publisher) to the
+    "Generated Artifacts" / "Minimal Generation Prompt" lists — a downstream project's
+    requirements.md referenced "eai_subscribe.md artifact #9" for this file, but only 8
+    artifacts were ever listed here, leaving a dangling reference. Also corrected the stale
+    version header (said 1.2, changelog already at 1.3).
   - 1.3 (April 22, 2026): (a) Two "do it this way" template fixes (demo_eai rebuild caught both): Consumer 1 now sets is_processed=False explicitly; JSON mapper skeleton replaced with concrete parent+child-array pattern with child_rows.append(child_row). (b) Two high-value diagnostics: process_xyz_payload now raises TypeError immediately if parse() returns tuples instead of model rows; row-event bridge now logs when the is_processed guard fires (makes silent skip visible in logic log)
   - 1.2 (April 15, 2026): Added mandatory is_processed guard to Artifact 3 row-event bridge template; without it the debug path triggers a spurious Kafka re-publish that crashes Consumer 2 on UNIQUE constraint (bug caught by customs_demo implementation)
   - 1.1 (April 12, 2026): Added source-PK normalization rule for placeholder external IDs (e.g. 0), plus insert-only rerun DB-reset guidance
@@ -89,6 +115,7 @@ class XyzMessage(Base):
     received_at  = Column(DateTime, default=datetime.utcnow)  # audit: when received
     payload      = Column(Text, nullable=False)                # raw XML or JSON blob
     is_processed = Column(Boolean, default=False)             # True after Tx 2 commits
+    error_text   = Column(Text, nullable=True)                 # exception message if Tx 2 failed
 ```
 
 > **models.py imports**: ensure `from datetime import datetime` is at the top of models.py.
@@ -97,6 +124,14 @@ class XyzMessage(Base):
 `received_at` is set on insert (Tx 1). `is_processed` flips to `True` when consumer 2
 commits successfully (Tx 2). On parse failure Tx 2 rolls back — blob stays `False`,
 queryable for retry: `SELECT * FROM xyz_message WHERE is_processed = 0`.
+
+> 🚨 **`error_text` is mandatory — as mandatory as the 2-message pattern itself.**
+> A failed Tx 2 must never fail *silently* onto the blob row. (It is written by `EaiSubscribeMapper.record_error_text`, system code.) `is_processed = False` alone
+> tells an operator only that *something* is stuck — not why, and not whether row #17 failed
+> for a different reason than row #23. Without `error_text`, diagnosing a backlog of failed
+> messages means grepping server logs and cross-referencing timestamps by hand; with it, the
+> failure reason is queryable alongside the blob: `SELECT id, error_text FROM xyz_message
+> WHERE is_processed = 0`. See § Generated Artifacts, Consumer 2, for where this is set.
 
 ### 2. Topic handler file (`integration/kafka/kafka_subscribe_discovery/xyz.py`)
 
@@ -109,7 +144,7 @@ import json
 import logging
 import safrs
 from database import models
-from integration.system.EaiSubscribeMapper import resolve_lookups
+from integration.system.EaiSubscribeMapper import resolve_lookups, record_error_text   # system helper, see Consumer 2
 
 logger = logging.getLogger('integration.kafka')
 
@@ -172,13 +207,23 @@ def register(bus):
             try:
                 process_xyz_payload(msg.value().decode('utf-8'), session, blob_id=blob_id)
             except Exception as e:
-                logger.exception(f"xyz_processed parse error (blob_id={blob_id})")  # blob stays is_processed=False; full traceback logged
+                logger.exception(f"xyz_processed parse error (blob_id={blob_id})")  # full traceback logged
+                # 🚨 mandatory — record failure on the blob row itself, not just the log (see § error_text).
+                # Call the SYSTEM helper (new Session on the engine); never write your own on safrs.DB.session:
+                # that session still holds the failed Tx 2's rows, so it would raise the same error again.
+                if blob_id:
+                    try:
+                        record_error_text(models.XyzMessage, blob_id, str(e))
+                    except Exception:   # never let error-recording end the consumer
+                        logger.exception(f"could not record error_text for blob_id={blob_id}")
 ```
 
 ### 3. Row event bridge (`logic/logic_discovery/xyz_consume.py`)
 
 ```python
 def _publish_xyz(row: models.XyzMessage, old_row, logic_row: LogicRow):
+    """XyzMessage event: publishes the raw blob to xyz_processed after Tx 1 commits, so
+    Consumer 2 can parse it in a clean Tx 2 (2-message pattern)."""
     if not logic_row.is_inserted() or not row.payload:
         return
     if row.is_processed:
@@ -187,9 +232,9 @@ def _publish_xyz(row: models.XyzMessage, old_row, logic_row: LogicRow):
         logic_row.log(f"_publish_xyz: skipping re-publish — blob.id={row.id} already is_processed=True (debug path)")
         return
     import integration.kafka.kafka_producer as kafka_producer
-    if kafka_producer.producer is None:
-        # Kafka not configured — /consume_debug does Tx 2 directly; nothing to do here
-        logic_row.log("_publish_xyz: Kafka not configured — skipping publish")
+    if not kafka_producer.kafka_available():
+        # Kafka not configured, or the broker does not answer — /consume_debug simulates Tx 2 directly; nothing to do here
+        logic_row.log("_publish_xyz: Kafka not configured or broker not reachable — skipping publish")
         return
     kafka_producer.producer.produce(topic='xyz_processed', key=str(row.id), value=row.payload.encode('utf-8'))
     kafka_producer.producer.flush(timeout=10)
@@ -209,8 +254,9 @@ def declare_logic():
 
 > **Do not import producer by value.**
 > `from integration.kafka.kafka_producer import producer` captures a stale snapshot (often `None`
-> before startup wiring finishes). Always import the module and read `kafka_producer.producer`
-> at call time inside the row-event function.
+> before startup wiring finishes). Always import the module and call `kafka_producer.kafka_available()` (or read
+> `kafka_producer.producer`) at call time inside the row-event function. `kafka_available()` is False without a producer and,
+> with one, asks the broker at most every 30 s: a down broker then costs one short wait, not a 10 s `flush` per message.
 
 > **Why `after_flush_row_event`, not `row_event`?** `row_event` fires during `before_flush` — before SQLite/Postgres assigns the autoincrement `id`. Publishing `key=str(row.id)` at that point sends the string `'None'`, causing Consumer 2 to crash on `int(key)`. `after_flush_row_event` fires after the flush assigns the id, so the key is always a valid integer. Additionally, any new rows added to the session mid-flush (inside `row_event`) miss the fresh LogicBank rule pass — Copy and Formula rules will not fire for those rows. Tx 2 (consumer 2 or `/consume_debug`) commits independently in a clean `before_flush`, so all rules fire correctly.
 
@@ -318,7 +364,15 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
                         blob.is_processed = True
                 session.commit()
             except Exception as e:
-                logger.exception(f"xyz_processed parse error")  # blob stays is_processed=False; full traceback logged
+                logger.exception(f"xyz_processed parse error (blob_id={blob_id})")  # full traceback logged
+                # 🚨 mandatory — record failure on the blob row itself, not just the log (see § error_text).
+                # Call the SYSTEM helper (new Session on the engine); never write your own on safrs.DB.session:
+                # that session still holds the failed Tx 2's rows, so it would raise the same error again.
+                if blob_id:
+                    try:
+                        record_error_text(models.XyzMessage, blob_id, str(e))
+                    except Exception:   # never let error-recording end the consumer
+                        logger.exception(f"could not record error_text for blob_id={blob_id}")
 ```
 
 > **XML payloads:** replace `json.loads(payload)` with `ET.fromstring(payload)`.
@@ -469,111 +523,110 @@ representative values. The sample is used as the `/consume_debug/<topic>` input 
 
 ---
 
-## Local Debug Mode (no Kafka required)
+## Debug endpoints: send a message, reset the queue (live Kafka or simulated)
 
-**Do not use a standalone Python script.** Direct `session.add()` outside the Flask app
-bypasses LogicBank — SQLAlchemy event listeners are only registered when the server starts.
-Rules will not fire.
+**Do not use a standalone Python script** to feed the pipeline. Direct `session.add()` outside the Flask app
+bypasses LogicBank — SQLAlchemy event listeners are only registered when the server starts. Rules will not fire.
 
-**Do not parse inside the `row_event` bridge.** The `row_event` fires during `before_flush`.
-Adding new rows (Order, OrderDetail) to the session at that point means they miss the fresh
-`before_flush` pass where LogicBank evaluates Copy and Formula rules — those columns stay NULL.
+**Do not parse inside the `row_event` bridge.** It fires during `before_flush`; rows added then miss the fresh
+`before_flush` pass where LogicBank evaluates Copy and Formula rules, so those columns stay NULL.
 
-**Correct approach: create `api/api_discovery/xyz_kafka_consume_debug.py`** — one file per topic, following the standard `api_discovery` pattern (auto-discovered at startup, filename makes the topic obvious).
+**Use the system engine, `integration/system/EaiDebug.py`.** Generate ONE thin file per pipeline,
+`api/api_discovery/xyz_kafka_consume_debug.py`; the engine does the modes, the broker check, the live publish and the
+reset. The generated file holds only what is specific to the pipeline, and its docstring carries the copy-paste curl
+commands (write the real file path and port, so the user can paste them as they are):
 
 ```python
 # api/api_discovery/xyz_kafka_consume_debug.py
-import logging, os
-from pathlib import Path
-import safrs
-from flask import request, jsonify
+"""
+Feature: <the requirement's Feature name, as in requirements.md>   <- the Scenario text follows, verbatim
 
-app_logger = logging.getLogger("api_logic_server_app")
+API service xyz debug: test the xyz subscribe pipeline by hand or from tests, with or without a broker.
+Thin file: the engine is integration/system/EaiDebug.py.  Development only: no authentication, and the reset is
+destructive.  Enabled by APILOGICPROJECT_CONSUME_DEBUG = true (config/default.env); false turns both off.
+
+Send the sample message - live through Kafka when a broker is configured and answering, else simulated (no Kafka):
+
+    curl "http://localhost:5656/consume_debug/xyz?file=docs/sample_data/sample_xyz.json"
+
+Force a mode (live answers 409 if Kafka is not available):
+
+    curl "http://localhost:5656/consume_debug/xyz?file=docs/sample_data/sample_xyz.json&mode=simulated"
+    curl "http://localhost:5656/consume_debug/xyz?file=docs/sample_data/sample_xyz.json&mode=live"
+
+Live is asynchronous (the reply is the broker's acknowledgement).  See the outcome in logs/als.log, or the blob table:
+
+    TOKEN=$(curl -s -X POST http://localhost:5656/api/auth/login -H 'Content-Type: application/json' -d '{"username":"admin","password":"p"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+    curl "http://localhost:5656/api/XyzMessage/?sort=-id&page%5Blimit%5D=1" -H "Authorization: Bearer $TOKEN"
+
+Purge the messages in topics xyz and xyz_processed (the topics and consumers stay; nothing to do without a broker):
+
+    curl -X POST "http://localhost:5656/consume_debug/xyz/reset"
+"""
+from integration.system.EaiDebug import register_consume_debug, register_queue_reset
+
+SAMPLE_FILE = "docs/sample_data/sample_xyz.json"
+
+
+def _simulate(payload: str, session) -> dict:
+    """xyz debug: runs the live consumer's parse-and-save function directly (no Kafka); returns the outcome."""
+    from integration.kafka.kafka_subscribe_discovery.xyz import process_xyz_payload
+    parent_row, blob = process_xyz_payload(payload, session)
+    return {"blob_id": blob.id, "parent_id": parent_row.id}
+
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators=[]):
-    if not os.getenv('APILOGICPROJECT_CONSUME_DEBUG'):
-        return
-
-    @app.route('/consume_debug/xyz')
-    def consume_debug_xyz():
-        """Debug the xyz consume pipeline without Kafka.
-        Enable with: export APILOGICPROJECT_CONSUME_DEBUG=true
-        curl 'http://localhost:5656/consume_debug/xyz?file=docs/sample_data/sample_xyz.json'
-        """
-        file_path = request.args.get('file')
-        if not file_path:
-            return jsonify({"success": False, "message": "Missing ?file= parameter"})
-        from integration.kafka.kafka_subscribe_discovery.xyz import process_xyz_payload
-        try:
-            payload = Path(file_path).read_text()
-            _, blob = process_xyz_payload(payload, safrs.DB.session)
-            return jsonify({"success": True, "topic": "xyz", "blob_id": blob.id, "file": file_path})
-        except Exception as e:
-            app_logger.error(f"consume_debug/xyz: {e}")
-            return jsonify({"success": False, "topic": "xyz", "error": str(e)}), 500
+    """API service xyz debug: registers /consume_debug/xyz and its reset (only when debug is enabled)."""
+    register_consume_debug(app, topic="xyz", simulate=_simulate, port=PORT, sample_file=SAMPLE_FILE,
+                           outcome_hint="GET /api/XyzMessage/?sort=-id&page[limit]=1 (is_processed, error_text)")
+    register_queue_reset(app, name="xyz", topics=["xyz", "xyz_processed"], port=PORT)
 ```
 
-The endpoint calls `process_xyz_payload()` — the same function consumer 2 uses — so debug and
-production paths are identical. LogicBank fires Copy + Formula + Sum rules correctly because
-the commit happens in a fresh transaction (not inside a `row_event` `before_flush`).
+**What the endpoints do** (details in the `EaiDebug.py` docstring):
+
+| Call | Behavior |
+|---|---|
+| `GET /consume_debug/xyz?file=...` (`mode=auto`, the default) | **Live** when a producer AND a consumer are configured (`KAFKA_SERVER`, `KAFKA_CONSUMER_GROUP`) and the broker answers: publishes the file to topic `xyz` and returns when the broker acknowledges (partition, offset), like any sender. Otherwise **simulated**. The response always has `"mode"`. |
+| `...&mode=simulated` | No Kafka: runs `process_xyz_payload()` directly in one transaction (the same function Consumer 2 uses) and returns the outcome (`blob_id`, ...) or the error. |
+| `...&mode=live` | Live only; `409` with the reason if Kafka is not available. |
+| `POST /consume_debug/xyz/reset` | Purges the messages in the pipeline's topics (to the high watermark; the topics, consumers and offsets stay, so a running consumer is unaffected and a restart replays nothing). Without a broker: `200` and "nothing to purge". |
+
+**Live is asynchronous.** The endpoint does not wait for Consumer 1, the bridge and Consumer 2: look at `logs/als.log`
+or query the blob table (`is_processed`, `error_text`). Tests do their own short polling (see `testing.md`).
+
+**The simulated path is not the live path.** It creates the blob already `is_processed = True` in the same transaction as the
+domain rows, so a rejected message leaves NO blob; live, the blob stays with `is_processed = 0` and `error_text`.
+Consumer 1, the bridge and Consumer 2 never run when simulated. Say so wherever simulated results are shown.
 
 **Development workflow:**
 
-*No-Kafka debug (fastest — start here):*
-1. Generate sample JSON from schema (if none exists)
-2. `APILOGICPROJECT_CONSUME_DEBUG=true` is set in `config/default.env` by default
-3. Start server: `python api_logic_server_run.py`
-4. `curl 'http://localhost:5656/consume_debug/xyz?file=docs/sample_data/sample_xyz.json'`
-5. Verify DB — confirm FK columns non-null (lookups worked) and computed columns non-null (LogicBank rules fired)
+*No Kafka (fastest — start here):*
+1. Generate sample JSON from the schema (if none exists).
+2. `APILOGICPROJECT_CONSUME_DEBUG = true` is in `config/default.env` by default.
+3. Start the server: `python api_logic_server_run.py`
+4. Paste the curl command from the debug file's docstring (or the one in the server log at startup).
+5. Verify the DB — FK columns non-null (lookups worked), computed columns non-null (LogicBank rules fired).
 
 *Live Kafka:*
-6. Start Kafka (idempotent — safe if already running): `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
-7. In `config/default.env`, add/uncomment `APILOGICPROJECT_KAFKA_CONSUMER` and `APILOGICPROJECT_KAFKA_PRODUCER`.
-    Use the **full 6-key form** — the 2-key shortcut omits settings that cause silent consume failures:
+6. Start Kafka (idempotent): `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d` (Podman: `podman compose`).
+7. Set `KAFKA_SERVER` and a project-unique `KAFKA_CONSUMER_GROUP` in `config/default.env` (or as environment variables). The
+   server must be (re)started AFTER Kafka is up. The default consumer settings (config/config.py: earliest offsets, no auto-commit, `session.timeout.ms` 6000) are enough for local tests; because offsets are never committed, every server start replays the whole topic, so reset the topics before the first live start (see "Verify Message Subscriptions" in the project CE); if you set
+   `APILOGICPROJECT_KAFKA_CONSUMER` yourself you own all keys (use the full form):
     ```
     KAFKA_SERVER = localhost:9092
     KAFKA_CONSUMER_GROUP = <project>-group1
     APILOGICPROJECT_KAFKA_CONSUMER = "{\"bootstrap.servers\": \"localhost:9092\", \"group.id\": \"<project>-group1\", \"auto.offset.reset\": \"earliest\", \"enable.auto.commit\": \"false\", \"session.timeout.ms\": \"6000\", \"heartbeat.interval.ms\": \"2000\"}"
-    APILOGICPROJECT_KAFKA_PRODUCER = "{\"bootstrap.servers\": \"localhost:9092\"}"
     ```
-    Use a project-specific value for `<project>` (example: `customs_demo`).
-    > **Why `session.timeout.ms: 6000`?** The default (45 s) means stale consumer sessions from a
-    > prior server run hold the partition assignment for up to 45 s after the process dies. During
-    > that window the new server's consumer polls but receives nothing (no active member).
-    > Set `session.timeout.ms` low (≥ `heartbeat.interval.ms × 3`) so the partition is re-assigned
-    > quickly. `6000 / 2000` (3 × multiplier) is the safe minimum.
-    >
-    > **Why `auto.offset.reset: earliest`?** Without it, confluent-kafka defaults to `latest` — the
-    > consumer only sees messages published *after* it first subscribes. Any message published before
-    > subscribe completes is silently skipped.
-    >
-    > **`APILOGICPROJECT_KAFKA_CONSUMER` overrides `Config.KAFKA_CONSUMER`** via Flask's
-    > `from_prefixed_env()`. For local tests, prefer only `KAFKA_SERVER` + `KAFKA_CONSUMER_GROUP`.
-    > If you explicitly set `APILOGICPROJECT_KAFKA_CONSUMER`, you own all keys; omitting any key
-    > loses its default value.
-8. Run `bash integration/kafka/xyz_reset.sh` — creates topics + clears log
-9. For insert-only pipelines, clear domain tables between repeat test runs (optional helper: `integration/kafka/xyz_reset_db.sh`) so replay duplicates do not masquerade as parser failures.
-10. Start server (or restart if already running before reset)
-11. Publish sample message — use `jq -c .` to compact JSON to a single line (kafka-console-producer sends one Kafka message per input line):
-    ```bash
-    jq -c . docs/sample_data/sample_xyz.json | \
-    ⚠️ XML payloads: `kafka-console-producer` also treats each input line as a separate message.
-    If publishing XML through console-producer, first collapse to a single line (or use a producer script/library) to avoid flooding the topic with partial XML fragments.
-      docker exec -i broker1 /opt/kafka/bin/kafka-console-producer.sh \
-      --bootstrap-server localhost:9092 --topic xyz
-    ```
-    ⚠️ **Python docstring rule:** When embedding this command in a module docstring, write it as a
-    **single line** — no `\` continuation. `\` inside a Python docstring becomes `\\` in source,
-    which is not a shell line continuation and breaks copy-paste from the editor.
-    ```
-    jq -c . docs/sample_data/sample_xyz.json | docker exec -i broker1 /opt/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic xyz
-    ```
-    Edit a key field (e.g. Account) to a different valid value between runs so each run creates a distinct row. Verify DB as above.
+    > **Why `session.timeout.ms: 6000`?** The default (45 s) means a stale consumer session from a prior server run holds
+    > the partition assignment for up to 45 s after the process dies; the new consumer polls but receives nothing.
+    > **Why `auto.offset.reset: earliest`?** Without it the consumer only sees messages published after it subscribes.
+8. Create the topics once: `bash integration/kafka/xyz_reset.sh` (needs the broker container), or let the first publish create them.
+9. Send: the same curl as above (it now goes live). Start from an empty queue with the reset endpoint, not by restarting.
+10. For insert-only pipelines, clear the domain tables between repeat runs, or use fresh keys (the tests use fresh, timestamped customers).
 
-**Cardinality sanity check:**
-- After one successful run, validate expected parent/child counts derived from the sample payload and any declarative enrichment/matching rules.
-- Put exact counts in the project requirements or regression test for that pipeline; do not hardcode domain-specific counts in generic training.
-- Add a regression test that asserts duplicate payloads are rejected under insert-only policy.
+**Cardinality sanity check:** after one successful run, validate the expected parent/child counts derived from the sample
+payload and any declarative enrichment/matching rules; put the exact counts in the project's requirements or regression
+test, and add a regression test that duplicate payloads are rejected under insert-only policy.
 
 ---
 
@@ -592,22 +645,37 @@ The script resets Kafka topics and the log file only; it does **not** clear the 
 #!/usr/bin/env bash
 # integration/kafka/xyz_reset.sh — reset Kafka topics and log for the xyz pipeline.
 # Run from project root: bash integration/kafka/xyz_reset.sh
+#
+# WARNING: deletes and recreates topics xyz and xyz_processed on the broker, losing their messages (and any other
+#          project using the same topic names on that broker). To purge messages WITHOUT deleting the topics, use
+#          the debug endpoint instead: curl -X POST http://localhost:5656/consume_debug/xyz/reset
+# Broker container: BROKER_CONTAINER (default broker1); bootstrap server inside it: BROKER_BOOTSTRAP (default localhost:9092).
 
 set -e
+
+# Docker or Podman — whichever is installed. Same broker container either way
+# (dockercompose_start_kafka.yml works unchanged under `podman compose`), so this
+# script must not hardcode `docker exec` — that fails outright on a Podman-only
+# machine (no `docker` binary at all, not just a different runtime under the hood).
+CONTAINER_CLI=$(command -v docker >/dev/null 2>&1 && echo docker || echo podman)
+BROKER_CONTAINER=${BROKER_CONTAINER:-broker1}
+BROKER_BOOTSTRAP=${BROKER_BOOTSTRAP:-localhost:9092}
+TOPICS="$CONTAINER_CLI exec $BROKER_CONTAINER /opt/kafka/bin/kafka-topics.sh --bootstrap-server $BROKER_BOOTSTRAP"
 
 # Truncate log
 if [ -f logs/als.log ]; then > logs/als.log && echo "Log cleared."; fi
 
 # Delete + recreate topics so consumer offsets start fresh
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz --delete --if-exists || true
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz_processed --delete --if-exists || true
+$TOPICS --topic xyz --delete --if-exists || true
+$TOPICS --topic xyz_processed --delete --if-exists || true
 sleep 2
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz_processed
+$TOPICS --create --replication-factor 1 --partitions 1 --topic xyz
+$TOPICS --create --replication-factor 1 --partitions 1 --topic xyz_processed
 echo "Kafka topics reset."
 
 # ---------------------------------------------------------------------------
-# Useful inspection commands (run manually):
+# Useful inspection commands (run manually — substitute `podman` for `docker` if
+# that's what's installed):
 # ---------------------------------------------------------------------------
 # List all topics:
 #   docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
@@ -644,7 +712,8 @@ Target tables: [list model classes from models.py].
 If no sample message exists, generate one from the schema.
 
 Generate:
-1. XyzMessage blob table (add to database/db.sqlite and models.py)
+1. XyzMessage blob table (add to database/db.sqlite and models.py) — including `error_text`
+   (nullable text column; see § error_text — mandatory, not optional)
 2. integration/kafka/kafka_subscribe_discovery/xyz.py — topic handler file with:
    - module docstring containing: (a) Basic Design — numbered list of files + what each one does (see example below), (b) the creating prompt used to generate it, (c) debug test instructions and test file locations, (d) how to enable Kafka via config/default.env including `bash integration/kafka/xyz_reset.sh` to reset topics + log between runs
    - Basic Design example:
@@ -661,13 +730,38 @@ Generate:
      ```
    - `register(bus)`, XYZ_EXCEPTIONS dict, XYZ_PARENT_LOOKUPS / XYZ_CHILD_LOOKUPS / XYZ_CHILD_KEY (if any field needs name→FK resolution; see § Lookup Resolution)
    - `process_xyz_payload(payload, session, blob_id=None)` shared function
+   - every consumer 2 `except` block calls `record_error_text(...)` from `integration.system.EaiSubscribeMapper`
+     (system code — do NOT write your own on `safrs.DB.session`), inside its own try/except; mandatory, not optional
    - handlers for topics `xyz` and `xyz_processed` (consumer 2 calls `process_xyz_payload`)
-3. logic/logic_discovery/xyz_consume.py — row_event bridge; only publishes to Kafka, no inline parse (see § Local Debug Mode)
+3. logic/logic_discovery/xyz_consume.py — row_event bridge; only publishes to Kafka, no inline parse (see § Debug endpoints)
 4. integration/XyzMapper.py — 3-tier mapper (by-name + FIELD_EXCEPTIONS stub + custom callback stub)
 5. docs/sample_data/sample_xyz.xml — minimal sample message
-6. api/api_discovery/xyz_kafka_consume_debug.py — one file per topic, auto-discovered by api_discovery; calls `process_xyz_payload()` directly (env-var gated, no Kafka required)
+6. api/api_discovery/xyz_kafka_consume_debug.py — ONE thin file per topic (see § Debug endpoints): calls `register_consume_debug` and `register_queue_reset` from `integration/system/EaiDebug.py`; its docstring carries copy-paste curl commands (send: auto / simulated / live; reset)
 7. ui/admin/admin.yaml — add XyzMessage section; set payload field as `type: textarea`
-8. integration/kafka/xyz_reset.sh — **required, do not skip** — bash script to delete+recreate Kafka topics and truncate log (see § Kafka Reset Script below for the template); step 8 of the live-Kafka workflow references this script by name
+8. integration/kafka/xyz_reset.sh — **required, do not skip, even when no container runtime is available** (it is just a file; it runs when a broker container exists) — bash script to delete+recreate Kafka topics and truncate log (see § Kafka Reset Script below for the template); the live-Kafka workflow references it by name
+9. test/send_xyz.py — **required, do not skip, even with no broker** (pure Python; the debug endpoint's live mode is the usual way to send, this is the standalone tool) — Kafka test publisher used for the live-Kafka verification step; use
+   `confluent_kafka.Producer` directly (never `subprocess` + `kafka-console-producer`, which
+   sends one message per input line and mangles multi-line XML/JSON payloads — see
+   § TEST PUBLISHERS above). Reads the topic name and a sample payload file, publishes one
+   message, and reports delivery via a `Producer.produce(..., callback=...)` + `flush()`.
+
+**Artifact completeness check (mandatory closing step, like the other before-you're-done scans).** Before reporting the
+pipeline done, confirm each of these exists on disk — list them, do not assume. A build with no container runtime
+still needs ALL of them (they are files, not containers):
+
+| # | Artifact | Path |
+|---|---|---|
+| 1 | Blob table in `database/models.py` (with `received_at` set by the code that inserts, `error_text`) | `database/models.py` |
+| 2 | Topic handlers (Consumer 1 + Consumer 2, `process_xyz_payload`) | `integration/kafka/kafka_subscribe_discovery/xyz.py` |
+| 3 | Row-event bridge (checks `kafka_available()`) | `logic/logic_discovery/xyz_consume.py` |
+| 4 | Mapper | `integration/XyzMapper.py` |
+| 5 | Sample message | `docs/sample_data/` or `docs/requirements/<name>/message_formats/` |
+| 6 | Debug + reset endpoints (thin file, curl docstring) | `api/api_discovery/xyz_kafka_consume_debug.py` |
+| 7 | Admin UI entry for the blob table | `ui/admin/admin.yaml` |
+| 8 | Reset script | `integration/kafka/xyz_reset.sh` |
+| 9 | Test publisher | `test/send_xyz.py` |
+
+Also confirm the docstring of #6 has the curl commands with the real file path and port.
 
 Example admin.yaml entry for the blob table:
 ```yaml
@@ -698,7 +792,7 @@ For XML payloads with multiple section tags mapping to different tables:
 
 > **CONSUMER ROLLBACKS:** NEVER call `session.rollback()` in a Kafka consumer's `except` block. The framework relies on implicit rollbacks; adding one manually masks errors and poisons the session.
 
-> **DEBUG ENDPOINT GUARD:** The `add_service()` function in `api/api_discovery/*_kafka_consume_debug.py` must return immediately if `APILOGICPROJECT_CONSUME_DEBUG` is not set — the endpoint should not be registered at all in production. Use `if not os.getenv('APILOGICPROJECT_CONSUME_DEBUG'): return` at the top of `add_service()`, not inside the route handler.
+> **DEBUG ENDPOINT GUARD:** the endpoints are registered only when `APILOGICPROJECT_CONSUME_DEBUG` is true / 1 / yes / on (`EaiDebug.debug_enabled()`); `false`, `0` or unset leaves them unregistered. Never test it with `if not os.getenv(...)`: that returns the string `"false"`, which is truthy, so `false` would leave the endpoint ON. They have no authentication and the reset is destructive: development and demo only; set the variable to `false` anywhere else.
 
 > **TEST PUBLISHERS:** Test scripts that send messages to Kafka MUST use `confluent_kafka.Producer` directly. Do NOT use `subprocess.run` calling `docker exec kafka-console-producer` — it is fragile and sends one message per input line, which breaks multi-line payloads.
 

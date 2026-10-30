@@ -32,8 +32,8 @@
 #
 ###############################################################################
 
-api_logic_server__version = '17.01.06'
-api_logic_server_created__on = 'July 01, 2026 18:15:45'
+api_logic_server__version = '17.05.12'
+api_logic_server_created__on = 'October 29, 2026 17:46:09'
 api_logic_server__host = 'localhost'
 api_logic_server__port = '5656'
 
@@ -148,7 +148,7 @@ server_setup.api_logic_server_setup(flask_app, args)
 AdminLoader.admin_events(flask_app = flask_app, args = args, validation_error = ValidationError)
 
 if __name__ == "__main__":
-    msg = f'API Logic Project loaded (not WSGI), version: 17.01.06\n'
+    msg = f'API Logic Project loaded (not WSGI), version: 17.05.12\n'
     msg += f'.. startup message: {start_up_message}\n'
     if server_setup.is_docker():
         msg += f' (running from docker container at flask_host: {args.flask_host} - may require refresh)\n'
@@ -170,6 +170,13 @@ if __name__ == "__main__":
                 f'..Explore data and API at http_scheme://swagger_host:port {start_up_message}\n'
                 f'.... with flask_host: {args.flask_host}\n'
                 f'.... and  swagger_port: {args.swagger_port}')
+    app_logger.info(f'\nSettings in effect for this run:')
+    app_logger.info(f'.. SECURITY_ENABLED      : {args.security_enabled}')
+    app_logger.info(f'.. OPT_LOCKING           : {args.opt_locking}')
+    app_logger.info(f'.. TRANS_UPDATE_LOCKING  : {os.getenv("TRANS_UPDATE_LOCKING", "ignored")}')
+    app_logger.info(f'.. AGGREGATE_DEFAULTS    : {os.getenv("AGGREGATE_DEFAULTS", "False")}')
+    app_logger.info(f'.. ALL_DEFAULTS          : {os.getenv("ALL_DEFAULTS", "False")}\n')
+
     if logic_alerts:
         app_logger.info(f'\nAlert: These following are **Critical** to unlocking value for project: {project_name}:')
         app_logger.info(f'.. see logic.declare_logic.py       -- {server_setup.declare_logic_message}')
@@ -184,7 +191,7 @@ if __name__ == "__main__":
 
     flask_app.run(host=args.flask_host, threaded=True, port=args.port)
 else:
-    msg = f'API Logic Project Loaded (WSGI), version 17.01.06\n'
+    msg = f'API Logic Project Loaded (WSGI), version 17.05.12\n'
     msg += f'.. startup message: {start_up_message}\n'
 
     if server_setup.is_docker():

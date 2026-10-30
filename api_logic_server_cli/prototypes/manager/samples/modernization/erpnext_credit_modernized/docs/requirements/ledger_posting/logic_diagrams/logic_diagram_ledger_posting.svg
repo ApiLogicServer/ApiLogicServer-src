@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1140pt" height="214pt" viewBox="18.80 18.80 1140.40 214.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 222.8)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-222.8 1148.8,-222.8 1148.8,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="359" y="-178.65" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — erpnext_credit_modernized  [ledger_posting]</text>
+<g id="clust2" class="cluster">
+<title>cluster_events</title>
+</g>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="8,-17.62 8,-50.62 152,-50.62 152,-17.62 8,-17.62" />
+<text xml:space="preserve" text-anchor="start" x="17" y="-32.17" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ SalesInvoice inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-18.62 9,-49.62 151,-49.62 151,-18.62 9,-18.62" />
+</g>
+
+<g id="node3" class="node">
+<title>SalesInvoice</title>
+<polygon fill="#4a6fa5" stroke="none" points="299,-34.12 299,-50.12 375,-50.12 375,-34.12 299,-34.12" />
+<text xml:space="preserve" text-anchor="start" x="301" y="-38.67" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> SalesInvoice </text>
+<polygon fill="#dbe4f0" stroke="none" points="322.33,-18.12 322.33,-34.12 351.67,-34.12 351.67,-18.12 322.33,-18.12" />
+<text xml:space="preserve" text-anchor="start" x="334" y="-23.12" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e">  </text>
+<polygon fill="none" stroke="#4a6fa5" points="298,-17.12 298,-51.12 376,-51.12 376,-17.12 298,-17.12" />
+</g>
+
+<g id="edge1" class="edge">
+<title>TRIGGER-&gt;SalesInvoice</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M159.81,-34.12C199.22,-34.12 238.64,-34.12 278.05,-34.12" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="287.84,-34.13 277.84,-38.63 285.28,-34.63 277.84,-34.63 277.84,-34.13 277.84,-33.63 285.28,-33.63 277.84,-29.63 287.84,-34.13" />
+</g>
+
+<g id="node2" class="node">
+<title>JournalEntry</title>
+<polygon fill="#4a6fa5" stroke="none" points="457.88,-34.12 457.88,-50.12 536.12,-50.12 536.12,-34.12 457.88,-34.12" />
+<text xml:space="preserve" text-anchor="start" x="459.88" y="-38.67" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> JournalEntry </text>
+<polygon fill="#dbe4f0" stroke="none" points="481.96,-18.12 481.96,-34.12 512.04,-34.12 512.04,-18.12 481.96,-18.12" />
+<text xml:space="preserve" text-anchor="start" x="494" y="-23.12" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e">  </text>
+<polygon fill="none" stroke="#4a6fa5" points="456.88,-17.12 456.88,-51.12 537.12,-51.12 537.12,-17.12 456.88,-17.12" />
+</g>
+
+<g id="node5" class="node">
+<title>evt__post_journal_entry</title>
+<polygon fill="#e8f5e9" stroke="none" points="945.25,-20 945.25,-48.25 1056.75,-48.25 1056.75,-20 945.25,-20" />
+<text xml:space="preserve" text-anchor="start" x="952.25" y="-30.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _post_journal_entry</text>
+<polygon fill="none" stroke="#27ae60" points="945.25,-20 945.25,-48.25 1056.75,-48.25 1056.75,-20 945.25,-20" />
+</g>
+
+<g id="edge3" class="edge">
+<title>JournalEntry-&gt;evt__post_journal_entry</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M539.66,-54.97C575.58,-71.3 628.83,-92.68 678,-101.54 768.98,-117.93 796.79,-125.76 886,-101.54 916.74,-93.2 947.67,-74.34 969.69,-58.68" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="977.68,-52.85 972.26,-62.38 974.88,-55.02 969.66,-58.83 969.6,-58.75 969.54,-58.67 974.76,-54.86 966.95,-55.12 977.68,-52.85" />
+<text xml:space="preserve" text-anchor="middle" x="621" y="-113" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">early</text>
+</g>
+
+<g id="node4" class="node">
+<title>evt__post_sales_invoice</title>
+<polygon fill="#e8f5e9" stroke="none" points="730.38,-20 730.38,-48.25 845.62,-48.25 845.62,-20 730.38,-20" />
+<text xml:space="preserve" text-anchor="start" x="737.38" y="-30.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _post_sales_invoice</text>
+<polygon fill="none" stroke="#27ae60" points="730.38,-20 730.38,-48.25 845.62,-48.25 845.62,-20 730.38,-20" />
+</g>
+
+<g id="edge2" class="edge">
+<title>SalesInvoice-&gt;evt__post_sales_invoice</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M353.95,-55.07C368.47,-71.22 390.96,-92.31 416,-101.54 529.43,-143.36 672.21,-90.1 743.39,-56.93" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="752.04,-52.83 744.93,-61.18 748.88,-54.43 743.05,-57.21 743,-57.12 742.96,-57.03 748.8,-54.25 741.07,-53.05 752.04,-52.83" />
+<text xml:space="preserve" text-anchor="middle" x="647" y="-113" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">early</text>
+</g>
+</g>
+</svg>

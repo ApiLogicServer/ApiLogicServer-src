@@ -1,10 +1,10 @@
 about:
-  date: July 01, 2026 18:15:45
+  date: October 29, 2026 17:46:09
   merged:
-    at: July 01, 2026 18:16:54
-    new_attributes: 'SysConfig.max_hourly_weekly_salary SysConfig.military_stipend_rate_per_year '
-    new_resources: 'CommissionOrder Employee Department LaborUnion '
-    new_tab_groups: 'SysConfig.EmployeeList '
+    at: October 29, 2026 17:49:49
+    new_attributes: 'SysConfig.max_hourly_weekly_salary SysConfig.military_stipend_per_service_year '
+    new_resources: 'Department Employee LaborUnion Order '
+    new_tab_groups: ''
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -14,26 +14,6 @@ info:
   number_tables: 1
 info_toggle_checked: true
 resources:
-  CommissionOrder:
-    attributes:
-    - label: ' customer_name*'
-      name: customer_name
-      required: true
-      search: true
-      sort: true
-    - name: employee_id
-      required: true
-    - name: amount
-      required: true
-    - name: id
-    tab_groups:
-    - direction: toone
-      fks:
-      - employee_id
-      name: employee
-      resource: Employee
-    type: CommissionOrder
-    user_key: customer_name
   Department:
     attributes:
     - label: ' name*'
@@ -62,21 +42,22 @@ resources:
       sort: true
     - name: dept_id
       required: true
-    - name: sys_config_id
-    - name: union_id
-      show_when: record["Type"] == "hourly"
     - name: Type
       required: true
-    - name: max_hourly_weekly_salary
-    - name: military_stipend_rate_per_year
     - name: salary
+    - name: hours_worked
+      show_when: record["Type"] == "hourly"
     - name: hourly_rate
+      show_when: record["Type"] == "hourly"
+    - name: union_id
       show_when: record["Type"] == "hourly"
     - name: union_dues
       show_when: record["Type"] == "hourly"
     - name: base_salary
       show_when: record["Type"] == "commissioned"
     - name: commission_total
+      show_when: record["Type"] == "commissioned"
+    - name: order_count
       show_when: record["Type"] == "commissioned"
     - name: military
       required: true
@@ -86,28 +67,21 @@ resources:
       show_when: record["military"] == "yes"
     - name: service_years
       show_when: record["military"] == "yes"
-    - name: total_compensation
-    - name: id
-    - name: hours_worked
-      show_when: record["Type"] == "hourly"
     - name: military_stipend
       show_when: record["military"] == "yes"
+    - name: total_compensation
+    - name: id
     tab_groups:
     - direction: tomany
       fks:
       - employee_id
-      name: CommissionOrderList
-      resource: CommissionOrder
+      name: OrderList
+      resource: Order
     - direction: toone
       fks:
       - dept_id
       name: dept
       resource: Department
-    - direction: toone
-      fks:
-      - sys_config_id
-      name: sys_config
-      resource: SysConfig
     type: Employee
     user_key: name
   LaborUnion:
@@ -128,6 +102,26 @@ resources:
       resource: Employee
     type: LaborUnion
     user_key: name
+  Order:
+    attributes:
+    - label: ' customer_name*'
+      name: customer_name
+      required: true
+      search: true
+      sort: true
+    - name: employee_id
+      required: true
+    - name: amount
+      required: true
+    - name: id
+    tab_groups:
+    - direction: toone
+      fks:
+      - employee_id
+      name: employee
+      resource: Employee
+    type: Order
+    user_key: customer_name
   SysConfig:
     attributes:
     - label: ' name*'
@@ -140,13 +134,7 @@ resources:
     - name: notes
     - name: id
     - name: max_hourly_weekly_salary
-    - name: military_stipend_rate_per_year
-    tab_groups:
-    - direction: tomany
-      fks:
-      - sys_config_id
-      name: EmployeeList
-      resource: Employee
+    - name: military_stipend_per_service_year
     type: SysConfig
     user_key: name
 settings:

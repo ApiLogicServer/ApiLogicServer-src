@@ -21,7 +21,11 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "Run Project DEBUG",
@@ -41,7 +45,11 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "  - API Logic Server - VERBOSE",
@@ -60,7 +68,11 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=True"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "  - No Security ApiLogicServer (e.g., simpler swagger)",
@@ -78,7 +90,11 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "  - No Security ApiLogicServer VERBOSE",
@@ -97,7 +113,11 @@
             "justMyCode": false,
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "Test - test/basic/server_test.py",
@@ -182,12 +202,12 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/test/api_logic_server_behave",
-            "program": "${workspaceFolder}/test/api_logic_server_behave/behave_logic_report.py",
+            "program": "${workspaceFolder}/test/api_logic_server_behave/requirements_traceability_report.py",
             "redirectOutput": true,
             "justMyCode": false,            
             "args": ["run"
-                ,"--prepend_wiki=reports/Behave Logic Report Intro.md"
-                ,"--wiki=reports/Behave Logic Report.md"
+                ,"--template=reports/Requirements Traceability Report Template.md"
+                ,"--wiki=../../docs/requirements/Requirements Traceability Report.md"
             ],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"

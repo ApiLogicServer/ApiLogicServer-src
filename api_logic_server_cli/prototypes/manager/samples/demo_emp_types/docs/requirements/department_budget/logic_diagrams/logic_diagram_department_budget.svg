@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="403pt" height="224pt" viewBox="18.80 18.80 403.40 224.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 233.55)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-233.55 412.3,-233.55 412.3,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="8" y="-189.4" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_emp_types  [department_budget]</text>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="11.62,-5.5 11.62,-38.5 141.38,-38.5 141.38,-5.5 11.62,-5.5" />
+<text xml:space="preserve" text-anchor="start" x="20.62" y="-20.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ Employee inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="12.62,-6.5 12.62,-37.5 140.38,-37.5 140.38,-6.5 12.62,-6.5" />
+</g>
+
+<g id="node3" class="node">
+<title>Employee</title>
+<polygon fill="#4a6fa5" stroke="none" points="287.62,-23 287.62,-39 349.38,-39 349.38,-23 287.62,-23" />
+<text xml:space="preserve" text-anchor="start" x="289.62" y="-27.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Employee </text>
+<polygon fill="#b8cce8" stroke="none" points="287.62,-5 287.62,-23 297.04,-23 297.04,-5 287.62,-5" />
+<text xml:space="preserve" text-anchor="start" x="290.83" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="297.04,-5 297.04,-23 339.96,-23 339.96,-5 297.04,-5" />
+<text xml:space="preserve" text-anchor="start" x="300.04" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> salary </text>
+<polygon fill="#b8cce8" stroke="none" points="339.96,-5 339.96,-23 349.38,-23 349.38,-5 339.96,-5" />
+<text xml:space="preserve" text-anchor="start" x="343.17" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="286.62,-4 286.62,-40 350.38,-40 350.38,-4 286.62,-4" />
+</g>
+
+<g id="edge2" class="edge">
+<title>TRIGGER-&gt;Employee</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M149.29,-22C188.34,-22 227.39,-22 266.44,-22" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="276.4,-22 266.4,-26.5 273.84,-22.5 266.4,-22.5 266.4,-22 266.4,-21.5 273.84,-21.5 266.4,-17.5 276.4,-22" />
+</g>
+
+<g id="node2" class="node">
+<title>Department</title>
+<polygon fill="#4a6fa5" stroke="none" points="288.12,-160.25 288.12,-176.25 368.88,-176.25 368.88,-160.25 288.12,-160.25" />
+<text xml:space="preserve" text-anchor="start" x="294.75" y="-164.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Department </text>
+<polygon fill="#b8cce8" stroke="none" points="288.12,-142.25 288.12,-160.25 295.12,-160.25 295.12,-142.25 288.12,-142.25" />
+<text xml:space="preserve" text-anchor="start" x="290.12" y="-148.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="295.12,-142.25 295.12,-160.25 361.88,-160.25 361.88,-142.25 295.12,-142.25" />
+<text xml:space="preserve" text-anchor="start" x="298.12" y="-148.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> total_salary </text>
+<polygon fill="#b8cce8" stroke="none" points="361.88,-142.25 361.88,-160.25 368.88,-160.25 368.88,-142.25 361.88,-142.25" />
+<text xml:space="preserve" text-anchor="start" x="363.88" y="-148.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#c0392b" stroke-width="3" points="286.62,-140.75 286.62,-177.75 370.38,-177.75 370.38,-140.75 286.62,-140.75" />
+</g>
+
+<g id="edge1" class="edge">
+<title>Employee-&gt;Department</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M269.49,-39.16C240.86,-51.55 212.8,-70.68 226.5,-95.25 237.55,-115.06 257.68,-129.43 277.16,-139.39" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="269.29,-39.25 280.25,-39.63 274.13,-37.27 278.33,-35.56 278.33,-35.56 278.33,-35.56 274.13,-37.27 276.84,-31.3 269.29,-39.25" />
+</g>
+
+<g id="edge3" class="edge">
+<title>Employee:Employee_salary_w-&gt;Department:Department_total_salary_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M286.62,-14C234.01,-14 283.55,-75.06 290.77,-129.13" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="291.45,-138.82 286.26,-129.16 290.78,-136.3 290.25,-128.88 290.75,-128.84 291.25,-128.81 291.77,-136.23 295.24,-128.53 291.45,-138.82" />
+<text xml:space="preserve" text-anchor="middle" x="283.71" y="-85.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">1</text>
+</g>
+</g>
+</svg>

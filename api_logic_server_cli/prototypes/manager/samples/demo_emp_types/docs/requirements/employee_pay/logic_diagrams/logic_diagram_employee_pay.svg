@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="539pt" height="404pt" viewBox="18.80 18.80 539.00 404.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 413.55)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-413.55 463.3,-413.55 463.3,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="50" y="-369.4" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_emp_types  [employee_pay]</text>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="8,-5.5 8,-38.5 116,-38.5 116,-5.5 8,-5.5" />
+<text xml:space="preserve" text-anchor="start" x="17" y="-20.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ Order inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-6.5 9,-37.5 115,-37.5 115,-6.5 9,-6.5" />
+</g>
+
+<g id="node3" class="node">
+<title>Order</title>
+<polygon fill="#4a6fa5" stroke="none" points="263,-23 263,-39 325,-39 325,-23 263,-23" />
+<text xml:space="preserve" text-anchor="start" x="276" y="-27.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Order </text>
+<polygon fill="#b8cce8" stroke="none" points="263,-5 263,-23 270,-23 270,-5 263,-5" />
+<text xml:space="preserve" text-anchor="start" x="265" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="270,-5 270,-23 318,-23 318,-5 270,-5" />
+<text xml:space="preserve" text-anchor="start" x="273" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> amount </text>
+<polygon fill="#b8cce8" stroke="none" points="318,-5 318,-23 325,-23 325,-5 318,-5" />
+<text xml:space="preserve" text-anchor="start" x="320" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="262,-4 262,-40 326,-40 326,-4 262,-4" />
+</g>
+
+<g id="edge2" class="edge">
+<title>TRIGGER-&gt;Order</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M123.62,-22C163.03,-22 202.43,-22 241.84,-22" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="251.63,-22 241.63,-26.5 249.07,-22.5 241.63,-22.5 241.63,-22 241.63,-21.5 249.07,-21.5 241.63,-17.5 251.63,-22" />
+</g>
+
+<g id="node2" class="node">
+<title>Employee</title>
+<polygon fill="#4a6fa5" stroke="none" points="256.5,-340.25 256.5,-356.25 423.5,-356.25 423.5,-340.25 256.5,-340.25" />
+<text xml:space="preserve" text-anchor="start" x="311.12" y="-344.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Employee </text>
+<polygon fill="#b8cce8" stroke="none" points="256.5,-322.25 256.5,-340.25 263.5,-340.25 263.5,-322.25 256.5,-322.25" />
+<text xml:space="preserve" text-anchor="start" x="258.5" y="-328.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="263.5,-322.25 263.5,-340.25 416.5,-340.25 416.5,-322.25 263.5,-322.25" />
+<text xml:space="preserve" text-anchor="start" x="266.5" y="-328.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> commission_total </text>
+<polygon fill="#b8cce8" stroke="none" points="416.5,-322.25 416.5,-340.25 423.5,-340.25 423.5,-322.25 416.5,-322.25" />
+<text xml:space="preserve" text-anchor="start" x="418.5" y="-328.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="256.5,-304.25 256.5,-322.25 263.5,-322.25 263.5,-304.25 256.5,-304.25" />
+<text xml:space="preserve" text-anchor="start" x="258.5" y="-310.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="263.5,-304.25 263.5,-322.25 416.5,-322.25 416.5,-304.25 263.5,-304.25" />
+<text xml:space="preserve" text-anchor="start" x="266.5" y="-310.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> order_count </text>
+<polygon fill="#b8cce8" stroke="none" points="416.5,-304.25 416.5,-322.25 423.5,-322.25 423.5,-304.25 416.5,-304.25" />
+<text xml:space="preserve" text-anchor="start" x="418.5" y="-310.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="256.5,-286.25 256.5,-304.25 263.5,-304.25 263.5,-286.25 256.5,-286.25" />
+<text xml:space="preserve" text-anchor="start" x="258.5" y="-292.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="263.5,-286.25 263.5,-304.25 416.5,-304.25 416.5,-286.25 263.5,-286.25" />
+<text xml:space="preserve" text-anchor="start" x="266.5" y="-291.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> salary </text>
+<text xml:space="preserve" text-anchor="start" x="301" y="-291.8" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="304" y="-291.8" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= _employee_salary(row)</text>
+<polygon fill="#b8cce8" stroke="none" points="416.5,-286.25 416.5,-304.25 423.5,-304.25 423.5,-286.25 416.5,-286.25" />
+<text xml:space="preserve" text-anchor="start" x="418.5" y="-292.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="256.5,-268.25 256.5,-286.25 263.5,-286.25 263.5,-268.25 256.5,-268.25" />
+<text xml:space="preserve" text-anchor="start" x="258.5" y="-274.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="263.5,-268.25 263.5,-286.25 416.5,-286.25 416.5,-268.25 263.5,-268.25" />
+<text xml:space="preserve" text-anchor="start" x="266.5" y="-274.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> type </text>
+<polygon fill="#b8cce8" stroke="none" points="416.5,-268.25 416.5,-286.25 423.5,-286.25 423.5,-268.25 416.5,-268.25" />
+<text xml:space="preserve" text-anchor="start" x="418.5" y="-274.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="256.5,-250.25 256.5,-268.25 263.5,-268.25 263.5,-250.25 256.5,-250.25" />
+<text xml:space="preserve" text-anchor="start" x="258.5" y="-256.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="263.5,-250.25 263.5,-268.25 416.5,-268.25 416.5,-250.25 263.5,-250.25" />
+<text xml:space="preserve" text-anchor="start" x="266.5" y="-256.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> hours_worked </text>
+<polygon fill="#b8cce8" stroke="none" points="416.5,-250.25 416.5,-268.25 423.5,-268.25 423.5,-250.25 416.5,-250.25" />
+<text xml:space="preserve" text-anchor="start" x="418.5" y="-256.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="256.5,-232.25 256.5,-250.25 263.5,-250.25 263.5,-232.25 256.5,-232.25" />
+<text xml:space="preserve" text-anchor="start" x="258.5" y="-238.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="263.5,-232.25 263.5,-250.25 416.5,-250.25 416.5,-232.25 263.5,-232.25" />
+<text xml:space="preserve" text-anchor="start" x="266.5" y="-238.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> hourly_rate </text>
+<polygon fill="#b8cce8" stroke="none" points="416.5,-232.25 416.5,-250.25 423.5,-250.25 423.5,-232.25 416.5,-232.25" />
+<text xml:space="preserve" text-anchor="start" x="418.5" y="-238.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="256.5,-214.25 256.5,-232.25 263.5,-232.25 263.5,-214.25 256.5,-214.25" />
+<text xml:space="preserve" text-anchor="start" x="258.5" y="-220.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="263.5,-214.25 263.5,-232.25 416.5,-232.25 416.5,-214.25 263.5,-214.25" />
+<text xml:space="preserve" text-anchor="start" x="266.5" y="-220.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> base_salary </text>
+<polygon fill="#b8cce8" stroke="none" points="416.5,-214.25 416.5,-232.25 423.5,-232.25 423.5,-214.25 416.5,-214.25" />
+<text xml:space="preserve" text-anchor="start" x="418.5" y="-220.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="256.5,-196.25 256.5,-214.25 263.5,-214.25 263.5,-196.25 256.5,-196.25" />
+<text xml:space="preserve" text-anchor="start" x="258.5" y="-202.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="263.5,-196.25 263.5,-214.25 416.5,-214.25 416.5,-196.25 263.5,-196.25" />
+<text xml:space="preserve" text-anchor="start" x="266.5" y="-202.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> union_id </text>
+<polygon fill="#b8cce8" stroke="none" points="416.5,-196.25 416.5,-214.25 423.5,-214.25 423.5,-196.25 416.5,-196.25" />
+<text xml:space="preserve" text-anchor="start" x="418.5" y="-202.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="256.5,-178.25 256.5,-196.25 263.5,-196.25 263.5,-178.25 256.5,-178.25" />
+<text xml:space="preserve" text-anchor="start" x="258.5" y="-184.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="263.5,-178.25 263.5,-196.25 416.5,-196.25 416.5,-178.25 263.5,-178.25" />
+<text xml:space="preserve" text-anchor="start" x="266.5" y="-184.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> union </text>
+<polygon fill="#b8cce8" stroke="none" points="416.5,-178.25 416.5,-196.25 423.5,-196.25 423.5,-178.25 416.5,-178.25" />
+<text xml:space="preserve" text-anchor="start" x="418.5" y="-184.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="256.5,-160.25 256.5,-178.25 263.5,-178.25 263.5,-160.25 256.5,-160.25" />
+<text xml:space="preserve" text-anchor="start" x="258.5" y="-166.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="263.5,-160.25 263.5,-178.25 416.5,-178.25 416.5,-160.25 263.5,-160.25" />
+<text xml:space="preserve" text-anchor="start" x="266.5" y="-166.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> session </text>
+<polygon fill="#b8cce8" stroke="none" points="416.5,-160.25 416.5,-178.25 423.5,-178.25 423.5,-160.25 416.5,-160.25" />
+<text xml:space="preserve" text-anchor="start" x="418.5" y="-166.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="256.5,-142.25 256.5,-160.25 263.5,-160.25 263.5,-142.25 256.5,-142.25" />
+<text xml:space="preserve" text-anchor="start" x="258.5" y="-148.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="263.5,-142.25 263.5,-160.25 416.5,-160.25 416.5,-142.25 263.5,-142.25" />
+<text xml:space="preserve" text-anchor="start" x="266.5" y="-147.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> union_dues </text>
+<text xml:space="preserve" text-anchor="start" x="328" y="-147.8" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="331" y="-147.8" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= _union_dues(row)</text>
+<polygon fill="#b8cce8" stroke="none" points="416.5,-142.25 416.5,-160.25 423.5,-160.25 423.5,-142.25 416.5,-142.25" />
+<text xml:space="preserve" text-anchor="start" x="418.5" y="-148.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#c0392b" stroke-width="3" points="255,-140.75 255,-357.75 425,-357.75 425,-140.75 255,-140.75" />
+</g>
+
+<g id="edge1" class="edge">
+<title>Order-&gt;Employee</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M244.38,-29.16C198.05,-37.42 138.6,-55.87 157,-95.25 175.85,-135.58 211.14,-169.02 245.74,-194.24" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="244.24,-29.19 254.84,-31.98 249.4,-28.33 253.87,-27.58 253.87,-27.58 253.87,-27.58 249.4,-28.33 253.36,-23.11 244.24,-29.19" />
+</g>
+
+<g id="edge3" class="edge">
+<title>Order:Order_amount_w-&gt;Employee:Employee_commission_total_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M262,-14C230.12,-14 221.75,-273.43 246.51,-323.09" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="253.7,-329.61 243.27,-326.22 251.46,-328.26 245.96,-323.26 246.29,-322.89 246.63,-322.52 252.13,-327.52 249.32,-319.56 253.7,-329.61" />
+<text xml:space="preserve" text-anchor="middle" x="240.04" y="-85.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">3</text>
+</g>
+
+<g id="edge4" class="edge">
+<title>Order:w-&gt;Employee:Employee_order_count_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M253.04,-22C127.76,-22 126.03,-294.78 243.38,-312.36" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="253.07,-313.07 242.77,-316.83 250.48,-313.38 243.06,-312.84 243.1,-312.34 243.13,-311.84 250.55,-312.39 243.43,-307.85 253.07,-313.07" />
+<text xml:space="preserve" text-anchor="middle" x="174.64" y="-85.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">4</text>
+</g>
+<path d="M425.0,-328.25 C447.0,-328.25 447.0,-291.8 425.0,-291.8" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="425.0,-291.8 429.0,-295.8 429.0,-287.8" stroke="#445544" fill="#445544" /><text x="450.0" y="-306.0" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">1</text><path d="M425.0,-166.25 C471.0,-166.25 471.0,-291.8 425.0,-291.8" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="425.0,-291.8 429.0,-295.8 429.0,-287.8" stroke="#445544" fill="#445544" /><text x="474.0" y="-225.0" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">1</text><path d="M425.0,-291.8 C495.0,-291.8 495.0,-147.8 425.0,-147.8" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="425.0,-147.8 429.0,-151.8 429.0,-143.8" stroke="#445544" fill="#445544" /><text x="498.0" y="-215.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">2</text><path d="M425.0,-220.25 C519.0,-220.25 519.0,-147.8 425.0,-147.8" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="425.0,-147.8 429.0,-151.8 429.0,-143.8" stroke="#445544" fill="#445544" /><text x="522.0" y="-180.0" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">2</text></g>
+</svg>

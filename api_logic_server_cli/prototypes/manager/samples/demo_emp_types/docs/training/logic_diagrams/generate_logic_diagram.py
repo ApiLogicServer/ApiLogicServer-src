@@ -4,6 +4,7 @@ Convenience wrapper — generate the logic diagram for this project.
 Usage (from anywhere inside the project):
     python docs/training/logic_diagrams/generate_logic_diagram.py              # full diagram
     python docs/training/logic_diagrams/generate_logic_diagram.py check_credit # scoped
+    python docs/training/logic_diagrams/generate_logic_diagram.py --each       # one per logic file (use case)
 """
 import sys
 from pathlib import Path
@@ -21,7 +22,10 @@ if not gen.exists():
 
 # Import and run
 sys.path.insert(0, str(gen.parent))
-from logic_diagram_gv import generate
+from logic_diagram_gv import generate, generate_each
 
-requirement = sys.argv[1] if len(sys.argv) > 1 else None
-generate(project_dir.name, requirement=requirement, manager_root=manager_dir)
+if "--each" in sys.argv[1:]:
+    generate_each(project_dir.name, manager_root=manager_dir)
+else:
+    requirement = sys.argv[1] if len(sys.argv) > 1 else None
+    generate(project_dir.name, requirement=requirement, manager_root=manager_dir)

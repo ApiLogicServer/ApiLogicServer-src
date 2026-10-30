@@ -1,141 +1,133 @@
-# demo_emp_types — Ad-Libs Report
+## Ad-Libs Report
+**9 items need your review. 13 FYIs — standard patterns, no action needed.**
 
-**1 item needs your review. 11 FYIs — standard patterns, no action needed.**
+Every assumption or guess made beyond `project_creation_prompt.md` (the prompt, `samples/prompts/emp_types.prompt.md`).
 
 ---
 
-## Pre-Coding Analysis
+## Walkthrough
+
+1. **Basic data model** — Department, Employee (single table for all types: STI), LaborUnion, Order, plus the starter `sys_config`.
+2. **Derived/predicted schema additions** — 2 constants to SysConfig (`max_hourly_weekly_salary` 5000, `military_stipend_per_service_year` 100); FKs `employee.dept_id`, `employee.union_id`, `order.employee_id`; derived columns `department.total_salary`, `employee.salary/union_dues/commission_total/order_count/military_stipend/total_compensation`; no Allocate; no Request Pattern.
+3. **Create db** — DDL in `database/ddl_emp_types.sql` + `rebuild-from-database` (5 tables).
+4. **Run impl-req** — 3 logic files: 2 sum, 1 count, 4 formula, 13 constraint (one of them role-aware via `Security.current_user_has_role('manager')`). Security: Keycloak (`add-auth --provider-type=keycloak --db-url=localhost`).
+5. **Test data / testing** — `database/test_data/alp_init.py` seeded 2 departments, 2 unions, 5 employees, 2 orders (all derived values computed by the rules). No Behave tests (not requested). API checked with curl as Keycloak users.
+
+## Creation Steps (commands actually run, from the Manager root unless noted)
+
+```bash
+source venv/bin/activate
+genai-logic create --project-name=demo_emp_types --db_url=sqlite:///samples/dbs/starter.sqlite
+cd demo_emp_types && genai-logic add-auth --provider-type=keycloak --db-url=localhost && cd ..
+sqlite3 demo_emp_types/database/db.sqlite < demo_emp_types/database/ddl_emp_types.sql
+cd demo_emp_types && genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite && cd ..
+# wrote logic/logic_discovery/{department_budget,employee_pay,military_compensation}.py + docs/requirements/<use_case>/requirements.md
+cd demo_emp_types && PROJECT_DIR=$(pwd) python database/test_data/alp_init.py && cd ..   # failed: see Loop 1
+# Loop 1 fix: dropped/recreated employee + order without the military TEXT default, cleared the partial seed rows
+cd demo_emp_types && genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite && cd ..
+cd demo_emp_types && PROJECT_DIR=$(pwd) python database/test_data/alp_init.py && cd ..   # OK
+python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py demo_emp_types --each
+cd demo_emp_types && python api_logic_server_run.py > logs/server_verify.log 2>&1 &     # then curl checks, then kill <PID>
+```
+
+<details markdown>
+<summary>Full diagnostic detail (DDL change list, rule plan, rejected alternatives, replay log)</summary>
+
+### 🟢 Diagnostic Appendix
+
+#### Pre-Coding Analysis
 
 **Phase 1 — Schema Impact Assessment**
+Files read: `project_creation_prompt.md` (whole prompt), `database/models.py` (starter: SysConfig only)
 
-| Signal | Finding |
+| Step | Signal |
 |---|---|
-| Type hierarchy (STI) | Prompt says "type that is one of: 'salaried', 'hourly', or 'commissioned'" → STI on `employee`, `type TEXT NOT NULL` discriminator |
-| Second classification axis | "military classification, independent of employment type" → `is_military` flag + nullable military-only columns, same table |
-| Rule.sum needed | `Department.total_salary` = sum of `Employee.salary`; `Employee.commission_total` = sum of `CommissionOrder.amount` |
-| Constants (Step 4a) | "5000 per week" and "service_years * 100" are rate/threshold literals → `SysConfig` columns |
-| FK inventory (Step 4b) | `dept_id`, `union_id` (nullable), `employee_id` on the order table |
-| Request Pattern (Step 4c) | Not applicable — plain domain data entry with derived columns |
+| Department budget | Rule.sum (total_salary) + role-aware Rule.constraint |
+| Employee types / hourly / commissioned | STI (type discriminator); Rule.formula salary, union_dues; Rule.sum commission_total; Rule.count order_count; constraints |
+| Military axis | second discriminator `military` TEXT yes/no; Rule.formula military_stipend, total_compensation |
 
-**DDL change list:**
+DDL change list:
 
 | Table | Change | Reason |
 |---|---|---|
-| `sys_config` | ADD COLUMN `max_hourly_weekly_salary NUMERIC(15,2) DEFAULT 5000.0` | Hourly weekly cap constant |
-| `sys_config` | ADD COLUMN `military_stipend_rate_per_year REAL DEFAULT 100.0` | Military stipend rate constant |
-| — | CREATE TABLE `department` | Header table with derived `total_salary` |
-| — | CREATE TABLE `labor_union` | Lookup table for union dues rate |
-| — | CREATE TABLE `employee` (STI) | Base + all 3 subtypes + military axis, one physical table |
-| — | CREATE TABLE `commission_order` | Line-item table for commissioned employees |
+| sys_config | ADD max_hourly_weekly_salary REAL 5000 | constant (hourly cap) |
+| sys_config | ADD military_stipend_per_service_year REAL 100 | constant (stipend rate) |
+| department | CREATE (name, budget, total_salary) | total_salary: Rule.sum |
+| labor_union | CREATE (name, dues_rate) | lookup for union_id |
+| employee | CREATE (STI: type, salary, hours_worked, hourly_rate, union_id, union_dues, base_salary, commission_total, order_count, military, branch, rank, service_years, military_stipend, total_compensation) | salary/union_dues/military_stipend/total_compensation: Rule.formula; commission_total: Rule.sum; order_count: Rule.count |
+| order | CREATE (employee_id, customer_name, amount) | child of commissioned employees |
+
+Closing check (after coding): every derived column has a writer: total_salary (sum), salary (formula), union_dues (formula), commission_total (sum), order_count (count), military_stipend (formula), total_compensation (formula). Confirmed against `database/models.py`.
 
 **Phase 2 — CE / Pattern Assessment**
+Files read: `logic_bank_api.md`, `logic_bank_patterns.md`, `security.md` ("Roles inside business rules")
 
-| Use case | Rule plan |
+| Use case | Rule Plan |
 |---|---|
-| `department_budget` | `Rule.sum` + `Rule.constraint` |
-| `employee_compensation` | `Rule.copy` (SysConfig), `Rule.formula` (type-branched salary, union_dues), `Rule.sum` (commission_total), `Rule.constraint` × 6 (hourly cap, union-hourly-only, order-commissioned-only, amount>0, 2 null-exclusions) |
-| `military_classification` | `Rule.copy` (SysConfig), `Rule.formula` (military_stipend, total_compensation), `Rule.constraint` × 4 (3 null-exclusions + branch enum check) |
+| department_budget | Rule.sum(Department.total_salary) + Rule.constraint(calling=, manager role exempt) |
+| employee_pay | Rule.formula(salary, type-branched) + Rule.formula(union_dues) + Rule.sum(commission_total) + Rule.count(order_count) + 7 constraints |
+| military_compensation | Rule.formula(military_stipend) + Rule.formula(total_compensation) + 5 constraints |
 
 Anti-patterns confirmed clear:
-- [x] No parent flag where Rule.count/sum on child table is correct
-- [x] No `as_expression=lambda row: my_func(row)` — used `calling=my_func` for multi-line logic
-- [x] No `session.query()` inside formula or constraint
-- [x] All derived/working values are physical columns with their own `Rule.formula`/`Rule.copy`/`Rule.sum`
-- [x] No `__mapper_args__` / SQLAlchemy polymorphic subclasses added — data-level STI only, all rules on `models.Employee`
+- [x] No parent flag where Rule.count on child table is correct (order_count is a Rule.count)
+- [x] No `as_expression=lambda row: my_func(row)` — multi-line logic uses `calling=`
+- [x] No `session.query()` inside formula or row_event (SysConfig read via `SysConfig.current(session)`)
+- [x] No punctuation glued to row attribute tokens (row reads bound to locals first)
+- [x] No SQLAlchemy polymorphic subclasses; all rules on `models.Employee`
 
-**Implementation Plan:**
-
-| Step | What was planned |
-|---|---|
-| 1 | Run DDL (SysConfig constants + 4 domain tables) + `rebuild-from-database` |
-| 2 | Write `department_budget.py` — Rule.sum + Rule.constraint |
-| 3 | Write `employee_compensation.py` — type-branched salary formula, hourly cap, union rules, commission sum, order constraint |
-| 4 | Write `military_classification.py` — stipend formula, total_compensation, null-exclusions, branch enum check |
-| 5 | Add `show_when` to `admin.yaml` for all subtype-specific fields (Method 4: auto-generated) |
-| 6 | Seed `alp_init.py` with all 3 types + 2 military examples across 2 departments |
-| 7 | Verify via live API: hourly cap, union-hourly-only, department budget, commissioned-only orders, branch enum, valid insert |
-
----
-
-## Execution Metrics
+#### Execution Metrics
 
 | Metric | Value |
 |---|---|
-| Strategy Used | Method 4 System Creation Services — STI for employee type, independent boolean axis for military status |
-| CE Files Loaded | `implement_requirements.md`, `logic_bank_api.md`, `logic_bank_patterns.md` (project CE v3.24, already encoding STI lessons from a prior test run of this same prompt as `demo_emp_types_1`) |
-| Schema Read First | Yes — full 4a-4d analysis completed before any DDL |
-| Sample Data Read | N/A — no message formats, plain domain prompt |
-| Self-Verification | Yes — server started, live API POSTs tested against all constraints, results confirmed |
-| Error Correction Loops | 2 |
-
-**Error Correction Loops:**
+| Strategy Used | Data-level STI on `employee` (two independent axes), SysConfig for constants, role check inside one constraint |
+| CE Files Loaded | `.github/copilot-instructions.md`, `docs/training/logic_bank_api.md`, `implement_requirements.md`, `logic_bank_patterns.md`, `RequestObjectPattern.md`, `security.md`, `health_check.md` |
+| Schema Read First | Yes |
+| Sample Data Read | n/a (no message formats) |
+| Subagent Used | No — single pass |
+| Self-Verification | Yes — seed values checked in sqlite, server started, 10 curl checks, als.log checked |
+| Error Correction Loops | 1 |
 
 ```
 Loop 1:
-  Symptom:   LBActivateException: Missing Attrs ['Employee.X:`: - formula'] during seed insert
-  Diagnosis: LogicBank's dependency scanner whitespace-splits the calling= function's source text
-             (including comments/docstrings) and collects tokens starting with "row.". A code
-             comment I wrote to document the known tokenizer gotcha itself contained the literal
-             text "row.X:`" as an illustrative example — the scanner picked that up as a fake
-             dependency token on models.Employee.
-  Fix:       Reworded the comment in military_classification.py to describe the gotcha without
-             including a literal "row.<name>:" substring.
-  Time:      ~2 min
-  Root cause type: Self-inflicted (documentation text mimicking the exact pattern it warned against)
-
-Loop 2:
-  Symptom:   Carol Nguyen (hourly, union assigned) seeded with union_dues=0 instead of 200
-             (40 hours * 5.0 dues_rate)
-  Diagnosis: Employee and LaborUnion were both new, uncommitted objects in the same session;
-             Carol was constructed with union=local_42 (relationship object, not a flushed id).
-             Rule.formula's calling function reads row.union_id directly at Row Logic time —
-             unlike Rule.sum's aggregate-adjustment machinery, this scalar FK read happens before
-             SQLAlchemy's flush-time dependency resolution assigns the real FK value, so
-             row.union_id was still None when the formula first evaluated it.
-  Fix:       Restructured alp_init.py to commit Department/LaborUnion rows first, then construct
-             Employee rows using their real integer ids (dept_id=engineering.id, union_id=local_42.id)
-             instead of relationship objects, matching the pattern already used successfully in
-             demo_emp_types_1's seed script.
-  Time:      ~5 min
-  Root cause type: Missing read (seed-ordering pattern not called out explicitly in local CE,
-             though demo_emp_types_1's working seed script already used it)
+  Symptom:   seed failed: "military ('no') must be 'yes' or 'no'" for employees that did not set military
+  Diagnosis: read logic_bank/exec_row_logic/logic_row.py _eager_defaults: LogicBank applies the column's
+             server_default text as-is, so TEXT DEFAULT 'no' becomes the 4-character string 'no' WITH its quotes
+  Fix:       removed the DEFAULT (military TEXT NOT NULL, callers must send 'yes' or 'no'); recreated employee/order
+             (empty), rebuild-from-database, seed sets military explicitly
+  Time:      ~3 min
+  Root cause type: platform behavior (LogicBank eager defaults for quoted TEXT server defaults), not covered by the CE
 ```
 
 ---
 
-## 🔴 Review Required
-
+### 🔴 Review Required
 | Location | Issue | Action |
 |---|---|---|
-| `database/db.sqlite` schema | Named the commissioned-employee line-item table `commission_order` rather than a literal `order` table — prompt just says "Orders" without naming the table. Chosen to avoid `order` being a SQL reserved word requiring quoting everywhere. | Confirm the name `CommissionOrder` (API resource `/api/CommissionOrder/`) is acceptable, or rename if a different convention is preferred. |
+| `logic/logic_discovery/department_budget.py:17-23` | No signed-in user (seed script, a direct/batch insert, `SECURITY_ENABLED=False`) is treated as "not a manager": the budget is enforced. | Confirm; the alternative is to exempt system writes. |
+| `logic/logic_discovery/department_budget.py:29-38` | The exemption is for whoever commits the transaction. Nothing records that a manager approved an overage, and once a department is over budget, any non-manager change that alters that department's total_salary (a salary change, even a decrease, or a budget change) is rejected while the total is still over budget. | Decide whether an approval record / audit is needed, and whether non-managers may make changes that reduce an overage. |
+| `logic/logic_discovery/department_budget.py:20` | Exact role name `manager` only. `sa` (Keycloak `admin`) is NOT exempt; verified: admin is rejected. | Confirm `sa`/admin should not exceed the budget. |
+| `logic/logic_discovery/employee_pay.py:60-67` | "salary must not exceed 5000 per week": hourly salary is taken to be a weekly amount (hours_worked = hours per week). Salaried and commissioned salary periods are unstated; `Department.total_salary` sums all types as if same-period (seed uses weekly amounts). | State the pay period for each type, or whether total_salary should normalize. |
+| `logic/logic_discovery/employee_pay.py:48` | Salaried salary is entered directly (prompt gives no formula). | Confirm. |
+| `logic/logic_discovery/employee_pay.py:41-46` | Missing hours/rate/base salary count as 0 (no "required" constraint); the prompt does not say they are required for their type. | Say if hours_worked/hourly_rate (hourly) and base_salary (commissioned) must be required. |
+| `database/ddl_emp_types.sql` (employee.military) | `military` is TEXT 'yes'/'no' and REQUIRED with no default (Loop 1: LogicBank copies a TEXT default with its quotes). API callers must send `"military": "no"` for non-military employees. Branch/rank/service_years are not required for military employees. | Confirm the required flag, or ask for a default via an event/model default. |
+| `logic/logic_discovery/military_compensation.py:48` | Branch values enforced by a constraint over the prompt's list (no `branch` lookup table). | Confirm, or ask for a lookup table (FK) if the list will change. |
+| `database/models.py` (LaborUnion) | Domain-floor constraints NOT added (spec does not state them): `budget >= 0`, `hours_worked >= 0`, `hourly_rate >= 0`, `Order.amount > 0`, `dues_rate >= 0`, `service_years >= 0`. | Say which you want. |
 
 ---
 
-## 🟡 FYI
+### 🟡 FYI
+- `database/ddl_emp_types.sql` — Single Table Inheritance: one `employee` table, `type` discriminator, all subtype columns nullable; no SQLAlchemy subclasses (per CE platform constraint).
+- `database/ddl_emp_types.sql` — Union table named `labor_union` (`union` is an SQL keyword); FK column keeps the prompt's name `union_id`, relationship `Employee.union`.
+- `database/ddl_emp_types.sql` — Order table named `"order"` (quoted keyword, same as basic_demo); `customer_name` TEXT NOT NULL, `amount` NUMERIC(15,2).
+- `database/ddl_emp_types.sql` — `employee.dept_id` NOT NULL (prompt: "Employees have a name, dept").
+- `database/ddl_emp_types.sql` — Money columns NUMERIC(15,2); hours_worked, hourly_rate, dues_rate REAL as the prompt states; military_stipend NUMERIC(15,2) (prompt says REAL; Numeric chosen for money).
+- `logic/logic_discovery/employee_pay.py:66`, `military_compensation.py:31` — 5000 and 100 moved to `sys_config` (read with `SysConfig.current(session)`, no FK). A change to these settings applies on the next write of each employee; it does not re-derive existing rows.
+- `logic/logic_discovery/employee_pay.py:57` — union_dues reads `union.dues_rate` live (verified: changing Local 42's dues_rate re-derived Bob's dues 60 -> 100).
+- `logic/logic_discovery/employee_pay.py:72,77` — "only Commissioned employees may have Orders" implemented as Rule.count(order_count) + constraint (so a zero-amount order is also caught, and a commissioned employee with orders cannot be changed to another type).
+- `logic/logic_discovery/employee_pay.py:78-80` — inferred STI null-exclusion constraints: hours_worked, hourly_rate (hourly only), base_salary (commissioned only).
+- `logic/logic_discovery/military_compensation.py:49-51` — inferred null-exclusion constraints: branch, rank, service_years (military only).
+- `logic/logic_discovery/employee_pay.py:74`, `military_compensation.py:47` — type and military values validated against the prompt's lists.
+- `logic/logic_discovery/*.py` — type-guarded formulas return 0 (not NULL) for non-applicable rows; "must not exceed" read as `<=`.
+- `ui/admin/admin-merge.yaml` — show_when for all subtype fields (`record["Type"] == "hourly"` / `"commissioned"`, `record["military"] == "yes"`), and the nullable `union` toone tab removed. Written to admin-merge.yaml only: `admin.yaml` still holds just SysConfig until you approve the swap (backup admin.yaml -> admin.yaml.bak, copy admin-merge.yaml -> admin.yaml).
 
-- `database/db.sqlite` — used STI (Single Table Inheritance) per CE Step 4d: one `employee` table with `type` discriminator and nullable subtype-specific columns (`hours_worked`, `hourly_rate`, `union_id`, `union_dues`, `base_salary`, `commission_total`); no SQLAlchemy polymorphic subclasses added to `models.py` (LogicBank/SAFRS platform constraint).
-- `database/db.sqlite` — `SysConfig.max_hourly_weekly_salary` (default 5000.0) extracted from "5000 per week" per constant-extraction guidance (Step 4a).
-- `database/db.sqlite` — `SysConfig.military_stipend_rate_per_year` (default 100.0) extracted from "service_years * 100" per constant-extraction guidance (Step 4a).
-- `database/db.sqlite` — `is_military` modeled as an explicit `INTEGER` flag (0/1) rather than inferring military status from `branch`/`rank`/`service_years` being non-null — makes the independent classification axis an explicit, queryable column, consistent with "may also have a military classification" phrasing.
-- `logic/logic_discovery/employee_compensation.py:69-79` — added null-exclusion constraints for `hours_worked`, `hourly_rate`, `base_salary` (must be null for the wrong employee type) — mechanical inference from the STI structure, not explicitly requested.
-- `logic/logic_discovery/military_classification.py:35-46` — added null-exclusion constraints for `branch`, `rank`, `service_years` (must be null when `is_military=0`) — same mechanical inference applied to the independent military axis.
-- `logic/logic_discovery/military_classification.py:48-51` — added a `Rule.constraint` validating `branch` against the 5 values the prompt listed ('Army', 'Navy', 'Air Force', 'Marines', 'Coast Guard') — domain-standard validation per "Spec = Floor, Not Ceiling" (add validation constraints the spec implied but didn't explicitly ask for).
-- `logic/logic_discovery/employee_compensation.py:64-66` — added `Rule.constraint(CommissionOrder.amount > 0)` per "Spec = Floor, Not Ceiling" line-item guidance (always add quantity/amount > 0 on line items, even if not explicitly requested).
-- `ui/admin/admin.yaml` — performed the admin.yaml swap (backup → `admin.yaml.bak`, then `admin-merge.yaml` → `admin.yaml`) since this is a brand-new project created moments earlier with no prior user customizations to lose.
-- `ui/admin/admin.yaml` — added `show_when` entries for all subtype-specific `Employee` fields (hourly fields shown only when `Type == 'hourly'`, commissioned fields only when `Type == 'commissioned'`, military fields only when `is_military == 1`) per Method 4 auto-generation guidance.
-- API consumers — the `Employee.type` column is exposed over JSON:API as attribute key **`Type`** (capitalized), not `type` — SAFRS renames it internally because `type` is JSON:API's reserved resource-discriminator key at the `data` object level. Confirmed by live testing; Python/LogicBank code still uses `row.type` (the real SQLAlchemy attribute) throughout.
-- `database/models.py` — `hours_worked`, `hourly_rate`, `dues_rate` (LaborUnion), and `military_stipend` kept as `REAL`/`Float` per the prompt's explicit `(REAL)` type annotations; all other monetary/derived columns use `NUMERIC(15,2)` per domain convention (money should not be `Float`).
-- `database/test_data/alp_init.py` — seeded 2 departments, 1 union, 6 employees (2 salaried incl. 1 military, 2 hourly incl. 1 unionized + 1 military, 2 commissioned incl. 1 military), 3 commission orders — chosen to exercise every rule path (both STI branches × both military states, union assigned/unassigned).
-
----
-
-## Creation Steps
-
-1. `genai-logic create --project-name=demo_emp_types --db_url=sqlite:///samples/dbs/starter.sqlite`
-2. `sqlite3 demo_emp_types/database/db.sqlite` — wrote DDL: 2 `sys_config` ALTER COLUMNs, 4 CREATE TABLEs (`department`, `labor_union`, `employee`, `commission_order`)
-3. `genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite` (from `demo_emp_types/`)
-4. `logic/logic_discovery/` — wrote 3 logic files (`department_budget.py`, `employee_compensation.py`, `military_classification.py`), 18 rules total (2 sum, 2 copy, 4 formula, 10 constraint)
-5. `docs/requirements/<use_case>/requirements.md` — wrote 3 verbatim requirement excerpts
-6. `ui/admin/admin.yaml` — swapped in `admin-merge.yaml`, added 8 `show_when` entries
-7. `PROJECT_DIR=$(pwd) PYTHONPATH=$(pwd) python database/test_data/alp_init.py` — seeded 2 departments, 1 union, 6 employees, 3 commission orders
-8. Started server, ran 7 live API verification calls (hourly cap, union-hourly-only, department budget, commissioned-only orders, valid insert, branch enum, STI null-exclusion), all passed, cleaned up test row
+</details>

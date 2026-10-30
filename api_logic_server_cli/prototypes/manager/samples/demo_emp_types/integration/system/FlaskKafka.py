@@ -55,9 +55,10 @@ class FlaskKafka():
             # The is_processed guard on Consumer 2 makes replays a safe no-op (skips already-processed blobs).
             # PRODUCTION: uncomment the commit line above for at-least-once delivery with no replays.
         except Exception as e:
-            logger.critical(str(e), exc_info=1)
-            # self.consumer.close()
-            sys.exit("Exited due to exception")
+            # Log and carry on with the next message.  (This used to sys.exit, which ended the consumer thread:
+            # one failed message silently stopped all later processing.)  Offsets are not committed, so a restart
+            # replays; handlers record their own failures (e.g. error_text on the blob row).
+            logger.critical(f"FlaskKafka: a handler failed on topic {msg.topic()}; the message is skipped: {e}", exc_info=1)
 
     def signal_term_handler(self, signal, frame):
         logger.info("closing consumer")

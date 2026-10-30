@@ -1,11 +1,14 @@
 ---
 title: Entity Subtypes — Single Table Inheritance Pattern
 notes: background and design rationale for entity_subtypes sample project
-source: docs/Sample-Types.md
+source: docs/Sample-Types
 version: 1.1 (Sep 2026)
 ---
 
-!!! pied-piper ":bulb: TL;DR - Type-specific attributes, relationships, rules, and display"
+
+&nbsp;
+**Key Takeways - TL;DR - Type-specific attributes, relationships, rules, and display**
+&nbsp;
 
     Created by: Method 4 (System Creation Services) — a prompt describing Hourly, Commissioned, and Military employee types, sharing one table
 
@@ -25,11 +28,11 @@ version: 1.1 (Sep 2026)
 
 This is a delivered sample (`samples/demo_emp_types`), which can also rebuild as follows:
 
-![types](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/database/entity_types.png?raw=true)
+![types](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/database/entity_types.png)
 
 &nbsp;
 
-![types](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/database/entity_types_dgm.png?raw=true)
+![types-dgm](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/database/entity_types_dgm.png)
 
 &nbsp;
 

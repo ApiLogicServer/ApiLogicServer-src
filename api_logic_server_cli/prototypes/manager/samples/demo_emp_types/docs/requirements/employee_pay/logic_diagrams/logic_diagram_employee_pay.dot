@@ -1,0 +1,32 @@
+digraph logic {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=13,
+         label=<<B>Logic Diagram — demo_emp_types  [employee_pay]</B>>, labelloc=t,
+         pad=0.4, nodesep=0.90, ranksep=1.10, bgcolor="white",
+         splines=spline]
+  node  [fontname="Helvetica", fontsize=11, shape=plaintext]
+  edge  [fontname="Helvetica", fontsize=10]
+
+  // ── trigger ─────────────────────────────────────────────────────
+  TRIGGER [label=<<TABLE BORDER="2" CELLBORDER="0" CELLPADDING="5" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60"><B>&#9889; Order inserted</B></FONT></TD></TR></TABLE>>, shape=plaintext]
+
+  // ── schema layer ──────────────────────────────────────────────────
+  Employee [label=<<TABLE BORDER="3" CELLBORDER="0" CELLSPACING="0" COLOR="#c0392b"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Employee </B></FONT></TD></TR><TR><TD PORT="Employee_commission_total_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_commission_total" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> commission_total </FONT></TD><TD PORT="Employee_commission_total_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_order_count_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_order_count" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> order_count </FONT></TD><TD PORT="Employee_order_count_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_salary_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_salary" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> salary </FONT> <FONT COLOR="#e67e22" POINT-SIZE="9">= _employee_salary(row)</FONT></TD><TD PORT="Employee_salary_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_type_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_type" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> type </FONT></TD><TD PORT="Employee_type_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_hours_worked_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_hours_worked" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> hours_worked </FONT></TD><TD PORT="Employee_hours_worked_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_hourly_rate_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_hourly_rate" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> hourly_rate </FONT></TD><TD PORT="Employee_hourly_rate_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_base_salary_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_base_salary" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> base_salary </FONT></TD><TD PORT="Employee_base_salary_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_union_id_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_union_id" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> union_id </FONT></TD><TD PORT="Employee_union_id_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_union_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_union" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> union </FONT></TD><TD PORT="Employee_union_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_session_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_session" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> session </FONT></TD><TD PORT="Employee_session_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_union_dues_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_union_dues" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> union_dues </FONT> <FONT COLOR="#e67e22" POINT-SIZE="9">= _union_dues(row)</FONT></TD><TD PORT="Employee_union_dues_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  Order [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Order </B></FONT></TD></TR><TR><TD PORT="Order_amount_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Order_amount" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> amount </FONT></TD><TD PORT="Order_amount_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  // ── rank groupings ────────────────────────────────────────────────
+  { rank=min; Employee }
+  { rank=max; Order; TRIGGER }
+
+  // ── FK relationships ───────────────────────────────────────────
+  Order -> Employee [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+
+  // ── trigger edge ──────────────────────────────────────────────
+  TRIGGER -> Order [color="#27ae60", style=bold, arrowhead=vee, penwidth=2, weight=10]
+
+  // ── logic edges ────────────────────────────────────────────────────
+  // INTRA:Employee:commission_total:salary:1:0
+  // INTRA:Employee:session:salary:1:1
+  // INTRA:Employee:salary:union_dues:2:2
+  // INTRA:Employee:base_salary:union_dues:2:3
+  Order:Order_amount_w -> Employee:Employee_commission_total_w [label="3", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8]
+  Order -> Employee:Employee_order_count_w [label="4", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8, tailport=w]
+}

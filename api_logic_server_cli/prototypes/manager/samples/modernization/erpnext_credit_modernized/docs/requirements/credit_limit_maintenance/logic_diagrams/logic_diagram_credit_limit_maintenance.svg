@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="763pt" height="260pt" viewBox="18.80 18.80 763.40 260.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 269.55)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-269.55 772.55,-269.55 772.55,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="139" y="-225.4" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — erpnext_credit_modernized  [credit_limit_maintenance]</text>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="8,-16.5 8,-49.5 196.25,-49.5 196.25,-16.5 8,-16.5" />
+<text xml:space="preserve" text-anchor="start" x="17" y="-31.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ CustomerCreditLimit inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-17.5 9,-48.5 195.25,-48.5 195.25,-17.5 9,-17.5" />
+</g>
+
+<g id="node3" class="node">
+<title>CustomerCreditLimit</title>
+<polygon fill="#4a6fa5" stroke="none" points="344.88,-43 344.88,-59 495.38,-59 495.38,-43 344.88,-43" />
+<text xml:space="preserve" text-anchor="start" x="362" y="-47.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> CustomerCreditLimit </text>
+<polygon fill="#b8cce8" stroke="none" points="344.88,-25 344.88,-43 351.88,-43 351.88,-25 344.88,-25" />
+<text xml:space="preserve" text-anchor="start" x="346.88" y="-31" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="351.88,-25 351.88,-43 488.38,-43 488.38,-25 351.88,-25" />
+<text xml:space="preserve" text-anchor="start" x="354.88" y="-31" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> credit_limit </text>
+<polygon fill="#b8cce8" stroke="none" points="488.38,-25 488.38,-43 495.38,-43 495.38,-25 488.38,-25" />
+<text xml:space="preserve" text-anchor="start" x="490.38" y="-31" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="344.88,-7 344.88,-25 351.88,-25 351.88,-7 344.88,-7" />
+<text xml:space="preserve" text-anchor="start" x="346.88" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="351.88,-7 351.88,-25 488.38,-25 488.38,-7 351.88,-7" />
+<text xml:space="preserve" text-anchor="start" x="354.88" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> bypass_credit_limit_check </text>
+<polygon fill="#b8cce8" stroke="none" points="488.38,-7 488.38,-25 495.38,-25 495.38,-7 488.38,-7" />
+<text xml:space="preserve" text-anchor="start" x="490.38" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#c0392b" stroke-width="3" points="343.38,-5.5 343.38,-60.5 496.88,-60.5 496.88,-5.5 343.38,-5.5" />
+</g>
+
+<g id="edge2" class="edge">
+<title>TRIGGER-&gt;CustomerCreditLimit</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M203.98,-33C243.26,-33 282.54,-33 321.82,-33" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="331.57,-33 321.57,-37.5 329.01,-33.5 321.57,-33.5 321.57,-33 321.57,-32.5 329.01,-32.5 321.57,-28.5 331.57,-33" />
+</g>
+
+<g id="node2" class="node">
+<title>CustomerCompany</title>
+<polygon fill="#4a6fa5" stroke="none" points="343.88,-198.25 343.88,-214.25 494.38,-214.25 494.38,-198.25 343.88,-198.25" />
+<text xml:space="preserve" text-anchor="start" x="365.12" y="-202.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> CustomerCompany </text>
+<polygon fill="#b8cce8" stroke="none" points="343.88,-180.25 343.88,-198.25 350.88,-198.25 350.88,-180.25 343.88,-180.25" />
+<text xml:space="preserve" text-anchor="start" x="345.88" y="-186.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="350.88,-180.25 350.88,-198.25 487.38,-198.25 487.38,-180.25 350.88,-180.25" />
+<text xml:space="preserve" text-anchor="start" x="353.88" y="-186.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> customer_credit_limit </text>
+<polygon fill="#b8cce8" stroke="none" points="487.38,-180.25 487.38,-198.25 494.38,-198.25 494.38,-180.25 487.38,-180.25" />
+<text xml:space="preserve" text-anchor="start" x="489.38" y="-186.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="343.88,-162.25 343.88,-180.25 350.88,-180.25 350.88,-162.25 343.88,-162.25" />
+<text xml:space="preserve" text-anchor="start" x="345.88" y="-168.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="350.88,-162.25 350.88,-180.25 487.38,-180.25 487.38,-162.25 350.88,-162.25" />
+<text xml:space="preserve" text-anchor="start" x="353.88" y="-168.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> bypass_credit_limit_check </text>
+<polygon fill="#b8cce8" stroke="none" points="487.38,-162.25 487.38,-180.25 494.38,-180.25 494.38,-162.25 487.38,-162.25" />
+<text xml:space="preserve" text-anchor="start" x="489.38" y="-168.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="342.88,-161.25 342.88,-215.25 495.38,-215.25 495.38,-161.25 342.88,-161.25" />
+</g>
+
+<g id="edge1" class="edge">
+<title>CustomerCreditLimit-&gt;CustomerCompany</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M324.45,-51.32C293.92,-61.85 263.35,-78.79 245.12,-106 218.08,-146.37 278.23,-167.11 335.06,-177.48" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="324.18,-51.41 335.08,-52.6 329.16,-49.79 333.47,-48.39 333.47,-48.39 333.47,-48.39 329.16,-49.79 332.3,-44.04 324.18,-51.41" />
+</g>
+
+<g id="edge3" class="edge">
+<title>CustomerCreditLimit:CustomerCreditLimit_credit_limit_w-&gt;CustomerCompany:CustomerCompany_customer_credit_limit_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M343.88,-34C279.19,-34 274.26,-170.45 330.76,-187.51" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="340.46,-188.9 329.92,-191.93 337.85,-189.03 330.49,-187.97 330.56,-187.48 330.64,-186.98 338,-188.04 331.21,-183.02 340.46,-188.9" />
+<text xml:space="preserve" text-anchor="middle" x="294.36" y="-107.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">1</text>
+</g>
+
+<g id="edge4" class="edge">
+<title>CustomerCreditLimit:CustomerCreditLimit_bypass_credit_limit_check_w-&gt;CustomerCompany:CustomerCompany_bypass_credit_limit_check_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M343.88,-16C283.34,-16 339.38,-86.91 346.63,-148.98" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="347.23,-158.82 342.13,-149.11 346.57,-156.29 346.12,-148.87 346.62,-148.84 347.12,-148.81 347.57,-156.23 351.11,-148.56 347.23,-158.82" />
+<text xml:space="preserve" text-anchor="middle" x="341.01" y="-107.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">2</text>
+</g>
+
+<g id="node4" class="node">
+<title>CustomerGroupCreditLimit</title>
+<polygon fill="#4a6fa5" stroke="none" points="579.5,-188.25 579.5,-204.25 732.75,-204.25 732.75,-188.25 579.5,-188.25" />
+<text xml:space="preserve" text-anchor="start" x="581.5" y="-192.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> CustomerGroupCreditLimit </text>
+<polygon fill="#dbe4f0" stroke="none" points="628.58,-172.25 628.58,-188.25 683.67,-188.25 683.67,-172.25 628.58,-172.25" />
+<text xml:space="preserve" text-anchor="start" x="653.12" y="-177.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e">  </text>
+<polygon fill="none" stroke="#c0392b" stroke-width="3" points="578,-170.75 578,-205.75 734.25,-205.75 734.25,-170.75 578,-170.75" />
+</g>
+</g>
+</svg>

@@ -56,6 +56,31 @@ Use:
 
 Do **not leave any file empty**.
 
+**Default: generate one resource file per step, report as you go.**
+
+Process resources one at a time — read that resource's schema slice from `admin.yaml`,
+generate that resource's complete `.js` file, move to the next. This is the default, not a
+hard rule enforced by a token-overflow constraint: that constraint applied to the original
+ChatGPT-based generator (`genai_react_app.py`, `a_generate_resource_files()`), which made one
+stateless API call per resource because a single-shot completion had no way to recover if it
+ran out of room mid-file, and generating the entire app in one call did not work reliably.
+
+An AI assistant with a full session (not a single stateless completion) may not have the
+same ceiling — you can hold more schema in context and self-check output as you go. Use
+judgment: if a project has few resources, generating more than one file per step is fine if
+you're confident in the result. If a project has many resources, or you're unsure, fall back
+to one-at-a-time. Either way, **report per-file progress and timing** — this is required
+regardless of batching, since it's the visibility a raw API call never had:
+- After each resource file (or batch): file name(s), what it implements
+  (List/Show/Create/Edit), and how long that step took (wall-clock).
+- After `App.js` wiring: same, one line. This step is always separate — it's just imports +
+  `<Resource>` registration, not per-table content, and depends on every resource file
+  already existing.
+- At the end: a total summary — every file produced, its one-line description, its
+  individual time, and the **total elapsed time** for the whole generation run — the same
+  way other generation steps in this project (Method 4, Executable Requirements) report back
+  with a summary instead of silently finishing.
+
 ---
 
 ## App Wiring

@@ -27,7 +27,7 @@ The prompt author is a domain expert. They wrote only what they needed to contro
 
 **Always apply domain knowledge to flesh out beyond the spec:**
 - Add domain-standard fields the spec didn't mention (e.g., `base_duty_rate` on a tariff HS code table, `effective_date` on a rate table)
-- Add `Rule.constraint` for `quantity > 0` and `unit_price`/`unit_value > 0` on any line item — always, without being asked
+- Domain-floor constraints (`quantity > 0`, `unit_price`/`unit_value > 0` on a line item): do NOT add them silently (rule 8: never ad-lib business logic). List each one under 🔴 Review Required in ad-libs.md as "not added: the spec does not state it; say so if you want it"
 - Add `Rule.sum` for every numeric child column that rolls up to a header — always
 - Add audit/traceability columns where domain convention expects them
 
@@ -1036,7 +1036,7 @@ Create a fully functional application and database
 
 0. **Spec = Floor, Not Ceiling:**
    - Prompt column lists are the *minimum anchor* — flesh out with domain-standard fields
-   - Always add `Rule.constraint` for `quantity > 0` and `unit_price`/`unit_value > 0` on line items
+   - Domain-floor constraints (`quantity > 0`, `unit_price`/`unit_value > 0`): not added silently; listed as 🔴 in ad-libs.md (see rule 8)
    - Always add `Rule.sum` for every numeric child column that rolls up to a header
    - Domain expert omissions = "obvious to them" — not "excluded"
 
@@ -1156,6 +1156,40 @@ Create a fully functional application and database
    Run DDL + `rebuild-from-database` ONCE before writing any logic or mapper files.
    ❌ NEVER discover a missing column while writing a logic file — that causes an error loop.
 
+   **🚨 Traceability anchor for rule-less requirements:** a requirement implemented by a
+   custom API, Kafka handler/mapper or security grants (no `logic/logic_discovery/` file) must
+   carry its `Feature: <name>` line, verbatim from requirements.md, in the module docstring of
+   the file that implements it — otherwise the Requirements Traceability Report shows it as
+   "not implemented". Write it when you write the file; adding it later edits source after the
+   test run and forces a re-run. Scanned globs and format: see STEP 6 in
+   `.github/copilot-instructions.md` ("NON-LOGIC IMPLEMENTATION FILES").
+
+   **🚨 MANDATORY CLOSING CHECK — "planned a derived column" is not the same as "derived it":**
+   Every row in the DDL change list whose Reason names a rule type (e.g. "Rule.count where=
+   clause", "Rule.formula output") is a promise that some code will assign that column —
+   not just declare a rule that reads it. Before the report is complete (after coding, not
+   during Phase 1 planning), go back through this same DDL change list and confirm, for each
+   such row, that the logic file actually contains an assignment to that column
+   (`row.<col> = ...` in an `early_row_event`/`row_event`, or a `Rule.formula`/`Rule.copy`
+   whose `derive=` names it). A column that only ever appears on the *reading* side (inside
+   a `Rule.count`/`Rule.sum` `where=`, or a `_reasons()`-style helper) and never on the
+   *writing* side is a bug, not a finding to note — fix it before finishing, don't just log it.
+
+   **Real failure case (customs_demo_clvs, Aug 2026):** the DDL change list correctly
+   included `shipment_commodity | ADD is_prohibited | Step 3 — Rule.count where= clause` —
+   the AI had already reasoned, correctly, that this column existed because a rule would
+   read it. The Phase 2 anti-pattern checklist even explicitly named it, paired with its
+   sibling column, as confirmed-correct: "`is_prohibited`/`controlled_regulated_goods_id`
+   are child-table Rule.count sources, not a stale parent flag." Despite writing this down
+   twice, the actual logic file only ever wrote `controlled_regulated_goods_id` (via a real
+   HS-code lookup) — `is_prohibited` was never assigned anywhere, so the `Rule.count` reading
+   it was permanently stuck at 0. The gap was 3 missing lines in an early_row_event that
+   otherwise correctly set the sibling column right next to it. This is not a case of the AI
+   not knowing a derivation was needed — its own planning notes proved it knew. It planned
+   correctly and then didn't close the loop on its own plan. This closing check exists
+   because the DDL change list already contains everything needed to catch this — it's a
+   verification against the AI's own prior reasoning, not new analysis.
+
    ---
 
    **Phase 2 — CE / Pattern Assessment**
@@ -1185,6 +1219,8 @@ Create a fully functional application and database
    Severity tiers:
    - 🔴 **Review required** — AI guessed something the spec didn't cover. Dev MUST verify.
    - 🟡 **FYI** — standard pattern applied. Almost certainly correct; no action needed.
+   - A term the spec uses but never defines, which you had to interpret (e.g. "unpaid" orders), is 🔴, even when
+     one reading is the obvious convention. 🟡 is only for standard patterns that involved no interpretation.
 
    ---
    *(begin template — copy everything below this line into the file)*
@@ -1193,6 +1229,23 @@ Create a fully functional application and database
    **N items need your review. M FYIs — standard patterns, no action needed.**
 
    ---
+
+   ## Walkthrough
+
+   Five steps, one or two lines each — what actually happened, in order. This is the
+   scannable summary; full diagnostic detail (DDL list, rule plan, rejected alternatives,
+   replay log) is collapsed below, not repeated here.
+
+   1. **Basic data model** — [entities/tables inferred from the spec]
+   2. **Derived/predicted schema additions** — [constants found → SysConfig; FK/lookup
+      columns added; allocate junction tables detected (or "none"); Request Pattern
+      columns added (or "none")]
+   3. **Create db** — [DDL + rebuild-from-database — table count]
+   4. **Run impl-req** — [rule types used: sum/count/formula/constraint/Allocate/events]
+   5. **Test data / testing** — [alp_init.py seed status; Behave tests if created]
+
+   <details markdown>
+   <summary>Full diagnostic detail (DDL change list, rule plan, rejected alternatives, replay log)</summary>
 
    ### 🟢 Diagnostic Appendix
 
@@ -1299,9 +1352,29 @@ Create a fully functional application and database
    - `` `logic/logic_discovery/clvs_eligibility.py:12` — used Decimal('3300') for threshold comparison ``
    - `` `integration/row_dict_maps/IsdcMapper.py` — ShipmentCommodity composite PK workaround: inserted via parent.ShipmentCommodityList.append() to avoid UNIQUE constraint on (local_shipment_oid_nbr, sequence_nbr) ``
 
+   </details>
+
    *(end template)*
+
+   ---
+
+   **Also mandatory — link this ad-libs.md from project_creation_report.md:**
+
+   After writing `docs/requirements/<name>/ad-libs.md`, append one line to
+   `docs/requirements/project_creation_report.md`'s `## Use Cases` section (create the
+   section if this is somehow the first entry and it's missing):
+
+   ```markdown
+   - [<name>](<name>/ad-libs.md) — <one-line summary>, <ISO date>
+   ```
+
+   Example: `- [charge_distribution](charge_distribution/ad-libs.md) — cascade allocation, 2026-08-05`
+
+   This keeps `project_creation_report.md` a live index of every use case implemented in
+   the project, not just a snapshot from `create` time.
 
 
 8. **Business Logic Patterns:**
    - NEVER ad-lib business logic or missing conditions that are not explicitly defined in the spec.
+     (This is why a missing domain-floor constraint such as `quantity > 0` is asked about, not added: list it as 🔴.)
    - For derived flags or totals (like `clvs_eligible`), ALWAYS use declarative `Rule.formula` or `Rule.count` derivations instead of imperative `Rule.row_event` loops. `row_event` is for side effects (like sending an email or matching a record), NOT formulas.
