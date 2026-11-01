@@ -425,14 +425,12 @@
                 "portofentry",
                 "warehousecode",
                 "surface_intl_shipment_nbr",
-                "clvs_reason",
-                "clvs_eligible",
-                "prohibited_commodity_count",
-                "controlled_item_count",
                 "customs_office_id",
-                "sys_config_id",
-                "clvs_lvs_threshold_cad",
-                "authorized_clvs_courier"
+                "customs_office_clvs_release",
+                "prohibited_commodity_count",
+                "controlled_commodity_count",
+                "clvs_reason",
+                "clvs_eligible"
             ],
             "filterable": [
                 "local_shipment_oid_nbr",
@@ -574,40 +572,12 @@
                 "portofentry",
                 "warehousecode",
                 "surface_intl_shipment_nbr",
-                "clvs_reason",
-                "clvs_eligible",
-                "prohibited_commodity_count",
-                "controlled_item_count",
                 "customs_office_id",
-                "sys_config_id",
-                "clvs_lvs_threshold_cad",
-                "authorized_clvs_courier"
-            ]
-        },
-        {
-            "name": "SysConfig",
-            "path": "/SysConfig",
-            "methods": [
-                "GET",
-                "PATCH",
-                "POST",
-                "DELETE"
-            ],
-            "fields": [
-                "id",
-                "name",
-                "discount_rate",
-                "tax_rate",
-                "notes",
-                "clvs_lvs_threshold_cad"
-            ],
-            "filterable": [
-                "id",
-                "name",
-                "discount_rate",
-                "tax_rate",
-                "notes",
-                "clvs_lvs_threshold_cad"
+                "customs_office_clvs_release",
+                "prohibited_commodity_count",
+                "controlled_commodity_count",
+                "clvs_reason",
+                "clvs_eligible"
             ]
         },
         {
@@ -771,13 +741,15 @@
                 "id",
                 "received_at",
                 "payload",
-                "is_processed"
+                "is_processed",
+                "error_text"
             ],
             "filterable": [
                 "id",
                 "received_at",
                 "payload",
-                "is_processed"
+                "is_processed",
+                "error_text"
             ]
         },
         {
@@ -804,6 +776,34 @@
                 "special_handling_cd",
                 "etl_tmstp",
                 "shipment_type_cd"
+            ]
+        },
+        {
+            "name": "SysConfig",
+            "path": "/SysConfig",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "clvs_lvs_threshold_cad",
+                "clvs_service_type_cd"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "clvs_lvs_threshold_cad",
+                "clvs_service_type_cd"
             ]
         },
         {

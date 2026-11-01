@@ -4,7 +4,7 @@ This project was created by `genai-logic create`.
 
 - **Project name:** demo_customs_clvs
 - **Database:** `sqlite:///samples/dbs/customs.sqlite`
-- **Created:** August 11, 2026 18:01:21
+- **Created:** November 01, 2026 10:02:35
 
 ## Scaffold
 
@@ -13,6 +13,7 @@ This project's scaffold:
 
 - **Base template:** `/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/venv/lib/python3.13/site-packages/api_logic_server_cli/prototypes/base` (always the foundation - every project starts here)
 - **Overlay:** none - this project is the unmodified base template
+- **Overlay (Project Context Engineering):** `/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/system/project_context_engineering` (training file additions/overrides copied into `docs/training/` - see this project's `docs/training/$readme.md` for the exact overlay timestamp/version)
 
 The scaffold provides, out of the box:
 
@@ -41,6 +42,6 @@ You can still add business logic at any time - say **"implement requirements"** 
 
 ## Use Cases
 
-*(each `impl req` run appends a link here to its `docs/requirements/<use_case>/ad-libs.md`)*
+- [customs_demo](customs_demo/ad-libs.md) — ISDC shipment subscribe, importer matching, CLVS eligibility, 2026-11-01
 
-- [customs_demo](customs_demo/ad-libs.md) — EAI Kafka consume (isdc) + importer matching + CLVS eligibility, 2026-08-11
+*(each `impl req` run appends a link here to its `docs/requirements/<use_case>/ad-libs.md`)*

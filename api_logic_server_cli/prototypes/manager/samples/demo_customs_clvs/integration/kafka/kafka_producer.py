@@ -1,6 +1,9 @@
 """
 
-Version 2.1
+Version 2.2
+
+2.2 - kafka_available(): a cached broker check, so a configured-but-down broker costs one short wait
+    instead of a 10 s flush on every publish (and no backlog of undeliverable messages in the producer queue).
 
 Invoked at server start (api_logic_server_run.py -> config/setup.py)
 
@@ -17,6 +20,7 @@ except ImportError:
     KafkaException = None
     # Kafka support not available on this platform
 import socket
+import time
 import logging, os
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from integration.system.RowDictMapper import RowDictMapper
@@ -28,6 +32,36 @@ producer = None
 
 conf = None
 """ filled from config (KAFKA_CONNECT) """
+
+_availability = {"checked": None, "up": False}
+""" last broker check: when (time.monotonic) and the result """
+
+
+def kafka_available(ttl: float = 30.0, timeout: float = 1.0) -> bool:
+    """ Is a broker configured AND answering?  Cheap enough to call before every publish.
+
+    No producer (KAFKA_SERVER unset) is False at once.  Otherwise the broker is asked (list_topics, `timeout`
+    seconds) at most once per `ttl` seconds; in between, the last answer is used.  A failed publish marks the
+    broker down (see mark_unavailable), so the next calls skip it until `ttl` has passed. """
+    if producer is None:
+        return False
+    now = time.monotonic()
+    checked = _availability["checked"]
+    if checked is not None and now - checked < ttl:
+        return _availability["up"]
+    try:
+        producer.list_topics(timeout=timeout)
+        up = True
+    except Exception as e:
+        logger.warning(f"kafka_available: broker not reachable ({e}); publishing is skipped for {ttl:.0f}s")
+        up = False
+    _availability.update(checked=now, up=up)
+    return up
+
+
+def mark_unavailable():
+    """ a publish did not get through: treat the broker as down until the next check """
+    _availability.update(checked=time.monotonic(), up=False)
 
 logger = logging.getLogger('integration.kafka')
 if Producer is None:
@@ -116,11 +150,12 @@ def send_kafka_message(kafka_topic: str, kafka_key: str = None, msg: str="", jso
 
     json_string = jsonify({f'{root_name}': row_obj_dict}).data.decode('utf-8')
     log_msg = log_msg
-    if producer:  # enabled in config/config.py?
+    if producer and kafka_available():  # enabled in config/config.py, and the broker answers
         try:
             producer.produce(value=json_string, topic=kafka_topic, key=kafka_key)
             outstanding = producer.flush(timeout=10)  # ensure message is actually sent (not just buffered)
             if outstanding > 0:
+                mark_unavailable()
                 logger.error(f"kafka_producer#send_kafka_message: {outstanding} messages NOT delivered to topic '{kafka_topic}'")
             else:
                 logger.debug(f"kafka_producer#send_kafka_message: delivered to topic '{kafka_topic}'")
@@ -129,7 +164,7 @@ def send_kafka_message(kafka_topic: str, kafka_key: str = None, msg: str="", jso
         except KafkaException as ke:
             logger.error(f"kafka_producer#send_kafka_message error: {ke}") 
     else:
-        log_msg += " [Note: **Kafka not enabled** ]"
+        log_msg += " [Note: **Kafka broker not reachable** ]" if producer else " [Note: **Kafka not enabled** ]"
     if logic_row is not None:
         logic_row.log(f'{log_msg}')
     logger.debug(f'\n\n{log_msg}\n{json_string}')
@@ -157,18 +192,19 @@ def publish_kafka_message(topic: str, logic_row: LogicRow, mapper=None):
     kafka_key = str(get_primary_key(logic_row))
     log_msg = f"publish_kafka_message: topic='{topic}', key={kafka_key}"
 
-    if producer:
+    if producer and kafka_available():
         try:
             producer.produce(value=json_string, topic=topic, key=kafka_key)
             outstanding = producer.flush(timeout=10)
             if outstanding > 0:
+                mark_unavailable()
                 logger.error(f"publish_kafka_message: {outstanding} messages NOT delivered to topic '{topic}'")
             else:
                 logger.debug(f"publish_kafka_message: delivered to topic '{topic}'")
         except KafkaException as ke:
             logger.error(f"publish_kafka_message error: {ke}")
     else:
-        log_msg += " [Note: **Kafka not enabled**]"
+        log_msg += " [Note: **Kafka broker not reachable**]" if producer else " [Note: **Kafka not enabled**]"
 
     if logic_row is not None:
         logic_row.log(log_msg)

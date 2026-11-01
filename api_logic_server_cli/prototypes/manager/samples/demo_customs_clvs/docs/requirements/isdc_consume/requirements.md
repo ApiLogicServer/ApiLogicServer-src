@@ -1,9 +1,8 @@
----
-created: 2026-08-11T18:10:00
-created_by: claude-sonnet-5
-use_case: isdc_consume
----
+Feature: Subscribe to Kafka and persist shipments
 
+### Step 1 — Subscribe to Kafka and persist shipments
+
+```
 Read `docs/training/eai_subscribe.md`, then:
 
 Subscribe to Kafka topic `isdc`. Each message is a CIMCorp shipment XML.
@@ -24,3 +23,21 @@ Important mapping note (prevent PK collisions):
 - In this payload, party OID fields may carry placeholder value `0` for multiple rows.
 - If mapped to local primary-key columns (e.g. `ShipmentParty.shipment_party_oid_nbr`),
   normalize placeholder IDs to `None` so DB autoincrement assigns unique PK values.
+```
+
+**Verify:** `F5`, then:
+```bash
+curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
+```
+Response should show `"success": true` with `awb_nbr`, `pieces`, `parties`, `commodities`. Check Admin UI — a ShipmentXml row and a Shipment row with children should appear.
+
+Then run the automated test gate (server must be running on port 5656):
+```bash
+bash docs/requirements/customs_demo/test_gate.sh
+```
+
+Behavioral acceptance checks (must pass):
+- Repeat the same Step 2 call twice using the same XML payload.
+- Domain graph counts remain stable on replay (Shipment/Piece/ShipmentParty/ShipmentCommodity do not increase).
+- Blob/audit ingest count increases as expected (`shipment_xml` increments).
+- No orphans remain after replay or after deleting the parent Shipment through API/Admin UI.

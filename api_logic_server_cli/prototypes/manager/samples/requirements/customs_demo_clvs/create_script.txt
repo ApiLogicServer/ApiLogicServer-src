@@ -1,0 +1,16 @@
+Check for Docker or Podman. If neither is running, continue in degraded mode (Kafka simulated through the debug endpoint) and tell me so up front.
+
+create project demo_customs_clvs from samples/dbs/customs.sqlite
+
+implement requirements samples/requirements/customs_demo_clvs/docs/requirements/customs_demo
+
+verify message subscriptions (all topics)
+
+create logic diagram for each requirement (skip if graphviz is not available)
+
+create tests from rules, using default names
+
+run the tests
+
+run the requirements traceability report
+When the report is done, print this verbatim: "Next: scan these two files: logic/logic_discovery/clvs_eligibility.py (the rules) and docs/requirements/customs_demo/ad-libs.md (the judgment calls the AI made). Then open the report: demo_customs_clvs/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."

@@ -1,14 +1,13 @@
 about:
-  date: August 11, 2026 18:01:21
+  date: November 01, 2026 10:02:36
   merged:
-    at: August 11, 2026 18:06:15
-    new_attributes: 'Shipment.customs_office_id Shipment.sys_config_id Shipment.clvs_reason
-      Shipment.clvs_eligible Shipment.prohibited_commodity_count Shipment.controlled_item_count
-      Shipment.authorized_clvs_courier Shipment.clvs_lvs_threshold_cad SysConfig.clvs_lvs_threshold_cad
-      ShipmentCommodity.is_prohibited '
+    at: November 01, 2026 10:04:03
+    new_attributes: 'Shipment.customs_office_id Shipment.customs_office_clvs_release
+      Shipment.prohibited_commodity_count Shipment.controlled_commodity_count Shipment.clvs_reason
+      Shipment.clvs_eligible ShipmentCommodity.is_prohibited SysConfig.clvs_lvs_threshold_cad
+      SysConfig.clvs_service_type_cd '
     new_resources: 'ShipmentXml '
-    new_tab_groups: 'CustomsOffice.ShipmentList Shipment.customs_office Shipment.sys_config
-      SysConfig.ShipmentList '
+    new_tab_groups: 'CustomsOffice.ShipmentList Shipment.customs_office '
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -373,13 +372,11 @@ resources:
     - name: iid_master_cd
     - name: iid_classify_cd
     - name: customs_office_id
-    - name: sys_config_id
+    - name: customs_office_clvs_release
+    - name: prohibited_commodity_count
+    - name: controlled_commodity_count
     - name: clvs_reason
     - name: clvs_eligible
-    - name: prohibited_commodity_count
-    - name: controlled_item_count
-    - name: authorized_clvs_courier
-    - name: clvs_lvs_threshold_cad
     tab_groups:
     - direction: tomany
       fks:
@@ -406,11 +403,6 @@ resources:
       - customs_office_id
       name: customs_office
       resource: CustomsOffice
-    - direction: toone
-      fks:
-      - sys_config_id
-      name: sys_config
-      resource: SysConfig
     type: Shipment
     user_key: local_shipment_oid_nbr
   ShipmentCommodity:
@@ -524,6 +516,7 @@ resources:
       sort: true
     - name: received_at
       type: DATETIME
+    - name: error_text
     - name: payload
       required: true
     - name: is_processed
@@ -562,12 +555,7 @@ resources:
     - name: notes
     - name: id
     - name: clvs_lvs_threshold_cad
-    tab_groups:
-    - direction: tomany
-      fks:
-      - sys_config_id
-      name: ShipmentList
-      resource: Shipment
+    - name: clvs_service_type_cd
     type: SysConfig
     user_key: name
   VirtualRouteLeg:

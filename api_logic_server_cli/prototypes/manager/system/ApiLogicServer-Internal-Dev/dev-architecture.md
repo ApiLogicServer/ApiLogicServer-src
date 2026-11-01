@@ -4,8 +4,13 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.40
+version: 2.41
 changelog:
+  - 2.41 (Oct 31 2026) - BLT section: recorded that BLT builds from the current working tree of
+    `org_git/ApiLogicServer-src`, committed or not (Val). Prompted by restoring the `demo_emp_types`
+    ontology folder (deleted in `14f329ce`, restored from `21d4dce6`, left untracked) and asking whether
+    it would reach the next BLT without a commit. It does; commit only for durability / other clones /
+    GitHub-fetched content. Distinct from Docs-sourced readmes, which still need a push.
   - 2.40 (Sep 11 2026) - Added `podman/` as a fourth sibling under `ApiLogicServer-dev/`
     (alongside `org_git/`, `build_and_test/`, `servers/`) — a persistent host directory for
     docker/podman bind-mount volumes that must survive a Manager workspace rebuild. Root
@@ -1474,6 +1479,11 @@ This understanding should be reflected in two source files in `org_git/ApiLogicS
 
 **BLT (Build-Load-Test):**
 - Rebuilds API Logic Server from dev source
+- **Builds from the current working tree of `org_git/ApiLogicServer-src` — committed or not.** Uncommitted
+  edits and brand-new untracked files are included; no `git commit` (or push) is needed before a BLT run
+  to see a change in the regenerated workspace. (Confirmed by Val, Oct 31 2026. Packaging is by file pattern —
+  `MANIFEST.in` — not by git state.) A commit is still needed for durability and for other clones,
+  `org_git/codespaces_mgr`, and anything that fetches from GitHub (e.g. `copy_md()` from Docs).
 - Creates ~18 test projects with validation
 - Critical smoke test before pushing to GitHub
 - Results in `tests/results.txt` and `tests/failures.txt`

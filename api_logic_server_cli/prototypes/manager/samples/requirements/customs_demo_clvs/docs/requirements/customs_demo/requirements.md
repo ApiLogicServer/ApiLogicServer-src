@@ -4,7 +4,10 @@ The following is a reproducible step-by-step prompt sequence to recreate this pr
 Each step is a copy-pasteable prompt with a verification checkpoint before proceeding.
 
 
-### Step 1 — Subscribe to Kafka and persist shipments
+## 1. Subscribe to Kafka and persist shipments
+
+Feature: Subscribe to Kafka and persist shipments
+
 
 ```
 Read `docs/training/eai_subscribe.md`, then:
@@ -48,7 +51,10 @@ Behavioral acceptance checks (must pass):
 
 ---
 
-### Step 2 — Importer matching
+## 2. Importer matching
+
+Feature: Importer matching
+
 
 ```
 Logic discovery: Shipment matching (Phase 2).
@@ -71,7 +77,10 @@ ShipmentParty writes atomically with the parent Shipment.
 
 ---
 
-### Step 3 - CVLS Eligibility
+## 3. CVLS Eligibility
+
+Feature: CVLS Eligibility
+
 
 ```
 Scenario: Shipment at or below the LVS threshold is eligible
@@ -85,7 +94,8 @@ Scenario: Shipment at or below the LVS threshold is eligible
   And set the clvs_reason as a comma delimited list of short all reasons why failed (or blank)
   ```
 
-### Step 4 — Live Kafka end-to-end test
+## 4. Live Kafka end-to-end test
+
 
 **Required: set Kafka env vars in `config/default.env`:**
 ```

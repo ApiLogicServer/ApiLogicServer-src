@@ -118,6 +118,7 @@ so `min(0, AmountOwed) = 0` and nothing is allocated.
 **Fix:** Add an `early_row_event` to explicitly initialize on insert:
 ```python
 def init_amount_unallocated(row: models.Payment, old_row: models.Payment, logic_row: LogicRow):
+    """Payment event: on insert, sets AmountUnAllocated = Amount so Allocate has a balance to drain."""
     if logic_row.ins_upd_dlt == "ins":
         row.AmountUnAllocated = row.Amount
 
@@ -307,6 +308,8 @@ Actual execution order for each ChargeDeptAllocation insert:
 **Level-1 allocator — must pre-compute percent AND amount:**
 ```python
 def allocate_charge_to_dept(allocation_logic_row, provider_logic_row) -> bool:
+    """Allocator: creates one department allocation per project funding line, sized by the
+    line's percent of the charge amount (Level 1 of the charge cascade)."""
     allocation = allocation_logic_row.row
     funding_line = allocation_logic_row.row.project_funding_line  # linked by link()
     charge = provider_logic_row.row
@@ -325,6 +328,8 @@ def allocate_charge_to_dept(allocation_logic_row, provider_logic_row) -> bool:
 **Level-2 allocator — reads pre-computed amount from provider:**
 ```python
 def allocate_dept_to_gl(allocation_logic_row, provider_logic_row) -> bool:
+    """Allocator: creates one GL account allocation per dept charge definition line, sized by
+    the line's percent of the department allocation (Level 2 of the charge cascade)."""
     allocation = allocation_logic_row.row
     defn_line = allocation_logic_row.row.dept_charge_definition_line  # linked by link()
     dept_alloc = provider_logic_row.row  # amount already set by Level-1 allocator above

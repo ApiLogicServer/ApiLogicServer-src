@@ -1,36 +1,42 @@
-import logging
-import os
-from pathlib import Path
-import safrs
-from flask import request, jsonify
+"""
+Feature: Subscribe to Kafka and persist shipments
 
-app_logger = logging.getLogger("api_logic_server_app")
+API service isdc debug: test the isdc subscribe pipeline by hand or from tests, with or without a broker.
+Thin file: the engine is integration/system/EaiDebug.py.  Development only: no authentication, and the reset is
+destructive.  Enabled by APILOGICPROJECT_CONSUME_DEBUG = true (config/default.env); false turns both off.
+
+Send the sample message - live through Kafka when a broker is configured and answering, else simulated (no Kafka):
+
+    curl "http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml"
+
+Force a mode (live answers 409 if Kafka is not available):
+
+    curl "http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml&mode=simulated"
+    curl "http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml&mode=live"
+
+Live is asynchronous (the reply is the broker's acknowledgement).  See the outcome in logs/als.log, or the blob table
+(GET /api/ShipmentXml/?sort=-id&page[limit]=1 - is_processed, error_text).
+
+Purge the messages in topics isdc and isdc_processed (the topics and consumers stay; nothing to do without a broker):
+
+    curl -X POST "http://localhost:5656/consume_debug/isdc/reset"
+"""
+from integration.system.EaiDebug import register_consume_debug, register_queue_reset
+
+SAMPLE_FILE = "docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml"
+
+
+def _simulate(payload: str, session) -> dict:
+    """isdc debug: runs the live consumer's parse-and-save function directly (no Kafka); returns the outcome."""
+    from integration.kafka.kafka_subscribe_discovery.isdc import process_isdc_payload
+    shipment, blob = process_isdc_payload(payload, session)
+    return {"blob_id": blob.id, "awb_nbr": shipment.awb_nbr, "pieces": len(shipment.PieceList),
+            "parties": len(shipment.ShipmentPartyList), "commodities": len(shipment.ShipmentCommodityList),
+            "clvs_eligible": shipment.clvs_eligible, "clvs_reason": shipment.clvs_reason}
 
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators=[]):
-    if not os.getenv('APILOGICPROJECT_CONSUME_DEBUG'):
-        return
-
-    @app.route('/consume_debug/isdc')
-    def consume_debug_isdc():
-        """Debug the isdc consume pipeline without Kafka.
-        Enable with: export APILOGICPROJECT_CONSUME_DEBUG=true
-        curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
-        """
-        file_path = request.args.get('file')
-        if not file_path:
-            return jsonify({"success": False, "message": "Missing ?file= parameter"})
-        from integration.kafka.kafka_subscribe_discovery.isdc import process_isdc_payload
-        try:
-            payload = Path(file_path).read_text()
-            parent_row, blob = process_isdc_payload(payload, safrs.DB.session)
-            return jsonify({
-                "success": True, "topic": "isdc", "blob_id": blob.id, "file": file_path,
-                "awb_nbr": parent_row.awb_nbr,
-                "pieces": len(parent_row.PieceList),
-                "parties": len(parent_row.ShipmentPartyList),
-                "commodities": len(parent_row.ShipmentCommodityList),
-            })
-        except Exception as e:
-            app_logger.error(f"consume_debug/isdc: {e}")
-            return jsonify({"success": False, "topic": "isdc", "error": str(e)}), 500
+    """API service isdc debug: registers /consume_debug/isdc and its reset (only when debug is enabled)."""
+    register_consume_debug(app, topic="isdc", simulate=_simulate, port=PORT, sample_file=SAMPLE_FILE,
+                           outcome_hint="GET /api/ShipmentXml/?sort=-id&page[limit]=1 (is_processed, error_text)")
+    register_queue_reset(app, name="isdc", topics=["isdc", "isdc_processed"], port=PORT)

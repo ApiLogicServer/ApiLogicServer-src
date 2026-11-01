@@ -1,37 +1,37 @@
 """
-IsdcMapper — CIMCorp shipment XML -> Shipment + Piece + ShipmentParty + ShipmentCommodity + SpecialHandling.
+Feature: Subscribe to Kafka and persist shipments
 
-Field mappings per docs/requirements/customs_demo/message_formats/Classify_Entity_Details.csv
-(Tier 1 auto lowercase(field) -> column). Sections mawbAsgmt, mawb, currencies,
-virtualRouteLegs, extraData have no corresponding target table in this schema and are skipped.
+ISDC shipment mapper: CIMCorp shipment XML -> Shipment, Piece, ShipmentParty, ShipmentCommodity model rows.
+
+Mapping contract (docs/requirements/customs_demo/message_formats/Classify_Entity_Details.csv, "Classify Storage - USE"):
+  Tier 1: lowercase(XML element name) -> column name, when the column exists on the model
+  Tier 2: exceptions below (placeholder ids)
+Sections not stored: mawbAsgmt, mawb, currencies, specialHandlingCodes, virtualRouteLegs, extraData (see ad-libs.md).
 """
 import xml.etree.ElementTree as ET
 from database import models
 from integration.system.EaiSubscribeMapper import populate_row, _local
 
+# section tag -> (model class, forced column values)
 TAG_ROUTING = {
-    "shipment":             (models.Shipment, {}),
-    "consignee":            (models.ShipmentParty, {}),
-    "shipper":              (models.ShipmentParty, {}),
-    "piece":                (models.Piece, {}),
-    "commodities":          (models.ShipmentCommodity, {}),
-    "specialHandlingCodes": (models.SpecialHandling, {}),
-    # ADD additional section tags here
+    "shipment":    (models.Shipment, {}),
+    "consignee":   (models.ShipmentParty, {}),
+    "shipper":     (models.ShipmentParty, {}),
+    "piece":       (models.Piece, {}),
+    "commodities": (models.ShipmentCommodity, {}),
 }
 
 
-def _normalize_party_pk(row: models.ShipmentParty, element):
-    """ShipmentParty custom mapping: normalize sentinel PARTY_OID_NBR=0 to None so DB
-    autoincrement assigns a unique PK (both consignee and shipper can carry placeholder 0)."""
-    if row.shipment_party_oid_nbr == 0:
-        row.shipment_party_oid_nbr = None
+def _normalize_party(party_row, element):
+    """ShipmentParty mapper: placeholder party ids (PARTY_OID_NBR = 0) must never reach the local primary key."""
+    if party_row.shipment_party_oid_nbr in (0, None):
+        party_row.shipment_party_oid_nbr = None   # DB autoincrement assigns a unique key
 
 
-def parse(payload: str) -> tuple:
-    """Returns (parent_row, list[model_instance]) — plain model rows, routed by class
-    in process_isdc_payload (not a single homogeneous child list — multiple child tables)."""
+def parse(payload: str, exceptions: dict = None) -> tuple:
+    """ISDC mapper: returns (shipment_row, [child model rows]) - plain rows, not (row, src) tuples."""
     root = ET.fromstring(payload)
-    parent = None
+    shipment = None
     children = []
     for section in root:
         tag = _local(section.tag)
@@ -39,10 +39,12 @@ def parse(payload: str) -> tuple:
             continue
         model_class, overrides = TAG_ROUTING[tag]
         row = model_class()
-        custom = _normalize_party_pk if model_class is models.ShipmentParty else None
-        populate_row(row, section, overrides=overrides, custom=custom)
+        custom = _normalize_party if model_class is models.ShipmentParty else None
+        populate_row(row, section, exceptions=exceptions, overrides=overrides, custom=custom)
         if tag == "shipment":
-            parent = row
+            shipment = row
         else:
             children.append(row)
-    return parent, children
+    if shipment is None:
+        raise ValueError("message has no <shipment> section")
+    return shipment, children

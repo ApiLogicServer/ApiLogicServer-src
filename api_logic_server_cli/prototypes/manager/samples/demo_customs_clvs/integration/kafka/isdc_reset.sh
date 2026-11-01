@@ -1,12 +1,24 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# integration/kafka/isdc_reset.sh - reset Kafka topics and log for the isdc pipeline.
+# Run from project root: bash integration/kafka/isdc_reset.sh
+#
+# WARNING: deletes and recreates topics isdc and isdc_processed on the broker, losing their messages (and any other
+#          project using the same topic names on that broker). To purge messages WITHOUT deleting the topics, use
+#          the debug endpoint instead: curl -X POST http://localhost:5656/consume_debug/isdc/reset
+# Broker container: BROKER_CONTAINER (default broker1); bootstrap server inside it: BROKER_BOOTSTRAP (default localhost:9092).
 
-# Docker or Podman -- whichever is installed (same broker1 container either way)
+set -e
+
 CONTAINER_CLI=$(command -v docker >/dev/null 2>&1 && echo docker || echo podman)
+BROKER_CONTAINER=${BROKER_CONTAINER:-broker1}
+BROKER_BOOTSTRAP=${BROKER_BOOTSTRAP:-localhost:9092}
+TOPICS="$CONTAINER_CLI exec $BROKER_CONTAINER /opt/kafka/bin/kafka-topics.sh --bootstrap-server $BROKER_BOOTSTRAP"
 
-$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic isdc >/dev/null 2>&1 || true
-$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic isdc_processed >/dev/null 2>&1 || true
-sleep 3
-$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --if-not-exists --topic isdc --partitions 1 --replication-factor 1 >/dev/null
-$CONTAINER_CLI exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --if-not-exists --topic isdc_processed --partitions 1 --replication-factor 1 >/dev/null
-echo "Kafka topics reset complete: isdc, isdc_processed"
+if [ -f logs/als.log ]; then > logs/als.log && echo "Log cleared."; fi
+
+$TOPICS --topic isdc --delete --if-exists || true
+$TOPICS --topic isdc_processed --delete --if-exists || true
+sleep 2
+$TOPICS --create --replication-factor 1 --partitions 1 --topic isdc
+$TOPICS --create --replication-factor 1 --partitions 1 --topic isdc_processed
+echo "Kafka topics reset."

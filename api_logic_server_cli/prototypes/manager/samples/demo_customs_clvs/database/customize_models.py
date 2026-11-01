@@ -1,20 +1,9 @@
 from database import models
 from safrs import jsonapi_attr
 from sqlalchemy.orm import relationship, remote, foreign
-from sqlalchemy import event
-from sqlalchemy.engine import Engine
 import logging
 
 app_logger = logging.getLogger(__name__)
-
-@event.listens_for(Engine, "connect")
-def _set_sqlite_pragma_foreign_keys(dbapi_connection, connection_record):
-    """SQLite disables FK enforcement per-connection by default; ON DELETE CASCADE
-    clauses in the schema (shipment -> piece/shipment_party/special_handling/shipment_commodity)
-    are silent no-ops without this."""
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
 
 from database.database_discovery.auto_discovery import discover_models
 discover_models()
@@ -28,3 +17,42 @@ Called from models.py (classes describing schema, per introspection).
 
 Your Code Goes Here
 """
+
+# SysConfig.current(session) - convenience accessor for the single-row runtime-settings
+# table (the starter.sqlite / System Creation Services pattern - see
+# docs/training/logic_bank_api.md). SysConfig has no FK from any transactional table (it's
+# a global settings row, not a per-row parent), so rule functions that need a threshold
+# would otherwise each repeat `logic_row.session.query(models.SysConfig).first()` -
+# duplicated code, and a common place to introduce a silent bug (a guessed fallback like
+# `config.rate if config else 0.05` that never errors, just quietly uses the wrong value
+# forever). Added conditionally: most projects do NOT have a SysConfig table at all, so this
+# must not raise or log at import time when it's absent - only .current() itself raises,
+# and only when actually called with no row present.
+if hasattr(models, 'SysConfig'):
+    def _sys_config_current(session):
+        """Return the single SysConfig row (runtime thresholds/settings).
+
+        Use `models.SysConfig.current(logic_row.session)` instead of repeating
+        `logic_row.session.query(models.SysConfig).first()` in every rule function.
+
+        Raises RuntimeError if the row is missing - a missing SysConfig row means every
+        threshold-based rule in the system would silently use None (or a guessed
+        fallback), not a recoverable condition to paper over.
+        """
+        config = session.query(models.SysConfig).first()
+        if config is None:
+            raise RuntimeError(
+                "SysConfig has no row - rules that read SysConfig thresholds/settings "
+                "depend on it. Seed one row before running any logic that calls "
+                "SysConfig.current()."
+            )
+        return config
+
+    models.SysConfig.current = staticmethod(_sys_config_current)
+
+
+# Deleting a Shipment deletes its children (no orphans). The commodity key includes the shipment FK, so the ORM default
+# (blank out the child's FK) fails with "tried to blank-out primary key column".
+from sqlalchemy.orm.util import CascadeOptions
+for _children in ("PieceList", "ShipmentPartyList", "ShipmentCommodityList", "SpecialHandlingList"):
+    getattr(models.Shipment, _children).property.cascade = CascadeOptions("save-update, merge, delete")

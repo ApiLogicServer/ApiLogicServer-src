@@ -13,7 +13,7 @@
 
 ### Rules
 
-E. `ShipmentXml` → `_publish_isdc` (after_flush) — ShipmentXml event: publishes the raw payload to Kafka topic isdc_processed so
+1. `ShipmentXml` → `_publish_isdc` (after_flush) — ShipmentXml event: publishes the raw blob to isdc_processed after Tx 1 commits, so Consumer 2 parses it in a clean Tx 2.
 
 </td>
 </tr>
@@ -22,12 +22,10 @@ E. `ShipmentXml` → `_publish_isdc` (after_flush) — ShipmentXml event: publis
 ## Requirements
 
 ```
-EAI Consume — isdc topic, row-event bridge.
+Feature: Subscribe to Kafka and persist shipments
 
-On ShipmentXml insert (Tx 1, from Consumer 1 or /consume_debug), publish the raw
-payload to isdc_processed so Consumer 2 can parse and persist domain rows in Tx 2.
-See integration/kafka/kafka_subscribe_discovery/isdc.py for the full pipeline.
+Subscribe to Kafka topic `isdc`. Each message is a CIMCorp shipment XML.
 ```
 
 ---
-_Generated 2026-08-11 18:36_
+_Generated 2026-11-01 10:06_

@@ -150,7 +150,8 @@ echo "$R1" | grep -q '"success":true' || fail "consume_debug fixture1 failed"
 echo "$R2" | grep -q '"success":true' || fail "consume_debug fixture2 failed"
 
 # After two debug ingests we expect 2 shipments, 2 pieces, 6 parties (C,S,I x2), 2 commodities, 2 blobs processed.
-assert_counts 2 2 6 2 2 2
+# The debug endpoint is live (asynchronous) when Kafka is configured, so poll instead of asserting at once.
+wait_for_counts 30 2 2 6 2 2 2 || { assert_counts 2 2 6 2 2 2; fail "debug-path counts"; }
 
 # Replay acceptance check: same fixture replayed — domain counts must stay stable, blob increments.
 echo "== [3b] replay acceptance: same payload x2 (replace-on-duplicate) =="
@@ -158,7 +159,7 @@ R1b="$(curl -s "$SERVER_URL/consume_debug/isdc?file=$SAMPLE1")"
 echo "$R1b"
 echo "$R1b" | grep -q '"success":true' || fail "consume_debug replay failed"
 # Domain counts unchanged (still 2 shipments etc.), but shipment_xml_total increments to 3.
-assert_counts 2 2 6 2 3 3 || fail "replay acceptance: domain counts changed or blob did not increment"
+wait_for_counts 30 2 2 6 2 3 3 || { assert_counts 2 2 6 2 3 3; fail "replay acceptance: domain counts changed or blob did not increment"; }
 
 
 echo "== [4/6] reset again for Kafka-only assertion =="

@@ -1,0 +1,140 @@
+Feature: CVLS Eligibility # features/cvls_eligibility.feature:1
+
+  Scenario: Shipment at or below the LVS threshold is eligible                                             # features/cvls_eligibility.feature:3
+    Given a shipment imported by courier "04" with value 3000 at office "0504" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the shipment eligibility is evaluated                                                             # features/steps/customs_steps.py:188
+    Then the shipment is eligible for the CLVS Program                                                     # features/steps/customs_steps.py:285
+    And clvs_reason is blank                                                                               # features/steps/customs_steps.py:297
+
+  Scenario: Shipment exactly at the threshold is eligible                                                  # features/cvls_eligibility.feature:9
+    Given a shipment imported by courier "04" with value 3300 at office "0504" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the shipment eligibility is evaluated                                                             # features/steps/customs_steps.py:188
+    Then the shipment is eligible for the CLVS Program                                                     # features/steps/customs_steps.py:285
+
+  Scenario: Shipment over the threshold is not eligible                                                       # features/cvls_eligibility.feature:14
+    Given a shipment imported by courier "04" with value 3300.01 at office "0504" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the shipment eligibility is evaluated                                                                # features/steps/customs_steps.py:188
+    Then the shipment is not eligible for the CLVS Program                                                    # features/steps/customs_steps.py:291
+    And clvs_reason is "value over threshold"                                                                 # features/steps/customs_steps.py:303
+
+  Scenario: Shipment from an unauthorized courier is not eligible                                          # features/cvls_eligibility.feature:20
+    Given a shipment imported by courier "05" with value 3000 at office "0504" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the shipment eligibility is evaluated                                                             # features/steps/customs_steps.py:188
+    Then the shipment is not eligible for the CLVS Program                                                 # features/steps/customs_steps.py:291
+    And clvs_reason is "courier not authorized"                                                            # features/steps/customs_steps.py:303
+
+  Scenario: Shipment with controlled goods is not eligible                                                 # features/cvls_eligibility.feature:26
+    Given a shipment imported by courier "04" with value 3000 at office "0504" with tariff "6110.20.00.01" # features/steps/customs_steps.py:134
+    When the shipment eligibility is evaluated                                                             # features/steps/customs_steps.py:188
+    Then the shipment is not eligible for the CLVS Program                                                 # features/steps/customs_steps.py:291
+    And clvs_reason is "controlled goods"                                                                  # features/steps/customs_steps.py:303
+    And the shipment has 1 controlled commodity line                                                       # features/steps/customs_steps.py:309
+
+  Scenario: Shipment released at a non-designated office is not eligible                                   # features/cvls_eligibility.feature:33
+    Given a shipment imported by courier "04" with value 3000 at office "0469" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the shipment eligibility is evaluated                                                             # features/steps/customs_steps.py:188
+    Then the shipment is not eligible for the CLVS Program                                                 # features/steps/customs_steps.py:291
+    And clvs_reason is "office not designated"                                                             # features/steps/customs_steps.py:303
+
+  Scenario: Shipment with several failures lists every reason                                              # features/cvls_eligibility.feature:39
+    Given a shipment imported by courier "05" with value 4000 at office "0469" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the shipment eligibility is evaluated                                                             # features/steps/customs_steps.py:188
+    Then the shipment is not eligible for the CLVS Program                                                 # features/steps/customs_steps.py:291
+    And clvs_reason is "courier not authorized, value over threshold, office not designated"               # features/steps/customs_steps.py:303
+
+  Scenario: Flagging a commodity line prohibited makes the shipment not eligible                           # features/cvls_eligibility.feature:45
+    Given a shipment imported by courier "04" with value 3000 at office "0504" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the commodity line is flagged prohibited                                                          # features/steps/customs_steps.py:193
+    Then the shipment is not eligible for the CLVS Program                                                 # features/steps/customs_steps.py:291
+    And clvs_reason is "prohibited goods"                                                                  # features/steps/customs_steps.py:303
+    And the shipment has 1 prohibited commodity line                                                       # features/steps/customs_steps.py:316
+
+  Scenario: Clearing the prohibited flag makes the shipment eligible again                                 # features/cvls_eligibility.feature:52
+    Given a shipment imported by courier "04" with value 3000 at office "0504" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    And the commodity line is flagged prohibited                                                           # features/steps/customs_steps.py:193
+    When the prohibited flag is cleared                                                                    # features/steps/customs_steps.py:200
+    Then the shipment is eligible for the CLVS Program                                                     # features/steps/customs_steps.py:285
+    And the shipment has 0 prohibited commodity lines                                                      # features/steps/customs_steps.py:316
+
+  Scenario: Deleting the controlled commodity line makes the shipment eligible                             # features/cvls_eligibility.feature:59
+    Given a shipment imported by courier "04" with value 3000 at office "0504" with tariff "6110.20.00.01" # features/steps/customs_steps.py:134
+    When the commodity line is deleted                                                                     # features/steps/customs_steps.py:206
+    Then the shipment is eligible for the CLVS Program                                                     # features/steps/customs_steps.py:285
+    And the shipment has 0 controlled commodity lines                                                      # features/steps/customs_steps.py:309
+
+  Scenario: Raising the value over the threshold makes the shipment not eligible                           # features/cvls_eligibility.feature:65
+    Given a shipment imported by courier "04" with value 3000 at office "0504" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the shipment value is changed to 4000                                                             # features/steps/customs_steps.py:213
+    Then the shipment is not eligible for the CLVS Program                                                 # features/steps/customs_steps.py:291
+    And clvs_reason is "value over threshold"                                                              # features/steps/customs_steps.py:303
+
+  Scenario: Lowering the value to the threshold makes the shipment eligible again                          # features/cvls_eligibility.feature:71
+    Given a shipment imported by courier "04" with value 4000 at office "0504" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the shipment value is changed to 3300                                                             # features/steps/customs_steps.py:213
+    Then the shipment is eligible for the CLVS Program                                                     # features/steps/customs_steps.py:285
+
+  Scenario: Moving the clearance to a designated office makes the shipment eligible                        # features/cvls_eligibility.feature:76
+    Given a shipment imported by courier "04" with value 3000 at office "0469" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the planned clearance office is changed to "0404"                                                 # features/steps/customs_steps.py:218
+    Then the shipment is eligible for the CLVS Program                                                     # features/steps/customs_steps.py:285
+
+  Scenario: Moving the clearance to a non-designated office makes the shipment not eligible                # features/cvls_eligibility.feature:81
+    Given a shipment imported by courier "04" with value 3000 at office "0504" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the planned clearance office is changed to "0469"                                                 # features/steps/customs_steps.py:218
+    Then the shipment is not eligible for the CLVS Program                                                 # features/steps/customs_steps.py:291
+    And clvs_reason is "office not designated"                                                             # features/steps/customs_steps.py:303
+
+  Scenario: Changing the courier to an authorized one makes the shipment eligible                          # features/cvls_eligibility.feature:87
+    Given a shipment imported by courier "05" with value 3000 at office "0504" with tariff "4901.99.00.91" # features/steps/customs_steps.py:134
+    When the courier service type is changed to "04"                                                       # features/steps/customs_steps.py:223
+    Then the shipment is eligible for the CLVS Program                                                     # features/steps/customs_steps.py:285
+
+Feature: Importer matching # features/importer_matching.feature:1
+
+  Scenario: Shipment with a matching customer gets an importer party  # features/importer_matching.feature:3
+    Given a shipment message for account 451000001 with value 2500    # features/steps/customs_steps.py:143
+    When the message is delivered to topic isdc                       # features/steps/customs_steps.py:159
+    Then the shipment has an importer party for "ACME IMPORTS INC"    # features/steps/customs_steps.py:272
+
+  Scenario: Shipment with no matching customer gets no importer party     # features/importer_matching.feature:8
+    Given a shipment message for account 999000099 with value 2500        # features/steps/customs_steps.py:143
+    When the message is delivered to topic isdc                           # features/steps/customs_steps.py:159
+    Then the shipment has no importer party                               # features/steps/customs_steps.py:279
+    And the shipment is persisted with 1 piece, 2 parties and 1 commodity # features/steps/customs_steps.py:230
+
+Feature: Subscribe to Kafka and persist shipments # features/subscribe_to_kafka_and_persist_shipments.feature:1
+
+  Scenario: Shipment message is delivered and the shipment graph is persisted  # features/subscribe_to_kafka_and_persist_shipments.feature:3
+    Given a shipment message for account 451000001 with value 2500             # features/steps/customs_steps.py:143
+    When the message is delivered to topic isdc                                # features/steps/customs_steps.py:159
+    Then the shipment is persisted with 1 piece, 3 parties and 1 commodity     # features/steps/customs_steps.py:230
+    And the message blob is marked processed                                   # features/steps/customs_steps.py:240
+
+  Scenario: Replay of the same message replaces the shipment graph         # features/subscribe_to_kafka_and_persist_shipments.feature:9
+    Given a shipment message for account 451000001 with value 2500         # features/steps/customs_steps.py:143
+    When the message is delivered to topic isdc                            # features/steps/customs_steps.py:159
+    And the same message is delivered to topic isdc again                  # features/steps/customs_steps.py:164
+    Then the shipment is persisted with 1 piece, 3 parties and 1 commodity # features/steps/customs_steps.py:230
+    And there are 2 message blobs for the shipment                         # features/steps/customs_steps.py:246
+
+  Scenario: Replayed message with a changed value replaces the stored shipment  # features/subscribe_to_kafka_and_persist_shipments.feature:16
+    Given a shipment message for account 451000001 with value 2500              # features/steps/customs_steps.py:143
+    When the message is delivered to topic isdc                                 # features/steps/customs_steps.py:159
+    And the message is delivered again with value 3100                          # features/steps/customs_steps.py:170
+    Then the shipment is persisted with 1 piece, 3 parties and 1 commodity      # features/steps/customs_steps.py:230
+    And the stored shipment value is 3100                                       # features/steps/customs_steps.py:252
+
+  Scenario: Deleting the shipment leaves no orphans                # features/subscribe_to_kafka_and_persist_shipments.feature:23
+    Given a shipment message for account 451000001 with value 2500 # features/steps/customs_steps.py:143
+    When the message is delivered to topic isdc                    # features/steps/customs_steps.py:159
+    And the shipment is deleted                                    # features/steps/customs_steps.py:182
+    Then no pieces, parties or commodities remain for the shipment # features/steps/customs_steps.py:258
+
+  Scenario: A malformed message leaves an unprocessed blob with error text (live Kafka only)  # features/subscribe_to_kafka_and_persist_shipments.feature:29
+    Given a malformed shipment message                                                        # features/steps/customs_steps.py:150
+    When the malformed message is delivered live to topic isdc                                # features/steps/customs_steps.py:177
+    Then the message blob is not processed and has error text                                 # features/steps/customs_steps.py:264
+
+&nbsp;&nbsp;
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_customs_clvs/test/api_logic_server_behave/behave_run.py completed at November 01, 2026 10:12:02
+Behave run time: 16.323 s

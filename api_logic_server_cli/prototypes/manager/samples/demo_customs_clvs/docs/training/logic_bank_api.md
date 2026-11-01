@@ -1,9 +1,87 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.22
-# Last Updated: July 10, 2026
+# Version: 1.0.29
+# Last Updated: October 13, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 # Changelog:
+#   1.0.29 (Oct 13 2026) - Added "EXTENDED RULE: insert_parent" section (composite natural-key
+#     bucket/rollup rows, auto-created on first reference, adjusted not recreated thereafter).
+#     insert_parent itself was documented only as a one-line parameter description with no
+#     worked example anywhere in the user-facing CE - the full story (the bucket pattern, the
+#     late-set-composite-key gotcha that was a real LogicBank engine bug, fixed in 1.34.0)
+#     existed only in internal dev-architecture.md, never reaching a normal project session.
+#     Modeled on basic_demo_sales_by_month's SalesRepTotal(sales_rep_id, year_month) sample.
+#   1.0.28 (Sep 26 2026) - Corrected 1.0.27's "Absence of an Event" section again: 1.0.27 fixed
+#     the trigger-mechanism guessing problem but still said to implement the reactive rule (the
+#     streak/threshold/alert logic) while flagging the trigger question separately. That is
+#     itself wrong, for a subtler reason: a hand-seeded test of the reactive logic cannot
+#     exercise the actual gap (whether the input row ever arrives in production), so its
+#     passing result misleadingly reads as "this feature works." Now: do NOT implement the
+#     reactive half either until the missing-row mechanism is decided - write the ad-lib +
+#     FIXME and stop on that clause; implement every other clause normally.
+#   1.0.27 (Sep 26 2026) - Corrected 1.0.26's "Absence of an Event" section: its own "CORRECT"
+#     guidance said to PICK one of (a)/(b) and build toward it - the exact unrequested-design-
+#     decision problem this file warns against elsewhere. Real case (health_fit blind-test
+#     build, same day): the AI correctly flagged the missing-row gap in ad-libs.md, but ALSO
+#     wired `Rule.early_row_event(on_class=Attendance, calling=_update_absence_streak)` -
+#     silently committing to "a synthesized absent row will exist" before the user had chosen
+#     a strategy. User caught it: a health/fitness domain plausibly has wearables reporting in
+#     periodically, in which case the right design might be watching for the ABSENCE of a
+#     heartbeat/sync (last-seen + elapsed time), not synthesizing an Attendance row at all -
+#     a third strategy the original two-option guidance didn't even list. Fixed: the section
+#     now explicitly says do NOT pick a mechanism and wire code to it; implement only the part
+#     safe to build (the reactive rule once a qualifying row exists), list candidate strategies
+#     in ad-libs.md as OPTIONS for the user to choose between (added a third: periodic-signal-
+#     absence, for domains where devices/wearables report in on their own schedule), and name
+#     that the list may not be exhaustive.
+#   1.0.26 (Sep 26 2026) - Added "Absence of an Event" detection section: LogicBank rules only
+#     fire on rows that get written (insert/update/delete) - no rule type can react to a row that
+#     was EXPECTED but never arrives. Real case (heartfit_companion, Sep 2026): an
+#     exertion_dropoff alert depended on Attendance.status='absent' rows, but nothing in the
+#     generated project ever wrote one outside hardcoded seed data - no batch job, no
+#     scheduled/clock-driven reconciliation, no event tied to ClassSchedule.end_time elapsing.
+#     The requirement and the code agreed with each other; the gap was that neither, nor
+#     anything else in the system, supplied the row the rule needed to react to. This is
+#     structurally different from a wrong-rule-type bug (see 1.0.25) - the fix isn't "pick a
+#     different Rule.* type," it's "identify that no rule can originate this row at all, and
+#     design/state the companion write path explicitly (scheduled job, clock-tick event, or an
+#     external system's documented responsibility)."
+#   1.0.25 (Sep 26 2026) - Added "Running Streaks (Consecutive Counts)" section: a requirement
+#     phrased with "count(...)" in its OWN formula text can still be a streak, not an aggregate,
+#     when the column name says "consecutive"/"streak"/"in a row" - Rule.count is order-blind
+#     and non-resetting, so it silently implements a lifetime total instead. Real case
+#     (heartfit_companion, Sep 2026): `Patient.consecutive_absences = count(Attendance where
+#     status == 'absent')` was implemented literally as Rule.count - never resets, never
+#     decreases, so a patient absent twice years ago who has since attended every class would
+#     still read consecutive_absences >= 2, risking a false drop-off alert on an unrelated later
+#     absence. Caught not by a name-pattern scanner but by a mandatory second pass reading the
+#     requirement clause and the generated rule side by side and asking "does this rule's actual
+#     behavior satisfy what these exact words claim" - see the new "MANDATORY BEHAVIORAL
+#     VERIFICATION PASS" section this same version adds to the Executable Requirements / SCS
+#     workflow (copilot-instructions.md), which generalizes this beyond just streak bugs. Also:
+#     the streak semantics here existed ONLY in the column name, not in the written requirement
+#     text - see that same section's mandate that any requirement inferred from a name/convention
+#     be written back into requirements.md or ad-libs.md, not fixed silently in code only.
+#   1.0.24 (Aug 18 2026) - Added "MISSING LOOKUP MUST NOT SILENTLY PASS A CONSTRAINT" section,
+#     right after the existing early_row_event/relationship-staleness warning whose own ❌ WRONG
+#     example already has this exact bug shape unlabeled. Real case: a live BLT run of the
+#     cascade-Allocate domain (full allocation.prompt.md, AI-designed schema) wrote
+#     `row.project.project_funding_definition is None or row.project.project_funding_definition.is_active == 1`
+#     as a constraint condition — intended as a defensive null-guard, but the `or` makes "no
+#     funding definition assigned at all" PASS the constraint instead of failing it. A Charge was
+#     posted against a Project with project_funding_definition_id=None and accepted (should have
+#     been rejected per "a Charge may only be posted if the Project's Project Funding Definition
+#     is active" — no definition is not active), producing a silent zero-value cascade (no
+#     ChargeDeptAllocation rows, total_distributed_amount stuck at 0, no error). Caught by the
+#     project's own self-verification (curl + als.log rule-fire trace), not by the constraint
+#     itself. Same run also dropped a Rule.sum rollup present in an earlier run of the identical
+#     prompt — consistent with the run-to-run requirement-coverage inconsistency documented at
+#     1.0.20/1.0.21/1.0.22.
+#   1.0.23 (Aug 2026) - Documented Rule.commit_constraint (engine-side since Jul 22 2026, never
+#     added here) as a sibling entry right after Rule.constraint: checked once after the
+#     transaction's cascade settles, for min-cardinality rules ("Order must have at least one
+#     Item") a plain Constraint false-negatives on (Order's insert-time check runs before its
+#     same-transaction Items are added, so item_count still reads 0).
 #   1.0.22 (Jul 2026) - Added step 7 + a full "initialize derived columns for pre-existing rows"
 #     section to the AFTER DATABASE SCHEMA CHANGES workflow. Real case: adding basic_demo's
 #     Customer.order_count/past_due_letter_count (Rule.count) via ALTER TABLE left existing
@@ -282,6 +360,65 @@ BECAUSE EVENTS ARE EASY TO MISS:
   reviewing a logic file — an undocumented or absent event for a stated requirement clause is
   a visible gap, not a silent one.
 
+CRITICAL — THE SAME DOCSTRING RULE COVERS EVERY OTHER "ACTION" FUNCTION, NOT JUST calling= AND EVENTS:
+  The two rules above name Rule.formula/Rule.constraint calling= functions and the four event
+  types. They are one rule, not two special cases: ANY function you write that a Rule.*,
+  Allocate, or an integration discovery file calls gets a one-line docstring, first line in
+  the form  """<Object> <kind>: <what it does and why>."""  where <kind> is one of:
+
+    kind                  | what it is                                          | example first line
+    ----------------------|-----------------------------------------------------|----------------------------------
+    formula               | calling= on Rule.formula/Rule.constraint            | Derive clvs_eligible: ...
+    event                 | any of the 4 Rule.*_row_event types                 | ShipmentCommodity event: ...
+    allocator             | Allocate while_calling_allocator= callback          | Allocator: ...
+    recipients            | Allocate recipients= function                       | Recipients: ...
+    publish handler       | function a row event calls to send a Kafka message  | Order publish: ...
+    subscribe handler     | register(bus) / topic handler in kafka_subscribe_discovery/ | Kafka subscribe order_b2b: ...
+    mapper                | RowDictMapper / EaiPublishMapper / parse() helper   | Order mapper: ...
+    API service           | class or function exposed by api_discovery/         | API service OrderB2B: ...
+
+  Why every kind, not only the two above: the Behave Logic Report and the logic diagram read
+  the FIRST docstring line to describe the rule or message flow to a human (an auditor, a
+  reviewer) who will not open the code. A function with no docstring shows up there as a bare
+  function name, which is exactly the "nobody knows what the code does" state the report exists
+  to prevent. Integration code is the most common place this is missed, because it feels like
+  plumbing rather than "a rule".
+
+  ✅ CORRECT:
+  ```python
+  def _send_order_to_kafka(row, old_row, logic_row):
+      """Order publish: sends the Order to Kafka topic order_shipping when date_shipped is first
+      set, using the by-example message in message_formats/order_shipping.json."""
+      ...
+
+  def allocate_charge_to_dept(allocation_logic_row, provider_logic_row) -> bool:
+      """Allocator: creates one department allocation per project funding line, sized by the
+      line's percent of the charge amount (Level 1 of the charge cascade)."""
+      ...
+
+  def funding_lines_for_charge(provider):
+      """Recipients: the project funding lines that apply to this charge's project."""
+      ...
+  ```
+
+  ❌ WRONG — an action function with no docstring (the rule ties to it, but a reader cannot tell what it does):
+  ```python
+  def _send_order_to_kafka(row, old_row, logic_row):
+      if row.date_shipped is not None and (old_row is None or row.date_shipped != old_row.date_shipped):
+          ...
+  ```
+
+  What does NOT need one: lambdas passed as where=, as_condition=, as_expression= (a lambda
+  cannot carry a docstring — the logic file's own docstring, which is the verbatim requirement
+  text, is what describes those rules), and trivial private helpers called only from a function
+  that already has a docstring. The test: "would a reader of the Behave Logic Report or the logic
+  diagram see this function's name and have to open the code to learn what it does?" If yes, it
+  needs the docstring.
+
+  Docstring content: describe WHAT it does and WHY, in plain English. This is a different thing
+  from the logic FILE's module docstring (next section), which holds only the verbatim
+  requirement text. Function docstrings are the one place implementation intent belongs.
+
 CRITICAL — ONE VALUE PER FORMULA:
   A Rule.formula calling function must return exactly one value — the column named in derive=.
   Setting other row attributes as side-effects inside the function is WRONG:
@@ -500,6 +637,13 @@ class Rule:
                 row was changed). as_condition's lambda receives only `row` - it cannot see old_row or
                 logic_row at all. See "Insert-Only Constraints (Grandfather Clauses)" below for the
                 canonical use case.
+            ⚠️ If this constraint's condition reads a relationship attribute that an
+                early_row_event set the FK for earlier in the SAME transaction (e.g.
+                row.project.project_funding_definition after an event set row.project_id),
+                the relationship may not be refreshed yet - query the lookup table directly
+                by the FK value instead. See the "after an early_row_event sets an FK column,
+                do NOT read the FK's relationship attribute" section below - same risk applies
+                to constraints, not just formulas/row_events.
             error_msg: string, with {row.attribute} replacements
             error_attributes: list of attributes
 
@@ -508,6 +652,34 @@ class Rule:
             error_attributes = []
         return Constraint(validate=validate, calling=calling, as_condition=as_condition,
                           error_attributes=error_attributes, error_msg=error_msg)
+
+
+    @staticmethod
+    def commit_constraint(validate: object,
+                          calling: Callable = None,
+                          as_condition: any = None,
+                          error_msg: str = "(error_msg not provided)",
+                          error_attributes=None):
+        """
+        Same args as Rule.constraint, but checked once per row after the transaction's
+        cascade has fully settled, not inline mid-cascade. Use for min-cardinality rules
+        ("Order must have at least one Item") that Rule.constraint gets wrong: on Order's
+        own insert, a plain Constraint checking row.item_count > 0 runs before its
+        same-transaction Items are added, so item_count reads 0 - false negative.
+
+        Example
+            Rule.count(derive=Order.item_count, as_count_of=OrderDetail)
+            Rule.commit_constraint(validate=Order,
+                            as_condition=lambda row: row.item_count > 0,
+                            error_msg="Order {row.Id} must have at least one item")
+
+        Note: not run for rows deleted this transaction. Runs after flush - like
+        Rule.after_flush_row_event, must not alter the row.
+        """
+        if error_attributes is None:
+            error_attributes = []
+        return CommitConstraint(validate=validate, calling=calling, as_condition=as_condition,
+                                error_attributes=error_attributes, error_msg=error_msg)
 
 
     @staticmethod
@@ -623,6 +795,29 @@ Equivalent expanded example using informal syntax:
                         as_condition=lambda row: row.balance <= row.credit_limit,
                         error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
 
+CRITICAL — BOUNDARY-OPERATOR CONVENTION for constraint prompt wording ("less than",
+"at most", "cannot exceed", "must not exceed", "within the limit", etc.):
+
+Note the example immediately above: the prompt says "is less than the credit limit"
+(strict `<`), but the response uses `<=`. This is a DELIBERATE, STANDING convention,
+not one example's stylistic choice — treat "less than X" / "under X" / "within X"
+phrasing in a business-rule prompt as `<=` unless the prompt gives an EXACT boundary
+value the rule must reject (e.g. "balance must never equal or exceed the limit" or
+"strictly less than $1000" — language that explicitly calls out the boundary case).
+Reason: business constraint language is rarely precise about the boundary itself — the
+author's actual intent is almost always "don't go over the limit," and a value exactly
+AT the limit is normally acceptable (spending your last available dollar of credit is
+not spending over it). Defaulting to strict `<` on ordinary "less than" phrasing rejects
+the boundary case the author almost certainly did not intend to reject.
+    ✅ "balance is less than the credit limit"          → row.balance <= row.credit_limit
+    ✅ "quantity must not exceed the available stock"    → row.quantity <= row.available_stock
+    ✅ "cannot exceed 3300"                               → row.value <= 3300
+    ❌ do NOT silently use strict `<` for any of the above
+    ⚠️ Only use strict `<`/`>` when the prompt itself states the boundary is excluded
+       — do not infer strictness from the English word "less"/"under" alone.
+This applies to every `Rule.constraint`, not just the Check Credit example — same rule
+for `Rule.commit_constraint` and any inline eligibility check with a numeric comparison.
+
 
 PREFER Rule.sum/count OVER CODE — always reactive to child data changes
 
@@ -677,37 +872,6 @@ Response is to create 2 rules - a derivation and a constraint, as follows:
     And, be sure to create the second Rule:
         Rule.Formula(derive=Employee.skill_summary, 
                     as_expression=lambda row: row.skill_rating_total + 2 * row.years_of_service)
-
-DETAIL VALUE + DERIVED FLAG: derive the detail first, make the flag reference it — never share a private helper.
-
-When a requirement defines both a detail value (a reason string, a computed amount) and a
-status/flag derived from that value, derive the detail as its own Rule.formula, then derive
-the flag as a trivial as_expression= referencing that column. Do NOT have both formulas call
-a shared helper function — LB's dependency scanner does not recurse into helpers (see the
-calling= dependency-tracking rules above), which forces manually-maintained dependency-anchor
-tuples in both functions, or worse, misses dependencies silently. The requirement text itself
-is usually the signal: if it names the detail value as something to *set* (not just an
-internal intermediate), that is the one to derive first.
-
-Prompt:
-    Set a shipment's eligibility_reason as a comma-delimited list of reasons why the shipment
-    fails eligibility (blank if eligible). The shipment is eligible if eligibility_reason is blank.
-
-Response is to derive the reason string first, then derive the flag from it:
-    def _eligibility_reason(row, old_row, logic_row):
-        """Derive eligibility_reason: comma-delimited list of ineligibility reasons (blank if eligible)."""
-        reasons = []
-        if row.value_amt > row.threshold_amt:
-            reasons.append(f"value {row.value_amt} exceeds threshold {row.threshold_amt}")
-        if row.restricted_item_count > 0:
-            reasons.append(f"{row.restricted_item_count} restricted item(s)")
-        return ", ".join(reasons)
-
-    Rule.formula(derive=Shipment.eligibility_reason, calling=_eligibility_reason)
-    Rule.formula(derive=Shipment.eligible, as_expression=lambda row: 1 if row.eligibility_reason == "" else 0)
-
-Note: eligible's dependency (row.eligibility_reason) is a real, scannable column reference —
-no anchor tuple needed, and the reasons logic runs once instead of once per formula.
 
 
 Prompt:
@@ -898,6 +1062,62 @@ ALSO APPLIES inside row_event / calling= functions:
 
   The event is now reactive: inserting or updating a ShipmentCommodity re-fires the count,
   which re-fires the row_event, keeping eligibility current on every write path.
+
+CRITICAL — A "MISSING LOOKUP" NULL-GUARD MUST NOT SILENTLY PASS A CONSTRAINT:
+  A common defensive pattern is to guard a constraint condition against a not-yet-set or
+  optional FK: `row.parent is None or row.parent.some_flag == 1`. This is CORRECT when the
+  requirement is "only check the flag if a parent is assigned" (parent genuinely optional).
+  It is WRONG when the requirement actually means "a missing parent fails the check too" —
+  the `or row.parent is None` clause then silently converts "nothing assigned" into a pass,
+  the opposite of the intended constraint.
+
+  Read the requirement's own wording for which case applies. Phrases like "must be active",
+  "may only be posted if X is active/valid/approved", "must have an active Y" describe a
+  condition on X itself — the absence of X is not a degenerate case of "X is active", it's a
+  separate failure. Do not write the null-guard unless the requirement explicitly allows the
+  parent to be absent (e.g. "if a discount code is provided, it must be valid" — no code is
+  fine, an invalid code is not).
+
+  ❌ WRONG — `is None` treated as a free pass, when the requirement means the opposite:
+      Rule.constraint(
+          validate=models.Charge,
+          as_condition=lambda row: (
+              row.project is None
+              or row.project.project_funding_definition is None
+              or row.project.project_funding_definition.is_active == 1
+          ),
+          error_msg="Charges may only be posted to Projects with an active Project Funding Definition"
+      )
+      REAL FAILURE CASE (Aug 2026, cascade-Allocate domain, full-prompt AI build): a Project
+      with `project_funding_definition_id = None` (no funding definition assigned at all) was
+      accepted for Charge posting — the `project.project_funding_definition is None` clause
+      passed it — even though the requirement ("a Charge may only be posted if the Project's
+      Project Funding Definition is active") means no definition is not active, and should
+      reject. The Charge silently cascaded with total_distributed_amount stuck at 0 and no
+      ChargeDeptAllocation rows — no error, no rejection, just a wrong, empty result. Caught
+      only by post-hoc self-verification (curl + reading the als.log rule-fire trace), not by
+      the constraint itself, which is exactly the failure mode a constraint exists to prevent.
+
+  ✅ CORRECT — missing lookup is itself a failure, matching "must have an active X":
+      Rule.constraint(
+          validate=models.Charge,
+          as_condition=lambda row: (
+              row.project is not None
+              and row.project.project_funding_definition is not None
+              and row.project.project_funding_definition.is_active == 1
+          ),
+          error_msg="Charges may only be posted to Projects with an active Project Funding Definition"
+      )
+      Note the flip from `or` (any clause true → pass) to `and` (every clause must hold → pass)
+      — this is the actual mechanical difference between "missing parent is fine" and "missing
+      parent is itself a failure." Getting the requirement's intent right determines which
+      boolean operator is correct; the code shape alone won't tell you.
+
+  This is not limited to `Rule.constraint` — the same silent-pass risk applies anywhere a
+  None-check is combined with `or` inside a condition meant to REJECT: `Rule.commit_constraint`,
+  a `row_event`'s reasons-list append logic, or a `Rule.formula`'s eligibility flag. Whenever
+  you write `X is None or X.<attr> <op> <value>`, stop and ask: does the requirement actually
+  intend "no X" to be acceptable? If not, this is the bug.
 
 =============================================================================
 🚧 Insert-Only Constraints (Grandfather Clauses)
@@ -1171,10 +1391,164 @@ WRONG (do not do this):
         # custom logic here
     Rule.commit_row_event(on_class=Order, calling=my_custom_kafka_function)
 
-RIGHT (do this instead):
-    Rule.after_flush_row_event(on_class=Order, calling=kafka_producer.send_row_to_kafka,
-                               if_condition=lambda row: row.date_shipped is not None,
-                               with_args={"topic": "order_shipping"})
+RIGHT (do this instead): see Rule.after_flush_row_event example above.
+
+=============================================================================
+🔁 Running Streaks (Consecutive Counts) — NOT Rule.count
+=============================================================================
+
+DETECTION: a derived column named `consecutive_*`, `streak_*`, `*_in_a_row`, or similar —
+even if the REQUIREMENT'S OWN TEXT describes it with the word "count" or literally as
+`count(...)`. Do not trust that wording. Ask instead: can a child row ever transition OUT of
+the qualifying state, or is each row an immutable historical fact (once "absent," a class
+attendance record never becomes "not absent")? If each row is immutable, a plain `Rule.count`
+over a `where=` filter can only ever grow — it has no way to reset when a non-qualifying row
+appears in between. That is a lifetime total, not a streak, regardless of what the requirement
+calls it.
+
+❌ WRONG — matches the requirement's own "count(...)" phrasing, but is a cumulative total that
+never resets and never decreases. A patient absent twice years ago, who has attended every
+class since, still reads consecutive_absences >= 2 today:
+    Rule.count(derive=Patient.consecutive_absences, as_count_of=Attendance,
+               where=lambda row: row.status == 'absent')
+
+WHY NOT Rule.formula either: a formula is a pure function of the CURRENT row's own/parent
+attributes — it has no way to reference "my own prior derived value" as an input to computing
+its next value. A streak needs a fold/accumulator: `next_state = f(prior_state, this_event)`.
+None of the five documented rule types encode "read my own current value, then update myself
+based on it plus the new child" — this requires a purpose-built pattern, not a rule type choice.
+
+✅ CORRECT SHAPE — two parent columns + one child-side early_row_event, functioning as the
+fold/accumulator a streak actually is:
+    Patient.consecutive_missed_last   # bool: did the most recent child qualify?
+    Patient.consecutive_missed_count  # int: current streak length
+
+    def _update_absence_streak(row, old_row, logic_row):
+        """Attendance event: extends or resets Patient.consecutive_missed_count based on
+        whether this attendance qualifies (absent) and whether the prior one did too - a
+        fold/accumulator, NOT a Rule.count (see 'Running Streaks' above)."""
+        patient = row.patient
+        qualifies = (row.status == 'absent')
+        if qualifies and patient.consecutive_missed_last:
+            patient.consecutive_missed_count = (patient.consecutive_missed_count or 0) + 1
+        elif qualifies:
+            patient.consecutive_missed_count = 1
+        else:
+            patient.consecutive_missed_count = 0
+        patient.consecutive_missed_last = qualifies
+
+    Rule.early_row_event(on_class=Attendance, calling=_update_absence_streak)
+
+Note the accumulator shape generalizes to ANY "consecutive/streak" requirement, not just
+absences: `consecutive_missed_last` is the carried state (was the prior child a "hit"), and
+`consecutive_missed_count` is the running total that survives only hit-after-hit — a single
+non-qualifying row anywhere in the sequence collapses it back to 0.
+
+⚠️ CAVEAT — relationship-freshness risk: this pattern reads `patient.consecutive_missed_last`
+through the SQLAlchemy relationship inside an early_row_event on the child. See "after an
+early_row_event sets an FK column, do NOT read the FK's relationship attribute" earlier in this
+file for the general risk (a relationship attribute set earlier in the same flush is not
+guaranteed fresh) — verify this pattern's actual behavior with a real insert/commit/re-read
+test before trusting it in production logic; do not assume it from this write-up alone.
+
+=============================================================================
+🚫 Absence of an Event — No Rule Can Fire on a Row That Never Arrives
+=============================================================================
+
+THE UNDERLYING FACT: every LogicBank rule type — Rule.sum, Rule.count, Rule.formula,
+Rule.constraint, Rule.row_event, Rule.early_row_event, Rule.commit_row_event,
+Rule.after_flush_row_event — fires only in reaction to a row being inserted, updated, or
+deleted. There is no rule type, and no mechanism in the DSL, that fires on a row FAILING to
+arrive by some deadline. This is not a missing feature to work around with a cleverer rule —
+it is structural: rules react to writes, and "nothing was written" produces no event of any
+kind for any rule to react to.
+
+DETECTION: any requirement phrased as "no-show," "absent," "missed deadline," "failed to
+respond," "did not renew," or any condition defined by the NON-occurrence of an expected row
+within a time window. For each such clause, ask explicitly: "does this depend on a row that
+gets written, or on a row that's expected but might never be written?" If the latter, a
+Rule.count/Rule.constraint/etc. downstream of that row (e.g. `where=status=='absent'`) is fine
+ONCE the row exists — but nothing in the rules layer can be the thing that WRITES that row when
+a deadline silently passes with no activity.
+
+❌ WRONG — assuming the presence of a `status` column with an 'absent'/'no_show'/etc. value
+means the feature is complete, without checking whether anything ever sets that value outside
+of hand-seeded test data:
+    Rule.count(derive=Patient.consecutive_absences, as_count_of=Attendance,
+               where=lambda row: row.status == 'absent')
+    # ^ Correct AS A RULE (modulo the streak issue above) — but if nothing outside seed data
+    # ever INSERTS an Attendance row with status='absent', this rule has no real trigger path.
+    # It only ever "works" against demo data, never against live usage.
+
+REAL FAILURE CASE (heartfit_companion, Sep 2026): `Attendance.status` supports
+'attended'/'absent'/'excused', and `exertion_dropoff.py`'s Rule.count and after_flush_row_event
+were both written correctly against that column. But searching the entire generated project,
+the ONLY place `status='absent'` was ever written was two hardcoded rows in the seed script.
+There was no API endpoint, no scheduled/periodic job, and no event tied to
+`ClassSchedule.end_time` elapsing that would ever produce a real `absent` row in operation. A
+patient who is scheduled and simply doesn't show up generates NO ROW AT ALL — nothing "fails to
+post" that a rule could react to. The entire alert chain was correct in isolation and
+untriggerable end-to-end.
+
+✅ CORRECT — treat the missing-row case as a BLOCKING design question, not a detail to flag
+and route around. Do NOT implement the reactive rule while this question is unresolved —
+write the ad-lib and a FIXME, and STOP on this clause:
+
+  ⛔ DO NOT choose a trigger mechanism and wire code to it (e.g. `Rule.early_row_event(
+  on_class=Attendance, ...)` assuming a synthesized absent row will exist). That silently
+  forecloses other, possibly better-fitting strategies before the user has said which one
+  matches their actual system — the same class of unrequested-design-decision problem this
+  whole file exists to catch elsewhere (see the streak pattern above: don't guess).
+
+  ⛔ ALSO DO NOT implement the reactive half either (the streak/threshold/alert logic that
+  fires once a qualifying row exists) and consider the clause "done modulo the trigger."
+  This is a STRICTER rule than it sounds, and it is not just about avoiding a bad guess —
+  it is about what implementing the reactive half, on its own, actually communicates and
+  invites. The reactive logic's own correctness is not in question here; the question is
+  whether its input will ever exist in production. Building and testing the reactive half
+  first produces a subtle, worse failure than skipping it: it manufactures the APPEARANCE
+  of a working, verified feature, and the verification is structurally blind to the actual
+  gap — any test of the reactive logic necessarily inserts the row by hand (there is no
+  other way to test it yet), so the test can only ever confirm "the code reacts correctly
+  to a row," never "the row will exist." A passing test, an ad-lib footnote, and 30+ lines
+  of carefully-engineered accumulator logic together read as "this feature works" to
+  anyone who didn't read the footnote closely — that is worse than an honest gap, because
+  it looks finished. Confirmed real case (health_fit, Sep 2026): a full streak accumulator
+  was built and empirically verified (via hand-seeded rows) to correctly build, reset, and
+  restart a consecutive-absence count — genuinely correct code — while the question of
+  what ever produces a real absent row remained completely unresolved and was never once
+  exercised by that verification. The requirement this rule serves ("alert after N missed
+  classes") is not implementable until that question is answered, because the answer may
+  change what "reactive logic" even means — see option (c) below, which is not a variant of
+  the same accumulator, it is a different computation entirely.
+
+  Candidate strategies exist — write them in `ad-libs.md` as OPTIONS for the user to choose
+  from, not as a menu to silently pick from and build toward:
+  (a) A companion write path: a scheduled job or an event tied to some OTHER row's write
+      (e.g. a "close out this class" action, or a nightly sweep) that diffs "who was
+      expected" against "who checked in" once a deadline passes, and explicitly INSERTS the
+      missing-row fact (e.g. `Attendance(status='absent')`). Ordinary application code, not
+      a LogicBank rule — a rule only takes over once that row exists.
+  (b) An external system (front-desk check-in app, coordinator UI, partner feed) is solely
+      responsible for writing the negative-fact row; this project's rules only react to it
+      once written.
+  (c) If devices/wearables in this domain report in periodically (a heartbeat/sync, not an
+      attendance record), the natural design may not involve synthesizing an absence row at
+      all — it may mean watching for the ABSENCE of that periodic signal (last-seen timestamp
+      + a check against elapsed time), a fundamentally different computation from (a)/(b),
+      not just a different way of populating the same accumulator. Whether this applies
+      depends on facts about the actual system (does anything ping in periodically?) that
+      are not yet known and must not be assumed either way.
+  There may be other strategies specific to the domain — this list is not exhaustive.
+
+  What TO do instead: write a 🔴 Review Required entry in `ad-libs.md` naming the gap,
+  listing the candidate strategies, and stating plainly that this clause is NOT implemented
+  pending the user's decision. Add a `# FIXME: <use_case> clause N not implemented — see
+  ad-libs.md, missing-row trigger mechanism not yet decided` comment at the point in the
+  logic file where the rule would go, so a reader of the code (not just the ad-lib) sees the
+  gap immediately. Do implement every OTHER clause in the same requirements.md that does not
+  depend on this open question — this blocks only the clause(s) whose correctness depends on
+  the missing-row mechanism, not the whole use case.
 
 =============================================================================
 🗂️ FILE ORGANIZATION: Complete Example with Directory Structure
@@ -1243,6 +1617,60 @@ def declare_logic():
     Rule.copy(derive=models.Item.unit_price, from_parent=models.Product.unit_price)
     Rule.count(derive=models.Product.count_suppliers, as_count_of=models.ProductSupplier)
 
+
+=============================================================================
+🪣 EXTENDED RULE: insert_parent — Auto-Created Bucket/Rollup Rows
+=============================================================================
+
+**Pattern:** a parent row keyed by a value computed on the child (often a composite natural
+key like `(sales_rep_id, year_month)`) does not need to be pre-seeded. The first child insert
+for a given key auto-creates its parent "bucket" row; every later child for the same key
+adjusts that existing bucket — it is NOT recreated.
+
+**🚨 DETECTION — use `insert_parent=True` (not a plain `Rule.sum`/`Rule.count`) when:**
+- A rollup/bucket parent is identified by a key that only exists once children start arriving
+  (e.g. "monthly sales total per rep" — there is no `SalesRepTotal` row for a given rep/month
+  until the first `Order` for that rep in that month is placed)
+- The prompt describes the bucket as something that "shows up" or "accumulates" rather than
+  something pre-existing to look up
+
+**Example — `SalesRepTotal(sales_rep_id, year_month)` monthly bucket**
+(`samples/basic_demo_sales_by_month`):
+
+```python
+Rule.sum(derive=models.SalesRepTotal.total_amount, as_sum_of=models.Order.amount_total,
+    insert_parent=True)
+
+Rule.count(derive=models.SalesRepTotal.order_count, as_count_of=models.Order,
+    insert_parent=True)
+```
+
+Placing an `Order` for a sales rep auto-creates `SalesRepTotal` on first reference for that
+rep/month, and adjusts it (not re-creates it) on every later order for the same rep/month. The
+bucket is never explicitly inserted by application code — the rule engine creates it the first
+time it's needed, from the FK/natural-key values already present on the child row being
+inserted.
+
+**⚠️ The composite key must be fully set BEFORE row construction, not set late by an event:**
+If a component of the parent's natural key (e.g. a computed `year_month` bucket key) is set by
+an `early_row_event` or stamping handler rather than being present at the child row's
+construction time, `insert_parent` can silently fail to find/create the correct parent — this
+was a real LogicBank engine bug (two bugs, actually: a relationship-setter side effect that
+nulled the child's own composite-FK columns, and the aggregate-adjustment code path silently
+giving up when no parent was found instead of honoring `insert_parent=True`), fixed in
+**LogicBank 1.34.0**. If your project's `logicbank` package predates that version, either set
+every composite-key component at construction time (not in a later event) or upgrade.
+`basic_demo_sales_by_month`'s own stamping handler
+(`logic/logic_discovery/system/all_classes_stamping.py`) sets `Order.CreatedOnYearMonth`
+generically, cross-cutting — confirm your `pip show logicbank` is `>=1.34.0` before relying on
+a similarly late-set key component.
+
+**`insert_parent` is rare — do not reach for it by default.** Per `Rule.sum`/`Rule.count`'s own
+parameter doc: "Do not use unless directly requested." The overwhelming majority of
+parent/child aggregates have a parent that already exists (a `Customer` placing an `Order`,
+a `Course` with `Enrollment` rows) — `insert_parent=True` is specifically for the
+bucket/rollup-row case where the parent's own existence is itself implied by the first
+qualifying child, not stated anywhere else in the prompt.
 
 =============================================================================
 💳 EXTENDED RULE: Allocate (Provider → Recipients)

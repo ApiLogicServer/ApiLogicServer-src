@@ -1,9 +1,8 @@
----
-created: 2026-08-11T18:10:00
-created_by: claude-sonnet-5
-use_case: clvs_eligibility
----
+Feature: CVLS Eligibility
 
+### Step 3 - CVLS Eligibility
+
+```
 Scenario: Shipment at or below the LVS threshold is eligible
   Given a shipment imported by an authorized CLVS courier
   And the shipment has an estimated value for duty not exceeding CAD $3,300
@@ -13,3 +12,4 @@ Scenario: Shipment at or below the LVS threshold is eligible
   When the shipment eligibility is evaluated
   Then the shipment shall be eligible for the CLVS Program
   And set the clvs_reason as a comma delimited list of short all reasons why failed (or blank)
+  ```

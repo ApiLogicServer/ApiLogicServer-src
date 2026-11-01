@@ -31,10 +31,11 @@ Usage in a generated per-topic mapper (e.g. kafka_publish_discovery/order_shippi
 
 See demo_eai/readme.md Section 6 for full pattern documentation.
 
-version: 1.0  (April 2026)
+version: 1.1  (October 2026 - Decimal values are serialized as numbers)
 """
 
 from datetime import date, datetime
+from decimal import Decimal
 import logging
 
 logger = logging.getLogger('integration.eai')
@@ -45,11 +46,14 @@ logger = logging.getLogger('integration.eai')
 # ---------------------------------------------------------------------------
 
 def _serialize_value(value):
-    """Convert date/datetime to ISO string; pass everything else through."""
+    """Convert date/datetime to ISO string and Decimal to a number (json.dumps would otherwise send amounts as strings,
+    e.g. "390.0000000000", not 390.0 as in the message sample); pass everything else through."""
     if isinstance(value, datetime):
         return value.isoformat()
     if isinstance(value, date):
         return value.isoformat()
+    if isinstance(value, Decimal):
+        return float(value)
     return value
 
 

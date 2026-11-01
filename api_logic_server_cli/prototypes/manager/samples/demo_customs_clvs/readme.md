@@ -2,7 +2,7 @@
 title: Customs EAI
 notes: gold source is docs
 source: docs/Customs-clvs-readme
-version: 1.3 from docsite, for readme, for readme 8/6/2016
+version: 1.3 from docsite, for readme, for readme 8/6/2026
 ---
 <style>
   -typeset h1,
@@ -11,7 +11,10 @@ version: 1.3 from docsite, for readme, for readme 8/6/2016
   }
 </style>
 
-!!! pied-piper ":bulb: TL;DR - Governed business system, built from Gherkin requirements"
+
+&nbsp;
+**Key Takeways - TL;DR - Governed business system, built from Gherkin requirements**
+&nbsp;
 
     Created by: › genai-logic create --project_name=demo_customs_clvs --db_url=sqlite:///samples/dbs/customs.sqlite
 
@@ -20,11 +23,32 @@ version: 1.3 from docsite, for readme, for readme 8/6/2016
     * Requirements expressed in Gherkin, not prose — see `docs/requirements/customs_demo/requirements.md`
     * A complex example of Executable Requirements — sample XML message formats, multiple requirements formats, full traceability from spec to rule to test
 
+    Browse the code: [demo_customs_clvs on GitHub](https://github.com/ApiLogicServer/ApiLogicServer-src/tree/main/api_logic_server_cli/prototypes/manager/samples/demo_customs_clvs)
+
     Status: Reference implementation
+
+&nbsp;
 
 # Customs Demo
 
-![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/customs_demo/summary.png?raw=true)
+## At a Glance
+
+### Process Msg Transactions
+
+The system 
+
+1. Subscribes to a broker message for shipments
+2. Determines which are **"Customs Low Value Shipments"** that require no further intervention
+    * Some of the classification rules are shown on the right panel
+3. Forwards low value shipments to the Tax System
+   
+![summary](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/customs_demo/summary.png)
+
+### Created from Requirements
+
+The system is created from requirements, as follows:
+
+![summary](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/customs_demo/creation_process.png)
 
 &nbsp;
 
@@ -32,13 +56,13 @@ version: 1.3 from docsite, for readme, for readme 8/6/2016
 
 <summary>Executable Requirements - Governance By Architecture, At Scale</summary>
 
-![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/architecture/gov-at-scale.png?raw=true)
+![summary](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/architecture/gov-at-scale.png)
 
 &nbsp;
 
 **The Underlying Logic Architecture**
 
-![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/architecture/logic-architecture-exec.png?raw=true)
+![summary](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/architecture/logic-architecture-exec.png)
 <br>
 
 </details>
@@ -51,56 +75,44 @@ version: 1.3 from docsite, for readme, for readme 8/6/2016
 
 <br>
 
-This simulates a common real-world case: an *existing* database and project, plus a *new* set of requirements — prepared by the BA team as a requirements folder (`samples/requirements/customs_demo_clvs`) — that need to be implemented against it.
+This simulates a common real-world case: an *existing* database, plus a *new* set of requirements — prepared by the BA team as a requirements folder (`samples/requirements/customs_demo_clvs`) — that need to be implemented against it.
 
-The demo therefore has 3 parts:
+It is one script. From the Manager, with Claude Code open (`claude`, shared Manager venv active), load the context engineering (*"Please load `.github/.copilot-instructions.md`"*) and paste `samples/requirements/customs_demo_clvs/create_script.txt` to the AI:
 
-1. **Rebuild** the existing db/project (Step A)
-2. **Copy in** the BA team's requirements folder (Step E)
-3. **Run `implement requirements`**, with a couple of small SQLAlchemy work-arounds (Steps F, G)
+```text title="create_script.txt - paste to AI"
+Check for Docker or Podman. If neither is running, continue in degraded mode (Kafka simulated through the debug endpoint) and tell me so up front.
 
-```bash title="Establish Initial State, Execute Requirements"
-# A - Create the project (already done, typically from Manager)
-genai-logic create  --project_name=demo_customs_clvs --db_url=sqlite:///samples/dbs/customs.sqlite
+create project demo_customs_clvs from 
+    samples/dbs/customs.sqlite
 
-# B - activate Claude Code in the VSCode terminal
-claude
+implement requirements
+    samples/requirements/customs_demo_clvs/docs/requirements/customs_demo
 
-# C - use the shared Manager venv (do not create a local project .venv)
-! source ../venv/bin/activate
+verify message subscriptions (all topics)
 
-# D - load context engineering to teach claude about rules, GenAI-Logic
-Please load `.github/.copilot-instructions.md`.
+create logic diagram for each requirement (skip if graphviz is not available)
 
-# E - in created project, get the requirements (win: Copy-Item -Path "..\samples\requirements\customs_demo\*" -Destination "." -Recurse -Force -Verbose 4>&1).Count)
-! cp -rv ../samples/requirements/customs_demo_clvs/. . | wc -l
+create tests from rules, using default names
 
-# F - apply the delete-cascade pattern below to database/models.py (no orphans after parent delete via API)
+run the tests
 
-# G - ask Coding Agent to create the system by implementing the requirements
-implement requirements docs/requirements/customs_demo
-/export docs/requirements/transcript_creation
+run the requirements traceability report
+When the report is done, print this verbatim: "Next: scan these two files: logic/logic_discovery/clvs_eligibility.py (the rules) and docs/requirements/customs_demo/ad-libs (the judgment calls the AI made). Then open the report: demo_customs_clvs/docs/requirements/Requirements Traceability Report (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
 ```
+
+Each line is an instruction, run in order: create the project from the existing database, implement the requirements, verify the Kafka subscriptions (live through a broker if a container runtime is running, else simulated), draw a logic diagram per requirement, create and run the tests, and produce the Requirements Traceability Report. With no Docker or Podman running it says so up front and continues in degraded mode.
+
+When it finishes, the report shows every requirement beside its rules and tests, and `docs/requirements/customs_demo/ad-libs.md` lists the judgment calls the AI made, each with a file and line to check. A reference run: 3 requirements, all implemented and tested; 22 of 22 scenarios passed (messages delivered live through Kafka); `test_gate.sh` passing end to end.
 
 <details markdown>
 
-<summary>Why Step F is needed</summary>
+<summary>Why deleting a Shipment needs a cascade</summary>
 
 <br>
 
-This schema is derived from a real carrier database (FedEx-like), not a toy design — so it carries a real-world wrinkle: `ShipmentCommodity` has a composite primary key (`local_shipment_oid_nbr`, `sequence_nbr`), where the foreign key back to `Shipment` is itself part of that key. SQLAlchemy's normal `cascade="all, delete"` tries to null out the FK before deleting the child, which fails when the FK is also a PK column.
+This schema is derived from a real carrier database (FedEx-like), not a toy design — so it carries a real-world wrinkle: `ShipmentCommodity` has a composite primary key (`local_shipment_oid_nbr`, `sequence_nbr`), where the foreign key back to `Shipment` is itself part of that key. Left alone, deleting a `Shipment` through the API fails: the ORM tries to null out the child's foreign key, which is also a primary-key column.
 
-So `Shipment`'s four child lists use two different cascade strategies:
-
-```python
-Shipment.PieceList             → relationship(cascade="all, delete", back_populates="shipment")
-Shipment.SpecialHandlingList   → relationship(cascade="all, delete", back_populates="shipment")
-Shipment.ShipmentPartyList     → relationship(cascade="all, delete", back_populates="shipment")
-
-Shipment.ShipmentCommodityList → relationship(passive_deletes='all', back_populates="shipment")
-```
-
-`ShipmentCommodityList` uses `passive_deletes='all'` instead — it skips ORM-managed cascade and lets the database's own `ON DELETE CASCADE` (already present on the FK) do the work.
+The build handles this itself — the tests include "deleting the shipment leaves no orphans", which fails without it — by declaring a delete cascade on `Shipment`'s child lists (`PieceList`, `ShipmentPartyList`, `ShipmentCommodityList`, `SpecialHandlingList`) in `database/customize_models.py`, which survives a rebuild from the database. There is no manual step.
 
 </details>
 
@@ -150,39 +162,39 @@ Governance by architecture only holds if teams are actually using rules. GenAI-L
 
 You can examine the Shipment database to verify parties created by matching:
 
-![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/customs_demo/shipment.png?raw=true)
+![summary](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/customs_demo/shipment.png)
 
 An enterprise integration (EAI) microservice that ingests CIMCorp/ISDC customs shipment data from a Kafka topic, parses the canonical XML format, and persists the resulting shipment records — with full REST API, Admin UI, and a declarative business logic layer ready for governance rules.
 
-**Inputs** (in `docs/elmo_creation/`):
+**Inputs** (in `docs/requirements/customs_demo/`):
 - Database — 7 tables, 130+ columns
 - XML-to-DB field mapping (`Classify Entity Details.csv`)
-- Sample message (`sample_data/MDE-CDV-HVS-WR-Rev260328.xml`)
+- Sample message (`message_formats/MDE-CDV-HVS-WR-Rev260328.xml`)
 
 **Outputs**:
 - Working Kafka consumer pipeline: `isdc` → `ShipmentXml` → `isdc_processed` → DB tables  
 - JSON:API for all tables, Admin UI, declarative logic engine
 - Matching: look up the matching Customer
-    - found: set `Shipment.trprt_bill_to_acct_nbr == CcpCustomer.duty_bill_to_acct_nbr` and create a `ShipmentParty` row
+    - found: set `Shipment.trprt_bill_to_acct_nbr == Customer.duty_bill_to_acct_nbr` and create a `ShipmentParty` row
     - no match: log a warning, do nothing.
 
 &nbsp;
 
 ## Basic Design - 2 transaction message processing
 
-1. `integration/kafka/kafka_subscribe_discovery/isdc.py` - isdc
+1. [`integration/kafka/kafka_subscribe_discovery/isdc.py`](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/demo_customs_clvs/integration/kafka/kafka_subscribe_discovery/isdc.py) - isdc
     * reads message, inserts into `ShipmentXml` (Tx 1)
     * this ensures messages are saved, even if the xml contains errors
-2. `logic/logic_discovery/isdc_consume.py`
+2. [`logic/logic_discovery/isdc_consume.py`](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/demo_customs_clvs/logic/logic_discovery/isdc_consume.py)
     * ShipmentXml insert → publishes raw payload to topic: `isdc_processed`
-3. `integration/kafka/kafka_subscribe_discovery/isdc.py` - isdc_processed
+3. [`integration/kafka/kafka_subscribe_discovery/isdc.py`](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/demo_customs_clvs/integration/kafka/kafka_subscribe_discovery/isdc.py) - isdc_processed
     * parses xml → database tables (Tx 2)
-4. `api/api_discovery/isdc_kafka_consume_debug.py`
+4. [`api/api_discovery/isdc_kafka_consume_debug.py`](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/demo_customs_clvs/api/api_discovery/isdc_kafka_consume_debug.py)
     * `/consume_debug/isdc` bypasses Kafka — calls the same parser directly (no Kafka required for dev/test)
-5. Matching: `logic/logic_discovery/shipment_matching.py` — `early_row_event` on Shipment insert
-    * Looks up `CcpCustomer` by `duty_bill_to_acct_nbr == trprt_bill_to_acct_nbr`
+5. Matching: [`logic/logic_discovery/shipment_matching.py`](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/demo_customs_clvs/logic/logic_discovery/shipment_matching.py) — `Rule.row_event` on Shipment insert (runs before the flush, so the importer party is written with the shipment)
+    * Looks up `Customer` by `duty_bill_to_acct_nbr == trprt_bill_to_acct_nbr`
     * Match found: creates a `ShipmentParty` importer row; (if no match, logs a warning)
-5. CLVS: `logic/logic_discovery/clvs_eligibility.py` - computes eligibility
+6. CLVS: [`logic/logic_discovery/clvs_eligibility.py`](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/demo_customs_clvs/logic/logic_discovery/clvs_eligibility.py) - computes eligibility
 
 
 &nbsp;

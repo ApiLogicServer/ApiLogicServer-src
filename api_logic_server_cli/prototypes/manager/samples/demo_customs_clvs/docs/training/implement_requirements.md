@@ -27,7 +27,7 @@ The prompt author is a domain expert. They wrote only what they needed to contro
 
 **Always apply domain knowledge to flesh out beyond the spec:**
 - Add domain-standard fields the spec didn't mention (e.g., `base_duty_rate` on a tariff HS code table, `effective_date` on a rate table)
-- Add `Rule.constraint` for `quantity > 0` and `unit_price`/`unit_value > 0` on any line item — always, without being asked
+- Domain-floor constraints (`quantity > 0`, `unit_price`/`unit_value > 0` on a line item): do NOT add them silently (rule 8: never ad-lib business logic). List each one under 🔴 Review Required in ad-libs.md as "not added: the spec does not state it; say so if you want it"
 - Add `Rule.sum` for every numeric child column that rolls up to a header — always
 - Add audit/traceability columns where domain convention expects them
 
@@ -642,19 +642,10 @@ Events are appropriate for:
 
 **✅ Valid Event Uses:**
 
-1. **Audit Trail Creation** (side effect, not calculation):
-```python
-def create_audit_record(row: models.CustomsEntry, old_row, logic_row):
-    audit = models.SysSurtaxReq(
-        customs_entry_id=row.id,
-        hs_code=row.hs_code.code,
-        surtax_rate_found=row.surtax_rate,
-        lookup_timestamp=datetime.utcnow()
-    )
-    logic_row.session.add(audit)
-
-Rule.early_row_event(on_class=models.CustomsEntry, calling=create_audit_record)
-```
+1. **Audit Trail Creation** (side effect, not calculation): recording changes to existing data is its own pattern -
+   see PATTERN 3c "Recording Changes (Auditing)" in `logic_bank_patterns.md` (`RuleExtension.copy_row`, or a
+   `commit_row_event` that inserts the audit row with old and new values, who and when). Do NOT create a `Sys*Req` table
+   and `session.add` it from an `early_row_event` for this: nobody inserts a request when a value is edited.
 
 2. **External Integrations** (Kafka, webhooks, email):
 ```python
@@ -1036,7 +1027,7 @@ Create a fully functional application and database
 
 0. **Spec = Floor, Not Ceiling:**
    - Prompt column lists are the *minimum anchor* — flesh out with domain-standard fields
-   - Always add `Rule.constraint` for `quantity > 0` and `unit_price`/`unit_value > 0` on line items
+   - Domain-floor constraints (`quantity > 0`, `unit_price`/`unit_value > 0`): not added silently; listed as 🔴 in ad-libs.md (see rule 8)
    - Always add `Rule.sum` for every numeric child column that rolls up to a header
    - Domain expert omissions = "obvious to them" — not "excluded"
 
@@ -1156,6 +1147,14 @@ Create a fully functional application and database
    Run DDL + `rebuild-from-database` ONCE before writing any logic or mapper files.
    ❌ NEVER discover a missing column while writing a logic file — that causes an error loop.
 
+   **🚨 Traceability anchor for rule-less requirements:** a requirement implemented by a
+   custom API, Kafka handler/mapper or security grants (no `logic/logic_discovery/` file) must
+   carry its `Feature: <name>` line, verbatim from requirements.md, in the module docstring of
+   the file that implements it — otherwise the Requirements Traceability Report shows it as
+   "not implemented". Write it when you write the file; adding it later edits source after the
+   test run and forces a re-run. Scanned globs and format: see STEP 6 in
+   `.github/copilot-instructions.md` ("NON-LOGIC IMPLEMENTATION FILES").
+
    **🚨 MANDATORY CLOSING CHECK — "planned a derived column" is not the same as "derived it":**
    Every row in the DDL change list whose Reason names a rule type (e.g. "Rule.count where=
    clause", "Rule.formula output") is a promise that some code will assign that column —
@@ -1211,6 +1210,8 @@ Create a fully functional application and database
    Severity tiers:
    - 🔴 **Review required** — AI guessed something the spec didn't cover. Dev MUST verify.
    - 🟡 **FYI** — standard pattern applied. Almost certainly correct; no action needed.
+   - A term the spec uses but never defines, which you had to interpret (e.g. "unpaid" orders), is 🔴, even when
+     one reading is the obvious convention. 🟡 is only for standard patterns that involved no interpretation.
 
    ---
    *(begin template — copy everything below this line into the file)*
@@ -1366,4 +1367,5 @@ Create a fully functional application and database
 
 8. **Business Logic Patterns:**
    - NEVER ad-lib business logic or missing conditions that are not explicitly defined in the spec.
+     (This is why a missing domain-floor constraint such as `quantity > 0` is asked about, not added: list it as 🔴.)
    - For derived flags or totals (like `clvs_eligible`), ALWAYS use declarative `Rule.formula` or `Rule.count` derivations instead of imperative `Rule.row_event` loops. `row_event` is for side effects (like sending an email or matching a record), NOT formulas.
