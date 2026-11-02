@@ -1,4 +1,5 @@
 ---
+version: 3.62 - 11/2/26 - "What are rules" table: added a 'Dependency managed' row (invocation, ordering and dependency propagation are the three things the engine takes over from the author; the table had the first two). Same wording as the Manager CE (2.34).
 version: 3.61 - 11/1/26 - Executable Requirements STEP 6 checklist: a clause that names something the data does not define (e.g. "authorized CLVS courier") is implemented against an assumed column and a SysConfig placeholder and flagged 🔴, never left unimplemented. A scripted demo_customs_clvs build skipped the courier clause ("no courier data") where three earlier builds had implemented it with an ad-lib; shipments from any courier passed.
 version: 3.60 - 11/1/26 - "Create Tests" trigger: the coverage plan is now a FILE (docs/requirements/<name>/test_plan.md), written before any test file and closed out in the same file, instead of a printed chat table. A scripted run with the 3.59 trigger again kept the plan in its thinking, printed nothing and left out the move-to-another-parent scenarios. This CE reliably writes mandated files (ad-libs.md, requirements.md, diagrams) but not mandated chat prints. testing.md Steps 2b/4d match.
 version: 3.59 - 11/1/26 - New "Create Tests" trigger (before "Run Tests"): the coverage plan is a printed table before any test file, and the same table closes the request. A scripted run (demo_customs_clvs) read the testing.md workflow and planned in its thinking only, printed nothing, and wrote 14 eligibility scenarios against 24 when the same request was typed alone; the trigger gives the AI a mandatory sequence at the point of use. Also: a live-only scenario goes in its requirement's Feature, so the traceability report counts it.
@@ -416,6 +417,7 @@ But unlike procedural code, rules are *declarative* — which has important impl
 | **Auto-reused** | `Customer.balance = sum of unpaid orders` — declared once, enforced over every change path | No per-path handlers to write or miss |
 | **Auto-invoked** | Rules fire at every commit, from every caller — you never call them | Can't be forgotten, can't be bypassed |
 | **Auto-ordered** | The engine computes dependency order at startup | Add a rule anywhere, it finds its place |
+| **Dependency managed** | A change re-derives exactly what depends on it — a sum adjusts by the changed child's delta, not a re-aggregate | No cascade or recompute code to write, no stale values |
 
 &nbsp;
 

@@ -23,8 +23,9 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.33
+version: 2.34
 changelog:
+  - 2.34 (Nov 2 2026) - "What are rules" table: added a 'Dependency managed' row. The three things the engine takes over from the author are invocation, ordering and dependency propagation; that is what separates declarative rules from procedural code (including 4GLs, which shorten the procedure but leave all three to the author). The table had the first two only.
   - 2.33 (Oct 27 2026) - "What are rules" now offers the extensibility point: new trigger (can I add code / what are events / how rules and Python fit together) answering that Python events are the extension mechanism and are integrated with the declarative rules. Same wording as the project CE (base 3.55).
   - 2.32 (Oct 24 2026) - New "Environment-Aware Steps" section: degrade (SQL security, simulated Kafka) instead of stopping when no container runtime runs, and say so up front; "add security" picks Keycloak or SQL; never install or download software; "create project X from <db>" is Method 1. From the first blind run of the clean demo_eai script, where these were done implicitly. create_script.txt is now that adaptive script (the level 1 diagnostic runs it).
   - 2.31 (Oct 24 2026) - Level 1: the final line now states why the verdict is DEGRADED or FAIL; the script runs its live Kafka step
@@ -217,6 +218,7 @@ But unlike procedural code, rules are *declarative* — which has important impl
 | **Auto-reused** | `Customer.balance = sum of unpaid orders` — declared once, enforced over every change path | No per-path handlers to write or miss |
 | **Auto-invoked** | Rules fire at every commit, from every caller — you never call them | Can't be forgotten, can't be bypassed |
 | **Auto-ordered** | The engine computes dependency order at startup | Add a rule anywhere, it finds its place |
+| **Dependency managed** | A change re-derives exactly what depends on it — a sum adjusts by the changed child's delta, not a re-aggregate | No cascade or recompute code to write, no stale values |
 
 &nbsp;
 
