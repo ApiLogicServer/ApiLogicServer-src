@@ -1,15 +1,15 @@
 ## Ad-Libs Report
-**9 items need your review. 9 FYIs — standard patterns, no action needed.**
+**10 items need your review. 8 FYIs — standard patterns, no action needed.**
 
 ---
 
 ## Walkthrough
 
-1. **Basic data model** — customs.sqlite already modelled Shipment, Piece, ShipmentParty, ShipmentCommodity, Customer, CustomsOffice, ControlledRegulatedGood (all seeded lookups); nothing inferred.
-2. **Derived/predicted schema additions** — constants → `sys_config.clvs_lvs_threshold_cad` (3300) and `clvs_service_type_cd` ('04'); FK `shipment.customs_office_id` (+ snapshot `customs_office_clvs_release`); `shipment_commodity.is_prohibited`; derived `shipment.prohibited_commodity_count`, `controlled_commodity_count`, `clvs_reason`, `clvs_eligible`; EAI blob table `shipment_xml`. Allocate junctions: none. Request Pattern: none.
-3. **Create db** — DDL via sqlite3 + `rebuild-from-database` (13 tables).
-4. **Run impl-req** — 2 early events, 1 row event, 1 after-flush event, 1 copy, 2 count, 2 formula (clvs_reason via `calling=`, clvs_eligible as a one-line expression over it); Kafka 2-message subscribe on topic `isdc`.
-5. **Test data / testing** — no seed script needed (reference data shipped in the database; scenarios build unique shipments from the reference XML); 22 Behave scenarios.
+1. **Basic data model** — customs.sqlite as given: Shipment (with Piece, ShipmentParty, ShipmentCommodity, SpecialHandling), Customer, CustomsOffice/Region, ControlledRegulatedGood/GovtDept, VirtualRouteLeg, SysConfig.
+2. **Derived/predicted schema additions** — constants to `sys_config` (`clvs_threshold_cad` 3300, `clvs_courier_service_type_cd` '04'); lookup FK `shipment.customs_office_id` (+ `customs_office.location_cd` to link the message's IATA-style location to an office); `shipment_xml` blob table; derived columns on `shipment` (`controlled_item_count`, `prohibited_commodity_count`, `clvs_reason`, `clvs_eligible`, `office_clvs_release`, copies of the two constants); `shipment_commodity.is_prohibited`; `shipment_party` address/oid columns from the field-mapping CSV. No allocate; no Request Pattern.
+3. **Create db** — one DDL pass + `rebuild-from-database` (13 tables).
+4. **Run impl-req** — 3 copy, 2 count, 2 formula, 2 early events, 1 row event, 1 after-flush event (the Kafka bridge), plus the 2-message Kafka subscribe pipeline (`isdc` / `isdc_processed`).
+5. **Test data / testing** — no seed needed (Customer and CustomsOffice are populated); 26 Behave scenarios across 4 Features, written from `test_plan.md`.
 
 <details markdown>
 <summary>Full diagnostic detail (DDL change list, rule plan, rejected alternatives, replay log)</summary>
@@ -17,56 +17,55 @@
 ### 🟢 Diagnostic Appendix
 
 #### Pre-Coding Analysis
-*(written before any code — both phases completed in order)*
 
 **Phase 1 — Schema Impact Assessment**
-Files read: `requirements.md` (all steps), `message_formats/*` (reference XML, mapping CSV), `database/models.py`
+Files read: `requirements.md` (all steps), `message_formats/*` (CSV, reference XML, the three demo XMLs, LVS/HVS samples by grep), `database/models.py`
 
 | Step | Signal |
 |---|---|
-| Step 1 — Subscribe to Kafka and persist shipments | EAI detected → blob table `shipment_xml`; mapper from the CSV; duplicate policy |
-| Step 2 — Importer matching | row_event side effect (lookup + child insert), no schema change |
-| Step 3 — CVLS Eligibility | Rule.count over children (prohibited, controlled), FK to customs_office, constants → SysConfig |
-| Step 4 — Live Kafka end-to-end test | config + reset/publisher scripts |
+| Step 1 — Subscribe to Kafka and persist shipments | EAI consume: blob table; CSV fields not in models (party address/oid columns) |
+| Step 2 — Importer matching | row_event; no schema change (Customer and ShipmentParty exist) |
+| Step 3 — CVLS Eligibility | per-clause FK scan: courier (no data → SysConfig), value (SysConfig threshold), prohibited lines (Rule.count on child, `is_prohibited` column missing), controlled goods (FK exists), designated office (FK missing, location code not linkable) |
+| Step 4 — Live Kafka end-to-end | env vars in `config/default.env`; reset scripts; test publisher |
 
-DDL change list *(run once before any coding)*:
+DDL change list:
 
 | Table | Change | Reason |
 |---|---|---|
 | shipment_xml | CREATE TABLE | Step 1 — EAI blob table |
-| shipment | ADD customs_office_id INTEGER REFERENCES customs_office(id) | Step 3 — "CBSA-designated customs office" is a lookup (FK, set by early event) |
-| shipment | ADD customs_office_clvs_release INTEGER | Step 3 — Rule.copy from CustomsOffice.clvs_release |
-| shipment | ADD prohibited_commodity_count INTEGER | Step 3 — Rule.count where= clause |
-| shipment | ADD controlled_commodity_count INTEGER | Step 3 — Rule.count where= clause |
-| shipment | ADD clvs_reason TEXT | Step 3 — Rule.formula output |
-| shipment | ADD clvs_eligible INTEGER | Step 3 — Rule.formula output |
-| shipment_commodity | ADD is_prohibited INTEGER | Step 3 — named in the requirement; read by Rule.count where= |
-| sys_config | ADD clvs_lvs_threshold_cad, clvs_service_type_cd | Step 3 — constants (3300, '04') |
+| sys_config | ADD clvs_threshold_cad, clvs_courier_service_type_cd | Step 3 — constant extraction |
+| customs_office | ADD location_cd (+ seed YYZ, YMX, YUL, YCL) | Step 3 — link message location to office |
+| shipment | ADD sys_config_id (FK), clvs_threshold_cad, clvs_courier_service_type_cd | Step 3 — Rule.copy |
+| shipment | ADD customs_office_id (FK), office_clvs_release | Step 3 — early_row_event sets FK, Rule.copy |
+| shipment | ADD controlled_item_count, prohibited_commodity_count | Step 3 — Rule.count |
+| shipment | ADD clvs_reason, clvs_eligible | Step 3 — Rule.formula |
+| shipment_commodity | ADD is_prohibited | Step 3 — Rule.count where= clause (set by early_row_event) |
+| shipment_party | ADD address_1, address_2, address_3, oid_nbr, oid_type_cd | Step 1 — CSV Classify storage |
 
 **Phase 2 — CE / Pattern Assessment**
-Files read: `eai_subscribe.md`, `logic_bank_api.md`, `logic_bank_patterns.md` (not opened; the API file and implement_requirements.md covered the rule choices), `implement_requirements.md`, `testing.md`
+Files read: `eai_subscribe.md`, `logic_bank_api.md`, `implement_requirements.md`, `testing.md`; `logic_bank_patterns.md` was NOT read.
 
 | Step | Rule Plan |
 |---|---|
-| Step 1 | 2-message EAI, 9 artifacts; `Rule.after_flush_row_event(ShipmentXml)` bridge |
-| Step 2 | `Rule.row_event(Shipment)` |
-| Step 3 | `Rule.early_row_event` ×2 (office FK, controlled-goods FK), `Rule.copy`, `Rule.count` ×2, `Rule.formula` ×2 |
+| Step 1 | 2-message EAI; ShipmentXml blob + after_flush bridge; mapper; debug/reset endpoint; reset scripts; test publisher; admin.yaml entry |
+| Step 2 | Rule.row_event(Shipment) |
+| Step 3 | Rule.copy x3; Rule.count x2 (where=); early_row_event x2 (Shipment: office FK; ShipmentCommodity: controlled FK + is_prohibited); Rule.formula clvs_reason (calling=) then clvs_eligible (derived from clvs_reason) |
 
 Anti-patterns confirmed clear:
-- [x] No parent flag where Rule.count on child table is correct (`dang_goods_cd`, `oga_shipment_flg` are not used)
-- [x] No `as_expression=lambda row: my_func(row)` — `calling=` used for the multi-line formula
-- [x] No `session.query()` inside a formula (SysConfig.current and the reference-table lookups are in events / the documented accessor)
-- [x] EAI: mapper returns plain model rows; 2-message design; `is_processed` guard in the bridge
+- [x] No parent flag where Rule.count on child table is correct (dang_goods_cd / oga_shipment_flg unused)
+- [x] No `as_expression=lambda row: my_func(row)`; `calling=` for the multi-line formula
+- [x] No `session.query()` inside a formula (queries only inside early events that set FKs)
+- [x] EAI: named parse() returns plain model rows, 2-message design, record_error_text from system code
 
 **Implementation Plan**:
 
 | Step | What was planned |
 |---|---|
-| 1 | DDL + rebuild-from-database |
-| 2 | IsdcMapper.py, isdc.py (2 consumers + shared process function) |
-| 3 | isdc_consume.py bridge, debug/reset API, reset scripts, send_isdc.py |
-| 4 | clvs_eligibility.py, shipment_matching.py |
-| 5 | Verify: simulated, then live |
+| 1 | One DDL pass + rebuild-from-database |
+| 2 | IsdcMapper.py, isdc.py (2 consumers + shared function), isdc_consume.py bridge, debug endpoint, scripts |
+| 3 | shipment_matching.py |
+| 4 | clvs_eligibility.py |
+| 5 | Verify subscriptions live; diagrams; tests from test_plan.md; run; report |
 
 ---
 
@@ -74,27 +73,48 @@ Anti-patterns confirmed clear:
 
 | Metric | Value |
 |---|---|
-| Strategy Used | Domain graph persisted by a mapper; eligibility as count + two formulas; matching as a row_event |
-| CE Files Loaded | project `.github/copilot-instructions.md` (3.57), `docs/training/logic_bank_api.md`, `implement_requirements.md`, `eai_subscribe.md`, `testing.md` |
-| Schema Read First | Yes — schema and sample XML read before any mapper or logic |
-| Sample Data Read | Yes — `message_formats/*` read before the mapper |
+| Strategy Used | DDL first (single pass), then mapper/consumer, then rules; simulated smoke test, then live Kafka (Podman broker) |
+| CE Files Loaded | project `.github/copilot-instructions.md`, `docs/training/logic_bank_api.md`, `implement_requirements.md`, `eai_subscribe.md`, `testing.md` (partial) |
+| Schema Read First | Yes — models.py and the live schema before any logic or mapper |
+| Sample Data Read | Yes — CSV and XML samples before the mapper |
 | Subagent Used | No — single pass |
-| Self-Verification | Yes — server started, simulated and live sends checked, `shipment` rows read back |
-| Lightweight Checks Used | Yes — curl + sqlite3 per phase |
-| Gate Test Run Count | `test_gate.sh`: 3 (as supplied: failed on timing; patched copy: passed; updated gate: passed); Behave: 3 runs |
-| Gate Test Purpose | Final verification (the first run diagnosed the gate, not the code) |
-| Error Correction Loops | 1 |
+| Self-Verification | Yes — server started, debug endpoint tested simulated and live, logs checked |
+| Lightweight Checks Used | Yes — curl + sqlite3 reads + logs/als.log per phase |
+| Gate Test Run Count | 1 — final verification only (the probe calls before it were diagnostic) |
+| Gate Test Purpose | Final verification |
+| Error Correction Loops | 4 |
+| Long-Run Diagnostics | None |
 
 **Error Correction Loops**:
 
 ```
 Loop 1:
-  Symptom:   Behave "Deleting the shipment leaves no orphans" failed: DELETE /api/Shipment/<id> answered 500
-             ("tried to blank-out primary key column 'shipment_commodity.local_shipment_oid_nbr'")
-  Diagnosis: read the Assertion Failed line in logs/behave.log
-  Fix:       delete cascade on Shipment's four child relationships (database/customize_models.py)
+  Symptom:   "Missing Parent: shipment" when the importer ShipmentParty was inserted from the row_event
+  Diagnosis: logs/als.log: the party carried only the FK value; the Shipment was not flushed yet
+  Fix:       party.shipment = row (relationship) and session.add(party) before logic_row.insert(); LogicRow.insert does not add to the session
+  Time:      ~2 min
+  Root cause type: CE gap (the EAI doc says attach via relationship; the Importer-matching text does not)
+
+Loop 2:
+  Symptom:   replace-on-duplicate raised "Dependency rule ... tried to blank-out primary key column shipment_commodity.local_shipment_oid_nbr"
+  Diagnosis: server response of the simulated replay
+  Fix:       session.expire(existing) after deleting and flushing the children, before deleting the Shipment
   Time:      ~1 min
-  Root cause type: missing read (the requirement's "no orphans after deleting the parent" check was not tried before the tests)
+  Root cause type: CE gap (no replace pattern in eai_subscribe.md; it only documents insert-only)
+
+Loop 3:
+  Symptom:   PATCH of Shipment / ShipmentCommodity answered 500 "'Shipment' object has no attribute 'clvs_courier_service_type_cd:'"; inserts had worked
+  Diagnosis: LogicBank's dependency scanner splits the function source on whitespace; `if row.a != row.b:` leaves `row.b:` as a token. Found only because an UPDATE was tried
+  Fix:       assign the comparison to a local (`courier_ok = ...`) so no row.attr token ends with a colon
+  Time:      ~2 min
+  Root cause type: CE gap / engine sharp edge (inserts pass; the failure appears only on update)
+
+Loop 4:
+  Symptom:   deleting a Shipment through the API left Piece, ShipmentParty and SpecialHandling rows (requirement: no orphans)
+  Diagnosis: sqlite3 counts after DELETE /api/Shipment/<id>; SQLite does not enforce ON DELETE CASCADE by default
+  Fix:       ORM cascade ("all, delete") on the four Shipment child relationships, in database/customize_models.py
+  Time:      ~2 min
+  Root cause type: missing read (the acceptance check was in requirements.md; found by running it)
 ```
 
 ---
@@ -102,28 +122,28 @@ Loop 1:
 ### 🔴 Review Required
 | Location | Issue | Action |
 |---|---|---|
-| `logic/logic_discovery/clvs_eligibility.py:54` | "authorized CLVS courier" has no table in the database. Interpreted as `Shipment.service_type_cd` equal to `sys_config.clvs_service_type_cd` ('04', the value in every sample message). | Confirm the code, or tell me where the list of authorized couriers lives. |
-| `logic/logic_discovery/clvs_eligibility.py:56` | "estimated value for duty" mapped to `local_customs_value_amt` (the CAD value); a missing value counts as over the threshold ("value over threshold"). Threshold 3300 is `sys_config.clvs_lvs_threshold_cad`. | Confirm the column, and the treatment of a missing value. |
-| `logic/logic_discovery/clvs_eligibility.py:71` | `ShipmentCommodity.is_prohibited` is only counted. Nothing sets it: not the Kafka message, not a lookup. Messages arriving through Kafka therefore never carry a prohibited line; it is set only through the API / Admin UI. | Say how a line becomes prohibited (a rule table, a message field). |
-| `logic/logic_discovery/clvs_eligibility.py:33-44` | Controlled-goods lookup: a `controlled_regulated_goods.hs_code` (8 digits, dotted) matches when it is a prefix of the first ten digits of the commodity's tariff number (dots removed). A tariff number with fewer than 8 digits never matches. | Confirm the prefix rule. |
-| `logic/logic_discovery/clvs_eligibility.py:23-30` | "CBSA-designated customs office" resolved from `Shipment.planned_clearance_location_cd` = `customs_office.office_code`. An unknown code (the demo samples use `MEM`) is "office not designated". The message also carries other location fields (`final_import_clearance_loc_cd`, `dest_location_cd`). | Confirm which field holds the release office. |
-| `logic/logic_discovery/shipment_matching.py:38-42` | "High confidence columns" chosen: company_nm←name, city_nm←city, state_cd←state, postal_cd←postal, country_cd←country, customer_acct_nbr←duty_bill_to_acct_nbr, contact_phone_nbr←phone_nbr, business_nbr←business_nbr, broker_id_cd←broker_cd. Customer address lines and GST registration have no ShipmentParty column. | Confirm the column list. |
-| `integration/kafka/kafka_subscribe_discovery/isdc.py:48-67` | Replace policy: the old graph (shipment, pieces, parties, commodities, special handling) is deleted and flushed, then the new rows are inserted, all in Tx 2; the env switch name `ISDC_DUPLICATE_POLICY` (`fail` or `replace`, default `replace`) is mine. | Confirm the switch name; confirm `fail` should leave the blob unprocessed with `error_text`. |
-| `integration/IsdcMapper.py:14-20` | Only shipment, consignee/shipper, piece and commodities are stored (the CSV's "Classify Storage - USE" columns). Not stored: `mawbAsgmt`, `mawb`, `currencies`, `specialHandlingCodes`, `virtualRouteLegs` (the CSV says "just store", but the table has no link to a shipment, so a replay would duplicate it), `extraData`. | Say which of these must be kept. |
-
-| `logic/logic_discovery/clvs_eligibility.py:49` | **Found on re-read, not requested.** `_clvs_reason` reads the threshold and the courier code through `SysConfig.current()`. That query is invisible to the rule engine: changing `sys_config` does not re-evaluate existing shipments. The project guide's preferred shape is `Rule.copy` of each constant onto `shipment` (FK to `sys_config`), which is tracked. Kept the simpler form for the demo. | Decide: keep (constants rarely change) or switch to `Rule.copy`. The vital-signs check scores this -3. |
+| `logic/logic_discovery/clvs_eligibility.py:58-60` | "Authorized CLVS courier" is not defined by the data. Assumed: `Shipment.service_type_cd` equals `SysConfig.clvs_courier_service_type_cd` ('04', the value in every sample message) | Confirm which attribute identifies an authorized courier and the allowed value(s); one value only today |
+| `logic/logic_discovery/clvs_eligibility.py:29-36` | The message carries IATA-style locations (YYZ) while `customs_office.office_code` is a 4-digit code. Added `customs_office.location_cd` and seeded YYZ→0700, YMX→0504, YUL→0500, YCL→0469 (the last is a non-designated office used by the tests) | Supply the real location-to-office mapping; seed data is a guess |
+| `logic/logic_discovery/clvs_eligibility.py:33` | "Released at" is taken from `final_import_clearance_loc_cd`; other candidates are `planned_clearance_location_cd` and `dest_location_cd` | Confirm the column |
+| `logic/logic_discovery/clvs_eligibility.py:52` | `ShipmentCommodity.is_prohibited` has no defined source. Set to 1 when the matched controlled good's `clvs_reason` contains the word "prohibited" (5 of 184 lookup rows) | Confirm the rule, or add an explicit flag to `controlled_regulated_goods` |
+| `logic/logic_discovery/clvs_eligibility.py:43-50` | Controlled-goods lookup: a lookup HS code (8 digits) matches when it is the start of the first ten digits of the line's tariff number; first match wins. A prohibited line is also a controlled line, so it adds both reasons | Confirm the match semantics and whether prohibited should count as controlled |
+| `logic/logic_discovery/clvs_eligibility.py:61` | "Estimated value for duty" = `Shipment.local_customs_value_amt` (CAD); not exceeding means `<=` 3300 | Confirm the column (alternatives: `customs_value_amt`, `dest_customs_value_amt`, `cad_value_amt`) |
+| `logic/logic_discovery/clvs_eligibility.py:67-68` | A shipment whose release location maps to no office fails ("release office unknown"); the spec does not say | Confirm unknown means ineligible |
+| `logic/logic_discovery/clvs_eligibility.py:56-71` | Wording and order of the short reasons are invented (spec: "short reasons") | Replace with the program's reason codes if they exist |
+| `logic/logic_discovery/shipment_matching.py:44-56` | "High confidence" Customer columns copied to the importer party: account, name, address 1-2, city, state, country, postal, business number, phone, broker | Confirm the set (e.g. `gst_reg`, `export_country` not copied) |
+| `integration/kafka/kafka_subscribe_discovery/isdc.py:78` | `VirtualRouteLeg` has no link to Shipment in the schema ("just store"), so a replayed message adds its legs again (not replaced). `mawb`, `mawbAsgmt`, `currencies` sections are not stored at all (`integration/IsdcMapper.py:59`) | Decide whether legs need a shipment key and whether currency conversion rows are required |
 
 ---
 
 ### 🟡 FYI
-- `logic/logic_discovery/clvs_eligibility.py:74` — `clvs_eligible` is a one-line expression over `clvs_reason` (blank = eligible), so the two cannot disagree.
-- `logic/logic_discovery/clvs_eligibility.py:70` — `customs_office_clvs_release` is a snapshot copy of the office flag (Rule.copy): a later change to a customs office does not re-evaluate existing shipments.
-- `logic/logic_discovery/clvs_eligibility.py:52-64` — reasons are short fixed phrases: "courier not authorized", "value over threshold", "prohibited goods", "controlled goods", "office not designated", joined by ", " in that order.
-- `database/customize_models.py` — deleting a Shipment deletes its pieces, parties, commodities and special handling rows (needed because the commodity key includes the shipment key).
-- `config/default.env:34-35` — Kafka enabled for the live tests: `KAFKA_SERVER = localhost:9092`, `KAFKA_CONSUMER_GROUP = demo_customs_clvs-group1`.
-- `integration/IsdcMapper.py:23-26` — party placeholder id 0 is cleared so the database assigns the key; no domain-floor constraints (for example on values) were added.
-- `docs/requirements/customs_demo/message_formats/*` — sample outcomes under these rules: HVS fixtures not eligible (value 5000 over 3300 and office `MEM` is not a CBSA code); LVS-1 not eligible (controlled goods: HS 6110.20.00, cotton jerseys); LVS-2 eligible with blank reason. All three are correct rejections or acceptances, not false positives.
-- `docs/requirements/customs_demo/test_gate.sh` — the supplied gate asserted counts immediately after sending, which fails when Kafka is configured because the debug endpoint is then live (asynchronous). Changed to poll (`wait_for_counts`); the gate now passes end to end with `KAFKA_PHASE_REQUIRED=true`.
-- `database/db.sqlite` — 8 foreign-key columns have no covering index (7 came with `customs.sqlite`, `shipment.customs_office_id` is new). Fine at demo scale; flagged by the vital-signs check (-1 each).
+- `logic/logic_discovery/clvs_eligibility.py:75-78` — threshold, courier code and office release flag are `Rule.copy` snapshots (default): a later SysConfig or office change does not re-derive existing shipments
+- `integration/kafka/kafka_subscribe_discovery/isdc.py:32-35` — duplicate policy read from env `ISDC_DUPLICATE_POLICY` (`fail|replace`, default `replace`); the variable name is mine
+- `integration/kafka/kafka_subscribe_discovery/isdc.py:46-57` — replace deletes the prior graph (children, then shipment, flushed) and then inserts the parsed rows, in Tx 2
+- `integration/IsdcMapper.py:41-44` — placeholder party OID 0 normalized to None so autoincrement assigns the key
+- `integration/IsdcMapper.py:28` — `extraData` name/value pairs mapped to Shipment columns per the CSV
+- `database/customize_models.py` — ORM cascade on Shipment children so a delete leaves no orphans (survives rebuild-from-database)
+- `integration/kafka/isdc_reset.sh` — falls back to Podman when Docker is not available; `isdc_reset_db.sh` also clears special_handling and virtual_route_leg
+- `config/default.env` — `KAFKA_SERVER=localhost:9092`, `KAFKA_CONSUMER_GROUP=demo_customs_clvs-group1` left set; the existing local `broker1` is shared, and the reset scripts recreate topics `isdc` and `isdc_processed` on it
+- `ui/admin/admin.yaml` — ShipmentXml entry added by hand; `admin-merge.yaml` (new columns for the other tables) was generated and NOT swapped in
 
 </details>

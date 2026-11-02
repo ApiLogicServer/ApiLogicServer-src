@@ -1,32 +1,36 @@
 """
-Kafka test publisher for topic isdc: publishes one sample shipment XML and reports delivery.
-Run from project root (broker up, KAFKA_SERVER set):  python test/send_isdc.py [path/to/message.xml]
+Kafka test publisher for topic `isdc`: publishes one CIMCorp shipment XML (confluent_kafka.Producer, not a subprocess).
+
+    python test/send_isdc.py [path/to/message.xml]      # default: the reference message
+
+Broker: KAFKA_SERVER (default localhost:9092).  The server must be running with Kafka enabled
+(config/default.env: KAFKA_SERVER, KAFKA_CONSUMER_GROUP) to process the message.
 """
 import os
 import sys
 from pathlib import Path
 from confluent_kafka import Producer
 
-SAMPLE = "docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml"
+DEFAULT_FILE = "docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml"
 
 
 def main():
-    """Publish one message to isdc and wait for the broker acknowledgement."""
-    path = sys.argv[1] if len(sys.argv) > 1 else SAMPLE
-    server = os.getenv("KAFKA_SERVER", "localhost:9092")
-    producer = Producer({"bootstrap.servers": server})
+    path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_FILE
+    payload = Path(path).read_text()
+    producer = Producer({"bootstrap.servers": os.getenv("KAFKA_SERVER", "localhost:9092")})
     result = {}
 
     def delivered(err, msg):
-        result["err"], result["msg"] = err, msg
+        result["err"] = err
+        result["msg"] = msg
 
-    producer.produce("isdc", value=Path(path).read_text().encode("utf-8"), callback=delivered)
-    producer.flush(10)
-    if result.get("err") or not result.get("msg"):
-        print(f"FAILED to deliver {path} to isdc at {server}: {result.get('err')}")
+    producer.produce("isdc", value=payload.encode("utf-8"), callback=delivered)
+    producer.flush(timeout=15)
+    if result.get("err") or "msg" not in result:
+        print(f"FAILED to deliver {path}: {result.get('err', 'no delivery report (broker down?)')}")
         sys.exit(1)
-    msg = result["msg"]
-    print(f"delivered {path} to isdc [partition {msg.partition()} offset {msg.offset()}]")
+    m = result["msg"]
+    print(f"Delivered {path} to topic {m.topic()} partition {m.partition()} offset {m.offset()}")
 
 
 if __name__ == "__main__":

@@ -38,11 +38,6 @@ curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_de
 ```
 Response should show `"success": true` with `awb_nbr`, `pieces`, `parties`, `commodities`. Check Admin UI — a ShipmentXml row and a Shipment row with children should appear.
 
-Then run the automated test gate (server must be running on port 5656):
-```bash
-bash docs/requirements/customs_demo/test_gate.sh
-```
-
 Behavioral acceptance checks (must pass):
 - Repeat the same Step 2 call twice using the same XML payload.
 - Domain graph counts remain stable on replay (Shipment/Piece/ShipmentParty/ShipmentCommodity do not increase).
@@ -132,8 +127,3 @@ Release gate (required):
 > **`test/send_isdc.py` is generated automatically by Step 2** — `eai_subscribe.md` artifact #9.
 
 **Verify:** Check Admin UI — ShipmentXml row, Shipment with children, and ShipmentParty with `shipment_party_type_cd="I"` should all appear without any curl.
-
-Then run the automated test gate with Kafka enabled:
-```bash
-KAFKA_PHASE_REQUIRED=true bash docs/requirements/customs_demo/test_gate.sh
-```

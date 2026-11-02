@@ -134,7 +134,8 @@
                 "city",
                 "Type",
                 "clvs_release",
-                "sufferance_warehouse"
+                "sufferance_warehouse",
+                "location_cd"
             ],
             "filterable": [
                 "id",
@@ -145,7 +146,8 @@
                 "city",
                 "Type",
                 "clvs_release",
-                "sufferance_warehouse"
+                "sufferance_warehouse",
+                "location_cd"
             ]
         },
         {
@@ -425,10 +427,13 @@
                 "portofentry",
                 "warehousecode",
                 "surface_intl_shipment_nbr",
+                "sys_config_id",
+                "clvs_threshold_cad",
+                "clvs_courier_service_type_cd",
                 "customs_office_id",
-                "customs_office_clvs_release",
+                "office_clvs_release",
+                "controlled_item_count",
                 "prohibited_commodity_count",
-                "controlled_commodity_count",
                 "clvs_reason",
                 "clvs_eligible"
             ],
@@ -572,12 +577,43 @@
                 "portofentry",
                 "warehousecode",
                 "surface_intl_shipment_nbr",
+                "sys_config_id",
+                "clvs_threshold_cad",
+                "clvs_courier_service_type_cd",
                 "customs_office_id",
-                "customs_office_clvs_release",
+                "office_clvs_release",
+                "controlled_item_count",
                 "prohibited_commodity_count",
-                "controlled_commodity_count",
                 "clvs_reason",
                 "clvs_eligible"
+            ]
+        },
+        {
+            "name": "SysConfig",
+            "path": "/SysConfig",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "clvs_threshold_cad",
+                "clvs_courier_service_type_cd"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "clvs_threshold_cad",
+                "clvs_courier_service_type_cd"
             ]
         },
         {
@@ -691,7 +727,12 @@
                 "cfia_account_nbr",
                 "fax_nbr",
                 "pref_cont_mthd_cd",
-                "additional_contact_flg"
+                "additional_contact_flg",
+                "address_1",
+                "address_2",
+                "address_3",
+                "oid_nbr",
+                "oid_type_cd"
             ],
             "filterable": [
                 "shipment_party_oid_nbr",
@@ -725,7 +766,12 @@
                 "cfia_account_nbr",
                 "fax_nbr",
                 "pref_cont_mthd_cd",
-                "additional_contact_flg"
+                "additional_contact_flg",
+                "address_1",
+                "address_2",
+                "address_3",
+                "oid_nbr",
+                "oid_type_cd"
             ]
         },
         {
@@ -776,34 +822,6 @@
                 "special_handling_cd",
                 "etl_tmstp",
                 "shipment_type_cd"
-            ]
-        },
-        {
-            "name": "SysConfig",
-            "path": "/SysConfig",
-            "methods": [
-                "GET",
-                "PATCH",
-                "POST",
-                "DELETE"
-            ],
-            "fields": [
-                "id",
-                "name",
-                "discount_rate",
-                "tax_rate",
-                "notes",
-                "clvs_lvs_threshold_cad",
-                "clvs_service_type_cd"
-            ],
-            "filterable": [
-                "id",
-                "name",
-                "discount_rate",
-                "tax_rate",
-                "notes",
-                "clvs_lvs_threshold_cad",
-                "clvs_service_type_cd"
             ]
         },
         {

@@ -1,12 +1,14 @@
 ---
 description: "Use when: adding EAI consume, Kafka consumer, subscribe to topic, ingest XML/JSON from partner, enterprise application integration, message-driven persistence, event-driven insert, bridge Kafka to database, add kafka consume, kafka inbound, receive from kafka, how do I add EAI, reliability, replay, duplicate handling"
 applyTo: "**/kafka_subscribe_discovery/**"
-version: "1.3"
-lastUpdated: "2026-09-23"
+version: "1.4"
+lastUpdated: "2026-11-01"
 ---
 # EAI Consume — Mandatory Pre-Implementation Read
 
 Changelog:
+- 1.4 (Nov 1, 2026) - removed the hard-coded customs `test_gate.sh` step; verification is now the Behave scenarios, with
+  the how-to in docs/training/eai_subscribe.md § Verifying a subscribe pipeline
 - 1.3 (Sep 23, 2026) - error_text capture is mandatory, same weight as the 2-message design —
   a failed Tx 2 must record why on the blob row, not just in the server log (see
   docs/training/eai_subscribe.md § error_text)
@@ -38,7 +40,5 @@ Required reliability checks (pass/fail):
   AND a non-null `error_text` describing the failure — not just a server-log entry
 - If checks fail, prioritize behavior fixes and rerun checks before structural cleanup
 
-After implementation, run the project test gate if present (server must be running):
-```bash
-bash docs/requirements/customs_demo/test_gate.sh
-```
+After implementation, run these checks as Behave scenarios; how to start clean, send, wait and count is in
+`docs/training/eai_subscribe.md` § "Verifying a subscribe pipeline".

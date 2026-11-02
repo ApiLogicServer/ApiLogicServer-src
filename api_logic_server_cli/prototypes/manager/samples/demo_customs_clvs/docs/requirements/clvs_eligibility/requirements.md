@@ -1,6 +1,7 @@
+## 3. CVLS Eligibility
+
 Feature: CVLS Eligibility
 
-### Step 3 - CVLS Eligibility
 
 ```
 Scenario: Shipment at or below the LVS threshold is eligible

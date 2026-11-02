@@ -43,10 +43,9 @@ See readme files under api, logic and security.
      a 2-4 sentence, plain-English description of what THIS project's schema and rules
      actually do. Left as this placeholder for projects created outside Method 4 (e.g.
      `genai-logic create` with no domain prompt) — those have no logic yet to summarize. -->
-This is a customs-shipment integration service. It subscribes to the Kafka topic `isdc`, saves each CIMCorp shipment XML as a blob, then parses it into Shipment, Piece, ShipmentParty and ShipmentCommodity rows (a repeated shipment replaces the stored one). Declarative rules add an importer party by matching the transport bill-to account to a Customer, and decide CLVS (Customs Low Value Shipments) eligibility on each shipment: courier, value at or below CAD 3,300, no prohibited or controlled commodity lines, and a CBSA-designated release office, with every failed reason listed in `clvs_reason`.
-
-See [project_creation_report.md](docs/requirements/project_creation_report.md)
-for how this was built.
+This project's schema and business logic have not been summarized yet — see
+[`docs/requirements/project_creation_report.md`](docs/requirements/project_creation_report.md)
+for what was created.
 
 ---
 

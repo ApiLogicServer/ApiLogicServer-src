@@ -13,13 +13,15 @@
 
 ### Rules
 
-1. `customs_office_clvs_release = copy(clvs_release)`<br>
-2. `clvs_eligible = 1 if clvs_reason == "" else 0`<br>
-3. `clvs_reason = _clvs_reason(row)` — Derive clvs_reason: comma-delimited short reasons why the shipment fails CLVS eligibility (blank if eligible).<br>
-4. `prohibited_commodity_count = count(ShipmentCommodity where is_prohibited)`<br>
-5. `controlled_commodity_count = count(ShipmentCommodity where controlled_regulated_goods_id)`<br>
-6. `Shipment` → `_set_customs_office` (early) — Shipment event: looks up the CustomsOffice whose office_code is the planned clearance location and sets<br>
-7. `ShipmentCommodity` → `_match_controlled_goods` (early) — ShipmentCommodity event: looks up ControlledRegulatedGood by the first ten digits of the harmonized tariff number
+1. `clvs_threshold_cad = copy(clvs_threshold_cad)`<br>
+2. `clvs_courier_service_type_cd = copy(clvs_courier_service_type_cd)`<br>
+3. `office_clvs_release = copy(clvs_release)`<br>
+4. `clvs_eligible = 1 if clvs_reason == "" else 0`<br>
+5. `clvs_reason = _clvs_reason(row)` — Derive clvs_reason: comma-delimited short list of every reason the shipment fails CLVS eligibility (blank if eligible).<br>
+6. `prohibited_commodity_count = count(ShipmentCommodity where is_prohibited)`<br>
+7. `controlled_item_count = count(ShipmentCommodity where controlled_regulated_goods_id)`<br>
+8. `Shipment` → `_set_customs_office` (early) — Shipment event: looks up the CustomsOffice whose location_cd equals the shipment's<br>
+9. `ShipmentCommodity` → `_match_controlled_goods` (early) — ShipmentCommodity event: looks up ControlledRegulatedGood whose HS code is the start of the first ten digits
 
 </td>
 </tr>
@@ -46,4 +48,4 @@ created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
 ```
 
 ---
-_Generated 2026-11-01 10:06_
+_Generated 2026-11-01 17:28_

@@ -1,0 +1,13 @@
+ Malformed message leaves an unprocessed blob with error text (live Kafka only)  - 2026-11-01 17:31:58,196 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10e2eee00) (sqlalchemy before_flush)			 - 2026-11-01 17:31:58,217 - logic_logger - INFO
+..ShipmentXml[None] {Insert - client} id: None, received_at: 2026-11-02 01:31:58.216957, payload: <notxml shipment="12831181975"><LOCAL_SHIPMENT_OID_NBR>12831181975</LOCAL_SHIPMENT_OID_NBR>, is_processed: False, error_text: None  row: 0x10e2dc870  session: 0x10e2eee00  ins_upd_dlt: ins, initial: ins - 2026-11-01 17:31:58,217 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e2eee00)   										 - 2026-11-01 17:31:58,217 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e2eee00)   										 - 2026-11-01 17:31:58,218 - logic_logger - INFO
+..ShipmentXml[42] {AfterFlush Event} id: 42, received_at: 2026-11-02 01:31:58.216957, payload: <notxml shipment="12831181975"><LOCAL_SHIPMENT_OID_NBR>12831181975</LOCAL_SHIPMENT_OID_NBR>, is_processed: False, error_text: None  row: 0x10e2dc870  session: 0x10e2eee00  ins_upd_dlt: ins, initial: ins - 2026-11-01 17:31:58,218 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-01 17:31:58,220 - logic_logger - INFO
+  ShipmentXml		## - 2026-11-01 17:31:58,220 - logic_logger - INFO
+    1. RowEvent ShipmentXml._publish_isdc() 		## - 2026-11-01 17:31:58,220 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10e2eee00))       	 - 2026-11-01 17:31:58,220 - logic_logger - INFO

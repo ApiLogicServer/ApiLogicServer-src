@@ -19,19 +19,6 @@ Important mapping note (prevent PK collisions):
 - In this payload, party OID fields may carry placeholder value `0` for multiple rows.
 - If mapped to local primary-key columns (e.g. `ShipmentParty.shipment_party_oid_nbr`),
   normalize placeholder IDs to `None` so DB autoincrement assigns unique PK values.
-
-Basic Design:
-  1. integration/kafka/kafka_subscribe_discovery/isdc.py  - isdc
-       reads message, inserts raw payload into ShipmentXml blob (Tx 1)
-  2. logic/logic_discovery/isdc_consume.py
-       blob insert -> publishes payload to topic: isdc_processed
-  3. integration/kafka/kafka_subscribe_discovery/isdc.py  - isdc_processed
-       parses payload -> Shipment graph (mapper + LogicBank rules) (Tx 2); duplicate policy fail|replace
-  4. api/api_discovery/isdc_kafka_consume_debug.py
-       /consume_debug/isdc bypasses Kafka (simulated) or publishes live
-
-Enable Kafka: KAFKA_SERVER / KAFKA_CONSUMER_GROUP in config/default.env; reset with `bash integration/kafka/isdc_reset.sh`.
-Duplicate policy: ISDC_DUPLICATE_POLICY in config/default.env (fail|replace, default replace).
 """
 import logging
 import os
@@ -41,50 +28,75 @@ from integration.system.EaiSubscribeMapper import record_error_text
 
 logger = logging.getLogger('integration.kafka')
 
-_CHILD_LISTS = {models.Piece: "PieceList", models.ShipmentParty: "ShipmentPartyList",
-                models.ShipmentCommodity: "ShipmentCommodityList"}
 
-
-def duplicate_policy() -> str:
-    """ISDC config: the duplicate-shipment policy, fail or replace (default replace)."""
-    policy = (os.getenv("ISDC_DUPLICATE_POLICY") or "replace").strip().lower()
+def _duplicate_policy() -> str:
+    """Subscribe isdc: duplicate-shipment policy from env ISDC_DUPLICATE_POLICY (fail|replace); default replace."""
+    policy = os.getenv("ISDC_DUPLICATE_POLICY", "replace").strip().lower()
     return policy if policy in ("fail", "replace") else "replace"
 
 
+def _replace_existing(shipment_oid: int, session) -> bool:
+    """Subscribe isdc: deletes the prior Shipment graph (parties, commodities, pieces, special handling, shipment)
+    for this LOCAL_SHIPMENT_OID_NBR, flushed before the new rows are inserted, so rules see delete then insert."""
+    existing = session.get(models.Shipment, shipment_oid)
+    if existing is None:
+        return False
+    policy = _duplicate_policy()
+    if policy == "fail":
+        raise ValueError(f"duplicate shipment {shipment_oid} (ISDC_DUPLICATE_POLICY=fail)")
+    for child_list in (existing.ShipmentPartyList, existing.ShipmentCommodityList,
+                       existing.SpecialHandlingList, existing.PieceList):
+        for child in list(child_list):
+            session.delete(child)
+    session.flush()
+    session.expire(existing)          # drop the stale child collections, or deleting the parent tries to blank their PKs
+    session.delete(existing)
+    session.flush()
+    return True
+
+
 def process_isdc_payload(payload: str, session, blob_id: int = None):
-    """ISDC subscribe: parse the XML, apply the duplicate policy, persist the Shipment graph and mark the blob (Tx 2).
-    Shared by Consumer 2 (Kafka, blob_id set) and /consume_debug simulated (blob created here, already processed)."""
+    """Subscribe isdc: parse the shipment XML, replace any prior graph for the same shipment, insert the parsed
+    graph and mark the blob processed. One function for Consumer 2 (Kafka) and /consume_debug (simulated)."""
     from integration.IsdcMapper import parse
-    shipment, children = parse(payload)          # parse first: a bad message never touches the existing graph
-    existing = session.get(models.Shipment, shipment.local_shipment_oid_nbr)
-    if existing is not None:
-        if duplicate_policy() == "fail":
-            raise ValueError(f"duplicate shipment {shipment.local_shipment_oid_nbr} (policy=fail)")
-        for each in (list(existing.ShipmentPartyList) + list(existing.PieceList)
-                     + list(existing.ShipmentCommodityList) + list(existing.SpecialHandlingList)):
-            session.delete(each)
-        session.delete(existing)
-        session.flush()                          # same Tx: old graph gone before the new rows are inserted
+    shipment, children = parse(payload)
+    if children and not hasattr(children[0], '__tablename__'):
+        raise TypeError("parse() must return plain model rows")
+    replaced = False
+    if shipment.local_shipment_oid_nbr is not None:
+        replaced = _replace_existing(shipment.local_shipment_oid_nbr, session)
     for child in children:
-        getattr(shipment, _CHILD_LISTS[type(child)]).append(child)
+        if isinstance(child, models.ShipmentParty):
+            shipment.ShipmentPartyList.append(child)
+        elif isinstance(child, models.Piece):
+            shipment.PieceList.append(child)
+        elif isinstance(child, models.ShipmentCommodity):
+            shipment.ShipmentCommodityList.append(child)
+        elif isinstance(child, models.SpecialHandling):
+            shipment.SpecialHandlingList.append(child)
+        else:
+            session.add(child)                       # VirtualRouteLeg: no shipment link in the model; just store
     session.add(shipment)
     if blob_id:
         blob = session.get(models.ShipmentXml, blob_id)
         if blob:
             blob.is_processed = True
     else:
-        blob = models.ShipmentXml(payload=payload, is_processed=True)
+        from datetime import datetime
+        blob = models.ShipmentXml(payload=payload, is_processed=True, received_at=datetime.utcnow())
         session.add(blob)
     session.commit()
+    logger.info(f"isdc: shipment {shipment.local_shipment_oid_nbr} persisted (replaced prior graph: {replaced})")
     return shipment, blob
 
 
 def register(bus):
-    """Kafka subscribe isdc: wires Consumer 1 (save blob) and Consumer 2 (parse and persist)."""
+    """Subscribe isdc: wires Consumer 1 (topic isdc) and Consumer 2 (topic isdc_processed); see auto_discovery."""
 
     @bus.handle('isdc')
     def isdc(msg, safrs_api):
-        """Kafka subscribe isdc: Consumer 1 saves the raw XML as a ShipmentXml blob and commits (Tx 1)."""
+        """Kafka subscribe isdc: Consumer 1 saves the raw XML to ShipmentXml and commits (Tx 1);
+        the bridge event then publishes it to isdc_processed."""
         from datetime import datetime
         with safrs_api.app.app_context():
             session = safrs.DB.session
@@ -95,7 +107,8 @@ def register(bus):
 
     @bus.handle('isdc_processed')
     def isdc_processed(msg, safrs_api):
-        """Kafka subscribe isdc_processed: Consumer 2 parses the blob and persists the Shipment graph (Tx 2)."""
+        """Kafka subscribe isdc_processed: Consumer 2 parses the blob and persists the Shipment graph (Tx 2);
+        a failure is recorded on the blob's error_text and the consumer carries on."""
         with safrs_api.app.app_context():
             session = safrs.DB.session
             blob_id = int(msg.key().decode('utf-8')) if msg.key() else None
@@ -106,5 +119,5 @@ def register(bus):
                 if blob_id:
                     try:
                         record_error_text(models.ShipmentXml, blob_id, str(e))
-                    except Exception:   # never let error-recording end the consumer
+                    except Exception:
                         logger.exception(f"could not record error_text for blob_id={blob_id}")

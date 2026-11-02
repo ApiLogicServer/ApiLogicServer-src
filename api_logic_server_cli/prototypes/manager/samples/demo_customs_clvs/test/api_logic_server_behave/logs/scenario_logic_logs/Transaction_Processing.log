@@ -1,0 +1,20 @@
+
+The following rules have been activated
+ - 2026-11-01 17:31:43,173 - logic_logger - DEBUG
+Rule Bank[0x10d2e2510] (loaded 2026-11-01 17:29:37.280989)		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+Mapped Class[Shipment] rules:		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+  Derive <class 'database.models.Shipment'>.clvs_threshold_cad as Copy(sys_config.clvs_threshold_cad)		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+  Derive <class 'database.models.Shipment'>.clvs_courier_service_type_cd as Copy(sys_config.clvs_courier_service_type_cd)		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+  RowEvent Shipment._set_customs_office() 		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+  Derive <class 'database.models.Shipment'>.office_clvs_release as Copy(customs_office.clvs_release)		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+  Derive <class 'database.models.Shipment'>.prohibited_commodity_count as Count(<class 'database.models.ShipmentCommodity'> Where Rule.count(derive=models.Shipment.prohibited_commodity_count, as_count_of=models.ShipmentCommodity, where=lambda row: row.is_prohibited == 1) - <function declare_logic.<locals>.<lambda> at 0x10de5ce00>)		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+  Derive <class 'database.models.Shipment'>.controlled_item_count as Count(<class 'database.models.ShipmentCommodity'> Where Rule.count(derive=models.Shipment.controlled_item_count, as_count_of=models.ShipmentCommodity, where=lambda row: row.controlled_regulated_goods_id is not None) - <function declare_logic.<locals>.<lambda> at 0x10de5cf40>)		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+  Derive <class 'database.models.Shipment'>.clvs_reason as Formula (1): <function>		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+  Derive <class 'database.models.Shipment'>.clvs_eligible as Formula (2): Rule.formula(derive=models.Shipment.clvs_eligible [...]		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+  RowEvent Shipment._match_importer() 		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+Mapped Class[ShipmentCommodity] rules:		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+  RowEvent ShipmentCommodity._match_controlled_goods() 		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+Mapped Class[ShipmentXml] rules:		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+  RowEvent ShipmentXml._publish_isdc() 		##   - 2026-11-01 17:31:43,173 - logic_logger - INFO
+Logic Bank - 15 rules loaded - 2026-11-01 17:31:43,173 - logic_logger - INFO
+Logic Bank - 15 rules loaded - 2026-11-01 17:31:43,173 - logic_logger - INFO

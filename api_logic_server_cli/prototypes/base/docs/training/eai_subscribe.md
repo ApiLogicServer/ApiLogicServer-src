@@ -3,13 +3,17 @@ title: EAI Consume Pattern — Kafka + XML/JSON → DB
 description: Two-message Kafka consume pattern with generic by-name XML/JSON mapper. Covers blob-row bridge, 3-tier mapping contract, local debug mode, and generated test data.
 source: Generic training for ApiLogicServer projects with GenAI integration
 usage: AI assistants read this when detecting Kafka consume, EAI, or XML/JSON-to-DB patterns in a user prompt
-version: 1.6
+version: 1.7
 date: April 4, 2026
 related:
   - implement_requirements.md (Kafka outbound, row_event patterns)
   - logic_bank_patterns.md (row_event, commit_row_event)
   - logic_bank_api.md (full rule API)
 changelog:
+  - 1.7 (Nov 1, 2026): New "Verifying a subscribe pipeline" section: the checks to run on every pipeline (replay x2, delete
+    integrity, induced failure, cardinality), how to start clean (stop server, reset db, reset topics, start), poll before
+    asserting on a live send, and a count query to see where a message ended up. Extracted from the customs `test_gate.sh`
+    when that script was retired: its lessons now live here, in `EaiDebug`, and in the Behave scenarios.
   - 1.6 (Oct 24, 2026): Found by running the pipeline against a REAL broker (the simulated tests could not):
     (1) the `_record_error_text` helper in this file's template used `safrs.DB.session` and called it "fresh" - it is
     the same session that still holds the failed Tx 2's rows, so its first query autoflushed them and raised the
@@ -701,6 +705,40 @@ echo "Kafka topics reset."
 #   Edit docs/sample_data/sample_xyz.json and change a key field (e.g. AccountId)
 #   to a different valid value before each publish so each run creates a distinct row.
 ```
+
+---
+
+## Verifying a subscribe pipeline
+
+> Run these on every new pipeline. The pass/fail list is also in `.github/instructions/eai_subscribe.instructions.md`;
+> this section is how to run it. Put the checks in Behave scenarios (`testing.md`) so they appear in the traceability report.
+
+| Check | Pass when |
+|---|---|
+| Replay: send the same payload twice | domain counts stay stable and the blob count goes up by one per send (replace-on-duplicate), or the duplicate is rejected (insert-only) |
+| Delete the parent through the API or Admin App | no orphan child rows remain |
+| Induced failure (bad lookup, rule rejection, malformed message) | live: the blob stays `is_processed = 0` with a non-null `error_text`. Simulated leaves no blob |
+| Cardinality, after one clean run | parent and child counts equal those derived from the sample payload |
+
+**Start clean (SQLite).** Offsets are never committed, so every server start replays the whole topic: empty the topics before starting.
+1. Stop the server: `pkill -f api_logic_server_run.py`, then confirm the port is free (`lsof -i :5656` prints nothing).
+2. `bash integration/kafka/xyz_reset_db.sh` clears the domain and blob tables (lookup tables stay). Run it with the server stopped, as its header says.
+3. Live only: `bash integration/kafka/xyz_reset.sh` recreates the topics. With the server already running, `POST /consume_debug/xyz/reset` purges them instead.
+4. Start the server and wait until it answers (live: `Kafka mode: ACTIVE` in `logs/als.log`).
+
+**Send, then wait.** A live send returns the broker's acknowledgement, not the outcome. Poll the blob table
+(`GET /api/XyzXml/?sort=-id&page[limit]=1`) until `is_processed` or `error_text` is set, up to about 60 s, and only then assert counts.
+Asserting right after a live send is what broke the first customs acceptance script: the counts were still zero.
+
+**See where a message ended up.** A read-only count of the pipeline's tables (change data through the API, never SQL):
+```bash
+sqlite3 database/db.sqlite "
+select 'parent', count(*) from xyz_parent
+union all select 'child', count(*) from xyz_child
+union all select 'blob_total', count(*) from xyz_xml
+union all select 'blob_processed', count(*) from xyz_xml where is_processed = 1;"
+```
+Compare with the cardinality derived from the sample payload; a gap between `blob_total` and `blob_processed` means a message is stuck (read its `error_text`).
 
 ---
 

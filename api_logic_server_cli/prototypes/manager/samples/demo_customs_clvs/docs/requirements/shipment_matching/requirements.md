@@ -1,6 +1,7 @@
+## 2. Importer matching
+
 Feature: Importer matching
 
-### Step 2 — Importer matching
 
 ```
 Logic discovery: Shipment matching (Phase 2).

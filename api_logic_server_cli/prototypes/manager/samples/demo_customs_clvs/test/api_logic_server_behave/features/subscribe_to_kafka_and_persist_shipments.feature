@@ -1,32 +1,25 @@
 Feature: Subscribe to Kafka and persist shipments
 
-  Scenario: Shipment message is delivered and the shipment graph is persisted
-    Given a shipment message for account 451000001 with value 2500
+  Scenario: Shipment message is persisted with its graph
+    Given a CIMCorp shipment message from courier "04" released at "YYZ" with customs value 2500 CAD and tariff "8542310001"
     When the message is delivered to topic isdc
-    Then the shipment is persisted with 1 piece, 3 parties and 1 commodity
-    And the message blob is marked processed
+    Then the shipment is persisted with 1 piece, 1 commodity and 2 parties
+    And the two parties have distinct keys
 
-  Scenario: Replay of the same message replaces the shipment graph
-    Given a shipment message for account 451000001 with value 2500
+  Scenario: Replayed shipment message replaces the graph
+    Given a CIMCorp shipment message from courier "04" released at "YYZ" with customs value 2500 CAD and tariff "8542310001"
     When the message is delivered to topic isdc
     And the same message is delivered to topic isdc again
-    Then the shipment is persisted with 1 piece, 3 parties and 1 commodity
-    And there are 2 message blobs for the shipment
-
-  Scenario: Replayed message with a changed value replaces the stored shipment
-    Given a shipment message for account 451000001 with value 2500
-    When the message is delivered to topic isdc
-    And the message is delivered again with value 3100
-    Then the shipment is persisted with 1 piece, 3 parties and 1 commodity
-    And the stored shipment value is 3100
+    Then the shipment is persisted with 1 piece, 1 commodity and 2 parties
+    And the blob count for the shipment went up by one per delivery
 
   Scenario: Deleting the shipment leaves no orphans
-    Given a shipment message for account 451000001 with value 2500
+    Given a CIMCorp shipment message from courier "04" released at "YYZ" with customs value 2500 CAD and tariff "8542310001"
     When the message is delivered to topic isdc
-    And the shipment is deleted
-    Then no pieces, parties or commodities remain for the shipment
+    And the shipment is deleted through the API
+    Then no piece, commodity, party or special handling rows remain for the shipment
 
-  Scenario: A malformed message leaves an unprocessed blob with error text (live Kafka only)
+  Scenario: Malformed message leaves an unprocessed blob with error text (live Kafka only)
     Given a malformed shipment message
-    When the malformed message is delivered live to topic isdc
-    Then the message blob is not processed and has error text
+    When the message is delivered to topic isdc live only
+    Then the blob stays unprocessed with error text

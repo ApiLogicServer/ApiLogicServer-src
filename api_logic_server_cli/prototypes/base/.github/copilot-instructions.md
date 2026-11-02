@@ -1,4 +1,8 @@
 ---
+version: 3.61 - 11/1/26 - Executable Requirements STEP 6 checklist: a clause that names something the data does not define (e.g. "authorized CLVS courier") is implemented against an assumed column and a SysConfig placeholder and flagged 🔴, never left unimplemented. A scripted demo_customs_clvs build skipped the courier clause ("no courier data") where three earlier builds had implemented it with an ad-lib; shipments from any courier passed.
+version: 3.60 - 11/1/26 - "Create Tests" trigger: the coverage plan is now a FILE (docs/requirements/<name>/test_plan.md), written before any test file and closed out in the same file, instead of a printed chat table. A scripted run with the 3.59 trigger again kept the plan in its thinking, printed nothing and left out the move-to-another-parent scenarios. This CE reliably writes mandated files (ad-libs.md, requirements.md, diagrams) but not mandated chat prints. testing.md Steps 2b/4d match.
+version: 3.59 - 11/1/26 - New "Create Tests" trigger (before "Run Tests"): the coverage plan is a printed table before any test file, and the same table closes the request. A scripted run (demo_customs_clvs) read the testing.md workflow and planned in its thinking only, printed nothing, and wrote 14 eligibility scenarios against 24 when the same request was typed alone; the trigger gives the AI a mandatory sequence at the point of use. Also: a live-only scenario goes in its requirement's Feature, so the traceability report counts it.
+version: 3.58 - 11/1/26 - New static `api/api_discovery/readme_api_discovery.md` (user-facing: the *_debug services and the requests the AI can serve for them), replacing the idea of repeating that text in each generated debug file's docstring; one pointer line in Discovery Systems. Customs test_gate.sh retired; its lessons are in eai_subscribe.md 1.7.
 version: 3.57 - 10/29/26 - Audit / change recording: new Step 2.8 (signals: audit, auditing, history, track changes, who changed, before/after) routes to PATTERN 3c of logic_bank_patterns.md (RuleExtension.copy_row, or an event for old/new values and decisions) instead of defaulting to the Request Pattern; Step 3 and the Request Pattern use-case line no longer send "audit" to a SysAuditReq table.
 version: 3.56 - 10/29/26 - Security section points to the new "Roles inside business rules" section of security.md (Security.current_user_has_role in a rule or event; no-user case). A blind run found that method only by reading security/system/authorization.py.
 version: 3.55 - 10/27/26 - "What are rules" now offers the extensibility point: new trigger (can I add code / what are events / how rules and Python fit together) answering that Python events are the extension mechanism and are integrated with the declarative rules (same transaction, engine phases, row/old_row/logic_row; the phase is the design choice). Events are not presented as a lesser or separate layer.
@@ -687,6 +691,32 @@ simulated run when a broker was answering.
 
 ---
 
+## 🧱 Create Tests
+
+**ACTIVATION TRIGGERS:**
+- "create tests from rules" / "create tests" / "write the tests" / "generate behave tests"
+- The same request as one step inside a longer script or prompt: the sequence below still applies in full.
+
+**MANDATORY SEQUENCE:**
+
+```
+STEP 1: Read docs/training/testing.md: the "Test Generation Workflow" at the top, including its COVERAGE MATRIX.
+STEP 2: Write the coverage plan to docs/requirements/<name>/test_plan.md (<name> = the requirements set the tests
+        are for): a table with one row per rule and the scenarios you will write (create / change / delete /
+        move to another parent / enters and leaves a where= / boundary / accepted and rejected).
+        The file exists before any .feature file, steps file or API probing.
+STEP 3: Write the tests: one Feature per requirement, named as its `Feature:` line in requirements.md.
+        A live-only scenario goes in the Feature of the requirement it tests, never in a file without a `Feature:` line.
+STEP 4: Close out in the same file: add the scenario name beside each row. A row with no scenario says NOT covered
+        and why. Then tell the user, in one line, where test_plan.md is and how many rows are NOT covered.
+STEP 5: Creating tests writes files; running them is the separate "run the tests" request (next section).
+```
+
+**❌ FORBIDDEN:** planning only in your head ("I've laid out the plan" in a summary is not the plan); writing a
+test file before test_plan.md exists; finishing without the close-out in test_plan.md.
+
+---
+
 ## 🧪 Run Tests / Behave Report
 
 **ACTIVATION TRIGGERS:**
@@ -852,6 +882,16 @@ STEP 5: Read docs/training/implement_requirements.md COMPLETELY (silently)
 STEP 6: Implement all steps in requirements.md in sequence.
          Schema is already correct from the assessment above — no DDL surprises mid-implementation.
          LOGIC FILES: before writing each logic file:
+           [ ] A clause that names something the data does not define ("authorized courier", "designated
+               office", "approved supplier") is IMPLEMENTED, never skipped. Pick the closest column the
+               data does carry, put the compared value in a SysConfig column (Step 4a), default it to what the
+               sample messages carry, write the rule and its scenarios, and log a 🔴 ad-lib saying what you
+               assumed and how to change it. A stated clause left unimplemented fails the requirement for
+               every shipment, silently; an assumed one fails only if the assumption is wrong, visibly.
+               Only a clause that needs a row that may never arrive stays blocked (STEP 8, step 4).
+               REAL CASE (demo_customs_clvs, Nov 2026): three builds implemented "authorized CLVS courier"
+               as service_type_cd equal to a SysConfig value, flagged 🔴; a fourth left it out ("no courier
+               data"), so shipments from any courier passed the eligibility check.
            [ ] Any multi-line logic → write a function, wire with calling=my_func — this
                applies to EVERY Rule.* that accepts calling=, not just Rule.formula. In
                particular Rule.constraint has BOTH as_condition= (lambda, row only) and
@@ -1204,6 +1244,7 @@ changelog:
 1. **Discovery Systems**: 
    - **Logic Discovery**: Business rules automatically loaded from all `logic/logic_discovery/*.py` files via `logic/logic_discovery/auto_discovery.py` — create one file per use case, named after it (e.g., `check_credit.py`)
    - **API Discovery**: Custom APIs automatically loaded from `api/api_discovery/[service_name].py` via `api/api_discovery/auto_discovery.py`
+     `api/api_discovery/readme_api_discovery.md` tells the user about the `*_debug` services and what to ask you for (verify, test, reset, why is a message stuck); point to it when they ask what is in that folder.
    - Do NOT manually duplicate rule calls or API registrations
 
 2. **API Record ID Pattern**: When creating records via custom APIs, use `session.flush()` before accessing the ID to ensure it's generated:

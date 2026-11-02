@@ -1,5 +1,5 @@
 about:
-  date: November 01, 2026 10:02:36
+  date: November 01, 2026 17:22:14
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -9,6 +9,20 @@ info:
   number_tables: 12
 info_toggle_checked: true
 resources:
+  ShipmentXml:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: received_at
+      type: DATETIME
+    - name: is_processed
+    - name: error_text
+    - name: payload
+      type: textarea
+    type: ShipmentXml
+    user_key: id
   ControlledRegulatedGood:
     attributes:
     - label: ' description*'

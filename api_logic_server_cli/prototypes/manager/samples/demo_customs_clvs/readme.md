@@ -102,7 +102,7 @@ When the report is done, print this verbatim: "Next: scan these two files: logic
 
 Each line is an instruction, run in order: create the project from the existing database, implement the requirements, verify the Kafka subscriptions (live through a broker if a container runtime is running, else simulated), draw a logic diagram per requirement, create and run the tests, and produce the Requirements Traceability Report. With no Docker or Podman running it says so up front and continues in degraded mode.
 
-When it finishes, the report shows every requirement beside its rules and tests, and `docs/requirements/customs_demo/ad-libs.md` lists the judgment calls the AI made, each with a file and line to check. A reference run: 3 requirements, all implemented and tested; 22 of 22 scenarios passed (messages delivered live through Kafka); `test_gate.sh` passing end to end.
+When it finishes, the report shows every requirement beside its rules and tests, and `docs/requirements/customs_demo/ad-libs.md` lists the judgment calls the AI made, each with a file and line to check. A reference run: 3 requirements, all implemented and tested; 22 of 22 scenarios passed (messages delivered live through Kafka).
 
 <details markdown>
 

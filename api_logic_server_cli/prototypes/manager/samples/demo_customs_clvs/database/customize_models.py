@@ -51,8 +51,11 @@ if hasattr(models, 'SysConfig'):
     models.SysConfig.current = staticmethod(_sys_config_current)
 
 
-# Deleting a Shipment deletes its children (no orphans). The commodity key includes the shipment FK, so the ORM default
-# (blank out the child's FK) fails with "tried to blank-out primary key column".
-from sqlalchemy.orm.util import CascadeOptions
-for _children in ("PieceList", "ShipmentPartyList", "ShipmentCommodityList", "SpecialHandlingList"):
-    getattr(models.Shipment, _children).property.cascade = CascadeOptions("save-update, merge, delete")
+# Deleting a Shipment (API or Admin App) must leave no orphan child rows (requirement: "Subscribe to Kafka and
+# persist shipments", behavioral acceptance check).  SQLite does not enforce the FK ON DELETE CASCADE unless
+# PRAGMA foreign_keys is on, so cascade through the ORM instead: LogicBank then sees every child delete.
+# Kept here (not in models.py) so it survives rebuild-from-database.
+if hasattr(models, 'Shipment') and hasattr(models, 'ShipmentParty'):
+    for _name, _child in (("PieceList", "Piece"), ("ShipmentCommodityList", "ShipmentCommodity"),
+                          ("SpecialHandlingList", "SpecialHandling"), ("ShipmentPartyList", "ShipmentParty")):
+        setattr(models.Shipment, _name, relationship(_child, back_populates="shipment", cascade="all, delete"))

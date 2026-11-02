@@ -18,17 +18,32 @@ Step 1b. Read logic/declare_logic.py → Identify rules to test
 Step 1c. Scan api/api_discovery/*.py → Discover custom APIs (PHASE 2!)
 Step 1d. Scan integration/kafka/kafka_subscribe_discovery/*.py → Kafka subscribers: mode-aware scenarios (Step 1d below)
 Step 2.  Decide Phase 1 vs Phase 2 → Based on custom API existence
-Step 2b. COVERAGE PLAN → For EVERY rule found in 1b, list the scenarios the "Key Testing Patterns" matrix
-         requires (create, change, delete, move to another parent, where in/out, constraint pass/boundary/fail).
-         Write the plan BEFORE any .feature file. It is the checklist Step 4d closes.
+Step 2b. COVERAGE PLAN → For EVERY rule found in 1b, list the scenarios the COVERAGE MATRIX below requires.
+         WRITE the plan to docs/requirements/<name>/test_plan.md (a table: one row per rule, the scenarios you
+         will write); no .feature file and no probing of the API comes before it. It is the checklist Step 4d closes.
 Step 3.  Generate .feature files → Business language scenarios
 Step 4.  Implement steps/*.py → Using discovered APIs or CRUD
 Step 4b. VERIFY STEP ORDERING → Multi-item BEFORE single-item (Rule #0.5!)
 Step 4c. ADD LOGIC LOG INTEGRATION → prt once in Given, does_file_contain in Then
-Step 4d. COVERAGE CLOSE-OUT → Re-walk the Step 2b plan against the .feature files you wrote. Every row has a
-         scenario, or is reported in your final message as NOT covered, with the reason. Do not end silently short.
+Step 4d. COVERAGE CLOSE-OUT → Re-walk the Step 2b plan against the .feature files you wrote. Add the scenario
+         name beside each row in test_plan.md. Every row has a scenario, or says NOT covered with the reason, and
+         your final message says where the file is. Do not end silently short.
 Step 5.  SUGGEST "run the tests" (DO NOT run automatically as part of creating tests)
 ```
+
+**COVERAGE MATRIX (Step 2b) - applied to every rule, not sampled.** Each applicable row needs its own scenario.
+The full text, with the move-to-another-parent detail, is in "Key Testing Patterns" further down.
+
+| If the rules include | Plan these scenarios |
+|---|---|
+| `Rule.sum` / `Rule.count` | create a child; change its value; delete it; **move it to a different parent** (old and new parent both adjust) |
+| `Rule.copy` | create (value copied); **change the FK to a different parent** (the new parent's value is re-copied) |
+| `Rule.formula` | change each input the formula reads (one scenario per input that matters) |
+| `where=` on a sum/count | the row **enters** the set AND **leaves** it |
+| `Rule.constraint` | accepted; accepted at the boundary (equality, when the rule is `<=`); rejected |
+| publish event (Kafka) | fires when its condition becomes true; does NOT fire when it is not |
+
+A suite with only create-and-reject scenarios is the happy path: it never exercises the change paths where hand-written code fails.
 
 **FEATURE NAMES (default):** one Feature per requirement, named exactly as that requirement's `Feature:` line in
 `docs/requirements/<name>/requirements.md` (the Requirements Traceability Report matches tests to requirements on that
