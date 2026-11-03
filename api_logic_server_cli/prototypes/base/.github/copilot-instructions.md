@@ -555,7 +555,7 @@ When user asks "what can I do here", "what can you help me with", "what can you 
 12. **Discovery systems** - Auto-load logic and APIs from discovery folders
 13. **FAQs / Eval info** - Common questions: what is this, why rules matter, 3-legged stool (rules + AI + context engineering)
 14. **EAI Consume** - Consume XML/JSON messages from a Kafka topic and persist to your existing tables.
-15. **Executable Requirements** - Copy a requirements set into `docs/requirements/`, say "implement reqs", and I execute the spec end-to-end — logic, APIs, Kafka integration — reporting any "ad libs" (decisions I made beyond the spec). Phase 2 of the two-phase workflow: infrastructure first (Phase 1, from Manager), then behavior here.
+15. **Executable Requirements** - Name a requirements set (a path, or a folder already in `docs/requirements/`), say "implement reqs" — I copy it in if needed —, and I execute the spec end-to-end — logic, APIs, Kafka integration — reporting any "ad libs" (decisions I made beyond the spec). Phase 2 of the two-phase workflow: infrastructure first (Phase 1, from Manager), then behavior here.
 16. **Governance Report** - Say "vital signs" or "health check" — I scan your logic files and report rule adoption, dependency tracking correctness, docstring hygiene, and logic organization. For each finding I offer to fix it.
 17. **Logic Diagram** - Say "create logic diagram" or "create logic diagram from <requirement>" — I generate an SVG showing the rule chain: which tables/columns are involved, how data flows from the trigger event through copy/formula/sum rules. Requires `brew install graphviz` once. See `docs/training/logic_diagrams/logic_diagram.md`.
 18. **Queries and Dashboards** - Ask for a query, report, or a dashboard/chart ("graph sales by category") — I write a custom API endpoint (aggregate SQLAlchemy query), and for dashboards also wire the chart into the Admin App home page. See `docs/training/queries_dashboards.md`.
@@ -760,6 +760,13 @@ STEP 1: Check graphviz is installed: dot -V
         If missing: tell user to run: brew install graphviz  (macOS)
                                    or: sudo apt install graphviz  (Linux)
 
+STEP 1b: Subtype groups appear automatically; the user never has to ask for them and nothing needs adding to
+        admin.yaml. The generators read the groups from the rule code itself: a column belongs to a subtype when every
+        guarded read of it sits in that subtype's branch (`if row.type == 'hourly':`, code after `if row.type !=
+        'hourly': return`, or `row.type == 'hourly' or row.union_id is None`), and a derived column whose same-table
+        inputs all sit in one subtype joins it. `show_when` entries in admin.yaml are honored too. The Requirements
+        Traceability Report's ER diagram uses the same inference, so it shows the same groups. Nothing to do here but run STEP 2.
+
 STEP 2: Run from Manager root:
         # Full diagram (all rules):
         python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py <project_name>
@@ -794,6 +801,9 @@ implements it (the file's module docstring carries the requirement text) and pas
 - Right side arcs = formula dependencies (intra-table)
 - Orange annotation on column = formula expression
 - Green = events, red border = constraint
+- Tinted group inside a table = a subtype (single-table inheritance): the columns that apply only
+  to that type, with a small label (for example Employee: hourly, commissioned, military).
+  Shared columns stay untinted at the top. Arrows address columns, so grouping never changes them
 - Numbers match the Rules legend at the bottom
 
 **See:** `docs/training/logic_diagrams/logic_diagram.md` for full guide and per-project shortcut:
@@ -802,6 +812,41 @@ python docs/training/logic_diagrams/generate_logic_diagram.py              # ful
 python docs/training/logic_diagrams/generate_logic_diagram.py check_credit # scoped
 python docs/training/logic_diagrams/generate_logic_diagram.py --each       # one per logic file (use case)
 ```
+
+---
+
+## 🧬 Ontology and Lineage
+
+**ACTIVATION TRIGGERS:**
+- "create the ontology" / "create an ontology" / "generate the ontology" / "export the ontology"
+- "show the lineage" / "what feeds <column>" / "create the lineage"
+- Any similar request for an ontology, SHACL shapes, or column lineage
+
+**MANDATORY SEQUENCE:**
+
+```
+STEP 1: Run from Manager root (no packages are needed to generate):
+        python system/ApiLogicServer-Internal-Dev/ontology_gv.py <project_name>
+        It reads database/models.py and logic/logic_discovery (subtype groups come from the rule code; admin.yaml show_when is honored too), and writes
+        docs/ontology/: genai-logic.ttl (shared rule vocabulary), <project>.ttl (OWL: classes, subtypes, properties,
+        every rule as a linked individual), <project>.shapes.ttl (SHACL), <project>.html, lineage.csv, lineage.json.
+STEP 2: Validation is automatic: if rdflib and pyshacl are installed, the files are parsed and the project's own data
+        (database/db.sqlite) is checked against the shapes. If they are missing, the generator says so and skips only
+        that step. NEVER install them unless the user's text says to ("validate it if rdflib is available" is not
+        permission to install).
+STEP 3: Tell the user, in two or three lines: the counts the generator printed (classes, subtypes, rules, how many
+        "inferred", constraints translated to SHACL, lineage edges), the validation result, and that
+        docs/ontology/<project>.html is the page to open. Do not paste file contents.
+```
+
+**What it is:** the ontology says what things mean; the rules make sure the data stays true to that meaning. Rules appear
+as `gl:Rule` individuals (`gl:derives`, `gl:validates`, `gl:dependsOn`, `gl:requirement`, `gl:origin`); constraints are also
+SHACL shapes ("translated" where SHACL can state the condition, "descriptive" where it is code). `gl:origin` is
+`specified` when the rule matches a line of the requirement, else `inferred` (a judgment call: see ad-libs.md).
+`gl:dependsOn` is column-level lineage.
+
+**❌ FORBIDDEN:** writing or editing the `.ttl` by hand or by AI authoring (it drifts from the engine): regenerate it.
+Do not claim the ontology enforces anything: the engine enforces; the ontology and shapes describe, and let other tools check.
 
 ---
 
@@ -1862,7 +1907,7 @@ an ad-lib — do not do it silently.
    1. Read `database/models.py` — find the discriminator column and its `Enum` values
    2. Read `logic/logic_discovery/` files — map each column to its type by scanning `row.type ==` guards
    3. Write `show_when` entries derived from that scan — do not guess
-   Do NOT auto-rewrite `admin.yaml` for existing projects; it may contain user customizations.
+   Do NOT rewrite `admin.yaml` for existing projects; it may contain user customizations. (Diagrams and the ontology do not need these entries: they read the subtype groups from the rules.)
 
    **🚨 Type hierarchy scan — verification before writing any DDL:**
    - [ ] Prompt contains "X are Y" / "X is a type of Y" / "subtypes" phrasing?

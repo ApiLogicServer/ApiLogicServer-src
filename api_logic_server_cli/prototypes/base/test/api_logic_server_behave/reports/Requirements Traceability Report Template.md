@@ -272,7 +272,7 @@ Each diagram is saved under `docs/requirements/<name>/logic_diagrams/`. Then reg
 
 ## Data Model
 
-The tables the rules run over. Shaded columns are derived by rules — no code writes them.
+The tables the rules run over. Derived columns (in italics) are computed by rules — no code writes them. Tinted groups are the subtypes.
 
 > ⚙ generated: database diagram
 

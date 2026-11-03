@@ -1,5 +1,5 @@
 from pathlib import Path
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from urllib.parse import quote
 import datetime
 import html
@@ -126,6 +126,8 @@ API_STUB_FILES = {"auto_discovery.py", "system.py", "new_service.py", "newer_ser
 C_HEADER = "#3f6792"
 C_ROW = "#f2f2f2"
 C_DERIVED = "#dbe6f3"
+C_GROUP_TINTS = ["#fdf3e0", "#e6f3ea", "#f0e6f5", "#e6eef8"]   # one per subtype group, cycled
+C_GROUP_LABEL = "#7a5c00"
 C_EDGE = "#9b9ca4"
 C_CANVAS = "#fbfbfb"
 
@@ -1055,6 +1057,181 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
 #  Data model
 # ======================================================================================
 
+def infer_subtype_groups(project):
+    """
+    Subtype groups (single-table inheritance) read from the rule code, so they need no admin.yaml.
+    A column belongs to a group when every guarded read of it sits in that group's branch (`if row.type == 'hourly':`,
+    code after `if row.type != 'hourly': return ...`, or a lambda like `row.type == 'hourly' or row.union_id is None`).
+    A derived column whose formula branches over 2+ groups is shared; one whose same-table inputs all sit in one group joins it.
+    Returns {table: OrderedDict[(discriminator column, value)] -> [columns, in model order]}, 2+ groups per table.
+    """
+    project = Path(project)
+    cols_of = OrderedDict()
+    tree = ast.parse((project / "database" / "models.py").read_text(encoding="utf-8"))
+    for node in tree.body:
+        if isinstance(node, ast.ClassDef):
+            cols = [st.targets[0].id for st in node.body if isinstance(st, ast.Assign) and len(st.targets) == 1
+                    and isinstance(st.targets[0], ast.Name) and isinstance(st.value, ast.Call)
+                    and getattr(st.value.func, "id", getattr(st.value.func, "attr", "")) == "Column"]
+            if cols:
+                cols_of[node.name] = cols
+    ld = project / "logic" / "logic_discovery"
+    files = sorted(p for p in ld.rglob("*.py") if p.name not in ("auto_discovery.py", "use_case.py", "__init__.py")
+                   and "system" not in p.parts and "__pycache__" not in p.parts)
+    evidence = defaultdict(set)      # (table, col) -> {(disc, value)} seen in guarded branches
+    discs = defaultdict(set)         # table -> discriminator columns
+    blocked = set()                  # (table, col) derived by a formula that branches over 2+ groups
+    derived = []                     # (table, col, [same-table input cols])
+
+    def _name(n):
+        return n.attr if isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) and n.value.id == "row" else None
+
+    def _attrs(node, table, aliases):
+        out = set()
+        for n in ast.walk(node):
+            c = _name(n)
+            if c and c in cols_of.get(table, []):
+                out.add(c)
+        return out
+
+    def _guards(test, table, aliases):
+        """[(disc, value, positive)] for `row.col == 'v'` / `!= 'v'` (directly or through an alias) inside the test."""
+        found = []
+        for n in ast.walk(test):
+            if isinstance(n, ast.Compare) and len(n.ops) == 1 and isinstance(n.comparators[0], ast.Constant) \
+                    and isinstance(n.comparators[0].value, str) and isinstance(n.ops[0], (ast.Eq, ast.NotEq)):
+                c = _name(n.left) or aliases.get(getattr(n.left, "id", None))
+                if c in cols_of.get(table, []) and n.comparators[0].value != "no":
+                    found.append((c, n.comparators[0].value, isinstance(n.ops[0], ast.Eq)))
+        return found
+
+    def _ends(stmts):
+        return bool(stmts) and isinstance(stmts[-1], (ast.Return, ast.Raise))
+
+    def _visit(stmts, table, aliases, group, seen):
+        """group None = unguarded; a (disc, value) tuple = inside that subtype's branch; a [group] list = its complement."""
+        for st in stmts:
+            if isinstance(st, ast.Assign) and len(st.targets) == 1 and isinstance(st.targets[0], ast.Name) and _name(st.value):
+                aliases[st.targets[0].id] = _name(st.value)
+            if isinstance(st, ast.If):
+                gs = _guards(st.test, table, aliases)
+                pos = [g for g in gs if g[2]]
+                neg = [g for g in gs if not g[2]]
+                for g in gs:
+                    discs[table].add(g[0])
+                if pos and not neg:
+                    g = (pos[0][0], pos[0][1])
+                    seen.add(g)
+                    for c in _attrs(st.test, table, aliases) - {pos[0][0]}:
+                        evidence[(table, c)].add(g)
+                    _visit(st.body, table, aliases, g, seen)
+                    _visit(st.orelse, table, aliases, [g], seen)
+                    if _ends(st.body):
+                        group = [g]
+                elif neg and not pos and _ends(st.body):
+                    g = (neg[0][0], neg[0][1])
+                    seen.add(g)
+                    for c in _attrs(st.test, table, aliases) - {neg[0][0]}:
+                        evidence[(table, c)].add(g)
+                    _visit(st.orelse, table, aliases, [g], seen)
+                    group = g
+                else:
+                    _visit(st.body, table, aliases, group, seen)
+                    _visit(st.orelse, table, aliases, group, seen)
+                continue
+            if isinstance(group, tuple):
+                for c in _attrs(st, table, aliases):
+                    evidence[(table, c)].add(group)
+            elif isinstance(group, list):   # complement of a guard: `x is None` checks say the column belongs to the guard's group
+                for n in ast.walk(st):
+                    if isinstance(n, ast.Compare) and len(n.ops) == 1 and isinstance(n.ops[0], ast.Is) \
+                            and isinstance(n.comparators[0], ast.Constant) and n.comparators[0].value is None \
+                            and _name(n.left) in cols_of.get(table, []):
+                        evidence[(table, _name(n.left))].add(group[0])
+        return group
+
+    for f in files:
+        mod = ast.parse(f.read_text(encoding="utf-8"))
+        funcs = {n.name: n for n in ast.walk(mod) if isinstance(n, ast.FunctionDef)}
+        for call in [n for n in ast.walk(mod) if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+                     and isinstance(n.func.value, ast.Name) and n.func.value.id == "Rule"]:
+            kw = {k.arg: k.value for k in call.keywords}
+            if call.func.attr not in ("constraint", "commit_constraint", "formula", "sum", "count"):
+                continue
+            tgt = kw.get("derive") or kw.get("validate")
+            parts = ast.unparse(tgt).replace("models.", "").split(".")
+            table = parts[0] if call.func.attr in ("constraint", "commit_constraint") else parts[-2] if len(parts) > 1 else None
+            if table not in cols_of:
+                continue
+            derive_col = parts[-1] if call.func.attr in ("formula", "sum", "count") else None
+            callee = kw.get("calling")
+            body = funcs.get(callee.id) if isinstance(callee, ast.Name) else kw.get("as_condition") or kw.get("as_expression")
+            if body is None:
+                continue
+            seen = set()
+            if isinstance(body, ast.FunctionDef):
+                _visit(body.body, table, {}, None, seen)
+            else:   # lambda: `row.type == 'hourly' or row.union_id is None`
+                gs = _guards(body.body, table, {})
+                for g in gs:
+                    discs[table].add(g[0])
+                    seen.add((g[0], g[1]))
+                if len(gs) == 1:
+                    for c in _attrs(body.body, table, {}) - {gs[0][0]}:
+                        evidence[(table, c)].add((gs[0][0], gs[0][1]))
+            if derive_col:
+                if len(seen) >= 2:
+                    blocked.add((table, derive_col))
+                derived.append((table, derive_col, sorted(_attrs(body, table, {}) - {derive_col})))
+    groups = defaultdict(OrderedDict)
+    assigned = {}
+    for (table, col), ev in evidence.items():
+        if col not in discs[table] and len(ev) == 1 and (table, col) not in blocked and col != "id":
+            assigned[(table, col)] = next(iter(ev))
+    changed = True
+    while changed:
+        changed = False
+        for table, col, ins in derived:
+            if (table, col) in assigned or (table, col) in blocked or col in discs[table]:
+                continue
+            ins = [c for c in ins if c not in discs[table]]
+            gs = {assigned.get((table, c)) for c in ins}
+            if ins and None not in gs and len(gs) == 1:
+                assigned[(table, col)] = gs.pop()
+                changed = True
+    for table, cols in cols_of.items():
+        for col in cols:
+            g = assigned.get((table, col))
+            if g:
+                groups[table].setdefault(g, []).append(col)
+    return {t: g for t, g in groups.items() if len(g) >= 2}
+
+
+_SQL_TYPE = {"Integer": "INTEGER", "Text": "TEXT", "Float": "FLOAT", "String": "VARCHAR", "DateTime": "DATETIME",
+             "Date": "DATE", "Boolean": "BOOLEAN", "Numeric": "NUMERIC", "DECIMAL": "DECIMAL", "BigInteger": "BIGINT"}
+
+
+def model_types(root: Path) -> dict:
+    """ (class, column) -> the type as declared in database/models.py, e.g. NUMERIC(15,2); the dbml says FLOAT for it. """
+    path = root / "database" / "models.py"
+    out = {}
+    if not path.is_file():
+        return out
+    for node in ast.parse(_read(path)).body:
+        if not isinstance(node, ast.ClassDef):
+            continue
+        for st in node.body:
+            if isinstance(st, ast.Assign) and len(st.targets) == 1 and isinstance(st.targets[0], ast.Name) \
+                    and isinstance(st.value, ast.Call) and getattr(st.value.func, "id", getattr(st.value.func, "attr", "")) == "Column":
+                for a in st.value.args:
+                    base = a.func if isinstance(a, ast.Call) else a
+                    name = getattr(base, "id", getattr(base, "attr", ""))
+                    if name in _SQL_TYPE:
+                        args = ",".join(str(x.value) for x in getattr(a, "args", []) if isinstance(x, ast.Constant))
+                        out[(node.name, st.targets[0].id)] = _SQL_TYPE[name] + (f"({args})" if args else "")
+    return out
+
+
 def parse_dbml(path: Path) -> tuple:
     """ (tables: OrderedDict name -> [(col, type, is_pk)], refs: [(child, col, parent, col)]) """
     text = _read(path)
@@ -1076,30 +1253,51 @@ def parse_dbml(path: Path) -> tuple:
     return tables, refs
 
 
-def build_dot(tables: OrderedDict, refs: list, derived: set) -> str:
-    """ ER diagram in graphviz: parents above children (rankdir=TB, edge parent -> child) """
+def build_dot(tables: OrderedDict, refs: list, derived: set, groups: dict = None, types: dict = None) -> str:
+    """ ER diagram in graphviz: parents above children (rankdir=TB, edge parent -> child).
+        groups: {table: OrderedDict[(discriminator, value)] -> [columns]}: subtype columns sit under a labelled group.
+        types: {(table, column): declared type}, used instead of the dbml type when present. """
+    groups, types = groups or {}, types or {}
     fk_cols = {(child, col) for child, col, _, _ in refs}
     out = ['digraph db {',
            f'  graph [rankdir=TB, bgcolor="{C_CANVAS}", pad=0.3, nodesep=0.6, ranksep=0.9, fontname="Helvetica"];',
            '  node [shape=plain, fontname="Helvetica", fontsize=11];',
            f'  edge [color="{C_EDGE}", penwidth=1.2, dir=both, arrowtail=tee, arrowhead=crow, arrowsize=0.8];']
+
+    def row(name, col, col_type, is_pk, tint=None, group_name=None):
+        is_derived = (name, col) in derived
+        bg = f' BGCOLOR="{tint}"' if tint else ""   # colour is the subtype group's; a derived column is marked in italics
+        label = f"<B>{html.escape(col)}</B>" if is_pk else (f"<I>{html.escape(col)}</I>" if is_derived else html.escape(col))
+        tags = ""
+        if is_pk:
+            tags += f' <FONT POINT-SIZE="8" COLOR="{C_HEADER}">PK</FONT>'
+        if (name, col) in fk_cols:
+            tags += f' <FONT POINT-SIZE="8" COLOR="{C_HEADER}">FK</FONT>'
+        if is_derived:
+            tags += ' <FONT POINT-SIZE="8" COLOR="#777777"><I>derived</I></FONT>'
+        if group_name:
+            tags += f' <FONT POINT-SIZE="8" COLOR="{C_GROUP_LABEL}"><I>{html.escape(group_name)}</I></FONT>'
+        shown = types.get((name, col), col_type)
+        return (f'<TR><TD ALIGN="LEFT"{bg}>{label}{tags}&nbsp;&nbsp;</TD>'
+                f'<TD ALIGN="RIGHT"{bg}><FONT POINT-SIZE="9" COLOR="#777777">{html.escape(shown)}</FONT></TD></TR>')
+
     for name, cols in tables.items():
         rows = [f'<TR><TD COLSPAN="2" ALIGN="LEFT" BGCOLOR="{C_HEADER}">'
                 f'<FONT COLOR="white" POINT-SIZE="12"><B>{html.escape(name)}</B></FONT></TD></TR>']
+        by_col = {c: (c, t, pk) for c, t, pk in cols}
+        grouped = {c for g in groups.get(name, {}).values() for c in g}
         for col, col_type, is_pk in cols:
-            is_derived = (name, col) in derived
-            bg = f' BGCOLOR="{C_DERIVED}"' if is_derived else ""
-            label = f"<B>{html.escape(col)}</B>" if is_pk else html.escape(col)
-            tags = ""
-            if is_pk:
-                tags += f' <FONT POINT-SIZE="8" COLOR="{C_HEADER}">PK</FONT>'
-            if (name, col) in fk_cols:
-                tags += f' <FONT POINT-SIZE="8" COLOR="{C_HEADER}">FK</FONT>'
-            if is_derived:
-                tags += ' <FONT POINT-SIZE="8" COLOR="#777777"><I>derived</I></FONT>'
-            rows.append(f'<TR><TD ALIGN="LEFT"{bg}>{label}{tags}&nbsp;&nbsp;</TD>'
-                        f'<TD ALIGN="RIGHT"{bg}><FONT POINT-SIZE="9" COLOR="#777777">'
-                        f'{html.escape(col_type)}</FONT></TD></TR>')
+            if col not in grouped:
+                rows.append(row(name, col, col_type, is_pk))
+        for i, ((disc, value), gcols) in enumerate(groups.get(name, {}).items()):
+            tint = C_GROUP_TINTS[i % len(C_GROUP_TINTS)]
+            disc_name = next((c for c, _, _ in cols if c.lower() == disc.lower()), disc)
+            gname = disc_name.lower() if str(value).lower() in ("yes", "y", "true", "1") else str(value)   # a yes/no axis is named for the axis
+            rows.append(f'<TR><TD COLSPAN="2" ALIGN="LEFT" BGCOLOR="{tint}"><FONT POINT-SIZE="9" COLOR="{C_GROUP_LABEL}">'
+                        f'<B>{html.escape(gname)}</B>  ({html.escape(disc_name)} = {html.escape(str(value))})</FONT></TD></TR>')
+            for col in gcols:
+                if col in by_col:
+                    rows.append(row(name, *by_col[col], tint=tint, group_name=gname))
         out.append(f'  "{name}" [label=<<TABLE BORDER="1" COLOR="#d9d9d9" CELLBORDER="0" '
                    f'CELLSPACING="0" CELLPADDING="5" BGCOLOR="{C_ROW}">' + "".join(rows) + '</TABLE>>];')
     for child, _, parent, _ in refs:
@@ -1136,7 +1334,15 @@ def sec_data_model(root: Path, rules: list, report_dir: Path) -> list:
                      f"`docs/db.dbml`; schema changes are not reflected in it automatically._")
     elif dbml.is_file():
         tables, refs = parse_dbml(dbml)
-        dot_text = build_dot(tables, refs, derived)
+        try:
+            groups = infer_subtype_groups(root)
+        except Exception:   # a diagram without subtype groups is better than no diagram
+            groups = {}
+        try:
+            types = model_types(root)
+        except Exception:
+            types = {}
+        dot_text = build_dot(tables, refs, derived, groups, types)
         dot_path = report_dir / "db_diagram.generated.dot"
         svg_path = report_dir / "db_diagram.generated.svg"
         dot_path.write_text(dot_text)
@@ -1897,7 +2103,7 @@ Each diagram is saved under `docs/requirements/<name>/logic_diagrams/`. Then reg
 > ⚙ generated: database diagram
 
 <!-- text: data-model-note -->
-_Generated from `docs/db.dbml` (parents above children; shaded rows are derived by rules). To use your own layout, save it as `docs/db_diagram.png`._
+_Generated from `docs/db.dbml` (parents above children; derived columns are in italics, with a "derived" tag; subtype groups are tinted). To use your own layout, save it as `docs/db_diagram.png`._
 
 ### Derived columns
 

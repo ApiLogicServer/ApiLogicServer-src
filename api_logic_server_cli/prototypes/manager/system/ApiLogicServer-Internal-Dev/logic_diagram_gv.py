@@ -181,9 +181,19 @@ def parse_admin_subtypes(project_dir: Path):
     group (or none) is not enough to justify grouping in the diagram.
     """
     admin_path = project_dir / "ui" / "admin" / "admin.yaml"
-    if not admin_path.exists():
+    from_admin = _parse_admin_show_when(admin_path) if admin_path.exists() else {}
+    if from_admin:
+        return from_admin
+    try:   # no show_when in admin.yaml (it is often still the starter stub): read the groups from the rules
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from ontology_gv import infer_subtype_groups
+        return {t: {f"{c}={v}": cols for (c, v), cols in g.items()} for t, g in infer_subtype_groups(project_dir).items()}
+    except Exception:
         return {}
 
+
+def _parse_admin_show_when(admin_path: Path):
+    """table -> discriminator -> [cols] from admin.yaml show_when entries (2+ groups per table)."""
     subtypes = defaultdict(lambda: defaultdict(list))
     current_resource = None
     current_attr = None
@@ -1220,7 +1230,7 @@ def generate(project_name: str, requirement: str = None, manager_root: Path = No
     involved_tables = tables_in_rules(rules)
     ranks = topo_rank(involved_tables, fk_parents, all_fk_parents=fk_parents)
 
-    project_basename = Path(project_name).name   # strip any subdirectory prefix (e.g. "samples/demo_emp_types")
+    project_basename = Path(project_name).name   # strip any subdirectory prefix (e.g. "samples/data_modeling/demo_emp_types")
     flow_name = f"logic_flow_{requirement}.md" if requirement else f"logic_flow_{project_basename}.md"
     flow_path = req_dir / flow_name
     # SVG ref is relative from flow_path to svg_path

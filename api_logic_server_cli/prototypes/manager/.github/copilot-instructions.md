@@ -23,8 +23,9 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.34
+version: 2.35
 changelog:
+  - 2.35 (Nov 3 2026) - New trigger: "create the ontology" (or lineage) runs `ontology_gv.py <project>` from the Manager root. The trigger lived only in the project CE, which the Manager loads only right after creating a project, so it did not route for an existing project. Generator: ontology, SHACL shapes, column lineage and a business-readable page, all generated from models, rules and requirements.
   - 2.34 (Nov 2 2026) - "What are rules" table: added a 'Dependency managed' row. The three things the engine takes over from the author are invocation, ordering and dependency propagation; that is what separates declarative rules from procedural code (including 4GLs, which shorten the procedure but leave all three to the author). The table had the first two only.
   - 2.33 (Oct 27 2026) - "What are rules" now offers the extensibility point: new trigger (can I add code / what are events / how rules and Python fit together) answering that Python events are the extension mechanism and are integrated with the declarative rules. Same wording as the project CE (base 3.55).
   - 2.32 (Oct 24 2026) - New "Environment-Aware Steps" section: degrade (SQL security, simulated Kafka) instead of stopping when no container runtime runs, and say so up front; "add security" picks Keycloak or SQL; never install or download software; "create project X from <db>" is Method 1. From the first blind run of the clean demo_eai script, where these were done implicitly. create_script.txt is now that adaptive script (the level 1 diagnostic runs it).
@@ -283,6 +284,21 @@ If a file has no version/front matter, say so rather than omitting it. This is a
 genai-logic start --clean --no-open-manager
 ```
 Report the command's output; do not summarize or paraphrase it.
+
+---
+
+**WHEN USER ASKS: "create the ontology", "create an ontology for <project>", "generate / export the ontology", "show the lineage"**
+**ACTION**: Say which project (Active Project rule; ask if it is ambiguous), then run from the Manager root:
+```bash
+source venv/bin/activate        # local Manager only; skip if there is no venv/
+python system/ApiLogicServer-Internal-Dev/ontology_gv.py <project>      # e.g. demo_emp_types or samples/data_modeling/demo_emp_types
+```
+It writes `<project>/docs/ontology/`: the OWL ontology, SHACL shapes, column lineage (`lineage.csv`, `lineage.json`) and a
+business-readable page `<project>.html`. Generating needs no packages. If `rdflib` and `pyshacl` are installed it also
+checks the project's data against the shapes; if they are missing it says so and skips only that. Never install them unless the
+user's text says to. Reply in two or three lines: the counts it printed, the validation result, and that
+`docs/ontology/<project>.html` is the page to open. Never write or edit the `.ttl` yourself: regenerate it. The project CE's
+"Ontology and Lineage" section has the detail.
 
 ---
 
