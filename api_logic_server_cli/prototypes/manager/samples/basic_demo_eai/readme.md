@@ -58,7 +58,9 @@ subscribes and publishes, so there's no second project to stand up:
 
 &nbsp;
 
-## Setup
+## Creation and Setup
+
+![create_script](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/demo_eai/create_script.png)
 
 **No Kafka installed? No Docker?** Not required for any of this. The Kafka client
 library installs with the project either way; you only need an actual broker
