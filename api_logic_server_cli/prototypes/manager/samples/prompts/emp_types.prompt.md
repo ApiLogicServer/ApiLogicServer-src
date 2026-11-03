@@ -29,3 +29,13 @@ a rank (TEXT), and service_years (INTEGER).
 Military employees receive a military_stipend (REAL) = service_years * 100.
 Total compensation for military employees = salary + military_stipend.
 Total compensation for non-military employees = salary.
+
+create logic diagram for each requirement (skip if graphviz is not available)
+
+create tests from rules, using default names
+
+run the tests
+
+run the requirements traceability report
+
+create the ontology (validate it if rdflib is available)

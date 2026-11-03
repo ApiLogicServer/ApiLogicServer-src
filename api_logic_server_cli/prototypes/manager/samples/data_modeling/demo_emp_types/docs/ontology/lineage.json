@@ -1,0 +1,150 @@
+{
+ "nodes": [
+  "Department.total_salary",
+  "Employee.base_salary",
+  "Employee.commission_total",
+  "Employee.hourly_rate",
+  "Employee.hours_worked",
+  "Employee.military",
+  "Employee.military_stipend",
+  "Employee.order_count",
+  "Employee.salary",
+  "Employee.service_years",
+  "Employee.total_compensation",
+  "Employee.type",
+  "Employee.union_dues",
+  "Employee.union_id",
+  "LaborUnion.dues_rate",
+  "Order (rows)",
+  "Order.amount",
+  "SysConfig.military_stipend_per_service_year"
+ ],
+ "edges": [
+  {
+   "source": "Employee.salary",
+   "target": "Department.total_salary",
+   "rule": "rule_01",
+   "kind": "sum",
+   "use_case": "department_budget"
+  },
+  {
+   "source": "Employee.type",
+   "target": "Employee.salary",
+   "rule": "rule_03",
+   "kind": "formula",
+   "use_case": "employee_pay"
+  },
+  {
+   "source": "Employee.hours_worked",
+   "target": "Employee.salary",
+   "rule": "rule_03",
+   "kind": "formula",
+   "use_case": "employee_pay"
+  },
+  {
+   "source": "Employee.hourly_rate",
+   "target": "Employee.salary",
+   "rule": "rule_03",
+   "kind": "formula",
+   "use_case": "employee_pay"
+  },
+  {
+   "source": "Employee.base_salary",
+   "target": "Employee.salary",
+   "rule": "rule_03",
+   "kind": "formula",
+   "use_case": "employee_pay"
+  },
+  {
+   "source": "Employee.commission_total",
+   "target": "Employee.salary",
+   "rule": "rule_03",
+   "kind": "formula",
+   "use_case": "employee_pay"
+  },
+  {
+   "source": "Employee.type",
+   "target": "Employee.union_dues",
+   "rule": "rule_04",
+   "kind": "formula",
+   "use_case": "employee_pay"
+  },
+  {
+   "source": "Employee.union_id",
+   "target": "Employee.union_dues",
+   "rule": "rule_04",
+   "kind": "formula",
+   "use_case": "employee_pay"
+  },
+  {
+   "source": "Employee.hours_worked",
+   "target": "Employee.union_dues",
+   "rule": "rule_04",
+   "kind": "formula",
+   "use_case": "employee_pay"
+  },
+  {
+   "source": "LaborUnion.dues_rate",
+   "target": "Employee.union_dues",
+   "rule": "rule_04",
+   "kind": "formula",
+   "use_case": "employee_pay"
+  },
+  {
+   "source": "Order.amount",
+   "target": "Employee.commission_total",
+   "rule": "rule_05",
+   "kind": "sum",
+   "use_case": "employee_pay"
+  },
+  {
+   "source": "Order (rows)",
+   "target": "Employee.order_count",
+   "rule": "rule_06",
+   "kind": "count",
+   "use_case": "employee_pay"
+  },
+  {
+   "source": "Employee.military",
+   "target": "Employee.military_stipend",
+   "rule": "rule_14",
+   "kind": "formula",
+   "use_case": "military_compensation"
+  },
+  {
+   "source": "Employee.service_years",
+   "target": "Employee.military_stipend",
+   "rule": "rule_14",
+   "kind": "formula",
+   "use_case": "military_compensation"
+  },
+  {
+   "source": "SysConfig.military_stipend_per_service_year",
+   "target": "Employee.military_stipend",
+   "rule": "rule_14",
+   "kind": "formula",
+   "use_case": "military_compensation"
+  },
+  {
+   "source": "Employee.military",
+   "target": "Employee.total_compensation",
+   "rule": "rule_15",
+   "kind": "formula",
+   "use_case": "military_compensation"
+  },
+  {
+   "source": "Employee.salary",
+   "target": "Employee.total_compensation",
+   "rule": "rule_15",
+   "kind": "formula",
+   "use_case": "military_compensation"
+  },
+  {
+   "source": "Employee.military_stipend",
+   "target": "Employee.total_compensation",
+   "rule": "rule_15",
+   "kind": "formula",
+   "use_case": "military_compensation"
+  }
+ ]
+}

@@ -10,6 +10,19 @@ See https://apilogicserver.github.io/Docs/Data-Model-Examples/.  The Manager inc
 
 * `samples/basic_demo_sample` is the pre-built demo tutorial.  You can r**ebuild it using the readme's, either by cli (`README.md`) or natural language (`readme_vibe.md`).**
 
+## Sample groups
+
+Some samples are grouped by what they teach. Each group folder has its own `readme_<group>.md`.
+
+| Group | Samples | What it covers |
+|---|---|---|
+| `data_modeling/` | `demo_emp_types`, `basic_demo_sales_by_month` | Shaping the data for rules: entity subtypes (single-table inheritance) and `insert_parent` rollup rows |
+| `a_b_tests/` | `basic_demo_genai_logic`, `bd_claude_native_ai` | The same requirement built with GenAI-Logic and by native AI |
+| `modernization/` | `erpnext_credit_modernized`, `demo_eai_legacy`, `demo_eai_modernized`, `demo_eai_native` | Recovering requirements from existing code and rebuilding as rules; includes the native-AI comparison |
+| `failure_to_post/` | `students_courses`, `students_courses_sweep` | Logic about a row that never arrives, and resolving it with a sweep |
+
+The `basic_demo_*` tutorial family and the other samples stay at the top level.
+
 Other samples are *reference implementations* of the Strategic Use Cases.  They are not meant to be customized.  You can run them:
 
 ```bash title="To Run Pre-built samples"

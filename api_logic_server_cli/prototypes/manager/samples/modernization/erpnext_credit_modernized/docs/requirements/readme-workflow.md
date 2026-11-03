@@ -29,7 +29,6 @@ docs/requirements/
 ## Sample requirement sets
 
 Available in the Manager at `samples/requirements/`:
-- `Order-EAI/` — Kafka order integration (subscribe + publish, custom B2B API)
 - `demo_eai/` — B2B order intake via Kafka, custom API, outbound shipping notification (minimal Folder example)
 - `customs_demo_clvs/` — CBSA customs system: 7 XML message variants + CSV mapping table (enterprise-scale Folder example)
 - `students_courses/` — course enrollment capacity + attendance drop-off alerting (CE regression fixture; its streak/alert clause is correctly left blocked — see its `README.md` and `RECREATE_PROMPT.md`)
@@ -38,7 +37,7 @@ Available in the Manager at `samples/requirements/`:
 
 Copy one into this folder:
 ```bash
-cp -r <manager>/samples/requirements/Order-EAI/* docs/requirements/
+cp -r <manager>/samples/requirements/demo_eai/docs/requirements/demo_eai docs/requirements/
 ```
 
 A flat set named for its `implement reqs <name>` command is copied as the folder itself:

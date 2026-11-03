@@ -25,7 +25,7 @@ open http://localhost:5656/api
 
 ## 📖 Documentation
 
-- [Getting Started Guide](./docs/COPILOT_GUIDE.md)
+- [Getting Started Guide](./.github/welcome.md)
 - [Main README](./readme.md)
 - [API Logic Server Docs](https://apilogicserver.github.io/)
 

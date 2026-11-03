@@ -90,13 +90,7 @@ genai-logic create --project_name=demo_eai_exec_reqmts --db_url=sqlite:///sample
 
 Open the created project in VS Code.
 
-**Step 2 — Copy the requirements set** (from a terminal inside the created project):
-
-```bash
-cp -r ../samples/requirements/demo_eai  docs/requirements/demo_eai
-```
-
-> `docs/requirements/` already exists in every created project — no need to create it.
+**Step 2 — Nothing to copy.** In the next step you point the AI at the requirements set in the Manager's `samples/requirements/`, and it copies the set into the project's `docs/requirements/` for you.
 
 **Step 3 — In Copilot, Agent mode** (not Ask), **just say:**
 
@@ -112,7 +106,7 @@ cp -r ../samples/requirements/demo_eai  docs/requirements/demo_eai
 Then:
 
 ```
-implement reqs demo_eai
+implement requirements ../samples/requirements/demo_eai/docs/requirements/demo_eai
 ```
 
 AI reads `docs/requirements/demo_eai/requirements.md`, builds the system, and writes `docs/requirements/demo_eai/ad-libs.md`.

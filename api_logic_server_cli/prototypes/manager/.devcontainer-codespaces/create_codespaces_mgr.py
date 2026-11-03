@@ -96,7 +96,7 @@ COPY_EXCLUDES = {
 # placeholder is never silently missed the way a static list would drift out of sync.
 EXTRA_FILES = [
     str(p.relative_to(SRC_ROOT))
-    for p in (SRC_ROOT / "samples").glob("*/logs/readme.md")
+    for p in (SRC_ROOT / "samples").glob("**/logs/readme.md")   # recursive: samples are grouped one folder deeper
 ] + [
     # Curated files README.md links to directly (e.g. a sample rule-chain trace) —
     # genuinely need to exist alongside the readme.md placeholder above, so hand-listed
@@ -413,9 +413,9 @@ def main():
 
     # samples/*/. vscode/settings.json — global interpreter for all samples
     print("Step 2g: Patching samples/*/. vscode/settings.json...")
-    for f in sorted((target / "samples").glob("*/.vscode/settings.json")):
+    for f in sorted((target / "samples").glob("**/.vscode/settings.json")):   # recursive: samples are grouped one folder deeper
         if patch_interpreter(f):
-            print(f"  ✅ {f.parent.parent.name}")
+            print(f"  ✅ {f.parent.parent.relative_to(target / 'samples')}")
 
     if not push and not release:
         print()

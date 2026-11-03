@@ -4,8 +4,22 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.41
+version: 2.42
 changelog:
+  - 2.42 (Nov 3 2026) - **Samples regrouped (gold: `prototypes/manager/samples/`).** Four group folders, each with a
+    `readme_<group>.md`, listed in `readme_samples.md`: `data_modeling/` (`demo_emp_types`, `basic_demo_sales_by_month`),
+    `a_b_tests/` (`basic_demo_genai_logic` vs `bd_claude_native_ai`), `modernization/` (`erpnext_credit_modernized` plus the
+    three `demo_eai_*`, moved from `native_ai/`, which is gone), `failure_to_post/` (`students_courses`, and
+    `students_courses_1` renamed `students_courses_sweep`). The `basic_demo_*` tutorial family and other samples stay flat
+    (they have the most outside references). Done with `git mv`, then a regex rewrite of `samples/<old>` paths across gold
+    and Docs, and fixes for the relative links that the extra depth broke (`../basic_demo_logic_gov` became
+    `../../basic_demo_logic_gov`, `../requirements/...` became `../../requirements/...`). **Gotcha for any future move:**
+    `create_codespaces_mgr.py` found samples with single-level globs (`samples/*/logs/readme.md`,
+    `samples/*/.vscode/settings.json`), so a sample one level deeper was silently skipped (`modernization/` and `native_ai/`
+    already were); both globs are now recursive. Interpreter paths in samples are absolute, so depth does not break them, and
+    intra-project `../../docs` paths are project-relative. Smoke-tested: `demo_emp_types` and `students_courses_sweep` start
+    from the new location and serve their API. NOT done here: this workspace's `samples/`, the venv copy and `codespaces_mgr`
+    still have the old layout until the next BLT and cs-mgr sync (gold first).
   - 2.41 (Oct 31 2026) - BLT section: recorded that BLT builds from the current working tree of
     `org_git/ApiLogicServer-src`, committed or not (Val). Prompted by restoring the `demo_emp_types`
     ontology folder (deleted in `14f329ce`, restored from `21d4dce6`, left untracked) and asking whether
@@ -43,7 +57,7 @@ changelog:
     demo_customs_surtax, demo_emp_types, basic_demo_sales_by_month) but was deliberately left
     alone per Val's "don't fix what isn't broken yet" scope call.
   - 2.39 (Sep 10 2026) - Val moved and renamed the `genai_demo_sales` project referenced in
-    v2.37/v2.38 below: it's now `samples/basic_demo_sales_by_month` (a `basic_demo`-family ref
+    v2.37/v2.38 below: it's now `samples/data_modeling/basic_demo_sales_by_month` (a `basic_demo`-family ref
     impl, matching how other reference implementations live under `samples/`) — the earlier
     root-level workspace name is retired. Renamed the business-capability way, not after the
     LogicBank mechanism (`insert_parent`) it happens to exercise — with AI increasingly doing

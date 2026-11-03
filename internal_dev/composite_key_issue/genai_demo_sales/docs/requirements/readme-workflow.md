@@ -29,12 +29,11 @@ docs/requirements/
 ## Sample requirement sets
 
 Available in the Manager at `samples/requirements/`:
-- `Order-EAI/` — Kafka order integration (subscribe + publish, custom B2B API)
 - `elmo/` — CIMCorp/ISDC customs shipment XML ingestion via Kafka
 
 Copy one into this folder:
 ```bash
-cp -r <manager>/samples/requirements/Order-EAI/* docs/requirements/
+cp -r <manager>/samples/requirements/demo_eai/docs/requirements/demo_eai docs/requirements/
 ```
 
 ## Ad-libs report

@@ -1635,7 +1635,7 @@ adjusts that existing bucket — it is NOT recreated.
   something pre-existing to look up
 
 **Example — `SalesRepTotal(sales_rep_id, year_month)` monthly bucket**
-(`samples/basic_demo_sales_by_month`):
+(`samples/data_modeling/basic_demo_sales_by_month`):
 
 ```python
 Rule.sum(derive=models.SalesRepTotal.total_amount, as_sum_of=models.Order.amount_total,
