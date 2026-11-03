@@ -59,7 +59,7 @@ dependencies = [
         "Flask-OpenID==1.3.0",
         "python-dotenv==1.2.2",
         "email-validator==1.1.1",
-        "LogicBank>=1.34.03",
+        "LogicBank>=1.34.04",
         # https://stackoverflow.com/questions/71354710/cryptography-package-is-required-for-sha256-password-or-caching-sha2-password
         # "PyMySQL==1.0.3[rsa]", 
         # "PyMySQL==1.0.3+rsa",
@@ -137,6 +137,15 @@ classifiers=[
 # kept out of the base install so SCA/dependency scans of a stock install show no openai package.
 ai-rules = [
     "openai==1.55.3",
+]
+
+# opt in with: pip install apilogicserver[ontology]
+# lets system/ApiLogicServer-Internal-Dev/ontology_gv.py parse the generated Turtle files and validate the
+# project's data against the generated SHACL shapes. Generating the ontology needs neither; without them
+# the generator says so and skips only that step. Pure Python (about 20 MB with their dependencies).
+ontology = [
+    "rdflib>=7.0",
+    "pyshacl>=0.30",
 ]
 
 [project.urls]

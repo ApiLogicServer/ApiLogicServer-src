@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "17.05.17"  # last public release: 17.05.15
+__version__ = "17.05.18"  # last public release: 17.05.17
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t11/03/2026 - 17.05.18  Ontology, SHACL & lineage generator, subtype groups in diagrams, samples regrouped, LB 1.34.04 \n"\
     "\t11/01/2026 - 17.05.17  Modernization (example 2) \n"\
     "\t10/26/2026 - 17.05.10  L1, Revised Behave Report, Students and Courses, Mgr readme launch fixes \n"\
     "\t10/16/2026 - 17.05.01  Students and Courses, Mgr launch fixes \n"\

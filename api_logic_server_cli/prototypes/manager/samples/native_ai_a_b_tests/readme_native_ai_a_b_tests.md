@@ -1,4 +1,4 @@
-# A/B tests
+# A/B tests: GenAI-Logic vs native AI
 
 The same requirement, built two ways: with GenAI-Logic, and by native AI without it.
 

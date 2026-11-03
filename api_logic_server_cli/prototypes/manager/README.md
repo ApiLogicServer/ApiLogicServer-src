@@ -236,13 +236,13 @@ Here's what needs to happen when someone places an order:
 - Before we let the order go through, check that the customer's balance doesn't go over their credit limit — if it would, reject the order.
 ```
 
-Both produced the same shape of code: one function, wired to order creation. **No update path. No delete path** — confirmed in [the actual code](samples/a_b_tests/bd_claude_native_ai/app/orders.py).
+Both produced the same shape of code: one function, wired to order creation. **No update path. No delete path** — confirmed in [the actual code](samples/native_ai_a_b_tests/bd_claude_native_ai/app/orders.py).
 
 Probed directly: change an item's quantity, delete an item, reassign an order to a different customer, reassign an item to a different product. Every case, both models, left stale data behind. No error. Nothing to catch it.
 
 **Key takeaways:**
 - **The logic wasn't buggy so much as absent** — it existed for exactly one path and nowhere else. [Full experiment →](https://apilogicserver.github.io/Docs/Tech-Standard-Reqs)
-- **A similar finding, looking beyond logic:** the hand-written API has no PATCH or DELETE on any resource either — not a bug, just more of what the prompt never asked for. [Full assessment →](samples/a_b_tests/bd_claude_native_ai/project-assessment.md)
+- **A similar finding, looking beyond logic:** the hand-written API has no PATCH or DELETE on any resource either — not a bug, just more of what the prompt never asked for. [Full assessment →](samples/native_ai_a_b_tests/bd_claude_native_ai/project-assessment.md)
 
 </details>
 
@@ -494,11 +494,11 @@ The three reports above analyze the rules as declared — this one proves they r
 
 ![Governance by Architecture, Not Discipline](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/architecture/proc-decl-simple.png)
 
-The GenAI-Logic side of that test, in full: [samples/a_b_tests/basic_demo_genai_logic](samples/a_b_tests/basic_demo_genai_logic) — the procedurally-phrased prompt, the 5 rules it produced, and confirmation all 9 change paths are governed, not just the one the prompt described.
+The GenAI-Logic side of that test, in full: [samples/native_ai_a_b_tests/basic_demo_genai_logic](samples/native_ai_a_b_tests/basic_demo_genai_logic) — the procedurally-phrased prompt, the 5 rules it produced, and confirmation all 9 change paths are governed, not just the one the prompt described.
 
 ![Procedural Spec In, Declarative Rules Out](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/exec_reqmts/proc-to-decl.png)
 
-The native-AI side, in full: [samples/a_b_tests/bd_claude_native_ai](samples/a_b_tests/bd_claude_native_ai) — the actual code, the prompt, and the [unedited transcript](samples/a_b_tests/bd_claude_native_ai/transcript.md).
+The native-AI side, in full: [samples/native_ai_a_b_tests/bd_claude_native_ai](samples/native_ai_a_b_tests/bd_claude_native_ai) — the actual code, the prompt, and the [unedited transcript](samples/native_ai_a_b_tests/bd_claude_native_ai/transcript.md).
 
 Full case: [Governance at Scale](https://apilogicserver.github.io/Docs/Tech-XGR/).
 

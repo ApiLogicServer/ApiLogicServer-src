@@ -2,7 +2,7 @@
 title: basic_demo_genai_logic
 Description: Logic only — prompt phrased procedurally, not as declarative rules
 URL: https://github.com/ApiLogicServer/basic_demo_genai_logic
-copy to gold source: cp -r ApiLogicServer-dev/build_and_test/genai-logic/basic_demo_genai_logic/. api_logic_server_cli/prototypes/manager/samples/a_b_tests/basic_demo_genai_logic/ (no .git)
+copy to gold source: cp -r ApiLogicServer-dev/build_and_test/genai-logic/basic_demo_genai_logic/. api_logic_server_cli/prototypes/manager/samples/native_ai_a_b_tests/basic_demo_genai_logic/ (no .git)
 version info: 17.04.01 (09/21/2026)
 ---
 

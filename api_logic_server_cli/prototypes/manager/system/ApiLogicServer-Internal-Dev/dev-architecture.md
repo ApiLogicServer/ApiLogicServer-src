@@ -8,7 +8,7 @@ version: 2.42
 changelog:
   - 2.42 (Nov 3 2026) - **Samples regrouped (gold: `prototypes/manager/samples/`).** Four group folders, each with a
     `readme_<group>.md`, listed in `readme_samples.md`: `data_modeling/` (`demo_emp_types`, `basic_demo_sales_by_month`),
-    `a_b_tests/` (`basic_demo_genai_logic` vs `bd_claude_native_ai`), `modernization/` (`erpnext_credit_modernized` plus the
+    `native_ai_a_b_tests/` (`basic_demo_genai_logic` vs `bd_claude_native_ai`), `modernization/` (`erpnext_credit_modernized` plus the
     three `demo_eai_*`, moved from `native_ai/`, which is gone), `failure_to_post/` (`students_courses`, and
     `students_courses_1` renamed `students_courses_sweep`). The `basic_demo_*` tutorial family and other samples stay flat
     (they have the most outside references). Done with `git mv`, then a regex rewrite of `samples/<old>` paths across gold
