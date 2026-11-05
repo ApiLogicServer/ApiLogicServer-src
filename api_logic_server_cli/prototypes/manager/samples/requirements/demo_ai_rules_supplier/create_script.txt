@@ -15,7 +15,7 @@ If the schema rebuild produced ui/admin/admin-merge.yaml, I choose Replace for t
 
 create the file config/ai_test_context.yaml with the single setting world_conditions: 'Suez Canal blocked - use alternate shipping routes', and the other scenarios (normal conditions, pandemic supply chain disruptions, economic recession) as commented-out lines
 
-verify the AI rule: start the server, place a first order for Alice with 100 Egyptian Cotton Sheets through the API, show the item unit_price and the new SysSupplierReq row (request, reason, fallback_used, chosen supplier), then stop the server. Say whether the AI was called or the fallback was used.
+verify the AI rule: start the server, place a first order for Alice with 2 Egyptian Cotton Sheets through the API, show the item unit_price and the new SysSupplierReq row (request, reason, fallback_used, chosen supplier), then stop the server. Say whether the AI was called or the fallback was used.
 
 create logic diagram for each requirement (skip if graphviz is not available)
 
