@@ -203,7 +203,10 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                 # images/ folder of its own. Confirmed real failure (Manager-readme.md, Sep 2026):
                 # 4 <img> tags added for EAI/MCP/AI-Rules/Vibe-gallery proof images rendered as
                 # broken images on every machine except one with org_git/Docs checked out alongside.
-                if '<img src="images/' in each_line and not is_abs_image:
+                # Source uses '../images/' (mkdocs serves the page at /Manager-readme/, so a raw <img>
+                # needs the ../ - unlike markdown ![](), which mkdocs rewrites itself); 'images/' still accepted.
+                if ('<img src="images/' in each_line or '<img src="../images/' in each_line) and not is_abs_image:
+                    each_line = each_line.replace('<img src="../images/', '<img src="images/')
                     each_line = each_line.replace('<img src="images/', '<img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/')
                 # also normalize image URLs already written absolute in the source doc (hand-written
                 # <img> tags with github.com/.../blob/...?raw=true), so every image uses the same host
