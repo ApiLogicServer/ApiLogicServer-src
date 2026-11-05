@@ -1,0 +1,28 @@
+// create_script.txt: AI Rules (the optimal-supplier sample) built from requirements, tested, and traced.
+// Setup that makes this sample hard by hand, handled here: the openai package (the ai-rules extra), the
+// OpenAI key (APILOGICSERVER_CHATGPT_APIKEY), and the world conditions file (config/ai_test_context.yaml).
+// The SysSupplierReq audit table (basic_demo.sqlite does not have it) is not mentioned: the CE creates it for a Request Pattern.
+// The Admin UI swap is approved here (the CE never replaces admin.yaml without being told to), so the audit table shows in the Admin App.
+// Without a key the build still completes: the AI step falls back to the minimum-cost supplier, and the verdict is DEGRADED.
+// Lines starting with // are notes for the human reader.
+Before anything else, check three things, report them in ONE line, and continue whatever the answers (never stop): (1) is `openai` importable in the Manager venv; if not, install exactly `openai==1.55.3` (this script gives permission for that one package, nothing else); (2) is the environment variable APILOGICSERVER_CHATGPT_APIKEY set (check only, never print its value); if not, say "no API key: AI rules will use the minimum-cost fallback" and continue; (3) is Docker or Podman running; if neither, Kafka publishing is simulated, and do not start or install anything.
+
+create project demo_ai_rules_supplier from samples/dbs/basic_demo.sqlite
+
+implement requirements samples/requirements/demo_ai_rules_supplier/docs/requirements/demo_ai_rules_supplier
+
+If the schema rebuild produced ui/admin/admin-merge.yaml, I choose Replace for the Admin UI update: back up ui/admin/admin.yaml to admin.yaml.bak, then copy admin-merge.yaml over admin.yaml (and remove admin-merge.yaml), so the new SysSupplierReq table appears in the Admin App.
+
+create the file config/ai_test_context.yaml with the single setting world_conditions: 'Suez Canal blocked - use alternate shipping routes', and the other scenarios (normal conditions, pandemic supply chain disruptions, economic recession) as commented-out lines
+
+verify the AI rule: start the server, place a first order for Alice with 100 Egyptian Cotton Sheets through the API, show the item unit_price and the new SysSupplierReq row (request, reason, fallback_used, chosen supplier), then stop the server. Say whether the AI was called or the fallback was used.
+
+create logic diagram for each requirement (skip if graphviz is not available)
+
+create tests from rules, using default names
+The AI choice is not deterministic: assert that the chosen supplier is one of the product's suppliers and that an audit row exists, never a specific supplier.
+
+run the tests
+
+run the requirements traceability report
+When the report is done, print this verbatim: "Next: scan docs/requirements/demo_ai_rules_supplier/ad-libs.md (the judgment calls the AI made), then open the audit trail in the Admin App (SysSupplierReq: the request, the reason, and whether the fallback was used). Then open the report: demo_ai_rules_supplier/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."

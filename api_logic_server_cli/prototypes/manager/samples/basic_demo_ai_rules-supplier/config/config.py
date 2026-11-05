@@ -167,12 +167,29 @@ class Config:
     ''' keycloak client id '''
 
     SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",False)
-    SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER', None)  # type: ignore # type: str
+    SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER', 'keycloak')  # type: ignore # type: str  ← STRING here; overwritten as a class below
     if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
         security_export = os.getenv('SECURITY_ENABLED','false').lower().strip()  # type: ignore # type: str
         SECURITY_ENABLED = security_export not in ["false", "no"]  # NO SEC
         app_logger.debug(f'Security .. overridden from env variable SECURITY_ENABLED: {SECURITY_ENABLED}')
     if SECURITY_ENABLED:
+        # *** HOW SECURITY_PROVIDER WORKS — do not reorder these lines ***
+        # SECURITY_PROVIDER starts as a STRING from os.getenv() above (e.g. "keycloak" or "sql",
+        # or None if not set).  The ternary below reads that string to select one of the two
+        # hardcoded classes, then OVERWRITES SECURITY_PROVIDER with that class reference.
+        # Order matters: the ternary must come after the os.getenv() call, not before.
+        #
+        # NOTE — user-provided class via env var is NOT implemented:
+        # The original design intent was that SECURITY_PROVIDER could be an arbitrary class
+        # (hence the # type: ignore annotation).  In practice the ternary only distinguishes
+        # "keycloak" vs everything-else (→ sql); there is no code path that imports and uses
+        # a custom class name supplied through the env var.  This has not been tested.
+        #
+        # The two imports below are intentionally different (sql + keycloak) in the prototype default.
+        # `genai-logic add-auth --provider-type=X` calls set_provider(), which uses str.replace() to
+        # rewrite the matching import line (the one containing the from-provider path string).  After
+        # a switch both aliases resolve to the target provider; the alias names become misleading
+        # (SQL_Authentication_Provider may import from keycloak) but are functionally equivalent.
         from security.authentication_provider.sql.auth_provider import Authentication_Provider as SQL_Authentication_Provider
         from security.authentication_provider.keycloak.auth_provider import Authentication_Provider as KC_Authentication_Provider
         # typically, authentication_provider is [ keycloak | sql ]
@@ -216,7 +233,7 @@ class Config:
         KAFKA_PRODUCER = os.getenv('KAFKA_PRODUCER',{"bootstrap.servers": f"{KAFKA_SERVER}"})  #  , "client.id": "aaa.b.c.d"}'
         KAFKA_CONSUMER_GROUP = os.getenv('KAFKA_CONSUMER_GROUP') #'als-default-group1'
         if KAFKA_CONSUMER_GROUP is not None: # and KAFKA_CONSUMER_GROUP != "None":
-            KAFKA_CONSUMER =  os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest"})
+            KAFKA_CONSUMER =  os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest", "session.timeout.ms": "6000", "heartbeat.interval.ms": "2000"})  # short session: a restart does not wait ~45 s for the old one to expire
     else:
         app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER} - not set, no kafka producer/consumer')
     producer_is_empty = "" == KAFKA_PRODUCER

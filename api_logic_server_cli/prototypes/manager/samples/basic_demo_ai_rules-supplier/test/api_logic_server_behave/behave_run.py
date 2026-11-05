@@ -7,11 +7,13 @@
 # if not, sets cwd to __file__.parent (5/29/2024)
 
 # 9/2/2021: added log file check to force fail if 'Assertion Failed' in log file
+# 10/2026: times the run and writes 'run time: N s' into the log (the Requirements Traceability Report shows it)
 
 # shoutout: https://github.com/behave/behave/issues/709
 
 import sys, os
 import datetime
+import time
 from pathlib import Path
 
 try:
@@ -34,7 +36,9 @@ if __name__ == "__main__":
         os.chdir(str(api_logic_server_behave_path))  # fails if does not exist
     pass
 
+    started = time.perf_counter()
     behave_result = behave_main()
+    run_seconds = time.perf_counter() - started
 
     log_file_name = None
     n = len(sys.argv)
@@ -52,6 +56,7 @@ if __name__ == "__main__":
             log_file.write(f'&nbsp;&nbsp;')
             log_file.write(f'')
             log_file.write(f'\n{__file__} completed at {date_time}')
+            log_file.write(f'\nBehave run time: {run_seconds:.3f} s')
         with open(log_file_name, 'r') as log_file:
             """ force a fail if 'Assertion Failed' in log file
             evidently behave eats the exceptions, so we need to check the log file
@@ -60,5 +65,5 @@ if __name__ == "__main__":
             if behave_result == 0 and 'Assertion Failed' in log_file_data:  
                 print(f'\nBehave Run detects Assertion Failed in log file: {log_file_name}\n')
                 behave_result = 1
-    print(f'\nBehave Run Exit -- {__file__} at {date_time}, result: {behave_result}\n\n')
+    print(f'\nBehave Run Exit -- {__file__} at {date_time}, run time: {run_seconds:.3f} s, result: {behave_result}\n\n')
     sys.exit(behave_result)

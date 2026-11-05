@@ -19,7 +19,7 @@ test/
 ├── readme_test.md                 # This guide
 ├── api_logic_server_behave/       # Primary BDD testing framework
 │   ├── behave_run.py             # Main test runner
-│   ├── behave_logic_report.py    # Report generator
+│   ├── requirements_traceability_report.py    # Report generator (behave_logic_report.py = old name, still works)
 │   ├── features/                 # Gherkin feature files
 │   │   ├── *.feature            # Business logic test scenarios
 │   │   └── steps/               # Python step implementations
@@ -412,10 +412,10 @@ To create a comprehensive markdown report showing which rules executed in each s
 
 ```bash
 # From test/api_logic_server_behave directory
-python behave_logic_report.py run
+python requirements_traceability_report.py run
 ```
 
-This generates `reports/Behave Logic Report.md` containing:
+This generates `docs/requirements/Requirements Traceability Report.md` containing:
 - **Test Scenarios**: All executed scenarios with descriptions
 - **Logic Documentation**: Step docstrings explaining what each test validates
 - **Rules Fired**: Which business logic rules executed during each scenario

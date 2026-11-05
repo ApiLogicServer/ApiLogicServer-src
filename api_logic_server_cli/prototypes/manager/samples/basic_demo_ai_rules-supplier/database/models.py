@@ -1,9 +1,8 @@
 # coding: utf-8
 from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
-from sqlalchemy import Boolean, Column, DECIMAL, Date, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DECIMAL, Date, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-import datetime
 
 ########################################################################################################################
 # Classes describing database for SqlAlchemy ORM, initially created by schema introspection.
@@ -11,8 +10,8 @@ import datetime
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  February 05, 2026 17:04:34
-# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/basic_demo_agentic/database/db.sqlite
+# Created:  November 04, 2026 17:40:39
+# Database: sqlite:////Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_ai_rules_supplier/database/db.sqlite
 # Dialect:  sqlite
 #
 # mypy: ignore-errors
@@ -96,6 +95,7 @@ class Supplier(Base):  # type: ignore
 
     # child relationships (access children)
     ProductSupplierList : Mapped[List["ProductSupplier"]] = relationship(back_populates="supplier")
+    SysSupplierReqList : Mapped[List["SysSupplierReq"]] = relationship(back_populates="chosen_supplier")
 
 
 
@@ -158,30 +158,22 @@ class Item(Base):  # type: ignore
 
 
 class SysSupplierReq(Base):  # type: ignore
-    """AI-driven supplier selection audit table"""
     __tablename__ = 'sys_supplier_req'
     _s_collection_name = 'SysSupplierReq'  # type: ignore
-    
-    # Standard AI Audit
+
     id = Column(Integer, primary_key=True)
-    request = Column(String(2000))           # Full AI prompt
-    reason = Column(String(500))             # AI explanation
-    created_on = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
-    fallback_used = Column(Boolean, default=False)
-    
-    # Parent Context Links (FKs to triggering entities)
-    item_id = Column(Integer, ForeignKey("item.id"), index=True, nullable=True)
-    product_id = Column(Integer, ForeignKey("product.id"), index=True, nullable=False)
-    
-    # AI Results (values selected by AI)
-    chosen_supplier_id = Column(Integer, ForeignKey("supplier.id"))
+    item_id = Column(ForeignKey('item.id'))
+    product_id = Column(ForeignKey('product.id'))
+    chosen_supplier_id = Column(ForeignKey('supplier.id'))
     chosen_unit_price : DECIMAL = Column(DECIMAL)
-    
-    # Relationships (bidirectional for parent context, unidirectional for chosen_supplier)
-    item : Mapped["Item"] = relationship(back_populates="SysSupplierReqList")
-    product : Mapped["Product"] = relationship(back_populates="SysSupplierReqList")
-    chosen_supplier : Mapped["Supplier"] = relationship()
+    request = Column(Text)
+    reason = Column(Text)
+    fallback_used = Column(Boolean)
+    created_on = Column(Text)
 
     # parent relationships (access parent)
+    chosen_supplier : Mapped["Supplier"] = relationship(back_populates=("SysSupplierReqList"))
+    item : Mapped["Item"] = relationship(back_populates=("SysSupplierReqList"))
+    product : Mapped["Product"] = relationship(back_populates=("SysSupplierReqList"))
 
     # child relationships (access children)

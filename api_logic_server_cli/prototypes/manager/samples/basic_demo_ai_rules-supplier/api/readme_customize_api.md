@@ -1,6 +1,25 @@
 Without customization, your API supports multi-table retrieval.  For more information, [see here](https://apilogicserver.github.io/Docs/API-Multi-Table).
 
-This describes how to *add new endpoints*.  For more information, [see here](https://apilogicserver.github.io/Docs/API-Customize).
+This describes how to *add new custom endpoints*.  For more information, [see here](https://apilogicserver.github.io/Docs/API-Customize).
+
+&nbsp;
+
+## Preferred Approach: Use AI
+
+Describe your endpoint to AI (e.g., text, or a Gherkin-style prompt).  AI generates the endpoint, mapper, and logic wiring automatically:
+
+```text
+Create a B2B order API called 'OrderB2B' that accepts orders from external partners.
+
+The external message format is in `integration/kafka/message_formats/order_b2b.json`.
+
+Field mappings:
+- 'Account' → lookup Customer by name, set customer_id
+- 'Notes' → order notes
+- 'Items' array → Item rows: 'Name' → lookup Product, 'QuantityOrdered' → item quantity
+
+The API should create complete orders.
+```
 
 &nbsp;
 

@@ -1,4 +1,5 @@
 ---
+version: 3.63 - 11/4/26 - Executable Requirements Phase 1 (schema impact) now asks about the Request Pattern: a requirement that gets a value from AI, or sends email / Kafka / calls an external service whose result the rules use, needs a Sys*Req table (audit columns per System Creation Services step 4c), created by DDL + rebuild-from-database before any logic. The checklist listed only EAI blob tables, derived columns and columns named in the requirement, so a scripted demo_ai_rules_supplier build created the audit table only because its script said to ("given in the script" in the ad-libs); without the script line nothing prompted it. Same bullet in implement_requirements.md.
 version: 3.62 - 11/2/26 - "What are rules" table: added a 'Dependency managed' row (invocation, ordering and dependency propagation are the three things the engine takes over from the author; the table had the first two). Same wording as the Manager CE (2.34).
 version: 3.61 - 11/1/26 - Executable Requirements STEP 6 checklist: a clause that names something the data does not define (e.g. "authorized CLVS courier") is implemented against an assumed column and a SysConfig placeholder and flagged 🔴, never left unimplemented. A scripted demo_customs_clvs build skipped the courier clause ("no courier data") where three earlier builds had implemented it with an ad-lib; shipments from any courier passed.
 version: 3.60 - 11/1/26 - "Create Tests" trigger: the coverage plan is now a FILE (docs/requirements/<name>/test_plan.md), written before any test file and closed out in the same file, instead of a printed chat table. A scripted run with the 3.59 trigger again kept the plan in its thinking, printed nothing and left out the move-to-another-parent scenarios. This CE reliably writes mandated files (ad-libs.md, requirements.md, diagrams) but not mandated chat prints. testing.md Steps 2b/4d match.
@@ -912,6 +913,13 @@ STEP 5: Read docs/training/implement_requirements.md COMPLETELY (silently)
            [ ] EAI / Kafka consume detected? → blob table needed (ShipmentXml, OrderXml, etc.)
            [ ] Rule.sum or Rule.count needed? → derived columns needed on parent table
            [ ] row_event side-effects (matching, enrichment)? → no schema change, but note the pattern
+           [ ] Request Pattern (a value chosen by AI, or an email / Kafka message / external call whose result the rules use)?
+               → a Sys*Req table is needed, so it belongs on the DDL list now, before any logic: input columns, result
+               columns, and the audit columns `request TEXT` and `created_on TEXT`; every FK the handler sets after the
+               insert (and every parent link made from a new row's event) nullable. Column rules: "System Creation
+               Services" step 4c. Create it with SQL DDL + rebuild-from-database, never by editing models.py by hand.
+               REAL CASE (demo_ai_rules_supplier, Nov 2026): the table was created only because the build script said
+               to; this checklist did not ask for it.
            [ ] Any requirement references a column that does not exist in models.py? → add it now
            Produce a complete list of ALL DDL changes needed across ALL steps.
            Run DDL + rebuild-from-database ONCE before writing any logic or mapper files.

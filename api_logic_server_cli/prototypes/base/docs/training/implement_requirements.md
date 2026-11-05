@@ -1091,6 +1091,10 @@ Create a fully functional application and database
    - EAI / Kafka consume present (any step)? → blob table needed
    - Rule.sum or Rule.count needed (any step)? → derived columns needed on parent table
    - row_event side-effects (matching, enrichment)? → note pattern, no schema change
+   - Request Pattern (a value chosen by AI, or an email / Kafka message / external call whose result the rules use)?
+     → a `Sys*Req` table is needed: input columns, result columns, audit columns `request TEXT` and `created_on TEXT`,
+     parent FKs nullable (see `.github/copilot-instructions.md`, System Creation Services step 4c). Put it on the DDL
+     change list now; create it with SQL DDL + rebuild-from-database, never by editing models.py by hand.
    - Any requirement references a column not yet in models.py? → add it now
    - Does the requirement describe something already represented by an existing
      table (e.g. "past due letters" → `SysEmail`, "current rates" → `SysConfig`)?
@@ -1248,7 +1252,7 @@ Create a fully functional application and database
 
    | Step | Signal |
    |---|---|
-   | Step 1 — [title] | [EAI detected / Rule.sum needed / Rule.count needed / Rule.row_event / no schema change] |
+   | Step 1 — [title] | [EAI detected / Rule.sum needed / Rule.count needed / Rule.row_event / Request Pattern (Sys*Req table) / no schema change] |
    | Step 2 — [title] | [signal] |
 
    DDL change list *(one row per change — covers ALL steps, run once before any coding)*:
@@ -1257,6 +1261,7 @@ Create a fully functional application and database
    |---|---|---|
    | [table] | ADD COLUMN [col] [type] | Step N — [rule type] |
    | [table] | CREATE TABLE [name] | Step N — EAI blob table |
+   | [sys_x_req] | CREATE TABLE [name] | Step N — Request Pattern audit table |
 
    *If no DDL needed: "None — all required columns already present in models.py"*
 

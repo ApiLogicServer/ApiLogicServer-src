@@ -1,9 +1,15 @@
 """
 Invoked at server start (api_logic_server_run.py -> config/setup.py)
 
-Listen/consume Kafka topis, if KAFKA_CONSUMER specified in Config.py
+Listen/consume Kafka topics, if KAFKA_CONSUMER specified in Config.py
 
-Alter this file to add handlers for consuming kafka topics
+DO NOT add topic handlers here.  Instead, create a file in:
+    integration/kafka/kafka_subscribe_discovery/
+
+Each file must expose:  def register(bus): ...
+It will be auto-discovered and registered before bus.run().
+
+See: integration/kafka/kafka_subscribe_discovery/auto_discovery.py
 """
 
 from config.config import Args
@@ -14,16 +20,12 @@ except ImportError:
     KafkaException = None
     Consumer = None
     # Kafka support not available on this platform
-import signal
 import logging
-import json
-import socket
 import safrs
 from threading import Event
 from integration.system.FlaskKafka import FlaskKafka
+from integration.kafka.kafka_subscribe_discovery.auto_discovery import discover_topic_handlers
 
-
-conf = None
 
 logger = logging.getLogger('integration.kafka')
 if Consumer is None:
@@ -34,36 +36,26 @@ else:
 
 def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
     """
-    Called by api_logic_server_run to listen on kafka
-
-    Enabled by config.KAFKA_CONSUMER
-
-    Args:
-        app (safrs.SAFRSAPI): safrs_api
+    Called by api_logic_server_run to listen on Kafka.
+    Enabled by config.KAFKA_CONSUMER.
+    Topic handlers are discovered from integration/kafka/kafka_subscribe_discovery/*.py
     """
 
     if not Args.instance.kafka_consumer:
-        logger.debug(f'Kafka Consumer not activated')
+        logger.info(f'Kafka mode: FALLBACK — KAFKA_SERVER not configured; running debug endpoint only')
         return
 
     conf = Args.instance.kafka_consumer
-    #  eg, KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1"}'
-    logger.debug(f'\nKafka Consumer configured, starting')
+    broker = conf.get('bootstrap.servers', '?')
+    group  = conf.get('group.id', '?')
+    logger.info(f'Kafka mode: ACTIVE (broker={broker}, group={group})')
 
     INTERRUPT_EVENT = Event()
-
     bus = FlaskKafka(interrupt_event=INTERRUPT_EVENT, conf=conf, safrs_api=safrs_api)
-    
-    bus.run()  # Kafka consumption, threading, handler annotations
+
+    discover_topic_handlers(bus)   # scans kafka_subscribe_discovery/*.py, calls register(bus) on each
+
+    bus.run()   # MUST be after all register() calls — subscribes to discovered topics
 
     logger.debug(f'Kafka Listener thread activated {bus}')
-
-    '''   Your Code Goes Here
-    
-    Define topic handlers here, e.g.
-
-    @bus.handle('order_shipping')
-    def order_shipping(msg: object, safrs_api: safrs.SAFRSAPI):
-
-    '''
 

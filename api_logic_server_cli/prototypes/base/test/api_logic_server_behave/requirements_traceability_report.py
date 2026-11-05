@@ -41,6 +41,18 @@ Tips
 * for tab: & emsp;
 
 Changelog:
+  2.15 - A helper is traced to the requirement that uses it. A logic file that a requirement's implementing file imports
+        (check_credit.py importing place_order/ai_requests/supplier_selection.py) belongs to that requirement: it appears under
+        "Implemented by", its rules count and are listed with the requirement, and it is no longer reported as untraced.
+        Read from the import statements, so nothing is guessed from folder or file names.
+  2.14 - Use case level, and requirements that are not Gherkin. The hierarchy is [Process >] Use case > Requirement > Test;
+        the process level is not generated and every level is optional. A requirement can be written as a block of the
+        original prompt ("On Placing Orders:" then "Requirement Check Credit:" / "Requirement: App Integration:"), not only as a
+        numbered section with a Feature line; before, such a file counted as one requirement named for its folder. The use case is
+        the logic folder that implements the requirement (logic_discovery/place_order/check_credit.py is use case Place Order),
+        else the prompt's context phrase, else none; with none specified, the report is unchanged. Added a Use case column to the
+        matrix, a Use cases row to the coverage summary, and a Use case line to each requirement's detail. A prompt-format
+        requirement is matched to its logic file by name ("Check Credit" = check_credit.py).
   2.13 - The Security row of At a Glance names the authentication provider ("enabled (SQL provider)" or "(Keycloak
         provider)"), read from SECURITY_PROVIDER (environment, config/default.env, else config/config.py). With the Kafka
         row, it shows at a glance whether a run used containers (Keycloak, live Kafka) or ran degraded (SQL, simulated).
@@ -105,7 +117,7 @@ Changelog:
 
 """
 
-__version__ = "2.13"
+__version__ = "2.15"
 
 tab = "&emsp;"
 behave_debug_info = " # "
@@ -614,9 +626,67 @@ def _requirement_text(section: str) -> list:
     return _cap(_clean_markdown(lines), 25)[0]
 
 
+CONTEXT_REQ_RE = re.compile(r'^\s*(?:On|When|For)\s+(.+?)\s*,\s*(?:Requirement|Use\s*case)\s*:?\s+([^.:]{1,60}?)\s*:\s*$', re.I)
+REQUIREMENT_RE = re.compile(r'^\s*(?:Requirement|Use\s*case)\s*(?::\s*([^.:]{1,60}?)\s*:?|\s+([^.:]{1,60}?)\s*:)\s*$', re.I)
+CONTEXT_RE = re.compile(r'^\s*(?:On|When|For)\s+(.+?)\s*:\s*$', re.I)
+HEADING_RE = re.compile(r'^\s*#{1,6}\s')
+
+
+def _prompt_requirements(text: str) -> list:
+    """ requirements written as blocks of the original prompt, not as Gherkin:
+
+            On Placing Orders:                       <- context phrase: the use case
+                Requirement Check Credit:            <- a requirement (also "Requirement: App Integration:")
+                1. The Customer's balance ...
+        or      On Placing Orders, Requirement Check Credit:
+
+        returns [(use case phrase or None, requirement name, body lines)]; a heading ends a block """
+    found, context, current = [], None, None
+    for line in text.splitlines():
+        m = CONTEXT_REQ_RE.match(line)
+        if m:
+            context = m.group(1)
+            current = [context, m.group(2), []]
+            found.append(current)
+            continue
+        m = REQUIREMENT_RE.match(line)
+        if m:
+            current = [context, m.group(1) or m.group(2), []]
+            found.append(current)
+            continue
+        m = CONTEXT_RE.match(line)
+        if m:
+            context, current = m.group(1), None
+            continue
+        if HEADING_RE.match(line):
+            current = None
+            continue
+        if current is not None:
+            current[2].append(line)
+    return [tuple(each) for each in found]
+
+
+def _humanize(folder: str) -> str:
+    """ 'place_order' -> 'Place Order' """
+    return folder.replace("_", " ").strip().title()
+
+
+def _use_case_of(files: list):
+    """ the use case is the logic folder that holds the implementing file: logic_discovery/place_order/check_credit.py is
+        use case 'Place Order'. A file straight in logic_discovery (or in system/) has none: the level is optional. """
+    for rel in files:
+        parts = Path(rel).parts
+        if "logic_discovery" in parts:
+            i = parts.index("logic_discovery")
+            if len(parts) > i + 2 and parts[i + 1] != "system":
+                return _humanize(parts[i + 1])
+    return None
+
+
 def parse_requirements(root: Path) -> list:
     """ requirement items from docs/requirements/**/requirements.md:
-        '## N. Title' sections (with Feature: lines), else one item per use-case folder """
+        '## N. Title' sections (with Feature: lines); else blocks of the original prompt ('Requirement <name>:');
+        else one item per use-case folder """
     items = OrderedDict()
     base = root / "docs" / "requirements"
     if not base.is_dir():
@@ -637,15 +707,28 @@ def parse_requirements(root: Path) -> list:
                     item["text"] = _requirement_text(section)
                 if rel not in item["sources"]:
                     item["sources"].append(rel)
-        else:
-            use_case = each.parent.name
-            key = (None, use_case)
-            item = items.setdefault(key, {"num": None, "title": use_case,
-                                          "features": set(), "sources": []})
-            item["features"] |= {f.strip() for f in re.findall(r'Feature:\s*(.+)', text)}
-            if not item.get("text"):
-                item["text"] = _requirement_text(text)
-            item["sources"].append(rel)
+            continue
+        blocks = _prompt_requirements(text)
+        if blocks:
+            for pos, (context, name, body) in enumerate(blocks):
+                item = items.setdefault((None, _norm(name)), {"num": None, "title": name, "features": set(),
+                                                              "sources": [], "use_case": None, "order": (0, 0)})
+                item["title"] = name                      # the spec's wording beats a folder name
+                item["use_case"] = item.get("use_case") or context
+                item["order"] = min(item["order"], (-len(blocks), pos)) if item["order"] != (0, 0) \
+                    else (-len(blocks), pos)               # the file with most blocks (the spec) sets the order
+                if not item.get("text"):
+                    item["text"] = _requirement_text("\n".join(body))
+                if rel not in item["sources"]:
+                    item["sources"].append(rel)
+            continue
+        use_case = each.parent.name
+        item = items.setdefault((None, _norm(use_case)), {"num": None, "title": use_case,
+                                                          "features": set(), "sources": []})
+        item["features"] |= {f.strip() for f in re.findall(r'Feature:\s*(.+)', text)}
+        if not item.get("text"):
+            item["text"] = _requirement_text(text)
+        item["sources"].append(rel)
     # A use-case folder's requirements.md is the verbatim excerpt that anchors its logic file; when its Feature lines are
     # all in a numbered section, it is the same requirement, not another one (it would be counted twice).
     numbered_features = set()
@@ -654,7 +737,7 @@ def parse_requirements(root: Path) -> list:
             numbered_features |= each["features"]
     kept = [each for each in items.values()
             if not (each["num"] is None and each["features"] and each["features"] <= numbered_features)]
-    return sorted(kept, key=lambda i: (i["num"] is None, i["num"] or 0, i["title"]))
+    return sorted(kept, key=lambda i: (i["num"] is None, i["num"] or 0, i.get("order", (0, 0)), i["title"]))
 
 
 def implementation_files(root: Path) -> list:
@@ -871,6 +954,17 @@ def _gap_list(labels: list) -> str:
     return ", ".join(labels) if labels else "none"
 
 
+def _imported_logic_files(src: str, root: Path) -> list:
+    """ logic files a source file imports: 'from logic.logic_discovery.place_order.ai_requests.supplier_selection import f'
+        names logic/logic_discovery/place_order/ai_requests/supplier_selection.py. Read from the import statements. """
+    found = []
+    for m in re.finditer(r'^\s*(?:from|import)\s+(logic\.logic_discovery(?:\.\w+)+)', src, re.M):
+        path = root / (m.group(1).replace(".", "/") + ".py")
+        if path.is_file() and _rel(path, root) not in found:
+            found.append(_rel(path, root))
+    return found
+
+
 def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
                      behave_log: str = "logs/behave.log", scenario_logs: str = "logs/scenario_logic_logs") -> tuple:
     """ requirements traceability: coverage summary, matrix, rule coverage by tests, detail per requirement.
@@ -902,16 +996,31 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
             if not hit and item["num"] is not None:
                 hit = re.search(rf'§\s*{item["num"]}\b', src) is not None
             if not hit and item["num"] is None:
-                hit = Path(rel).stem == item["title"]
+                hit = _norm(Path(rel).stem) == _norm(item["title"])
             if hit:
                 matched.append(rel)
                 traced.add(rel)
                 req_by_file.setdefault(rel, []).append(label)
+        i = 0
+        while i < len(matched):             # helpers the implementing files import are part of the requirement (and theirs, in turn)
+            for helper in _imported_logic_files(sources.get(matched[i], ""), root):
+                if helper in sources and helper not in matched:
+                    matched.append(helper)
+                    traced.add(helper)
+                    req_by_file.setdefault(helper, []).append(label)
+            i += 1
         wanted = {_norm(f) for f in item["features"]} | {_norm(item["title"])}
         scenarios = sum(n for name, n in features.items() if _norm(name) in wanted)
         records.append({"item": item, "label": label, "matched": matched, "wanted": wanted,
+                        "use_case": _use_case_of(matched) or item.get("use_case"),
                         "scenarios": scenarios,
                         "n_rules": sum(1 for r in rules if r["file"] in matched)})
+
+    # use cases are optional: with none specified nothing below changes. Requirements are grouped by use case, in order of appearance.
+    use_cases = list(dict.fromkeys(r["use_case"] for r in records if r["use_case"]))
+    has_uc = bool(use_cases)
+    if has_uc:
+        records.sort(key=lambda r: use_cases.index(r["use_case"]) if r["use_case"] else len(use_cases))
 
     # ---- coverage summary
     all_wanted = set().union(*[r["wanted"] for r in records]) if records else set()
@@ -934,6 +1043,8 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
                  + (f" - gap: {_gap_list(no_impl)}" if no_impl else "") + " |")
     lines.append(f"| Tested (at least one scenario) | {n - len(no_tests)} of {n}"
                  + (f" - gap: {_gap_list(no_tests)}" if no_tests else "") + " |")
+    if has_uc:
+        lines.append(f"| Use cases | {len(use_cases)}: {_cell(', '.join(use_cases))} |")
     FACTS.clear()
     FACTS.update(n_req=n, no_impl=list(no_impl), no_tests=list(no_tests), n_rules=len(rules),
                  n_declarative=declarative, n_python=python_fn, n_events=events, seen=None,
@@ -984,12 +1095,14 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
                      "`implement reqs <name>` to turn them into rules, and name the same `Feature:` in the "
                      "logic file and the tests so this report can link them.")
     else:
-        lines += ["| Requirement | Implemented by | Rules | Tests |", "|---|---|---|---|"]
+        lines += (["| Use case | Requirement | Implemented by | Rules | Tests |", "|---|---|---|---|---|"] if has_uc
+                  else ["| Requirement | Implemented by | Rules | Tests |", "|---|---|---|---|"])
     for rec in records:
         impl = "<br>".join(f"[{m}]({_link(root / m, report_dir)})" for m in rec["matched"]) \
             if rec["matched"] else "⚠ none found"
         tests = _tests_text(rec, results, defined=True)
-        lines.append(f"| {_cell(rec['label'])} | {impl} | {rec['n_rules']} | {tests} |")
+        uc_cell = f"{_cell(rec['use_case'] or '-')} | " if has_uc else ""
+        lines.append(f"| {uc_cell}{_cell(rec['label'])} | {impl} | {rec['n_rules']} | {tests} |")
 
     # ---- rule coverage by tests
     lines += ["", f"### {title('rule-coverage')}", ""] + text("rule-coverage")
@@ -1025,7 +1138,8 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
     for rec in records:
         item, matched = rec["item"], rec["matched"]
         tests = _tests_text(rec, results, defined=False)
-        block = ["", f"#### {rec['label']}", "", f"Tests: {tests}", "", "```"]
+        block = ["", f"#### {rec['label']}", ""] + ([f"Use case: {rec['use_case']}", ""] if rec["use_case"] else []) \
+            + [f"Tests: {tests}", "", "```"]
         block += item.get("text") or ["(no requirement text found)"]
         block += ["```", ""]
         rows = []
@@ -1969,7 +2083,7 @@ _Status: ✅ every requirement is implemented and tested, all scenarios pass, an
 
 **What a requirement is**
 
-A **requirement** is a statement of business behavior, written in plain language as a Gherkin feature (Given / When / Then). It lives in the project at `docs/requirements/<name>/requirements.md`. The system is built from these requirements, and this report is organized around them.
+A **requirement** is a statement of business behavior, written in plain language: a block of the original prompt ("Requirement Check Credit:" and its numbered statements), or a Gherkin feature (Given / When / Then). It lives in the project at `docs/requirements/<name>/requirements.md`. The system is built from these requirements, and this report is organized around them. Requirements can be grouped into a **use case** (for example *Place Order*, with the requirements *Check Credit* and *App Integration*); the report reads the use case from the logic folder that implements the requirement, or from the prompt's context phrase, and shows none when none is specified.
 
 **How the system was built**
 
@@ -2005,7 +2119,8 @@ A **requirement** is a statement of business behavior, written in plain language
 
 | Term | Meaning |
 |---|---|
-| Requirement | A Gherkin feature describing business behavior; the unit this report traces. |
+| Use case | An optional group of related requirements (for example Place Order); read from the logic folder, or the prompt's context phrase. |
+| Requirement | A statement of business behavior, as a prompt block or a Gherkin feature; the unit this report traces. |
 | Rule | A declaration about data (sum, count, formula, copy, constraint) that the engine enforces at every commit. |
 | Event | Python code the engine calls when a row of a given class changes (for example, to publish a message). |
 | Handler | Code that serves an API endpoint or consumes a Kafka topic. |
@@ -2024,7 +2139,7 @@ A **requirement** is a statement of business behavior, written in plain language
 
 ## Requirements Coverage
 
-Traceability here is **forward** (requirement, to the rules, handlers and grants that implement it, to the tests that exercise it) and **backward** (implementation and tests, to the requirement they serve). Anything with no requirement is listed as untraced, and every requirement with no implementation or no test is listed as a gap. Links are made by the `Feature:` names and `§N` tags that requirements, code and tests carry.
+Traceability here is **forward** (requirement, to the rules, handlers and grants that implement it, to the tests that exercise it) and **backward** (implementation and tests, to the requirement they serve). Anything with no requirement is listed as untraced, and every requirement with no implementation or no test is listed as a gap. Links are made by the requirement names, `Feature:` names and `§N` tags that requirements, code and tests carry.
 
 ### Coverage summary
 

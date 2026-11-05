@@ -1,6 +1,6 @@
 ---
 title: GenAI-Logic Project Governance Policy
-version: 1.0 (May 2026)
+version: 1.1 (June 2026) — added Effective LOC metric (informational, no grade thresholds yet)
 audience: Project managers, team leads, consulting staff
 related: docs/training/health_check.md — AI health check instructions
 ---
@@ -171,6 +171,33 @@ result = session.query(CcpCustomer).filter_by(...)  # @health-check: suppress �
 | 2.0–3.9 | 85–94 | 🟠 Both need attention | Training + remediation |
 | < 2.0 | any | 🔴 Under-governed | Training/consulting |
 | any | < 75 | 🔴 Integrity critical | Immediate code review |
+
+### Effective LOC (code beyond scaffold)
+
+Measures total "effective" lines of code added beyond the generated scaffold,
+broken down per domain table and cross-cutting concern (API, integration,
+security).
+
+- Computed via hardcoded scaffold-baseline diffs — see `health_check.md`,
+  "Baseline: hardcoded scaffold LOC"
+- Files matching the baseline table count only the lines *beyond* the
+  scaffold stub (`max(0, project_lines - baseline_lines)`)
+- Framework-infrastructure paths (api/system/, integration/mcp/, etc.)
+  always count as 0 — never "new effort"
+- New files (logic_discovery rules, custom API/integration mappers, etc.)
+  count in full
+
+**No target range yet** — this metric is informational. Use it to:
+- Track effort/complexity growth across health checks (is the project
+  growing where you expect?)
+- Compare projects of similar scope (a 7-table EAI demo vs. a 16-table
+  ERP sample will naturally differ)
+- Make the "40X less code" claim concrete per-project — Effective LOC is
+  the numerator a team actually wrote; the scaffold is the denominator
+  the framework generated for free
+
+As more projects report this metric, grade bands may be added in a future
+revision.
 
 ---
 

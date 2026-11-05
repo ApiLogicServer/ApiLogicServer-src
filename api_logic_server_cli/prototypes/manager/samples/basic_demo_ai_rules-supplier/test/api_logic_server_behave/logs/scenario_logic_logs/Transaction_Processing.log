@@ -1,0 +1,19 @@
+
+The following rules have been activated
+ - 2026-11-04 18:03:00,334 - logic_logger - DEBUG
+Rule Bank[0x10bb75940] (loaded 2026-11-04 18:02:58.763190)		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+Mapped Class[SysSupplierReq] rules:		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+  RowEvent SysSupplierReq.select_supplier_via_ai() 		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+Mapped Class[Order] rules:		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+  RowEvent Order.send_row_to_kafka() 		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+Mapped Class[Customer] rules:		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+  Constraint Function: None 		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10c1f6e80>)		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+Mapped Class[Item] rules:		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+  RowEvent Item.set_item_unit_price_from_supplier() 		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+Mapped Class[Product] rules:		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+  Derive <class 'database.models.Product'>.count_suppliers as Count(<class 'database.models.ProductSupplier'> Where  - None)		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
+Logic Bank - 14 rules loaded - 2026-11-04 18:03:00,334 - logic_logger - INFO
+Logic Bank - 14 rules loaded - 2026-11-04 18:03:00,334 - logic_logger - INFO

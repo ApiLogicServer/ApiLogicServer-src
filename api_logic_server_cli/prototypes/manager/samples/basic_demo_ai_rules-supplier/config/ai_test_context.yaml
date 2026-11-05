@@ -1,11 +1,6 @@
-# AI Test Context Configuration
-# This file provides INPUT conditions for AI testing (world_conditions)
-# AI still makes the decision - we just provide the scenario context
-
-# World conditions for AI supplier selection
-# world_conditions: 'normal conditions'
-
-# Example alternate scenarios (uncomment to test):
+# Test context: INPUT conditions passed to the AI supplier-selection prompt (not predetermined outputs).
+# Uncomment exactly one world_conditions line.
 world_conditions: 'Suez Canal blocked - use alternate shipping routes'
-# world_conditions: 'pandemic supply chain disruptions - prioritize reliability'
-# world_conditions: 'economic recession - minimize costs'
+# world_conditions: 'normal conditions'
+# world_conditions: 'pandemic supply chain disruptions'
+# world_conditions: 'economic recession'

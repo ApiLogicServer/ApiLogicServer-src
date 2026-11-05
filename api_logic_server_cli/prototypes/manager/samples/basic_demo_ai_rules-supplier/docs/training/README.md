@@ -22,15 +22,15 @@ This directory contains training materials for ApiLogicServer with GenAI integra
 
 ---
 
-### AI Rules Implementation
-**File:** `ai_rules_guide.md`  
-**Scope:** Implementing AI-powered business rules  
+### Probabilistic Logic Implementation
+**File:** `probabilistic_logic_guide.md`  
+**Scope:** Implementing probabilistic (AI-powered) business rules  
 **Topics:**
-- Conditional formulas (Business Rules vs AI)
+- Conditional formulas (deterministic vs AI)
 - Request Pattern for audit trails
-- Integration with Business Rules
+- Integration with deterministic rules
 - Execution flow
-- Testing AI Rules
+- Testing probabilistic rules
 - Common implementation patterns
 - Troubleshooting AI integration
 
@@ -52,17 +52,33 @@ This directory contains training materials for ApiLogicServer with GenAI integra
 
 ---
 
+### Subsystem Creation - Architectural Principles
+**File:** `implement_requirements.md`  
+**Scope:** Creating complete subsystems with multiple tables and business logic  
+**Topics:**
+- Data model principles (autoincrement, derived columns, naming conventions)
+- Logic architecture (rules >> events, calculations in formulas)
+- Request Pattern vs Custom API (when to use which)
+- Common mistakes and anti-patterns
+- Concrete examples from real failures
+
+**Use this when:** Creating multiple related tables with business logic (customs, billing, inventory, HR subsystems).
+
+---
+
 ## Quick Navigation
 
 **I want to...**
 
+- **Create a subsystem** (multiple tables + logic) → `implement_requirements.md`
 - **Understand LogicBank + AI patterns** → `genai_logic_patterns.md`
 - **Implement AI rules in my project** → `probabilistic_logic_guide.md`
 - **Copy working code** → `template_probabilistic_rules.py`
 - **Fix import errors** → `genai_logic_patterns.md` (Section 1)
 - **Fix "Session is already flushing"** → `genai_logic_patterns.md` (Section 2)
-- **Add audit trails** → `probabilistic_logic_guide.md` (Section 2)
+- **Add audit trails** → `probabilistic_logic_guide.md` (Section 2) or `implement_requirements.md` (Part 3)
 - **Test AI rules** → `probabilistic_logic_guide.md` (Section 4)
+- **Understand Request Pattern** → `RequestObjectPattern.md` or `implement_requirements.md` (Part 3)
 
 ---
 
@@ -71,9 +87,9 @@ This directory contains training materials for ApiLogicServer with GenAI integra
 This directory also contains:
 
 - **API Documentation:**
-  - `logic_bank_api.prompt` - LogicBank API reference
-  - `logic_bank_api_probabilistic.prompt` - Probabilistic extensions
-  - `logic_bank_patterns.prompt` - Pattern library
+  - `logic_bank_api.md` - LogicBank API reference
+  - `probabilistic_logic.md` - Probabilistic extensions
+  - `logic_bank_patterns.md` - Pattern library
 
 - **Admin App Documentation:**
   - `admin_app_1_context.prompt.md` - Admin app context

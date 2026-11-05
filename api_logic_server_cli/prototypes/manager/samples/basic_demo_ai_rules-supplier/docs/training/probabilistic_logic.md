@@ -1,30 +1,30 @@
 ---
-title: LogicBank AI Rules API
-description: Training document for translating natural language into AI-driven rules
-source: Generic training for ApiLogicServer projects with AI Rules
-usage: AI assistants read this to generate AI Rules + Business Rules implementations
-version: 3.1
-date: November 21, 2025
+title: LogicBank Probabilistic Rules API (AI Value Computation)
+description: Training document for translating natural language into probabilistic value computation rules
+source: Generic training for ApiLogicServer projects with probabilistic rules
+usage: AI assistants read this to generate probabilistic + deterministic rules implementations
+version: 3.2
+date: November 4, 2026
 prerequisites:
   - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery)
-  - docs/training/logic_bank_patterns.prompt (event signatures, logging, request pattern)
-  - docs/training/logic_bank_api.prompt (Business Rules APIs)
+  - docs/training/logic_bank_patterns.md (event signatures, logging, request pattern)
+  - docs/training/logic_bank_api.md (deterministic rule APIs)
 ---
 
-# AI Rules Pattern
+# AI Value Computation Pattern
 
-This document describes how to implement AI Rules (AI-driven value computation) alongside Business Rules in LogicBank.
+This document describes how to implement probabilistic logic (AI-driven value computation) alongside deterministic rules in LogicBank.
 
 ## Prerequisites
 
 Read these foundation documents first:
 
 1. **docs/training/genai_logic_patterns.md** - Import patterns, auto-discovery
-2. **docs/training/logic_bank_patterns.prompt** - Event signatures, logging, Request Pattern
-3. **docs/training/logic_bank_api.prompt** - Business Rules APIs
+2. **docs/training/logic_bank_patterns.md** - Event signatures, logging, Request Pattern
+3. **docs/training/logic_bank_api.md** - Deterministic rule APIs
 
 =============================================================================
-🤖 AUTOMATIC DETECTION: When to Generate AI Rules
+🤖 AUTOMATIC DETECTION: When to Generate Probabilistic Logic
 =============================================================================
 
 When you see these patterns in user's natural language prompt, AUTOMATICALLY create complete AI value computation infrastructure:
@@ -213,14 +213,17 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
 
 **Wrapper function should:**
 ```python
-def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: LogicRow):
+def get_supplier_selection_from_ai(product_id: int, item: models.Item, logic_row: LogicRow):
     supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
     supplier_req = supplier_req_logic_row.row
     
     # Set parent context (FK links)
     # Note: request/reason populated by AI event handler with actual data
     supplier_req.product_id = product_id
-    supplier_req.item_id = item_id
+    # Link to the triggering row BY OBJECT, never by id. This runs inside an early event, before the row is
+    # flushed, so a new row's id is still None: `item_id = item.id` would silently save a NULL link.
+    # Assigning the object lets SQLAlchemy save the Item first and fill in item_id itself.
+    supplier_req.item = item
     
     # Insert triggers AI handler which populates request/reason
     supplier_req_logic_row.insert(reason="AI supplier selection request")
@@ -246,6 +249,10 @@ When user says "Use AI to Set <Receiver> field by finding optimal <Provider>":
 2. **Event calls wrapper** - Wrapper hides Request Pattern complexity
 3. **Wrapper returns object** - Returns populated request object (not scalar)
 4. **Event extracts values** - `row.unit_price = req.chosen_unit_price`
+
+**⚠️ CRITICAL: use `early_row_event` — `unit_price` is consumed by `Rule.formula(Item.amount)`**
+
+`Rule.formula` runs *after* events. Wrong event type → formula uses old/null price → wrong amounts, wrong balance, wrong credit check — silently. See PATTERN 8 in `docs/training/logic_bank_patterns.md`.
 
 ## Fallback Strategy
 
@@ -295,7 +302,7 @@ Natural Language Requirements:
 
 version: 3.0
 date: November 21, 2025
-source: docs/training/probabilistic_logic.prompt
+source: docs/training/probabilistic_logic.md
 """
 
 from logic_bank.logic_bank import Rule
@@ -343,7 +350,7 @@ def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, lo
     logic_row.log(f"Product {product.name} has {product.count_suppliers} suppliers, requesting AI selection")
     supplier_req = get_supplier_selection_from_ai(
         product_id=row.product_id,
-        item_id=row.id,
+        item=row,        # the object, not row.id: the id does not exist yet (see the wrapper)
         logic_row=logic_row
     )
     
@@ -373,7 +380,7 @@ See: https://apilogicserver.github.io/Docs/Logic-Using-AI/
 
 version: 3.0
 date: November 21, 2025
-source: docs/training/probabilistic_logic.prompt
+source: docs/training/probabilistic_logic.md
 """
 
 from logic_bank.exec_row_logic.logic_row import LogicRow
@@ -497,10 +504,13 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
                     temperature=0.7
                 )
                 
-                response_text = response.choices[0].message.content.strip()
+                response_text = (response.choices[0].message.content or "").strip()
+                # GPT-4o sometimes wraps JSON in ```json ... ``` despite instructions — strip fences
+                if response_text.startswith('```'):
+                    lines = response_text.split('\n')
+                    response_text = '\n'.join(lines[1:-1]).strip()
                 logic_row.log(f"OpenAI response: {response_text}")
-                
-                # Parse JSON response
+
                 ai_result = json.loads(response_text)
                 
                 # Find the selected supplier
@@ -540,7 +550,7 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
         row.chosen_unit_price = selected_supplier.unit_cost
         logic_row.log(f"Selected supplier {selected_supplier.supplier_id} with price {selected_supplier.unit_cost}")
 
-def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: LogicRow) -> models.SysSupplierReq:
+def get_supplier_selection_from_ai(product_id: int, item: models.Item, logic_row: LogicRow) -> models.SysSupplierReq:
     """
     Wrapper function called from Item (Receiver) early event.
     
@@ -556,6 +566,11 @@ def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: Log
     - Standard AI Audit: request, reason, created_on, fallback_used
     - Parent Context Links: item_id, product_id
     - AI Results: chosen_supplier_id, chosen_unit_price
+
+    Link the request to the triggering row BY OBJECT (`item`), never by `item.id`. This runs inside an
+    early_row_event, before the Item is flushed, so a new Item's id is still None and an id-based link
+    is silently saved as NULL (the audit row is then orphaned, and the Admin App asks for Item `-`: a 404).
+    Assigning `supplier_req.item = item` lets SQLAlchemy save the Item first and fill in item_id.
     """
     # 1. Create request row using parent's logic_row
     supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
@@ -564,7 +579,10 @@ def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: Log
     # 2. Set parent context (FK links)
     # Note: request/reason fields populated by AI event handler with actual prompt/candidate data
     supplier_req.product_id = product_id
-    supplier_req.item_id = item_id
+    # Link to the triggering row BY OBJECT, never by id. This runs inside an early event, before the row is
+    # flushed, so a new row's id is still None: `item_id = item.id` would silently save a NULL link.
+    # Assigning the object lets SQLAlchemy save the Item first and fill in item_id itself.
+    supplier_req.item = item
     
     # 3. Insert triggers early event which populates AI values (chosen_* fields, request, reason)
     supplier_req_logic_row.insert(reason="AI supplier selection request")
@@ -747,6 +765,21 @@ if not api_key:
 
 Why: Tests should run consistently without requiring OpenAI API key. Test context is explicitly provided configuration that should override API calls.
 
+**FAILURE #7: Link the Request Row to the Triggering Row by Id**
+```python
+# ❌ WRONG - runs in an early_row_event, before the Item is flushed: item.id is still None
+supplier_req.item_id = row.id
+```
+**What happens**: No error. The audit row is saved with item_id NULL, so it is linked to the Product but not to the order line that caused the AI call. The Admin App's Item screen shows no requests, and its fetch of Item `-` logs a 404.
+**Why it fails**: A new row has no primary key until the database assigns it at flush; early events run before that.
+**Fix**: Link by object, and let SQLAlchemy fill in the key when both rows are saved.
+
+✅ **CORRECT** (pass the Item itself, not its id):
+```python
+supplier_req.item = row          # wrapper signature: get_supplier_selection_from_ai(product_id, item, logic_row)
+```
+The same applies to any request row created from a new row's event or `Rule.formula` (email, Kafka, audit): link to the parent by object, never by `parent.id`.
+
 =============================================================================
 🚨 CRITICAL: Model Relationship Checklist
 =============================================================================
@@ -895,7 +928,7 @@ def assign_multiple_values(row: models.Order, old_row, logic_row):
     # Call wrapper - returns object
     req = get_supplier_selection_from_ai(
         product_id=row.product_id,
-        item_id=row.id,
+        item=row,        # the object, not row.id: the id does not exist yet (see the wrapper)
         logic_row=logic_row
     )
     
@@ -1077,5 +1110,5 @@ When implementing AI logic:
 
 ---
 
-For detailed LogicBank patterns, see docs/training/logic_bank_patterns.prompt
-For deterministic rules, see docs/training/logic_bank_api.prompt
+For detailed LogicBank patterns, see docs/training/logic_bank_patterns.md
+For deterministic rules, see docs/training/logic_bank_api.md

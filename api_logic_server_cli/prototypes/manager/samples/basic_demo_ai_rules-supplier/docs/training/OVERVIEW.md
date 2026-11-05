@@ -12,7 +12,7 @@ This folder contains **generic, reusable training materials** for ApiLogicServer
 - ✅ Universal LogicBank API documentation
 - ✅ Framework-level integration patterns
 - ❌ **NEVER include project-specific details** (file names, use cases, workflows)
-- ❌ **NEVER reference project-specific files** (like readme_ai_rules.md)
+- ❌ **NEVER reference project-specific files** (like readme_probabilistic.md)
 
 ## Intended Use
 

@@ -2,7 +2,7 @@ This describes how to use Logic; for more information, [see here](https://apilog
 
 ## What are Rules?
 
-Rules enforce business policy — multi-table derivations, constraints, and actions like messaging. They are Python functions in `logic/logic_discovery/` — readable, version-controlled, and owned like any other source file.
+Rules enforce business policy — multi-table derivations, constraints, and actions like messaging. **LogicBank**, the rule engine, hooks SQLAlchemy's commit event to run them on every transaction — authored as plain Python functions in `logic/logic_discovery/`, readable, version-controlled, and owned like any other source file.
 
 But unlike procedural code, rules are *declarative* — which has important implications:
 

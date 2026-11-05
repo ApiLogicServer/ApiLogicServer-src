@@ -54,6 +54,18 @@ Table Supplier {
     region VARCHAR 
     }
 
+Table SysSupplierReq {
+    id INTEGER [primary key]
+    item_id INTEGER 
+    product_id INTEGER 
+    chosen_supplier_id INTEGER 
+    chosen_unit_price DECIMAL 
+    request TEXT 
+    reason TEXT 
+    fallback_used BOOLEAN 
+    created_on TEXT 
+    }
+
 
 
 // Relationships
@@ -62,3 +74,6 @@ Table Supplier {
     Ref: Order.(customer_id) > Customer.(id)
     Ref: ProductSupplier.(product_id) > Product.(id)
     Ref: ProductSupplier.(supplier_id) > Supplier.(id)
+    Ref: SysSupplierReq.(chosen_supplier_id) > Supplier.(id)
+    Ref: SysSupplierReq.(item_id) > Item.(id)
+    Ref: SysSupplierReq.(product_id) > Product.(id)

@@ -1,0 +1,160 @@
+Feature: About Sample # features/about.feature:6
+
+  Scenario: Transaction Processing                           # features/about.feature:8
+    Given Sample Database                                    # features/steps/about.py:8
+    When Transactions are submitted                          # features/steps/about.py:12
+    Then Enforce business policies with Logic (rules + code) # features/steps/about.py:16
+
+Feature: App Integration # features/app_integration.feature:1
+
+  Scenario: Kafka - shipped order                                           # features/app_integration.feature:5
+    Given a customer with credit limit 1000                                 # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers                               # features/steps/check_credit.py:83
+    And an order is created with 5 of the product                           # features/steps/check_credit.py:111
+    When the order is shipped                                               # features/steps/check_credit.py:127
+    Then the logic log shows the order sent to Kafka topic "order_shipping" # features/steps/check_credit.py:287
+
+  Scenario: Kafka - unshipped order                                          # features/app_integration.feature:12
+    Given a customer with credit limit 1000                                  # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers                                # features/steps/check_credit.py:83
+    When an order is created with 5 of the product                           # features/steps/check_credit.py:111
+    Then the logic log shows no message sent to Kafka topic "order_shipping" # features/steps/check_credit.py:293
+
+  Scenario: Kafka - edit shipped order                                             # features/app_integration.feature:18
+    Given a customer with credit limit 1000                                        # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers                                      # features/steps/check_credit.py:83
+    And an order is created with 5 of the product                                  # features/steps/check_credit.py:111
+    And the order is shipped                                                       # features/steps/check_credit.py:127
+    When the order notes are edited                                                # features/steps/check_credit.py:300
+    Then the logic log shows the order sent to Kafka topic "order_shipping" 1 time # features/steps/check_credit.py:306
+
+Feature: Check Credit # features/check_credit.feature:1
+
+  Scenario: Credit - within limit                  # features/check_credit.feature:7
+    Given a customer with credit limit 1000        # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers      # features/steps/check_credit.py:83
+    When an order is created with 5 of the product # features/steps/check_credit.py:111
+    Then the customer balance is 50                # features/steps/check_credit.py:200
+    And the order amount total is 50               # features/steps/check_credit.py:210
+    And the item amount is 50                      # features/steps/check_credit.py:220
+
+  Scenario: Credit - at the limit                   # features/check_credit.feature:15
+    Given a customer with credit limit 100          # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers       # features/steps/check_credit.py:83
+    When an order is created with 10 of the product # features/steps/check_credit.py:111
+    Then the customer balance is 100                # features/steps/check_credit.py:200
+
+  Scenario: Credit - over the limit                                            # features/check_credit.feature:21
+    Given a customer with credit limit 100                                     # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers                                  # features/steps/check_credit.py:83
+    When an order is created with 11 of the product                            # features/steps/check_credit.py:111
+    Then the item is rejected with a message containing "exceeds credit limit" # features/steps/check_credit.py:240
+    And the customer balance is 0                                              # features/steps/check_credit.py:200
+
+  Scenario: Balance - ship and unship             # features/check_credit.feature:28
+    Given a customer with credit limit 1000       # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers     # features/steps/check_credit.py:83
+    And an order is created with 5 of the product # features/steps/check_credit.py:111
+    When the order is shipped                     # features/steps/check_credit.py:127
+    Then the customer balance is 0                # features/steps/check_credit.py:200
+    When the order is un-shipped                  # features/steps/check_credit.py:133
+    Then the customer balance is 50               # features/steps/check_credit.py:200
+
+  Scenario: Balance - move order                   # features/check_credit.feature:37
+    Given a customer with credit limit 1000        # features/steps/check_credit.py:70
+    And a second customer with credit limit 1000   # features/steps/check_credit.py:78
+    And a product priced 10 with no suppliers      # features/steps/check_credit.py:83
+    And an order is created with 5 of the product  # features/steps/check_credit.py:111
+    When the order is moved to the second customer # features/steps/check_credit.py:139
+    Then the customer balance is 0                 # features/steps/check_credit.py:200
+    And the second customer balance is 50          # features/steps/check_credit.py:205
+
+  Scenario: Balance - delete order                # features/check_credit.feature:46
+    Given a customer with credit limit 1000       # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers     # features/steps/check_credit.py:83
+    And an order is created with 5 of the product # features/steps/check_credit.py:111
+    When the order and its item are deleted       # features/steps/check_credit.py:145
+    Then the customer balance is 0                # features/steps/check_credit.py:200
+
+  Scenario: Item - change quantity                # features/check_credit.feature:53
+    Given a customer with credit limit 1000       # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers     # features/steps/check_credit.py:83
+    And an order is created with 5 of the product # features/steps/check_credit.py:111
+    When the item quantity is changed to 8        # features/steps/check_credit.py:153
+    Then the item amount is 80                    # features/steps/check_credit.py:220
+    And the order amount total is 80              # features/steps/check_credit.py:210
+    And the customer balance is 80                # features/steps/check_credit.py:200
+
+  Scenario: Item - delete                            # features/check_credit.feature:62
+    Given a customer with credit limit 1000          # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers        # features/steps/check_credit.py:83
+    And an order is created with 5 of the product    # features/steps/check_credit.py:111
+    And a second item is added with 2 of the product # features/steps/check_credit.py:121
+    When the item is deleted                         # features/steps/check_credit.py:159
+    Then the order amount total is 20                # features/steps/check_credit.py:210
+    And the customer balance is 20                   # features/steps/check_credit.py:200
+
+  Scenario: Item - move to order                        # features/check_credit.feature:71
+    Given a customer with credit limit 1000             # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers           # features/steps/check_credit.py:83
+    And an order is created with 5 of the product       # features/steps/check_credit.py:111
+    And a second order is created with 2 of the product # features/steps/check_credit.py:116
+    When the item is moved to the second order          # features/steps/check_credit.py:165
+    Then the order amount total is 0                    # features/steps/check_credit.py:210
+    And the second order amount total is 70             # features/steps/check_credit.py:215
+    And the customer balance is 70                      # features/steps/check_credit.py:200
+
+  Scenario: Item - change product                          # features/check_credit.feature:81
+    Given a customer with credit limit 1000                # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers              # features/steps/check_credit.py:83
+    And a second product priced 30 with no suppliers       # features/steps/check_credit.py:88
+    And an order is created with 5 of the product          # features/steps/check_credit.py:111
+    When the item product is changed to the second product # features/steps/check_credit.py:171
+    Then the item unit price is 30                         # features/steps/check_credit.py:225
+    And the item amount is 150                             # features/steps/check_credit.py:220
+
+  Scenario: Suppliers - add and remove                       # features/check_credit.feature:90
+    Given a customer with credit limit 1000                  # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers                # features/steps/check_credit.py:83
+    When a supplier is added to the product costing 7        # features/steps/check_credit.py:178
+    Then the product supplier count is 1                     # features/steps/check_credit.py:230
+    When a second supplier is added to the product costing 9 # features/steps/check_credit.py:183
+    Then the product supplier count is 2                     # features/steps/check_credit.py:230
+    When the first supplier is removed from the product      # features/steps/check_credit.py:188
+    Then the product supplier count is 1                     # features/steps/check_credit.py:230
+
+  Scenario: Suppliers - move                                 # features/check_credit.feature:100
+    Given a customer with credit limit 1000                  # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers                # features/steps/check_credit.py:83
+    And a second product priced 20 with no suppliers         # features/steps/check_credit.py:88
+    And a supplier is added to the product costing 7         # features/steps/check_credit.py:178
+    When the product supplier is moved to the second product # features/steps/check_credit.py:194
+    Then the product supplier count is 0                     # features/steps/check_credit.py:230
+    And the second product supplier count is 1               # features/steps/check_credit.py:235
+
+  Scenario: AI - no suppliers                      # features/check_credit.feature:109
+    Given a customer with credit limit 1000        # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers      # features/steps/check_credit.py:83
+    When an order is created with 5 of the product # features/steps/check_credit.py:111
+    Then the item unit price is 10                 # features/steps/check_credit.py:225
+    And no AI audit row exists for the item        # features/steps/check_credit.py:253
+
+  Scenario: AI - chooses a supplier                                        # features/check_credit.feature:116
+    Given a customer with credit limit 1000                                # features/steps/check_credit.py:70
+    And a product priced 50 with suppliers costing 7 and 9                 # features/steps/check_credit.py:102
+    When an order is created with 5 of the product                         # features/steps/check_credit.py:111
+    Then the AI chose one of the product suppliers and an audit row exists # features/steps/check_credit.py:258
+    And the item amount is the quantity times the chosen price             # features/steps/check_credit.py:271
+    And the customer balance is the item amount                            # features/steps/check_credit.py:277
+
+  Scenario: AI - product change                                            # features/check_credit.feature:124
+    Given a customer with credit limit 1000                                # features/steps/check_credit.py:70
+    And a product priced 10 with no suppliers                              # features/steps/check_credit.py:83
+    And a second product priced 50 with suppliers costing 7 and 9          # features/steps/check_credit.py:93
+    And an order is created with 5 of the product                          # features/steps/check_credit.py:111
+    When the item product is changed to the second product                 # features/steps/check_credit.py:171
+    Then the AI chose one of the product suppliers and an audit row exists # features/steps/check_credit.py:258
+
+&nbsp;&nbsp;
+/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_ai_rules_supplier/test/api_logic_server_behave/behave_run.py completed at November 04, 2026 18:03:04
+Behave run time: 4.711 s

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="931pt" height="131pt" viewBox="18.80 18.80 931.40 131.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 140.05)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-140.05 940.17,-140.05 940.17,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="254.69" y="-95.9" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_ai_rules_supplier  [supplier_selection]</text>
+<g id="clust2" class="cluster">
+<title>cluster_events</title>
+</g>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="8,-17.62 8,-50.62 170.75,-50.62 170.75,-17.62 8,-17.62" />
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-18.62 9,-49.62 169.75,-49.62 169.75,-18.62 9,-18.62" />
+<text xml:space="preserve" text-anchor="start" x="17" y="-32.17" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ SysSupplierReq inserted</text>
+</g>
+
+<g id="node2" class="node">
+<title>SysSupplierReq</title>
+<polygon fill="none" stroke="#4a6fa5" points="316,-17.12 316,-51.12 412.75,-51.12 412.75,-17.12 316,-17.12" />
+<polygon fill="#4a6fa5" stroke="none" points="317,-34.12 317,-50.12 411.75,-50.12 411.75,-34.12 317,-34.12" />
+<text xml:space="preserve" text-anchor="start" x="319" y="-38.67" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> SysSupplierReq </text>
+<polygon fill="#dbe4f0" stroke="none" points="346.58,-18.12 346.58,-34.12 382.17,-34.12 382.17,-18.12 346.58,-18.12" />
+<text xml:space="preserve" text-anchor="start" x="361.38" y="-23.12" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e">  </text>
+</g>
+
+<g id="edge1" class="edge">
+<title>TRIGGER-&gt;SysSupplierReq</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M178.54,-34.12C217.59,-34.12 256.65,-34.12 295.71,-34.12" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="305.68,-34.13 295.68,-38.63 303.11,-34.63 295.68,-34.63 295.68,-34.13 295.68,-33.63 303.11,-33.63 295.68,-29.63 305.68,-34.13" />
+</g>
+
+<g id="node3" class="node">
+<title>evt_select_supplier_via_ai</title>
+<polygon fill="#e8f5e9" stroke="none" points="661,-20 661,-48.25 783.75,-48.25 783.75,-20 661,-20" />
+<polygon fill="none" stroke="#27ae60" points="661,-20 661,-48.25 783.75,-48.25 783.75,-20 661,-20" />
+<text xml:space="preserve" text-anchor="start" x="668" y="-30.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ select_supplier_via_ai</text>
+</g>
+
+<g id="edge2" class="edge">
+<title>SysSupplierReq-&gt;evt_select_supplier_via_ai</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M420.71,-34.12C480.18,-34.12 574.46,-34.12 641.79,-34.12" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="651.73,-34.13 641.73,-38.63 648.19,-34.23 641.73,-34.23 641.73,-34.13 641.73,-34.03 648.19,-34.03 641.73,-29.63 651.73,-34.13" />
+<text xml:space="preserve" text-anchor="middle" x="536.88" y="-38.88" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">early</text>
+</g>
+</g>
+</svg>

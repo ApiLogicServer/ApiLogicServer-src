@@ -3,16 +3,13 @@ title: basic_demo_ai_rules_supplier
 notes: gold source is docs
 source: docs/Sample_ai-rules
 do_process_code_block_titles: True
-version: 0.4, for readme 2/12/2026
+version: 1.0 from docsite, for readme, for readme 2/16/2026
 ---
-<style>
-  -typeset h1,
-  -content__button {
-    display: none;
-  }
-</style>
 
-!!! pied-piper ":bulb: TL;DR - AI Rules: governed judgment calls inside deterministic logic"
+
+&nbsp;
+**Key Takeways - TL;DR - AI Rules: governed judgment calls inside deterministic logic**
+&nbsp;
 
     Created by: › genai-logic create --project_name=demo_ai_rules_supplier --db_url=sqlite:///samples/dbs/basic_demo.sqlite
 
@@ -22,7 +19,14 @@ version: 0.4, for readme 2/12/2026
 
     Status: Reference implementation
 
-![example](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/copilot/AI-Rules-Audit.png?raw=true)
+<style>
+  -typeset h1,
+  -content__button {
+    display: none;
+  }
+</style>
+
+![example](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/sample-ai/copilot/AI-Rules-Audit.png)
 
 
 &nbsp;
@@ -31,25 +35,26 @@ version: 0.4, for readme 2/12/2026
 ##
 AI provides creativity and reasoning that businesses want... how do we provide that, *with deterministic goverance?*.  
 
-For example - a business can continue to operate even if a tanker has blocked the Suez canal by choosing an alternate supplier, as declared in the prompt shown below.
+For example - a business can continue to operate even if a tanker has blocked the Suez canal by choosing an alternate supplier, as declared in the prompt shown below (rule 6).
+
+This sample illustrates:
+
+1. Using **AI Rules** to pick the optimal supplier (calls AI at runtime, with auditing shown above)
+2. Other rules provide Governance - whether AI rules, or calling client (e.g., check credit)
 &nbsp;
 
 <br>
 
-<details markdown>
-<summary><strong>Say "hi" to your coding assistant</strong> — click to see important notes on models</summary>
-
-<br>Using a lighter or auto-selected model? Fine for exploring — for real logic you intend to keep, pick a frontier model (Claude Sonnet 5, GPT-5, etc.) if your plan allows it, and review the AI's output either way, the same as you would any other engineer's.
-
-*Why this matters: [AI-Enabled Projects](https://apilogicserver.github.io/Docs/Project-AI-Enabled/).*
-
-</details>
+**🤖 Bootstrap your AI assistant — paste into chat (Agent mode, Claude Sonnet 4.6 recommended):**
+```bash title='🤖 Bootstrap your AI assistant — paste into chat (Agent mode, Claude Sonnet 4.6 recommended)'
+Please load `.github/.copilot-instructions.md`
+```
 
 <br>
 
 ## Declare and Test
 
-If you have not already created the project, you can create it in Manager using Copilot:
+If you have not already created the sample project, you can create it in the Manager using Copilot:
 
 &emsp;*Create a system named basic_demo from samples/dbs/basic_demo.sqlite*.  
 
@@ -60,29 +65,44 @@ Then:
 **Paste this logic into Copilot chat (note: takes several minutes)**
 &nbsp;
 
-    On Placing Orders, Check Credit:
+    On Placing Orders, Requirement Check Credit:
 
     1. The Customer's balance is less than the credit limit
     2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
     3. The Order's amount_total is the sum of the Item amount
     4. The Item amount is the quantity * unit_price
     5. The Product count suppliers is the sum of the Product Suppliers
-    6. __Use AI__ to Set Item field unit_price by finding the optimal Product Supplier based on cost, lead time, and world conditions*
+    6. Use AI to Set Item field unit_price by finding the optimal Product Supplier based on cost, lead time, and world conditions
 
-    Use case: App Integration
+    Requirement: App Integration
 
-    1. Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
+    1. Publish the Order to Kafka topic 'order_shipping' if the date_shipped is not None
 
 Developers review this DSL before execution, providing a natural human-in-the-loop checkpoint.
 
 To test:
 
-1. Start the Server
-2. Order some Egyptian Cotton Sheets (use in the Admin App, or test MCP using Copilot - paste:<br> &emsp;*On Alice's first order, include 100 Egyptian Cotton Sheets*
-3. Verify the AI call - use the Admin App to view the audit trail (top of this page)
+1. Update config/ai_test_context.yaml to signify Suez Canal blocked
+2. Start the Server
+3. Order some Egyptian Cotton Sheets (use in the Admin App, or test MCP using Copilot - paste:<br> &emsp;*On Alice's first order, include 100 Egyptian Cotton Sheets*
+4. Verify the AI call - use the Admin App to view the audit trail (top of this page)
 
 &nbsp;
 
+
+## Logic Governance Architecture
+
+1. **Context Engineering** directs AI to generate Data Rules — not procedural code. Without it, AI pattern-matches to FrankenCode. With it, intent becomes declarations.
+
+2. **Data Rules** distill path-dependent logic into *path-independent rules on data*. See them below — `Rule.constraint`, `Rule.sum`. No missed paths. Every path inherits them automatically.
+
+3. The **Commit Listener** hooks into the ORM commit. Every transaction — API, agent, workflow — passes through one control point. Nothing bypasses it.
+
+4. The **Rule Engine** computes dependency order from the Data Rules at startup — deterministically. No pattern-matching, no subtle ordering bugs.
+
+![Logic Governance Architecture](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/architecture/logic-architecture.png)
+
+&nbsp;
 
 ## Background Concepts
 
@@ -106,9 +126,9 @@ Different kinds of logic naturally call for different tools, as in this unified 
 
 ### Logic Architecture
 
-**The Business Logic Agent** processes a *declarative NL requests:*
+GenAI-Logic provides support for *AI Rules:*
 
-- At declaration time (e.g., in Copilot):
+- At declaration time (e.g., in VSCode/Copilot):
 
     * **D1:** Accepts a unified declarative NL request
     * **D2.** Uses GenAI to create
@@ -121,7 +141,7 @@ Different kinds of logic naturally call for different tools, as in this unified 
     * **R2:** LLM calls are made to compute values (e.g., optimal supplier)
     * The rules engine ensures that R2 logic results are governed by R1 rules
 
-![Bus-Logic-Engine](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/Bus-Logic-Agent.png?raw=true)
+![Bus-Logic-Engine](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/mcp/Bus-Logic-Agent.png)
 
 **AI logic become far more compelling when probabilistic intent is paired with deterministic enforcement.**
 
@@ -138,75 +158,77 @@ In this example, we leverage AI by providing a list of suppliers and the selecti
 
 
 &nbsp;
-**AI Intelligent Selection From Options**
+**Pattern: AI Intelligent Selection From Options**
 &nbsp;
 
      Invoke AI providing a prompt (*find optimal <criteria>*) and a *list of candidates*.
      
      AI computes the selected object.
 
-     Here we select an optimal supplier from a list of suppliers.  Other examples:
+     Examples:
 
-     1. Shipping Carrier/Route Selection
-     2. Dynamic Pricing/Discount Strategy
-     3. Task/Resource Assignment
-     4. Inventory Sourcing/Replenishment
-
+     1. Choose Optimal Supplier (this example)
+     2. Shipping Carrier/Route Selection
+     3. Dynamic Pricing/Discount Strategy
+     4. Task/Resource Assignment
+     5. Inventory Sourcing/Replenishment
+&nbsp;
 <br>
 
-esign
+## Design
 
-Data Model
+### Data Model
 
-rve:
+Observe:
 
-roducts can have multiple suppliers (selection candidates)
-he Audit table `SysSupplierReq` - rows are created for each AI request
+1. Products can have multiple suppliers (selection candidates)
+2. The Audit table `SysSupplierReq` - rows are created for each AI request
 
-sic_demo_data_model](images/basic_demo/basic_demo_data_model.png)
+![basic_demo_data_model](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/basic_demo/basic_demo_data_model_ai.png)
 
-AI Code Generation via Context Engineering
+### AI Code Generation via Context Engineering
 
-as not *born* understanding how to use rules to solve this.  We provide extensive context engineering to automate this pattern.
+AI was not *born* understanding how to use rules to solve this.  We provide extensive context engineering to automate this pattern.
 
-an not only create the implementation, it can explain it:
+AI can not only create the implementation, it can explain it:
 
-I Supplier Selection Logic Flow
+## AI Supplier Selection Logic Flow
 
-itiating Event**: When an Item is inserted or its `product_id` changes
+**Initiating Event**: When an Item is inserted or its `product_id` changes
 
-ow** (see files under `logic/logic_discovery/place_order`):
+**Flow** (see files under `logic/logic_discovery/place_order`):
 
-*Early Row Event on OrderItem Fires** - see `./check_credit.py`
+1. **Early Row Event on Item Fires** - see `./check_credit.py`
 
-- Early row event: `set_item_unit_price_from_supplier()`
-- Checks if suppliers exist for the product (fallback to Product.unit_price if no suppliers)
-- Invokes wrapper
+    - Early row event: `set_item_unit_price_from_supplier()`
+    - Checks if suppliers exist for the product (fallback to Product.unit_price if no suppliers)
+    - Invokes wrapper
 
-*Wrapper Function** invokes request pattern on `SysSupplierReq`
+2. **Wrapper Function** invokes request pattern on `SysSupplierReq`
 
-- See `./ai_requests/supplier_selection.py` -- `get_supplier_selection_from_ai()` 
-- Hides complexity from rule, above, by using the *Request Pattern*:
+    - See `./ai_requests/supplier_selection.py` -- `get_supplier_selection_from_ai()` 
+    - Hides complexity from rule, above, by using the *Request Pattern*:
 
-    - Creates new `SysSupplierReq` row instance
-    - Sets parent context links (`product_id`, `item_id`)
-    - Inserts the request row: `SysSupplierReq` - runs its logic...
-*AI Event Triggers** → Insert fires ***early_row_event:*** `select_supplier_via_ai()`
+        - Creates new `SysSupplierReq` row instance
+        - Sets parent context links (`product_id`, `item_id`)
+        - Inserts the request row: `SysSupplierReq` - runs its logic...
+   
+3. Insert →  ***early_row_event:*** `select_supplier_via_ai()` - *Request Pattern* implementation
 
-- *Request Pattern* implementation
-- Get world conditions from `config/ai_test_context.yaml` (e.g., "Suez Canal blocked")
-- Sends supplier data (cost, lead time, region) + world conditions to OpenAI
-- AI analyzes and selects optimal supplier
-- Populates `SysSupplierReq` result fields: `chosen_supplier_id`, `chosen_unit_price`, `reason`, `request`
+    - See same file: `./ai_requests/supplier_selection.py`
+    - Get world conditions from `config/ai_test_context.yaml` (e.g., "Suez Canal blocked")
+    - Sends supplier data (cost, lead time, region) + world conditions to OpenAI
+    - AI analyzes and selects optimal supplier
+    - Populates `SysSupplierReq` result fields: `chosen_supplier_id`, `chosen_unit_price`, `reason`, `request`
 
-*Wrapper Returns** → Returns populated `SysSupplierReq` row with AI results
+4. **Wrapper Returns** → Returns populated `SysSupplierReq` row with AI results
 
-- Caller extracts: `supplier_req.chosen_unit_price`
-- Item's `unit_price` is set from this AI-chosen value
+    - Caller extracts: `supplier_req.chosen_unit_price`
+    - Item's `unit_price` is set from this AI-chosen value
 
-*Standard Rule Chaining provides Governance**: Formula rules automatically recalculate `Item.amount` → `Order.amount_total` → `Customer.balance`, triggering credit limit constraint check
+5. **Standard Rule Chaining provides Governance**: Formula rules automatically recalculate `Item.amount` → `Order.amount_total` → `Customer.balance`, triggering credit limit constraint check
 
-y Pattern**: 
+**Key Pattern**: 
 
-he ***request pattern*** is commonly used to insert a row, where logic (such as `early_row_event`) provides integration services (e.g, invoke AI, messaging, email, etc), with automatic request auditing 
-he wrapper hides Request Pattern complexity - caller just gets back a populated row object with AI results (`chosen_supplier_id`, `chosen_unit_price`, `reason`) plus full audit trail.
+1. The ***request pattern*** is commonly used to insert a row, where logic (such as `early_row_event`) provides integration services (e.g, invoke AI, messaging, email, etc), with automatic request auditing 
+2. The wrapper hides Request Pattern complexity - caller just gets back a populated row object with AI results (`chosen_supplier_id`, `chosen_unit_price`, `reason`) plus full audit trail.

@@ -1,40 +1,42 @@
 ---
-use: welcome for basic_demo - please start the tour
-instuctions: copy api_logic_server_cli/prototypes/base/.github/.copilot-instructions.md, then paste as the Welcome section 
+use: Standard welcome for GenAI-Logic Projects
+note: Edit this for a project-specific Copilot welcome
 ---
 
-## Welcome to the `basic_demo` project
+## Welcome to Your GenAI-Logic Project
 
-This is a complete, working microservice auto-generated from a database schema - **uncustomized**, so you can see what to expect when you create projects from your own databases.
+This is a complete, working microservice auto-generated from a database schema.
 
-Created from database schema introspection:
+**What's been created:**
 - **Admin Web Application** - Live at `http://localhost:5656`
-- **REST API Endpoints** - All database tables exposed at MCP discoverable `/api/*`
+- **REST API Endpoints** - All database tables exposed at `/api/*`
 - **Database Models** - Complete SQLAlchemy ORM in `database/models.py`
-- **Authentication System** - JWT-based auth framework
-- **Business Logic Engine** - Declarative rules system
+- **Authentication System** - JWT-based auth framework ready to configure
+- **Business Logic Engine** - Declarative rules system in `logic/declare_logic.py`
 
 ---
 
-**Ready to explore?** Just say me "guide me through" to begin the interactive tutorial
-
-* Brief exploration of what's already created
-* Customizing logic, security, and the API
+**To start your application:** ***Press F5***
 
 ---
 
-**Or, self-demo?** Open `readme_ai_mcp.md` to explore logic, ai and mcp.
+**What can I help you with?**
 
-<!-- 
-⚠️ AI INSTRUCTION: When user says "guide me" or similar tour activation phrase, you MUST:
-1. Read tutor.md COMPLETELY before responding
-2. Follow tutor.md choreography EXACTLY as written
-3. Act as TOUR GUIDE directing the experience (not passive assistant)
-4. Create manage_todo_list to track tour sections
-5. Do NOT freelance, improvise, or skip sections
+Ask me to ***'show me what you can help me with'*** for a complete list of services, or jump right in:
 
-This is MANDATORY - the tutor.md represents weeks of refined choreography.
-Deviations break the carefully engineered learning experience.
--->
+1. **Add business logic** - Translate requirements into declarative rules
+2. **Customize the API** - Add custom endpoints for your specific needs
+3. **Create custom UIs** - Build React apps with `genai-logic genai-add-app --vibe`
+4. **Add security** - Bootstrap with `genai-logic add-auth`, then declare roles/grants/filters in `security/declare_security.py`
+5. **Test your logic** - Create Behave tests with requirements traceability
+6. **Configure Admin UI** - Customize the auto-generated admin interface
+7. **Query via MCP** - Process natural language queries through Model Context Protocol
+8. **Create B2B APIs** - Complex integration endpoints with partner systems
+9. **Add events** - Integrate with Kafka, webhooks, or other event systems
+10. **Customize models** - Add tables, attributes, or derived fields
+11. **Executable Requirements** - Name a requirements set (a path, or a folder already in `docs/requirements/`), say "implement reqs <name>" — I copy it in if needed —, and I execute the spec end-to-end with an ad-libs audit report
+12. **Governance Report** - Say "vital signs" or "health check" for rule adoption, dependency tracking, and docstring hygiene
+13. **Logic Diagram** - Say "create logic diagram" for an SVG showing the rule chain
+14. **Queries and Dashboards** - Ask for a query, report, or a dashboard/chart
 
----
+Ready to customize your project?

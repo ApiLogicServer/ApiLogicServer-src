@@ -101,6 +101,7 @@ Rule.after_flush_row_event(
 )
 
 def send_email_if_not_opted_out(row: models.SysEmail, old_row, logic_row):
+    """SysEmail event: on insert, sends the email unless the customer has opted out, and logs either way."""
     if not logic_row.is_inserted():
         return
     if row.customer.email_opt_out:
@@ -119,6 +120,7 @@ Rule.early_row_event(
 )
 
 def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row):
+    """SysSupplierReq event: on insert, asks the AI service for the best supplier and records the choice and reason."""
     if not logic_row.is_inserted():
         return
     # call AI, populate response fields
@@ -161,12 +163,14 @@ def get_unit_price_from_ai(row, old_row, logic_row, fallback='first:id,asc') -> 
     """Wrapper: hides Request Pattern complexity, returns computed value."""
     if row.product.count_suppliers == 0:
         return row.product.unit_price  # deterministic fallback
-    req = models.SysSupplierReq(product_id=row.product_id, item_id=row.id)
+    req = models.SysSupplierReq(product_id=row.product_id, item=row)   # by object: row.id is None until flush
     logic_row.new_logic_row(req)    # triggers early_row_event synchronously
     return req.chosen_unit_price    # response field now populated
 
 Rule.formula(derive=models.Item.unit_price, calling=get_unit_price_from_ai)
 ```
+
+Link the request to the triggering row **by object** (`item=row`), never `item_id=row.id`: for a new row the id does not exist until the database assigns it at flush, so an id-based link is silently saved as NULL.
 
 `logic_row.new_logic_row()` runs the nested insert synchronously — early_row_event fires, populates `chosen_unit_price`, then control returns to the wrapper.
 
