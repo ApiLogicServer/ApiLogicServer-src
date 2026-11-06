@@ -20,6 +20,7 @@ Some samples are grouped by what they teach. Each group folder has its own `read
 | `native_ai_a_b_tests/` | `basic_demo_genai_logic`, `bd_claude_native_ai` | The same requirement built with GenAI-Logic and by native AI |
 | `modernization/` | `erpnext_credit_modernized`, `demo_eai_legacy`, `demo_eai_modernized`, `demo_eai_native` | Recovering requirements from existing code and rebuilding as rules; includes the native-AI comparison |
 | `failure_to_post/` | `students_courses`, `students_courses_sweep` | Logic about a row that never arrives, and resolving it with a sweep |
+| `reqmts_from_interview/` | `basic_demo_rfi`, `library_rfi` | Requirements from interview (RFI): supply incomplete requirements and AI interviews you to complete them |
 
 The `basic_demo_*` tutorial family and the other samples stay at the top level.
 

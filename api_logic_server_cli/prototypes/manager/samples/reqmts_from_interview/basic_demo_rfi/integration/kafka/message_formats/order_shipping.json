@@ -1,0 +1,9 @@
+{
+  "order_id": 1,
+  "order_date": "2026-11-05",
+  "customer_name": "Alice",
+  "total": 100.00,
+  "items": [
+    { "quantity": 2, "product_name": "Widget", "unit_price": 25.00, "discount_amount": 0.00, "amount": 50.00 }
+  ]
+}
