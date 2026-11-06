@@ -55,7 +55,7 @@ else:
     port ="1521"
     service_name ="ORCL"  # might see... Not a socket?  Not registered as listener?
     conn_string = f'oracle+oracledb://{username}:{password}@{host}:{port}/?service_name={service_name}'
-    print(f'\n Attempting connect with:\n{conn_string}')  
+    print(f'\n Attempting connect with:\n{host}:{port}/{service_name}')  
     print(f'oracle+oracledb://hr:tiger@localhost:1521/?service_name=ORCL  <-- sample\n')
     # eg, oracle+oracledb://hr:tiger@localhost:1521/?service_name=ORCL
 

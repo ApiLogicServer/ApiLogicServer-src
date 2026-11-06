@@ -9,6 +9,7 @@ Feature: B2B Order Integration
     And map Items.QuantityOrdered to Item.quantity
 """
 import logging
+from api.system.api_utils import safe_log
 
 import safrs
 from flask import request
@@ -51,7 +52,7 @@ class OrderB2B(safrs.JABase):
         try:
             mapper_def = OrderB2BMapper()
             request_dict_data = request.json["meta"]["args"]["data"]
-            app_logger.info(f"OrderB2B: Processing order for account: {request_dict_data.get('Account')}")
+            app_logger.info(f"OrderB2B: Processing order for account: {safe_log(request_dict_data.get('Account'))}")
 
             sql_alchemy_row = mapper_def.dict_to_row(row_dict=request_dict_data, session=session)
 

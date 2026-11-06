@@ -81,7 +81,7 @@ def __proper_salary__(self):  # type: ignore [no-redef]
 @__proper_salary__.setter
 def _proper_salary(self, value):  # type: ignore [no-redef]
     self._proper_salary = value
-    print(f'_proper_salary={self._proper_salary}')
+    print('_proper_salary set')
     pass
 
 models.Employee.ProperSalary = __proper_salary__

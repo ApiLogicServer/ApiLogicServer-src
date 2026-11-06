@@ -87,7 +87,7 @@ def register_consume_debug(app, topic: str, simulate, port=5656, sample_file: st
         try:
             payload = Path(file_path).read_text()
         except OSError as e:
-            return jsonify({"success": False, "topic": topic, "error": str(e)}), 400
+            return jsonify({"success": False, "topic": topic, "error": "cannot read the file"}), 400
 
         why_not = "" if mode == "simulated" else kafka_unavailable_reason()
         if mode == "live" and why_not:
@@ -125,7 +125,7 @@ def register_queue_reset(app, name: str, topics: list, port=5656) -> None:
             return jsonify({"success": True, "mode": "live", "broker": _broker(), "purged": _purge(topics)})
         except Exception as e:
             app_logger.error(f"consume_debug reset {name}: {e}", exc_info=True)
-            return jsonify({"success": False, "mode": "live", "error": str(e)}), 500
+            return jsonify({"success": False, "mode": "live", "error": "purge failed - see logs/als.log"}), 500
 
     app_logger.info(f"consume_debug reset enabled for topics {topics} (destructive, no authentication). Copy/paste:\n"
                     f"  curl -X POST \"http://localhost:{port}/consume_debug/{name}/reset\"")
@@ -163,7 +163,7 @@ def _simulate(topic: str, simulate, payload: str, file_path: str, note: str = ""
         return jsonify({**base, "success": True, **simulate(payload, safrs.DB.session)})
     except Exception as e:
         app_logger.error(f"consume_debug {topic}: {e}", exc_info=True)
-        return jsonify({**base, "success": False, "error": str(e)}), 500
+        return jsonify({**base, "success": False, "error": "simulation failed - see logs/als.log"}), 500
 
 
 def _purge(topics: list) -> dict:

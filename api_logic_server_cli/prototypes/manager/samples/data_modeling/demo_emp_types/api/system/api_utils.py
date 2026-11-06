@@ -63,6 +63,7 @@ def server_log(request, jsonify):
     * test/api_logic_server_behave/logs
     """
     import os
+    import re
     import datetime
     from pathlib import Path
     import logging
@@ -87,7 +88,7 @@ def server_log(request, jsonify):
 
         # Determine log path/file name; create log_dir if necessary
         now = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-        log_name = f'{str(name).replace(" ", "_")}'  # {now}'
+        log_name = re.sub(r'[^\w.-]', '_', str(name)).lstrip('.')  # a file name only: no path separators (CWE-22)
         if len(log_name) >= 26:
             log_name = log_name[0:25]
 

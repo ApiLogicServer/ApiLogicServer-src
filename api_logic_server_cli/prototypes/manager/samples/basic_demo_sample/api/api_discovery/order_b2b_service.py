@@ -1,4 +1,5 @@
 from flask import request
+from api.system.api_utils import safe_log
 from safrs import jsonapi_rpc
 import safrs
 from integration.row_dict_maps.OrderB2BMapper import OrderB2BMapper
@@ -36,7 +37,7 @@ class OrderB2BEndPoint(safrs.JABase):
             mapper_def = OrderB2BMapper()
             request_dict_data = request.json["meta"]["args"]["data"]
             
-            app_logger.info(f"OrderB2B: Processing order for account: {request_dict_data.get('Account')}")
+            app_logger.info(f"OrderB2B: Processing order for account: {safe_log(request_dict_data.get('Account'))}")
             
             sql_alchemy_row = mapper_def.dict_to_row(row_dict=request_dict_data, session=session)
             

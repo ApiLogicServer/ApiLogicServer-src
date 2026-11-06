@@ -264,7 +264,8 @@ def send_spa(path=None):
         directory = 'ui/safrs-react-admin'
     if not did_send_spa:
         did_send_spa = True
-        app_logger.debug(f'send_spa - directory = {directory}, path= {path}')
+        safe_path = str(path).replace('\r', '').replace('\n', ' ')
+        app_logger.debug(f'send_spa - directory = {directory}, path= {safe_path}')
     return send_from_directory(directory, path)
 
 

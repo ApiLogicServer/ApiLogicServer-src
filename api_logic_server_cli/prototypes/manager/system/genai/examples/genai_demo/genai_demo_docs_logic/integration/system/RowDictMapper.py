@@ -240,7 +240,7 @@ class RowDictMapper():
         """
 
         logger.debug( f"RowDictMapper.dict_to_row(): {str(self)}" )
-        logger.debug( f"  ..row_dict: {row_dict}" )
+        logger.debug( "  ..row_dict: %s", str(row_dict).replace("\r", "").replace("\n", " ") )
 
         custom_endpoint = self  # TODO just use self
         if current_endpoint is not None:

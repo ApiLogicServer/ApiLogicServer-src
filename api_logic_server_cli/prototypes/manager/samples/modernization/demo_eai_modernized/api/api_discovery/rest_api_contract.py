@@ -16,6 +16,7 @@ rules give the 400 for a rejected transaction.  This request guard adds the two 
 derived columns are silently dropped, and unknown column names are rejected with 400.
 """
 import logging
+from api.system.api_utils import safe_log
 from flask import request, jsonify
 from sqlalchemy import inspect as sa_inspect
 
@@ -55,6 +56,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                                         "code": "400"}]}), 400
         for name in DERIVED.get(data["type"], set()) | {"id"}:
             if name in attributes:
-                app_logger.info(f"rest_api_contract: ignoring client value for derived column {data['type']}.{name}")
+                app_logger.info(f"rest_api_contract: ignoring client value for derived column {safe_log(data['type'])}.{safe_log(name)}")
                 del attributes[name]
         return None
