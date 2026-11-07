@@ -139,7 +139,8 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
             log.info(f"    Cleaning manager at: {to_dir}\n\n")
 
         # create the manager system files and shell scripts (samples created below).
-        copied_path = shutil.copytree(src=from_dir_proto_mgr, dst=to_dir, dirs_exist_ok=True, )  # issue: not permitted
+        # samples ship as samples.zip in the built package (Windows max path) - expanded here
+        copied_path = create_utils.copy_manager_prototype(from_dir=from_dir_proto_mgr, to_dir=to_dir)
         copied_env = shutil.copy(src=from_dir_proto_mgr.joinpath('settings.txt'), dst=to_dir.joinpath('.env'))
         web_genai_docker = to_dir.joinpath('webgenai/docker-compose.yml')
         if web_genai_docker.exists():

@@ -469,7 +469,7 @@ class GenAI(object):
         to_dir = Path(os.getcwd())
         to_dir_check = Path(to_dir).joinpath('system')
         if not to_dir_check.exists():
-            copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
+            copied_path = utils.copy_manager_prototype(from_dir=from_dir, to_dir=to_dir)
 
     def get_logic_from_prompt(self) -> list[str]:
         """ Get logic from ChatGPT prompt (code after "Enforce")

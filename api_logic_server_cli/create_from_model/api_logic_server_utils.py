@@ -605,6 +605,49 @@ def run_command(cmd: str, env=None, msg: str = "", new_line: bool=False,
     return result.replace('\\n','\n')
 
 
+SAMPLES_ZIP = 'samples.zip'
+""" The built package ships prototypes/manager/samples as one zip (see setup.py), because
+the unzipped paths (up to ~170 chars) plus the install prefix
+(<venv>\\Lib\\site-packages\\api_logic_server_cli\\prototypes\\manager\\) exceed Windows MAX_PATH (260)
+for users without LongPathsEnabled. A source checkout (pip -e) has the plain samples/ folder, no zip. """
+
+
+def extract_samples_zip(zip_path: Path, to_dir: Path):
+    """ Expand samples.zip (entries are 'samples/...') into to_dir, restoring the exec bit (run.sh etc.).
+
+    Overlay semantics, same as the shutil.copytree(dirs_exist_ok=True) it replaces:
+    existing files are overwritten, extra files are left alone.
+    """
+    import zipfile
+    try:
+        with zipfile.ZipFile(zip_path) as zf:
+            for info in zf.infolist():
+                target = zf.extract(info, to_dir)
+                mode = info.external_attr >> 16
+                if mode & 0o111 and not info.is_dir() and os.name != 'nt':
+                    os.chmod(target, mode & 0o777)
+    except (OSError, zipfile.BadZipFile) as e:
+        hint = ""
+        if os.name == 'nt':
+            hint = ("\n  Windows max path (260) may be exceeded - use a shorter folder for the Manager, or enable long paths:"
+                    "\n  reg add HKLM\\SYSTEM\\CurrentControlSet\\Control\\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1 /f  (admin)")
+        raise OSError(f"Could not extract {zip_path} into {to_dir}: {e}{hint}") from e
+
+
+def copy_manager_prototype(from_dir: Path, to_dir: Path):
+    """ Deep copy prototypes/manager -> to_dir (overlay), expanding samples.zip into to_dir/samples.
+
+    Used wherever the manager prototype is copied (manager.py, genai.py).
+    A source checkout has samples/ and no zip: plain copy, as before.
+    """
+    shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True,
+                    ignore=shutil.ignore_patterns(SAMPLES_ZIP))
+    samples_zip = Path(from_dir) / SAMPLES_ZIP
+    if samples_zip.exists():
+        extract_samples_zip(zip_path=samples_zip, to_dir=Path(to_dir))
+    return to_dir
+
+
 def recursive_overwrite(src, dest, ignore=None):
     """
     copyTree, with overwrite
