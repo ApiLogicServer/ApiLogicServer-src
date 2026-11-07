@@ -51,13 +51,13 @@ if __name__ == "__main__":
     if log_file_name is None:
         sys.stdout.write(f'\n{__file__} completed at {date_time} (no log)')
     else:
-        with open(log_file_name, 'a') as log_file:
+        with open(log_file_name, 'a', encoding='utf-8') as log_file:
             log_file.write(f'')
             log_file.write(f'&nbsp;&nbsp;')
             log_file.write(f'')
             log_file.write(f'\n{__file__} completed at {date_time}')
             log_file.write(f'\nBehave run time: {run_seconds:.3f} s')
-        with open(log_file_name, 'r') as log_file:
+        with open(log_file_name, 'r', encoding='utf-8') as log_file:
             """ force a fail if 'Assertion Failed' in log file
             evidently behave eats the exceptions, so we need to check the log file
             """

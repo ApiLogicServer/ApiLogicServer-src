@@ -145,7 +145,7 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
     
     test_context = {}
     if context_file.exists():
-        with open(str(context_file), 'r') as f:
+        with open(str(context_file), 'r', encoding='utf-8') as f:
             test_context = yaml.safe_load(f) or {}
     
     world_conditions = test_context.get('world_conditions', 'normal conditions')

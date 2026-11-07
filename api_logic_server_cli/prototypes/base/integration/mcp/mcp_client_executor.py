@@ -75,7 +75,7 @@ def discover_mcp_servers() -> str:
 
     discovery_file_path = os.path.join(os.path.dirname(__file__), "../../integration/mcp/mcp_server_discovery.json")
     try:
-        with open(discovery_file_path, "r") as discovery_file:
+        with open(discovery_file_path, "r", encoding='utf-8') as discovery_file:
             discovery_data = json.load(discovery_file)
             log.info(f"\n1. Discovered MCP servers from config file: {discovery_file_path}:" + json.dumps(discovery_data, indent=4))
     except FileNotFoundError:
@@ -154,7 +154,7 @@ def query_llm_with_nl(learnings_and_schema: str, nl_query: str):
         if 'email' in nl_query:
             tool_context_file_path = os.path.join(os.path.dirname(__file__), "../../integration/mcp/examples/mcp_tool_context_response.json")
         try:    
-            with open(tool_context_file_path, "r") as tool_context_file:
+            with open(tool_context_file_path, "r", encoding='utf-8') as tool_context_file:
                 tool_context_str = tool_context_file.read()
                 log.info(f"\n\n2c. Tool context from file {tool_context_file_path}:\n" + tool_context_str)
         except FileNotFoundError:
@@ -534,7 +534,7 @@ if __name__ == "__main__":  # F5 to start API Logic Server
     logging_config = f'{project_path}/config/logging.yml'
     if os.getenv('APILOGICPROJECT_LOGGING_CONFIG'):
         logging_config = project_path.joinpath(os.getenv("APILOGICPROJECT_LOGGING_CONFIG"))
-    with open(logging_config,'rt') as f:  # see also logic/declare_logic.py
+    with open(logging_config,'rt', encoding='utf-8') as f:  # see also logic/declare_logic.py
             config=yaml.safe_load(f.read())
             f.close()
     logging.config.dictConfig(config)  # log levels: notset 0, debug 10, info 20, warn 30, error 40, critical 50

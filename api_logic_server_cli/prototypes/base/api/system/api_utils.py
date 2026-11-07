@@ -109,7 +109,7 @@ def server_log(request, jsonify):
 
         # Create file handler for logging to a file (log all five levels)
         # print(f'create file handler for logging: {log_file}')
-        logger.file_handler = logging.FileHandler(log_file)
+        logger.file_handler = logging.FileHandler(log_file, encoding='utf-8')
         logger.file_handler.setLevel(logging.DEBUG)
         logger.file_handler.setFormatter(formatter)
         logger.addHandler(logger.file_handler)

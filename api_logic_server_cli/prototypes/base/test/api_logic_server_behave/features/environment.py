@@ -41,4 +41,4 @@ def after_scenario(context, scenario):
         return
     _times[f'{scenario.feature.name} / {scenario.name}'] = round(time.perf_counter() - started, 3)
     LOGS.mkdir(parents=True, exist_ok=True)
-    TIMES_FILE.write_text(json.dumps(_times, indent=2))
+    TIMES_FILE.write_text(json.dumps(_times, indent=2), encoding='utf-8')

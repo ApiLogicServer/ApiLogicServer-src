@@ -235,7 +235,7 @@ def show_logic(scenario: str, logic_logs_dir: str):
         wiki_data.append("_No logic log for this scenario: the test does not open one, so no rules are shown "
                          "for it (see \"How to add more tests\")._")
         return
-    with open(logic_file_name_path) as logic:
+    with open(logic_file_name_path, encoding='utf-8', errors='replace') as logic:
         logic_lines = logic.readlines()
     sections = log_sections(logic_lines)
     if not sections:
@@ -282,7 +282,7 @@ def get_docStrings(steps_dir: str):
     for each_steps_dir_file in steps_dir_files:
         each_steps_dir_file_path = Path(steps_dir).joinpath(each_steps_dir_file)
         if each_steps_dir_file_path.is_file() and each_steps_dir_file_path.suffix == ".py":
-            with open(each_steps_dir_file_path) as f:
+            with open(each_steps_dir_file_path, encoding='utf-8') as f:
                 step_code = f.readlines()
             for index, each_step_code_line in enumerate(step_code):
                 if each_step_code_line.startswith('@when'):
@@ -325,7 +325,7 @@ def build_test_evidence(behave_log: str, scenario_logs: str) -> list:
     wiki_data = []
     get_docStrings(steps_dir="features/steps")
 
-    with open(behave_log) as f:
+    with open(behave_log, encoding='utf-8', errors='replace') as f:
         contents = f.read().splitlines()
 
     results = scenario_results(behave_log) or {}
@@ -409,7 +409,7 @@ def build_test_evidence(behave_log: str, scenario_logs: str) -> list:
 
 def _read(path: Path) -> str:
     try:
-        return path.read_text(errors="ignore")
+        return path.read_text(encoding="utf-8", errors="ignore")
     except Exception:
         return ""
 
@@ -1459,7 +1459,7 @@ def sec_data_model(root: Path, rules: list, report_dir: Path) -> list:
         dot_text = build_dot(tables, refs, derived, groups, types)
         dot_path = report_dir / "db_diagram.generated.dot"
         svg_path = report_dir / "db_diagram.generated.svg"
-        dot_path.write_text(dot_text)
+        dot_path.write_text(dot_text, encoding='utf-8')
         if shutil.which("dot"):
             result = subprocess.run(["dot", "-Tsvg", str(dot_path), "-o", str(svg_path)],
                                     capture_output=True, text=True)
@@ -2450,7 +2450,7 @@ def load_template(template_path: str) -> None:
     older = [path.with_name("Behave Logic Report Template.md"), path.with_name("Behave Logic Report Intro.md")]
     chosen = path if path.is_file() else next((p for p in older if p.is_file()), None)
     if chosen:
-        src = chosen.read_text()
+        src = chosen.read_text(encoding='utf-8')
         if re.search(r'^## \S', src, re.M) or re.search(r'^# (?!Behave Logic Report|Requirements Traceability Report)\S', src, re.M):
             mine, mine_titles = parse_template(src)
             result.update(mine)
@@ -2789,7 +2789,7 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str, proj
         out.extend(section_lines)
         out.append("")
 
-    wiki_path.write_text("\n".join(add_spacing(out)))
+    wiki_path.write_text("\n".join(add_spacing(out)), encoding='utf-8')
     print(f'Wiki Output: {wiki_path}\n\n')
 
 

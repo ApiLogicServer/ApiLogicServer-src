@@ -25,7 +25,7 @@ from pathlib import Path
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("response2code")
 
-source_code_preamble = open(Path(__file__).parent / 'test_data_preamble.py').read()
+source_code_preamble = open(Path(__file__).parent / 'test_data_preamble.py', encoding='utf-8').read()
 
 add_instance_code_template = """
     try:
@@ -95,14 +95,14 @@ def write_test_data(test_data):
         test_data_code += add_instance_code_template.format(code=fixed_code, hash=hash(fixed_code))
 
     test_data_code += f"print('\\n'.join(data_log))\n"
-    test_data_code += "with open(project_dir / 'database/test_data/test_data_code_log.txt', 'w') as log_file:\n"
+    test_data_code += "with open(project_dir / 'database/test_data/test_data_code_log.txt', 'w', encoding='utf-8') as log_file:\n"
     test_data_code += "    log_file.write('\\n'.join(data_log))\n"
     test_data_code += "print('\\n'.join(data_log))\n"
 
 
     test_data_file = 'database/test_data/test_data_code.py'
     
-    with open(test_data_file, 'w') as f:
+    with open(test_data_file, 'w', encoding='utf-8') as f:
         f.write(test_data_code)
     
     log.info(f"Successfully wrote test data code to {test_data_file}")
@@ -124,7 +124,7 @@ def get_test_data(response):
     
     log.info(f"Loading GPT response from {response}")
     
-    with open(response) as f:
+    with open(response, encoding='utf-8') as f:
         test_data = json.load(f).get("test_data_rows", [])
 
     return test_data

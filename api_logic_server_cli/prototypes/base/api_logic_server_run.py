@@ -86,7 +86,8 @@ _log_file.write_text(
     f"    Version : {api_logic_server__version}\n"
     f"    Python  : {sys.executable}\n"
     f"    Dir     : {project_dir}\n"
-    f"{'=' * 50}\n\n"
+    f"{'=' * 50}\n\n",
+    encoding='utf-8'
 )
 
 import api.system.api_utils as api_utils
