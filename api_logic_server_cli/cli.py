@@ -321,7 +321,7 @@ def login_exec(user: str, password: str):
         user (str): _description_
         password (str): _description_
     """
-    log.info(f"\nLogging in as {user}, {password}")
+    log.info(f"\nLogging in as {user}")  # never log the password (CWE-312)
     token = login_and_get_token(user=user, password=password)
     api_logic_server_info_file_dict["last_login_token"] = token
     with open(api_logic_server_info_file_name, 'w') as api_logic_server_info_file_file:
