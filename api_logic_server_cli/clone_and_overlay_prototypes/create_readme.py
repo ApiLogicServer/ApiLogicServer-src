@@ -116,6 +116,9 @@ def create_readme(project: Project, api_logic_server_dir_str: str):
         proto_dir = Path(api_logic_server_dir_str).joinpath('prototypes/basic_demo')
         if proto_dir.exists():
             log.debug(f".. ..Overlaying basic_demo prototype for {project.project_name_last_node}")
-            shutil.copytree(str(proto_dir), project.project_directory, dirs_exist_ok=True)
+            # The prototype has README.md; on case-insensitive filesystems (macOS, Windows) it
+            # overwrites the demo-specific readme.md copied above (basic_demo_rfi got basic_demo's readme).
+            ignore = shutil.ignore_patterns('README.md') if demo_created else None
+            shutil.copytree(str(proto_dir), project.project_directory, dirs_exist_ok=True, ignore=ignore)
         else:
             log.warning(f".. ..basic_demo prototype not found at {proto_dir}")
