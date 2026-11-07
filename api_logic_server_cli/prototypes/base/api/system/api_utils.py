@@ -82,6 +82,7 @@ def server_log(request, jsonify):
                 # print(f'do not delete stderr')
             else:
                 logger.removeHandler(each_handler)
+                each_handler.close()  # release the file: Windows cannot os.remove() an open file (WinError 32)
         fmt = '%(asctime)s | %(levelname)8s | %(filename)s:%(lineno)d | %(message)s'
         formatter = logging.Formatter(fmt)
         formatter = logging.Formatter('%(message)s - %(asctime)s - %(name)s - %(levelname)s')
