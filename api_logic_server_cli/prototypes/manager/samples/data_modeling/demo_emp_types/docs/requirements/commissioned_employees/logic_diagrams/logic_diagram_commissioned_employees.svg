@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="447pt" height="256pt" viewBox="18.80 18.80 447.40 256.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 265.3)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-265.3 456.55,-265.3 456.55,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="8" y="-221.15" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_emp_types  [commissioned_employees]</text>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="33.5,-5.5 33.5,-38.5 141.5,-38.5 141.5,-5.5 33.5,-5.5" />
+<text xml:space="preserve" text-anchor="start" x="42.5" y="-20.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ Order inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="34.5,-6.5 34.5,-37.5 140.5,-37.5 140.5,-6.5 34.5,-6.5" />
+</g>
+
+<g id="node3" class="node">
+<title>Order</title>
+<polygon fill="#4a6fa5" stroke="none" points="288.5,-23 288.5,-39 350.5,-39 350.5,-23 288.5,-23" />
+<text xml:space="preserve" text-anchor="start" x="301.5" y="-27.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Order </text>
+<polygon fill="#b8cce8" stroke="none" points="288.5,-5 288.5,-23 295.5,-23 295.5,-5 288.5,-5" />
+<text xml:space="preserve" text-anchor="start" x="290.5" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="295.5,-5 295.5,-23 343.5,-23 343.5,-5 295.5,-5" />
+<text xml:space="preserve" text-anchor="start" x="298.5" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> amount </text>
+<polygon fill="#b8cce8" stroke="none" points="343.5,-5 343.5,-23 350.5,-23 350.5,-5 343.5,-5" />
+<text xml:space="preserve" text-anchor="start" x="345.5" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="287.5,-4 287.5,-40 351.5,-40 351.5,-4 287.5,-4" />
+</g>
+
+<g id="edge2" class="edge">
+<title>TRIGGER-&gt;Order</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M149.12,-22C188.53,-22 227.93,-22 267.34,-22" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="277.13,-22 267.13,-26.5 274.57,-22.5 267.13,-22.5 267.13,-22 267.13,-21.5 274.57,-21.5 267.13,-17.5 277.13,-22" />
+</g>
+
+<g id="node2" class="node">
+<title>Employee</title>
+<polygon fill="#4a6fa5" stroke="none" points="281.75,-192 281.75,-208 391.25,-208 391.25,-192 281.75,-192" />
+<text xml:space="preserve" text-anchor="start" x="307.62" y="-196.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Employee </text>
+<polygon fill="#b8cce8" stroke="none" points="281.75,-174 281.75,-192 288.75,-192 288.75,-174 281.75,-174" />
+<text xml:space="preserve" text-anchor="start" x="283.75" y="-180" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="288.75,-174 288.75,-192 384.25,-192 384.25,-174 288.75,-174" />
+<text xml:space="preserve" text-anchor="start" x="291.75" y="-180" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> commission_total </text>
+<polygon fill="#b8cce8" stroke="none" points="384.25,-174 384.25,-192 391.25,-192 391.25,-174 384.25,-174" />
+<text xml:space="preserve" text-anchor="start" x="386.25" y="-180" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#c0392b" stroke="none" points="281.75,-160.25 281.75,-174 288.75,-174 288.75,-160.25 281.75,-160.25" />
+<polygon fill="#e6f3ea" stroke="none" points="288.75,-160.25 288.75,-174 384.25,-174 384.25,-160.25 288.75,-160.25" />
+<text xml:space="preserve" text-anchor="start" x="290.75" y="-164.45" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00" fill="#7a5c00"> type: commissioned </text>
+<polygon fill="#c0392b" stroke="none" points="384.25,-160.25 384.25,-174 391.25,-174 391.25,-160.25 384.25,-160.25" />
+<polygon fill="#b8cce8" stroke="none" points="281.75,-142.25 281.75,-160.25 288.75,-160.25 288.75,-142.25 281.75,-142.25" />
+<text xml:space="preserve" text-anchor="start" x="283.75" y="-148.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#e6f3ea" stroke="none" points="288.75,-142.25 288.75,-160.25 384.25,-160.25 384.25,-142.25 288.75,-142.25" />
+<text xml:space="preserve" text-anchor="start" x="291.75" y="-148.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> order_count </text>
+<polygon fill="#b8cce8" stroke="none" points="384.25,-142.25 384.25,-160.25 391.25,-160.25 391.25,-142.25 384.25,-142.25" />
+<text xml:space="preserve" text-anchor="start" x="386.25" y="-148.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#c0392b" stroke-width="3" points="280.25,-140.75 280.25,-209.5 392.75,-209.5 392.75,-140.75 280.25,-140.75" />
+</g>
+
+<g id="edge1" class="edge">
+<title>Order-&gt;Employee</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M269.68,-29.81C221.72,-38.7 159.59,-57.77 182.5,-95.25 201.85,-126.9 238.37,-146.37 270.99,-158.05" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="269.58,-29.83 280.21,-32.54 274.74,-28.93 279.2,-28.14 279.2,-28.14 279.2,-28.14 274.74,-28.93 278.66,-23.67 269.58,-29.83" />
+</g>
+
+<g id="edge3" class="edge">
+<title>Order:Order_amount_w-&gt;Employee:Employee_commission_total_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M287.5,-14C254.03,-14 245.01,-148.05 269.99,-177.38" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="278.59,-181.87 267.64,-181.23 276.09,-181.13 269.5,-177.68 269.73,-177.24 269.96,-176.8 276.55,-180.24 271.81,-173.25 278.59,-181.87" />
+<text xml:space="preserve" text-anchor="middle" x="259.15" y="-85.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">1</text>
+</g>
+
+<g id="edge4" class="edge">
+<title>Order:w-&gt;Employee:Employee_order_count_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M278.54,-22C257.97,-22 243.81,-65.16 253.25,-95.25 259.25,-114.37 276.31,-116.38 282.75,-129.41" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="284.75,-138.87 278.28,-130.01 283.73,-136.46 282.19,-129.18 282.68,-129.08 283.17,-128.98 284.71,-136.25 287.08,-128.15 284.75,-138.87" />
+<text xml:space="preserve" text-anchor="middle" x="255.88" y="-85.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">2</text>
+</g>
+</g>
+</svg>

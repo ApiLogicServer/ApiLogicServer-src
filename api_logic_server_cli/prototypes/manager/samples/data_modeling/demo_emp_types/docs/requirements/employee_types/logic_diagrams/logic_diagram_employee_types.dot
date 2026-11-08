@@ -1,0 +1,22 @@
+digraph logic {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=13,
+         label=<<B>Logic Diagram — demo_emp_types  [employee_types]</B>>, labelloc=t,
+         pad=0.4, nodesep=0.90, ranksep=1.10, bgcolor="white",
+         splines=spline]
+  node  [fontname="Helvetica", fontsize=11, shape=plaintext]
+  edge  [fontname="Helvetica", fontsize=10]
+
+  // ── trigger ─────────────────────────────────────────────────────
+  TRIGGER [label=<<TABLE BORDER="2" CELLBORDER="0" CELLPADDING="5" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60"><B>&#9889; Employee inserted</B></FONT></TD></TR></TABLE>>, shape=plaintext]
+
+  // ── schema layer ──────────────────────────────────────────────────
+  Employee [label=<<TABLE BORDER="3" CELLBORDER="0" CELLSPACING="0" COLOR="#c0392b"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Employee </B></FONT></TD></TR><TR><TD PORT="Employee_salary_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_salary" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> salary </FONT> <FONT COLOR="#e67e22" POINT-SIZE="9">= _salary(row)</FONT></TD><TD PORT="Employee_salary_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_type_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_type" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> type </FONT></TD><TD PORT="Employee_type_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_commission_total_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_commission_total" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> commission_total </FONT></TD><TD PORT="Employee_commission_total_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD BGCOLOR="#c0392b"></TD><TD BGCOLOR="#fdf3e0" CELLPADDING="2"><FONT COLOR="#7a5c00" POINT-SIZE="9"><B> type: hourly </B></FONT></TD><TD BGCOLOR="#c0392b"></TD></TR><TR><TD PORT="Employee_hours_worked_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_hours_worked" ALIGN="LEFT" BGCOLOR="#fdf3e0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> hours_worked </FONT></TD><TD PORT="Employee_hours_worked_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Employee_hourly_rate_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_hourly_rate" ALIGN="LEFT" BGCOLOR="#fdf3e0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> hourly_rate </FONT></TD><TD PORT="Employee_hourly_rate_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD BGCOLOR="#c0392b"></TD><TD BGCOLOR="#e6f3ea" CELLPADDING="2"><FONT COLOR="#7a5c00" POINT-SIZE="9"><B> type: commissioned </B></FONT></TD><TD BGCOLOR="#c0392b"></TD></TR><TR><TD PORT="Employee_base_salary_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Employee_base_salary" ALIGN="LEFT" BGCOLOR="#e6f3ea" CELLPADDING="3"><FONT COLOR="#1a1a2e"> base_salary </FONT></TD><TD PORT="Employee_base_salary_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  // ── rank groupings ────────────────────────────────────────────────
+  { rank=min; Employee; TRIGGER }
+
+  // ── trigger edge ──────────────────────────────────────────────
+  TRIGGER -> Employee [color="#27ae60", style=bold, arrowhead=vee, penwidth=2, weight=10]
+
+  // ── logic edges ────────────────────────────────────────────────────
+  // INTRA:Employee:commission_total:salary:1:0
+}

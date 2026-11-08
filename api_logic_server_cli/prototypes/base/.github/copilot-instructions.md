@@ -1,4 +1,6 @@
 ---
+version: 3.65 - 11/7/26 - Admin UI `show_when` for subtypes (STI) is now written on the "implement reqs" path too, not only in Method 4 (the old rule said: existing project, only on explicit request). Precautionary: a rebuilt demo_emp_types did write the entries (11, into admin-merge.yaml, pending the admin.yaml swap) even under the old rule, so this codifies what the run did; it was first misdiagnosed here as missing because only admin.yaml was checked. Where to look for show_when after a rebuild: admin-merge.yaml until the user approves the swap. Executable Requirements STEP 6 gets the matching checklist item.
+version: 3.64 - 11/7/26 - System Creation Services: two mechanical closing scans, run as commands against the finished project. (1) Step 8b, the subtype (STI) scan: `show_when` entries in admin.yaml, a null-exclusion constraint for every subtype-specific column, a TEXT yes/no classification axis (not `is_x` 0/1), and "only X may have Y" as a Rule.count plus a parent constraint. (2) A Before-you're-done bullet: no `sys_config_id` FK on a domain table (read constants with SysConfig.current). A blind demo_emp_types build (Sonnet 5.5, Nov 2026) read the STI section and the SysConfig guidance and still shipped none of them (0 show_when entries vs 11 in the reference build, only 1 of 7 null-exclusion constraints, `is_military` 0/1, a sys_config_id FK plus an early event to default it); the guidance was correct but sat in prose ~400 lines before the point of use, with no closing check. Same fix pattern as 3.38/3.39: a checklist at the end. implement_requirements.md gains a money-column convention (NUMERIC(15,2) and Decimal, not REAL).
 version: 3.63 - 11/4/26 - Executable Requirements Phase 1 (schema impact) now asks about the Request Pattern: a requirement that gets a value from AI, or sends email / Kafka / calls an external service whose result the rules use, needs a Sys*Req table (audit columns per System Creation Services step 4c), created by DDL + rebuild-from-database before any logic. The checklist listed only EAI blob tables, derived columns and columns named in the requirement, so a scripted demo_ai_rules_supplier build created the audit table only because its script said to ("given in the script" in the ad-libs); without the script line nothing prompted it. Same bullet in implement_requirements.md.
 version: 3.62 - 11/2/26 - "What are rules" table: added a 'Dependency managed' row (invocation, ordering and dependency propagation are the three things the engine takes over from the author; the table had the first two). Same wording as the Manager CE (2.34).
 version: 3.61 - 11/1/26 - Executable Requirements STEP 6 checklist: a clause that names something the data does not define (e.g. "authorized CLVS courier") is implemented against an assumed column and a SysConfig placeholder and flagged 🔴, never left unimplemented. A scripted demo_customs_clvs build skipped the courier clause ("no courier data") where three earlier builds had implemented it with an ad-lib; shipments from any courier passed.
@@ -1023,6 +1025,12 @@ STEP 6: Implement all steps in requirements.md in sequence.
                report marked §2 "not implemented". Adding the docstrings afterward edited source
                after the test run, which forced a server restart, a full test re-run and a
                regenerated report to get a current result.
+         [ ] SUBTYPE TABLE? (a type discriminator, or a classification axis, with columns that apply to one
+             type only) → add `show_when` to those fields in `ui/admin/admin.yaml` (Step 4d, "implement reqs"
+             bullet) and run step 8b of System Creation Services as commands. Do this before STEP 7.
+             REAL CASE (demo_emp_types, Nov 2026): built by "implement reqs", every other 4d item landed, and
+             `show_when` shipped as 0 entries (11 in the reference) because the old rule read "existing
+             project: only on request".
 STEP 7: Write completed ad-libs report to docs/requirements/<name>/ad-libs.md AND summarize in chat
         ⛔ ALSO MANDATORY: append a link to it from docs/requirements/project_creation_report.md's
         "Use Cases" section — see implement_requirements.md for the exact line format.
@@ -1910,12 +1918,15 @@ an ad-lib — do not do it silently.
      show_when: record["military"] == "yes"
    ```
 
-   **Existing project (implement reqs):** only add `show_when` if the prompt explicitly requests it
-   (e.g. "in the admin app, show attributes pertinent to type"). When requested:
-   1. Read `database/models.py` — find the discriminator column and its `Enum` values
+   **"implement reqs" (new or existing project):** write `show_when` whenever the rules you just wrote create
+   subtype-specific columns (a type discriminator plus columns guarded by `row.type ==` / `row.<axis> ==`). Do not wait
+   to be asked: a project built by "implement reqs" from a prompt is the same case as Method 4. Sequence:
+   1. Read `database/models.py` — find the discriminator column(s) and the subtype-specific columns
    2. Read `logic/logic_discovery/` files — map each column to its type by scanning `row.type ==` guards
-   3. Write `show_when` entries derived from that scan — do not guess
-   Do NOT rewrite `admin.yaml` for existing projects; it may contain user customizations. (Diagrams and the ontology do not need these entries: they read the subtype groups from the rules.)
+   3. Edit `ui/admin/admin.yaml`: add a `show_when` to each of those fields' existing entries — do not guess
+   4. Check: `grep -c show_when ui/admin/admin.yaml` is greater than 0
+   Never REWRITE `admin.yaml` (it may contain user customizations): add the `show_when` line to a field's entry only, and
+   leave a field alone if it already has one or its name has an underscore (see the regex rules above). Log as 🟡 FYI. (Diagrams and the ontology do not need these entries: they read the subtype groups from the rules.)
 
    **🚨 Type hierarchy scan — verification before writing any DDL:**
    - [ ] Prompt contains "X are Y" / "X is a type of Y" / "subtypes" phrasing?
@@ -1994,6 +2005,28 @@ This auto-generates correct `models.py` with all boilerplate intact.
    This applies to System Creation Services (Method 4 / "See It Work") just as much as to
    logic added later — do not skip it because the project was just created.
 
+8b. **Subtype (STI) closing scan — only if step 4d applied, in Method 4 or in "implement reqs"** (the prompt had "X are Y with Z" subtypes, or a
+   classification axis such as military / non-military). **Run it as commands against the finished project;
+   do not answer it from memory.** REAL CASE (demo_emp_types, Nov 2026): a build read step 4d and shipped with
+   none of the four items below; a reference build of the same prompt had all of them.
+   ```bash
+   grep -c show_when ui/admin/admin.yaml     # must be > 0 (one entry per subtype-specific column)
+   grep -n "is_" database/models.py          # no `is_<axis>` INTEGER discriminator
+   ```
+   - [ ] **`show_when` written.** `ui/admin/admin.yaml` has a `show_when` for every subtype-specific column in the
+     step 4d list. Method 4 writes them now, right after the logic files. This step is on no numbered list in the
+     prompt, which is why it is the one most often skipped.
+   - [ ] **Null-exclusion constraint per subtype-specific column.** Every hourly-only, commissioned-only or
+     military-only column in `models.py` is named by a `Rule.constraint` that requires it to be null for the other
+     types. A column with no constraint naming it is the gap (the 4d "Inferred constraints" list, applied).
+   - [ ] **Classification axis is TEXT `"yes"`/`"no"` named `military`**, not `is_military` INTEGER 0/1: the underscore
+     breaks `show_when` (see "Boolean axis naming" in step 4d). Add a constraint that the column is `yes` or `no`.
+   - [ ] **"Only X may have Y"** (only Commissioned employees may have Orders) is a `Rule.count` of Y on the parent
+     (`order_count`) plus a parent constraint (`row.type == 'commissioned' or row.order_count == 0`). Not a
+     constraint on the child that reads `row.employee.type`: the child form is checked only when an order is saved,
+     so it misses an Employee whose type changes after it already has orders.
+   Log anything you add here as 🟡 FYI in `ad-libs.md`; anything you decide NOT to add is 🔴 with the reason.
+
 9. **Press F5** — full JSON:API + Admin UI + logic enforcement.
 
 **🚨 Before-you're-done scan — verify these two are actually present, not just planned:**
@@ -2005,6 +2038,16 @@ This auto-generates correct `models.py` with all boilerplate intact.
      transcript (e.g. `/export docs/requirements/transcript_creation`), confirm that file
      exists now. This step is easy to skip because it comes after the "real" work feels done —
      check for the file, don't rely on remembering to run the command.
+   - **No `sys_config_id` FK on a domain table.** Run `grep -n sys_config_id database/models.py`: the only hits
+     allowed are an ad-libbed frozen-snapshot design (step 2 of "System Creation Services"). Read constants with
+     `models.SysConfig.current(logic_row.session).<column>` inside the `calling=` function. Symptoms of the wrong
+     design: a `Rule.copy` of a SysConfig constant onto the domain table, a constraint that passes when that copy is
+     None (`... or row.max_x is None or ...`, which silently accepts the case it exists to reject), and an
+     `early_row_event` whose only job is to default `sys_config_id` because the DB `server_default` is not visible
+     to rules before flush. REAL CASE (demo_emp_types, Nov 2026): all three appeared together, plus a separate
+     `employee_sys_config.py` logic file that is not in any requirement; the reference build used `.current()` and
+     had none of them. The FK-vs-`.current()` test is "is there a real relationship" (a singleton has none), never
+     "is the FK easy to add".
    - **Rollup/aggregate columns:** scan `database/models.py` for every column whose name reads
      as an aggregate (`total_*`, `*_total`, `*_count`, `*_amount`, `sum_*`, `num_*`, or similar)
      on any table the logic file(s) you just wrote touch. For each one, confirm a matching

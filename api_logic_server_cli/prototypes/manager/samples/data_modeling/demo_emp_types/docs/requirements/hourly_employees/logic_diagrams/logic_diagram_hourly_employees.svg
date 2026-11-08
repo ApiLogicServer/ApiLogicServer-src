@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432pt" height="157pt" viewBox="18.80 18.80 431.88 157.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 166.05)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-166.05 428.18,-166.05 428.18,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="19.69" y="-121.9" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_emp_types  [hourly_employees]</text>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="8,-41.38 8,-74.38 137.75,-74.38 137.75,-41.38 8,-41.38" />
+<text xml:space="preserve" text-anchor="start" x="17" y="-55.92" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ Employee inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-42.38 9,-73.38 136.75,-73.38 136.75,-42.38 9,-42.38" />
+</g>
+
+<g id="node2" class="node">
+<title>Employee</title>
+<polygon fill="#4a6fa5" stroke="none" points="221.38,-92.75 221.38,-108.75 388.38,-108.75 388.38,-92.75 221.38,-92.75" />
+<text xml:space="preserve" text-anchor="start" x="276" y="-97.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Employee </text>
+<polygon fill="#b8cce8" stroke="none" points="221.38,-74.75 221.38,-92.75 228.38,-92.75 228.38,-74.75 221.38,-74.75" />
+<text xml:space="preserve" text-anchor="start" x="223.38" y="-80.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="228.38,-74.75 228.38,-92.75 381.38,-92.75 381.38,-74.75 228.38,-74.75" />
+<text xml:space="preserve" text-anchor="start" x="231.38" y="-80.75" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> type </text>
+<polygon fill="#b8cce8" stroke="none" points="381.38,-74.75 381.38,-92.75 388.38,-92.75 388.38,-74.75 381.38,-74.75" />
+<text xml:space="preserve" text-anchor="start" x="383.38" y="-80.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="221.38,-56.75 221.38,-74.75 228.38,-74.75 228.38,-56.75 221.38,-56.75" />
+<text xml:space="preserve" text-anchor="start" x="223.38" y="-62.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="228.38,-56.75 228.38,-74.75 381.38,-74.75 381.38,-56.75 228.38,-56.75" />
+<text xml:space="preserve" text-anchor="start" x="231.38" y="-62.75" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> union </text>
+<polygon fill="#b8cce8" stroke="none" points="381.38,-56.75 381.38,-74.75 388.38,-74.75 388.38,-56.75 381.38,-56.75" />
+<text xml:space="preserve" text-anchor="start" x="383.38" y="-62.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#c0392b" stroke="none" points="221.38,-43 221.38,-56.75 228.38,-56.75 228.38,-43 221.38,-43" />
+<polygon fill="#fdf3e0" stroke="none" points="228.38,-43 228.38,-56.75 381.38,-56.75 381.38,-43 228.38,-43" />
+<text xml:space="preserve" text-anchor="start" x="277.12" y="-47.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00" fill="#7a5c00"> type: hourly </text>
+<polygon fill="#c0392b" stroke="none" points="381.38,-43 381.38,-56.75 388.38,-56.75 388.38,-43 381.38,-43" />
+<polygon fill="#b8cce8" stroke="none" points="221.38,-25 221.38,-43 228.38,-43 228.38,-25 221.38,-25" />
+<text xml:space="preserve" text-anchor="start" x="223.38" y="-31" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#fdf3e0" stroke="none" points="228.38,-25 228.38,-43 381.38,-43 381.38,-25 228.38,-25" />
+<text xml:space="preserve" text-anchor="start" x="231.38" y="-30.55" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> union_dues </text>
+<text xml:space="preserve" text-anchor="start" x="292.88" y="-30.55" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="295.88" y="-30.55" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= _union_dues(row)</text>
+<polygon fill="#b8cce8" stroke="none" points="381.38,-25 381.38,-43 388.38,-43 388.38,-25 381.38,-25" />
+<text xml:space="preserve" text-anchor="start" x="383.38" y="-31" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="221.38,-7 221.38,-25 228.38,-25 228.38,-7 221.38,-7" />
+<text xml:space="preserve" text-anchor="start" x="223.38" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#fdf3e0" stroke="none" points="228.38,-7 228.38,-25 381.38,-25 381.38,-7 228.38,-7" />
+<text xml:space="preserve" text-anchor="start" x="231.38" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> hours_worked </text>
+<polygon fill="#b8cce8" stroke="none" points="381.38,-7 381.38,-25 388.38,-25 388.38,-7 381.38,-7" />
+<text xml:space="preserve" text-anchor="start" x="383.38" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#c0392b" stroke-width="3" points="219.88,-5.5 219.88,-110.25 389.88,-110.25 389.88,-5.5 219.88,-5.5" />
+</g>
+
+<g id="edge1" class="edge">
+<title>TRIGGER-&gt;Employee</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M145.38,-57.88C163.01,-57.88 180.64,-57.88 198.28,-57.88" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="208.05,-57.88 198.05,-62.38 205.48,-58.38 198.05,-58.38 198.05,-57.88 198.05,-57.38 205.48,-57.38 198.05,-53.38 208.05,-57.88" />
+</g>
+<path d="M389.88,-62.75 C411.88,-62.75 411.88,-30.55 389.88,-30.55" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="389.88,-30.55 393.88,-34.55 393.88,-26.55" stroke="#445544" fill="#445544" /><text x="414.9" y="-42.6" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">1</text></g>
+</svg>

@@ -1,8 +1,8 @@
 about:
-  date: October 29, 2026 17:46:09
+  date: November 07, 2026 16:48:14
   merged:
-    at: October 29, 2026 17:49:49
-    new_attributes: 'SysConfig.max_hourly_weekly_salary SysConfig.military_stipend_per_service_year '
+    at: November 07, 2026 16:51:50
+    new_attributes: 'SysConfig.max_hourly_weekly_salary SysConfig.military_stipend_per_year '
     new_resources: 'Department Employee LaborUnion Order '
     new_tab_groups: ''
   recent_changes: works with modified safrs-react-admin
@@ -41,15 +41,13 @@ resources:
       search: true
       sort: true
     - name: dept_id
-      required: true
+    - name: union_id
+      show_when: record["Type"] == "hourly"
     - name: Type
       required: true
     - name: salary
-    - name: hours_worked
-      show_when: record["Type"] == "hourly"
+      required: true
     - name: hourly_rate
-      show_when: record["Type"] == "hourly"
-    - name: union_id
       show_when: record["Type"] == "hourly"
     - name: union_dues
       show_when: record["Type"] == "hourly"
@@ -60,17 +58,18 @@ resources:
     - name: order_count
       show_when: record["Type"] == "commissioned"
     - name: military
-      required: true
     - name: branch
       show_when: record["military"] == "yes"
     - name: rank
       show_when: record["military"] == "yes"
     - name: service_years
       show_when: record["military"] == "yes"
-    - name: military_stipend
-      show_when: record["military"] == "yes"
     - name: total_compensation
     - name: id
+    - name: hours_worked
+      show_when: record["Type"] == "hourly"
+    - name: military_stipend
+      show_when: record["military"] == "yes"
     tab_groups:
     - direction: tomany
       fks:
@@ -134,7 +133,7 @@ resources:
     - name: notes
     - name: id
     - name: max_hourly_weekly_salary
-    - name: military_stipend_per_service_year
+    - name: military_stipend_per_year
     type: SysConfig
     user_key: name
 settings:

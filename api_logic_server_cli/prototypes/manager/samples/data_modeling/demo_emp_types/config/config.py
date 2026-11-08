@@ -73,7 +73,7 @@ def logging_setup() -> logging.Logger:
     logging_config = f'{project_path}/config/logging.yml'
     if os.getenv('APILOGICPROJECT_LOGGING_CONFIG'):
         logging_config = project_path.joinpath(os.getenv("APILOGICPROJECT_LOGGING_CONFIG"))
-    with open(logging_config,'rt') as f:  # see also logic/declare_logic.py
+    with open(logging_config,'rt', encoding='utf-8') as f:  # see also logic/declare_logic.py
             config=yaml.safe_load(f.read())
             f.close()
     logging.config.dictConfig(config)  # log levels: notset 0, debug 10, info 20, warn 30, error 40, critical 50
@@ -157,7 +157,7 @@ class Config:
     # als add-auth --provider-type=sql --db-url=
     # als add-auth --provider-type=keycloak --db-url=localhost
     # als add-auth --provider-type=keycloak --db-url=http://10.0.0.77:8080
-    kc_base = 'http://localhost:8080'
+    kc_base = os.getenv('KEYCLOAK_BASE','https://localhost:8080')
     #kc_base = 'http://localhost:8080'
     ''' keycloak location '''
     KEYCLOAK_REALM =  os.getenv('KEYCLOAK_REALM','kcals')
@@ -190,7 +190,7 @@ class Config:
         # rewrite the matching import line (the one containing the from-provider path string).  After
         # a switch both aliases resolve to the target provider; the alias names become misleading
         # (SQL_Authentication_Provider may import from keycloak) but are functionally equivalent.
-        from security.authentication_provider.keycloak.auth_provider import Authentication_Provider as SQL_Authentication_Provider
+        from security.authentication_provider.sql.auth_provider import Authentication_Provider as SQL_Authentication_Provider
         from security.authentication_provider.keycloak.auth_provider import Authentication_Provider as KC_Authentication_Provider
         # typically, authentication_provider is [ keycloak | sql ]
         SECURITY_PROVIDER = KC_Authentication_Provider if "keycloak" in str(SECURITY_PROVIDER).lower() else SQL_Authentication_Provider

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="553pt" height="193pt" viewBox="18.80 18.80 553.25 193.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 202.05)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-202.05 501.55,-202.05 501.55,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="53.38" y="-157.9" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_emp_types  [military_employees]</text>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="8,-59.38 8,-92.38 137.75,-92.38 137.75,-59.38 8,-59.38" />
+<text xml:space="preserve" text-anchor="start" x="17" y="-73.92" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ Employee inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-60.38 9,-91.38 136.75,-91.38 136.75,-60.38 9,-60.38" />
+</g>
+
+<g id="node2" class="node">
+<title>Employee</title>
+<polygon fill="#4a6fa5" stroke="none" points="222,-128.75 222,-144.75 461.75,-144.75 461.75,-128.75 222,-128.75" />
+<text xml:space="preserve" text-anchor="start" x="313" y="-133.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Employee </text>
+<polygon fill="#b8cce8" stroke="none" points="222,-110.75 222,-128.75 229,-128.75 229,-110.75 222,-110.75" />
+<text xml:space="preserve" text-anchor="start" x="224" y="-116.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="229,-110.75 229,-128.75 454.75,-128.75 454.75,-110.75 229,-110.75" />
+<text xml:space="preserve" text-anchor="start" x="232" y="-116.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> total_compensation </text>
+<text xml:space="preserve" text-anchor="start" x="331" y="-116.3" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="334" y="-116.3" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= salary + military_stipend i...</text>
+<polygon fill="#b8cce8" stroke="none" points="454.75,-110.75 454.75,-128.75 461.75,-128.75 461.75,-110.75 454.75,-110.75" />
+<text xml:space="preserve" text-anchor="start" x="456.75" y="-116.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="222,-92.75 222,-110.75 229,-110.75 229,-92.75 222,-92.75" />
+<text xml:space="preserve" text-anchor="start" x="224" y="-98.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="229,-92.75 229,-110.75 454.75,-110.75 454.75,-92.75 229,-92.75" />
+<text xml:space="preserve" text-anchor="start" x="232" y="-98.75" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> salary </text>
+<polygon fill="#b8cce8" stroke="none" points="454.75,-92.75 454.75,-110.75 461.75,-110.75 461.75,-92.75 454.75,-92.75" />
+<text xml:space="preserve" text-anchor="start" x="456.75" y="-98.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="222,-74.75 222,-92.75 229,-92.75 229,-74.75 222,-74.75" />
+<text xml:space="preserve" text-anchor="start" x="224" y="-80.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="229,-74.75 229,-92.75 454.75,-92.75 454.75,-74.75 229,-74.75" />
+<text xml:space="preserve" text-anchor="start" x="232" y="-80.75" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> military </text>
+<polygon fill="#b8cce8" stroke="none" points="454.75,-74.75 454.75,-92.75 461.75,-92.75 461.75,-74.75 454.75,-74.75" />
+<text xml:space="preserve" text-anchor="start" x="456.75" y="-80.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="222,-56.75 222,-74.75 229,-74.75 229,-56.75 222,-56.75" />
+<text xml:space="preserve" text-anchor="start" x="224" y="-62.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="229,-56.75 229,-74.75 454.75,-74.75 454.75,-56.75 229,-56.75" />
+<text xml:space="preserve" text-anchor="start" x="232" y="-62.75" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> session </text>
+<polygon fill="#b8cce8" stroke="none" points="454.75,-56.75 454.75,-74.75 461.75,-74.75 461.75,-56.75 454.75,-56.75" />
+<text xml:space="preserve" text-anchor="start" x="456.75" y="-62.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#c0392b" stroke="none" points="222,-43 222,-56.75 229,-56.75 229,-43 222,-43" />
+<polygon fill="#f0e6f5" stroke="none" points="229,-43 229,-56.75 454.75,-56.75 454.75,-43 229,-43" />
+<text xml:space="preserve" text-anchor="start" x="313" y="-47.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00" fill="#7a5c00"> military: yes </text>
+<polygon fill="#c0392b" stroke="none" points="454.75,-43 454.75,-56.75 461.75,-56.75 461.75,-43 454.75,-43" />
+<polygon fill="#b8cce8" stroke="none" points="222,-25 222,-43 229,-43 229,-25 222,-25" />
+<text xml:space="preserve" text-anchor="start" x="224" y="-31" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#f0e6f5" stroke="none" points="229,-25 229,-43 454.75,-43 454.75,-25 229,-25" />
+<text xml:space="preserve" text-anchor="start" x="232" y="-30.55" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> military_stipend </text>
+<text xml:space="preserve" text-anchor="start" x="312.25" y="-30.55" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="315.25" y="-30.55" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= _military_stipend(row)</text>
+<polygon fill="#b8cce8" stroke="none" points="454.75,-25 454.75,-43 461.75,-43 461.75,-25 454.75,-25" />
+<text xml:space="preserve" text-anchor="start" x="456.75" y="-31" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="222,-7 222,-25 229,-25 229,-7 222,-7" />
+<text xml:space="preserve" text-anchor="start" x="224" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#f0e6f5" stroke="none" points="229,-7 229,-25 454.75,-25 454.75,-7 229,-7" />
+<text xml:space="preserve" text-anchor="start" x="232" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> service_years </text>
+<polygon fill="#b8cce8" stroke="none" points="454.75,-7 454.75,-25 461.75,-25 461.75,-7 454.75,-7" />
+<text xml:space="preserve" text-anchor="start" x="456.75" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#c0392b" stroke-width="3" points="220.5,-5.5 220.5,-146.25 463.25,-146.25 463.25,-5.5 220.5,-5.5" />
+</g>
+
+<g id="edge1" class="edge">
+<title>TRIGGER-&gt;Employee</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M145.64,-75.88C163.39,-75.88 181.14,-75.88 198.89,-75.88" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="208.74,-75.88 198.74,-80.38 206.18,-76.38 198.74,-76.38 198.74,-75.88 198.74,-75.38 206.18,-75.38 198.74,-71.38 208.74,-75.88" />
+</g>
+<path d="M463.25,-30.55 C485.25,-30.55 485.25,-116.3 463.25,-116.3" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="463.25,-116.3 467.25,-120.3 467.25,-112.3" stroke="#445544" fill="#445544" /><text x="488.2" y="-69.4" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">1</text><path d="M463.25,-80.75 C509.25,-80.75 509.25,-116.3 463.25,-116.3" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="463.25,-116.3 467.25,-120.3 467.25,-112.3" stroke="#445544" fill="#445544" /><text x="512.2" y="-94.5" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">1</text><path d="M463.25,-62.75 C533.25,-62.75 533.25,-30.55 463.25,-30.55" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="463.25,-30.55 467.25,-34.55 467.25,-26.55" stroke="#445544" fill="#445544" /><text x="536.2" y="-42.6" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">2</text></g>
+</svg>

@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-import sys
+import os, logging, logging.config, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))  # ensure project root on path
-import os, logging, logging.config
 from config import server_setup
 import api.system.api_utils as api_utils
 from flask import Flask
@@ -33,31 +32,35 @@ os.environ['AGGREGATE_DEFAULTS'] = 'True'
 
 with flask_app.app_context():
     safrs.DB.create_all()
-    session = safrs.DB.session
-    from decimal import Decimal
+    # try:
+    #     alice = Customer(id=1, name="Alice", credit_limit=1000, balance=0, total_orders=0)
+    #     safrs.DB.session.add(alice)
+    #     safrs.DB.session.commit()
+    # except Exception as e:
+    #     print(f"Error adding variable to session: {e}")
 
-    # 1. lookup / parent rows first, committed, so children reference real ids
-    engineering = Department(name="Engineering", budget=Decimal("20000"))
-    sales = Department(name="Sales", budget=Decimal("15000"))
-    local_42 = LaborUnion(name="Local 42", dues_rate=1.5)
-    teamsters = LaborUnion(name="Teamsters", dues_rate=2.0)
-    session.add_all([engineering, sales, local_42, teamsters])
-    session.commit()
+    
 
-    # 2. employees (salaries are weekly amounts - see ad-libs)
-    alice = Employee(name="Alice Salaried", dept_id=engineering.id, type="salaried", salary=Decimal("4000"),
-                     military="yes", branch="Army", rank="Captain", service_years=6)
-    bob = Employee(name="Bob Hourly", dept_id=engineering.id, type="hourly", hours_worked=40, hourly_rate=50,
-                   union_id=local_42.id, military="no")
-    carol = Employee(name="Carol Hourly", dept_id=sales.id, type="hourly", hours_worked=35, hourly_rate=30,
-                     military="yes", branch="Navy", rank="Petty Officer", service_years=3)
-    dan = Employee(name="Dan Commissioned", dept_id=sales.id, type="commissioned", base_salary=Decimal("1500"), military="no")
-    eve = Employee(name="Eve Salaried", dept_id=sales.id, type="salaried", salary=Decimal("3000"), military="no")
-    session.add_all([alice, bob, carol, dan, eve])
-    session.commit()
+    if safrs.DB.session.query(Employee).count() == 0 and safrs.DB.session.query(Department).count() == 0:
+        session = safrs.DB.session
+        # lookup/parent rows first: committed before children whose formulas read them
+        local_42 = LaborUnion(name="Local 42", dues_rate=2.5)
+        engineering = Department(name="Engineering", budget=200000)
+        sales = Department(name="Sales", budget=150000)
+        session.add_all([local_42, engineering, sales])
+        session.commit()
 
-    # 3. orders for the commissioned employee
-    session.add_all([Order(employee_id=dan.id, customer_name="Acme Corp", amount=Decimal("1200")),
-                     Order(employee_id=dan.id, customer_name="Globex", amount=Decimal("800"))])
-    session.commit()
-    print("Seed data loaded")
+        session.add_all([
+            Employee(type="salaried", name="Sally Salaried", dept_id=engineering.id, salary=90000),
+            Employee(type="hourly", name="Harry Hourly", dept_id=engineering.id, hours_worked=40, hourly_rate=50, union_id=local_42.id),
+            Employee(type="hourly", name="Nina Nonunion", dept_id=engineering.id, hours_worked=30, hourly_rate=40),
+            Employee(type="commissioned", name="Carl Commissioned", dept_id=sales.id, base_salary=50000),
+            Employee(type="salaried", name="Mia Military", dept_id=sales.id, salary=60000,
+                     military="yes", branch="Navy", rank="Lieutenant", service_years=8),
+        ])
+        session.commit()
+        carl = session.query(Employee).filter(Employee.name == "Carl Commissioned").one()
+        session.add_all([Order(employee_id=carl.id, amount=1000, customer_name="Acme"),
+                         Order(employee_id=carl.id, amount=2500, customer_name="Globex")])
+        session.commit()
+        print("demo_emp_types seed data loaded")

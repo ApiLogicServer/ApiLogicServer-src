@@ -1,19 +1,18 @@
 source,target,rule,kind,use_case
-Employee.salary,Department.total_salary,rule_01,sum,department_budget
-Employee.type,Employee.salary,rule_03,formula,employee_pay
-Employee.hours_worked,Employee.salary,rule_03,formula,employee_pay
-Employee.hourly_rate,Employee.salary,rule_03,formula,employee_pay
-Employee.base_salary,Employee.salary,rule_03,formula,employee_pay
-Employee.commission_total,Employee.salary,rule_03,formula,employee_pay
-Employee.type,Employee.union_dues,rule_04,formula,employee_pay
-Employee.union_id,Employee.union_dues,rule_04,formula,employee_pay
-Employee.hours_worked,Employee.union_dues,rule_04,formula,employee_pay
-LaborUnion.dues_rate,Employee.union_dues,rule_04,formula,employee_pay
-Order.amount,Employee.commission_total,rule_05,sum,employee_pay
-Order (rows),Employee.order_count,rule_06,count,employee_pay
-Employee.military,Employee.military_stipend,rule_14,formula,military_compensation
-Employee.service_years,Employee.military_stipend,rule_14,formula,military_compensation
-SysConfig.military_stipend_per_service_year,Employee.military_stipend,rule_14,formula,military_compensation
-Employee.military,Employee.total_compensation,rule_15,formula,military_compensation
-Employee.salary,Employee.total_compensation,rule_15,formula,military_compensation
-Employee.military_stipend,Employee.total_compensation,rule_15,formula,military_compensation
+Order.amount,Employee.commission_total,rule_01,sum,commissioned_employees
+Order (rows),Employee.order_count,rule_02,count,commissioned_employees
+Employee.salary,Department.total_salary,rule_05,sum,department_budget
+Employee.type,Employee.salary,rule_07,formula,employee_types
+Employee.hours_worked,Employee.salary,rule_07,formula,employee_types
+Employee.hourly_rate,Employee.salary,rule_07,formula,employee_types
+Employee.base_salary,Employee.salary,rule_07,formula,employee_types
+Employee.commission_total,Employee.salary,rule_07,formula,employee_types
+Employee.type,Employee.union_dues,rule_09,formula,hourly_employees
+Employee.hours_worked,Employee.union_dues,rule_09,formula,hourly_employees
+LaborUnion.dues_rate,Employee.union_dues,rule_09,formula,hourly_employees
+Employee.military,Employee.military_stipend,rule_13,formula,military_employees
+Employee.service_years,Employee.military_stipend,rule_13,formula,military_employees
+SysConfig.military_stipend_per_year,Employee.military_stipend,rule_13,formula,military_employees
+Employee.salary,Employee.total_compensation,rule_14,formula,military_employees
+Employee.military,Employee.total_compensation,rule_14,formula,military_employees
+Employee.military_stipend,Employee.total_compensation,rule_14,formula,military_employees

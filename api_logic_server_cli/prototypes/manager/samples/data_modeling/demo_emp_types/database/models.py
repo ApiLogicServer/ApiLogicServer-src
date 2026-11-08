@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  October 29, 2026 17:49:49
+# Created:  November 07, 2026 16:51:50
 # Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_emp_types/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -51,7 +51,7 @@ class Department(Base):  # type: ignore
     id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
     budget = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
-    total_salary = Column(Numeric(15, 2), server_default=text("0"))
+    total_salary = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
 
     # parent relationships (access parent)
 
@@ -84,8 +84,8 @@ class SysConfig(Base):  # type: ignore
     discount_rate = Column(Float, server_default=text("0.05"))
     tax_rate = Column(Float, server_default=text("0.10"))
     notes = Column(Text)
-    max_hourly_weekly_salary = Column(Float, server_default=text("5000.0"))
-    military_stipend_per_service_year = Column(Float, server_default=text("100.0"))
+    max_hourly_weekly_salary = Column(Numeric(15, 2), server_default=text("5000"))
+    military_stipend_per_year = Column(Numeric(15, 2), server_default=text("100"))
 
     # parent relationships (access parent)
 
@@ -98,23 +98,23 @@ class Employee(Base):  # type: ignore
     _s_collection_name = 'Employee'  # type: ignore
 
     id = Column(Integer, primary_key=True)
-    name = Column(Text, nullable=False)
-    dept_id = Column(ForeignKey('department.id'), nullable=False)
     type = Column(Text, nullable=False)
-    salary = Column(Numeric(15, 2), server_default=text("0"))
+    name = Column(Text, nullable=False)
+    dept_id = Column(ForeignKey('department.id'))
+    salary = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
     hours_worked = Column(Float)
     hourly_rate = Column(Float)
     union_id = Column(ForeignKey('labor_union.id'))
-    union_dues = Column(Numeric(15, 2), server_default=text("0"))
+    union_dues = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
     base_salary = Column(Numeric(15, 2))
-    commission_total = Column(Numeric(15, 2), server_default=text("0"))
-    order_count = Column(Integer, server_default=text("0"))
-    military = Column(Text, nullable=False)
+    commission_total = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
+    order_count = Column(Integer, server_default=text("0"), nullable=False)
+    military = Column(Text)
     branch = Column(Text)
     rank = Column(Text)
     service_years = Column(Integer)
-    military_stipend = Column(Numeric(15, 2), server_default=text("0"))
-    total_compensation = Column(Numeric(15, 2), server_default=text("0"))
+    military_stipend = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
+    total_compensation = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
 
     # parent relationships (access parent)
     dept : Mapped["Department"] = relationship(back_populates=("EmployeeList"))
@@ -131,8 +131,8 @@ class Order(Base):  # type: ignore
 
     id = Column(Integer, primary_key=True)
     employee_id = Column(ForeignKey('employee.id'), nullable=False)
+    amount = Column(Numeric(15, 2), nullable=False)
     customer_name = Column(Text, nullable=False)
-    amount = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
 
     # parent relationships (access parent)
     employee : Mapped["Employee"] = relationship(back_populates=("OrderList"))

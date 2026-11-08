@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="388pt" height="207pt" viewBox="18.80 18.80 388.19 207.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 215.8)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-215.8 391.3,-215.8 391.3,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="8" y="-171.65" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_emp_types  [employee_types]</text>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="14.81,-66.25 14.81,-99.25 144.56,-99.25 144.56,-66.25 14.81,-66.25" />
+<text xml:space="preserve" text-anchor="start" x="23.81" y="-80.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ Employee inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="15.81,-67.25 15.81,-98.25 143.56,-98.25 143.56,-67.25 15.81,-67.25" />
+</g>
+
+<g id="node2" class="node">
+<title>Employee</title>
+<polygon fill="#4a6fa5" stroke="none" points="228.69,-142.5 228.69,-158.5 344.69,-158.5 344.69,-142.5 228.69,-142.5" />
+<text xml:space="preserve" text-anchor="start" x="257.81" y="-147.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Employee </text>
+<polygon fill="#b8cce8" stroke="none" points="228.69,-124.5 228.69,-142.5 235.69,-142.5 235.69,-124.5 228.69,-124.5" />
+<text xml:space="preserve" text-anchor="start" x="230.69" y="-130.5" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="235.69,-124.5 235.69,-142.5 337.69,-142.5 337.69,-124.5 235.69,-124.5" />
+<text xml:space="preserve" text-anchor="start" x="238.69" y="-130.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> salary </text>
+<text xml:space="preserve" text-anchor="start" x="273.19" y="-130.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="276.19" y="-130.05" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= _salary(row)</text>
+<polygon fill="#b8cce8" stroke="none" points="337.69,-124.5 337.69,-142.5 344.69,-142.5 344.69,-124.5 337.69,-124.5" />
+<text xml:space="preserve" text-anchor="start" x="339.69" y="-130.5" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="228.69,-106.5 228.69,-124.5 235.69,-124.5 235.69,-106.5 228.69,-106.5" />
+<text xml:space="preserve" text-anchor="start" x="230.69" y="-112.5" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="235.69,-106.5 235.69,-124.5 337.69,-124.5 337.69,-106.5 235.69,-106.5" />
+<text xml:space="preserve" text-anchor="start" x="238.69" y="-112.5" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> type </text>
+<polygon fill="#b8cce8" stroke="none" points="337.69,-106.5 337.69,-124.5 344.69,-124.5 344.69,-106.5 337.69,-106.5" />
+<text xml:space="preserve" text-anchor="start" x="339.69" y="-112.5" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="228.69,-88.5 228.69,-106.5 235.69,-106.5 235.69,-88.5 228.69,-88.5" />
+<text xml:space="preserve" text-anchor="start" x="230.69" y="-94.5" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="235.69,-88.5 235.69,-106.5 337.69,-106.5 337.69,-88.5 235.69,-88.5" />
+<text xml:space="preserve" text-anchor="start" x="238.69" y="-94.5" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> commission_total </text>
+<polygon fill="#b8cce8" stroke="none" points="337.69,-88.5 337.69,-106.5 344.69,-106.5 344.69,-88.5 337.69,-88.5" />
+<text xml:space="preserve" text-anchor="start" x="339.69" y="-94.5" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#c0392b" stroke="none" points="228.69,-74.75 228.69,-88.5 235.69,-88.5 235.69,-74.75 228.69,-74.75" />
+<polygon fill="#fdf3e0" stroke="none" points="235.69,-74.75 235.69,-88.5 337.69,-88.5 337.69,-74.75 235.69,-74.75" />
+<text xml:space="preserve" text-anchor="start" x="258.94" y="-78.95" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00" fill="#7a5c00"> type: hourly </text>
+<polygon fill="#c0392b" stroke="none" points="337.69,-74.75 337.69,-88.5 344.69,-88.5 344.69,-74.75 337.69,-74.75" />
+<polygon fill="#b8cce8" stroke="none" points="228.69,-56.75 228.69,-74.75 235.69,-74.75 235.69,-56.75 228.69,-56.75" />
+<text xml:space="preserve" text-anchor="start" x="230.69" y="-62.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#fdf3e0" stroke="none" points="235.69,-56.75 235.69,-74.75 337.69,-74.75 337.69,-56.75 235.69,-56.75" />
+<text xml:space="preserve" text-anchor="start" x="238.69" y="-62.75" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> hours_worked </text>
+<polygon fill="#b8cce8" stroke="none" points="337.69,-56.75 337.69,-74.75 344.69,-74.75 344.69,-56.75 337.69,-56.75" />
+<text xml:space="preserve" text-anchor="start" x="339.69" y="-62.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="228.69,-38.75 228.69,-56.75 235.69,-56.75 235.69,-38.75 228.69,-38.75" />
+<text xml:space="preserve" text-anchor="start" x="230.69" y="-44.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#fdf3e0" stroke="none" points="235.69,-38.75 235.69,-56.75 337.69,-56.75 337.69,-38.75 235.69,-38.75" />
+<text xml:space="preserve" text-anchor="start" x="238.69" y="-44.75" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> hourly_rate </text>
+<polygon fill="#b8cce8" stroke="none" points="337.69,-38.75 337.69,-56.75 344.69,-56.75 344.69,-38.75 337.69,-38.75" />
+<text xml:space="preserve" text-anchor="start" x="339.69" y="-44.75" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#c0392b" stroke="none" points="228.69,-25 228.69,-38.75 235.69,-38.75 235.69,-25 228.69,-25" />
+<polygon fill="#e6f3ea" stroke="none" points="235.69,-25 235.69,-38.75 337.69,-38.75 337.69,-25 235.69,-25" />
+<text xml:space="preserve" text-anchor="start" x="240.94" y="-29.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00" fill="#7a5c00"> type: commissioned </text>
+<polygon fill="#c0392b" stroke="none" points="337.69,-25 337.69,-38.75 344.69,-38.75 344.69,-25 337.69,-25" />
+<polygon fill="#b8cce8" stroke="none" points="228.69,-7 228.69,-25 235.69,-25 235.69,-7 228.69,-7" />
+<text xml:space="preserve" text-anchor="start" x="230.69" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#e6f3ea" stroke="none" points="235.69,-7 235.69,-25 337.69,-25 337.69,-7 235.69,-7" />
+<text xml:space="preserve" text-anchor="start" x="238.69" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> base_salary </text>
+<polygon fill="#b8cce8" stroke="none" points="337.69,-7 337.69,-25 344.69,-25 344.69,-7 337.69,-7" />
+<text xml:space="preserve" text-anchor="start" x="339.69" y="-13" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#c0392b" stroke-width="3" points="227.19,-5.5 227.19,-160 346.19,-160 346.19,-5.5 227.19,-5.5" />
+</g>
+
+<g id="edge1" class="edge">
+<title>TRIGGER-&gt;Employee</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M152.46,-82.75C170.14,-82.75 187.82,-82.75 205.5,-82.75" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="215.3,-82.75 205.3,-87.25 212.74,-83.25 205.3,-83.25 205.3,-82.75 205.3,-82.25 212.74,-82.25 205.3,-78.25 215.3,-82.75" />
+</g>
+<path d="M346.19,-94.5 C368.19,-94.5 368.19,-130.05 346.19,-130.05" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="346.19,-130.05 350.19,-134.05 350.19,-126.05000000000001" stroke="#445544" fill="#445544" /><text x="371.2" y="-108.3" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">1</text></g>
+</svg>

@@ -23,8 +23,9 @@ Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.35
+version: 2.36
 changelog:
+  - 2.36 (Nov 7 2026) - Method 4 STEP 4: run the project CE's closing scans (step 8b subtype scan, and the no-`sys_config_id` bullet of its Before-you're-done scan) before STEP 5. A blind demo_emp_types build read those sections and still shipped without `show_when`, null-exclusion constraints and `SysConfig.current()`; the scans are now commands to run, not guidance to recall. See project CE 3.64.
   - 2.35 (Nov 3 2026) - New trigger: "create the ontology" (or lineage) runs `ontology_gv.py <project>` from the Manager root. The trigger lived only in the project CE, which the Manager loads only right after creating a project, so it did not route for an existing project. Generator: ontology, SHACL shapes, column lineage and a business-readable page, all generated from models, rules and requirements.
   - 2.34 (Nov 2 2026) - "What are rules" table: added a 'Dependency managed' row. The three things the engine takes over from the author are invocation, ordering and dependency propagation; that is what separates declarative rules from procedural code (including 4GLs, which shorten the procedure but leave all three to the author). The table had the first two only.
   - 2.33 (Oct 27 2026) - "What are rules" now offers the extensibility point: new trigger (can I add code / what are events / how rules and Python fit together) answering that Python events are the extension mechanism and are integrated with the declarative rules. Same wording as the project CE (base 3.55).
@@ -624,6 +625,10 @@ STEP 4: Implement the domain prompt using the project CE's System Creation Servi
            the project was freshly created in this same session; a self-authored pass has the
            same blind spot whether the project is new or pre-existing. See project CE's
            `.github/copilot-instructions.md` STEP 8 for the full procedure.
+        ⛔ Then run the project CE's closing scans, as commands, before STEP 5: step 8b (subtype / STI scan,
+           when the prompt has subtypes or a classification axis) and the "No `sys_config_id` FK on a domain
+           table" bullet of its Before-you're-done scan. Reading those sections earlier in STEP 3 is not
+           the check; the scans are run against the finished project.
 
 ⚠️ CRITICAL PATH RULE — all file operations use the subdirectory as root:
    - File reads/writes:  <name>/database/db.sqlite,  <name>/logic/logic_discovery/...

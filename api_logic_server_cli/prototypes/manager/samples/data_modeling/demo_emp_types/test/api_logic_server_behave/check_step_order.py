@@ -23,7 +23,7 @@ def check_step_order(steps_file):
     
     Returns list of issues found, or empty list if order is correct.
     """
-    with open(steps_file) as f:
+    with open(steps_file, encoding='utf-8') as f:
         lines = f.readlines()
     
     issues = []

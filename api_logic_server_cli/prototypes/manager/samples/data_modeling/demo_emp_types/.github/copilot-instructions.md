@@ -1,4 +1,12 @@
 ---
+version: 3.64 - 11/7/26 - System Creation Services: two mechanical closing scans, run as commands against the finished project. (1) Step 8b, the subtype (STI) scan: `show_when` entries in admin.yaml, a null-exclusion constraint for every subtype-specific column, a TEXT yes/no classification axis (not `is_x` 0/1), and "only X may have Y" as a Rule.count plus a parent constraint. (2) A Before-you're-done bullet: no `sys_config_id` FK on a domain table (read constants with SysConfig.current). A blind demo_emp_types build (Sonnet 5.5, Nov 2026) read the STI section and the SysConfig guidance and still shipped none of them (0 show_when entries vs 11 in the reference build, only 1 of 7 null-exclusion constraints, `is_military` 0/1, a sys_config_id FK plus an early event to default it); the guidance was correct but sat in prose ~400 lines before the point of use, with no closing check. Same fix pattern as 3.38/3.39: a checklist at the end. implement_requirements.md gains a money-column convention (NUMERIC(15,2) and Decimal, not REAL).
+version: 3.63 - 11/4/26 - Executable Requirements Phase 1 (schema impact) now asks about the Request Pattern: a requirement that gets a value from AI, or sends email / Kafka / calls an external service whose result the rules use, needs a Sys*Req table (audit columns per System Creation Services step 4c), created by DDL + rebuild-from-database before any logic. The checklist listed only EAI blob tables, derived columns and columns named in the requirement, so a scripted demo_ai_rules_supplier build created the audit table only because its script said to ("given in the script" in the ad-libs); without the script line nothing prompted it. Same bullet in implement_requirements.md.
+version: 3.62 - 11/2/26 - "What are rules" table: added a 'Dependency managed' row (invocation, ordering and dependency propagation are the three things the engine takes over from the author; the table had the first two). Same wording as the Manager CE (2.34).
+version: 3.61 - 11/1/26 - Executable Requirements STEP 6 checklist: a clause that names something the data does not define (e.g. "authorized CLVS courier") is implemented against an assumed column and a SysConfig placeholder and flagged 🔴, never left unimplemented. A scripted demo_customs_clvs build skipped the courier clause ("no courier data") where three earlier builds had implemented it with an ad-lib; shipments from any courier passed.
+version: 3.60 - 11/1/26 - "Create Tests" trigger: the coverage plan is now a FILE (docs/requirements/<name>/test_plan.md), written before any test file and closed out in the same file, instead of a printed chat table. A scripted run with the 3.59 trigger again kept the plan in its thinking, printed nothing and left out the move-to-another-parent scenarios. This CE reliably writes mandated files (ad-libs.md, requirements.md, diagrams) but not mandated chat prints. testing.md Steps 2b/4d match.
+version: 3.59 - 11/1/26 - New "Create Tests" trigger (before "Run Tests"): the coverage plan is a printed table before any test file, and the same table closes the request. A scripted run (demo_customs_clvs) read the testing.md workflow and planned in its thinking only, printed nothing, and wrote 14 eligibility scenarios against 24 when the same request was typed alone; the trigger gives the AI a mandatory sequence at the point of use. Also: a live-only scenario goes in its requirement's Feature, so the traceability report counts it.
+version: 3.58 - 11/1/26 - New static `api/api_discovery/readme_api_discovery.md` (user-facing: the *_debug services and the requests the AI can serve for them), replacing the idea of repeating that text in each generated debug file's docstring; one pointer line in Discovery Systems. Customs test_gate.sh retired; its lessons are in eai_subscribe.md 1.7.
+version: 3.57 - 10/29/26 - Audit / change recording: new Step 2.8 (signals: audit, auditing, history, track changes, who changed, before/after) routes to PATTERN 3c of logic_bank_patterns.md (RuleExtension.copy_row, or an event for old/new values and decisions) instead of defaulting to the Request Pattern; Step 3 and the Request Pattern use-case line no longer send "audit" to a SysAuditReq table.
 version: 3.56 - 10/29/26 - Security section points to the new "Roles inside business rules" section of security.md (Security.current_user_has_role in a rule or event; no-user case). A blind run found that method only by reading security/system/authorization.py.
 version: 3.55 - 10/27/26 - "What are rules" now offers the extensibility point: new trigger (can I add code / what are events / how rules and Python fit together) answering that Python events are the extension mechanism and are integrated with the declarative rules (same transaction, engine phases, row/old_row/logic_row; the phase is the design choice). Events are not presented as a lesser or separate layer.
 version: 3.54 - 10/24/26 - Closes the remaining gaps from the blind demo_eai run: default Feature names (testing.md), the quantity>0 / unit_price>0 contradiction (now: asked about as a 🔴 ad-lib, not added silently), undefined-term ambiguity is 🔴 not 🟡, and Executable Requirements STEP 1 copies a requirements dir given from outside the project.
@@ -411,6 +419,7 @@ But unlike procedural code, rules are *declarative* — which has important impl
 | **Auto-reused** | `Customer.balance = sum of unpaid orders` — declared once, enforced over every change path | No per-path handlers to write or miss |
 | **Auto-invoked** | Rules fire at every commit, from every caller — you never call them | Can't be forgotten, can't be bypassed |
 | **Auto-ordered** | The engine computes dependency order at startup | Add a rule anywhere, it finds its place |
+| **Dependency managed** | A change re-derives exactly what depends on it — a sum adjusts by the changed child's delta, not a re-aggregate | No cascade or recompute code to write, no stale values |
 
 &nbsp;
 
@@ -548,7 +557,7 @@ When user asks "what can I do here", "what can you help me with", "what can you 
 12. **Discovery systems** - Auto-load logic and APIs from discovery folders
 13. **FAQs / Eval info** - Common questions: what is this, why rules matter, 3-legged stool (rules + AI + context engineering)
 14. **EAI Consume** - Consume XML/JSON messages from a Kafka topic and persist to your existing tables.
-15. **Executable Requirements** - Copy a requirements set into `docs/requirements/`, say "implement reqs", and I execute the spec end-to-end — logic, APIs, Kafka integration — reporting any "ad libs" (decisions I made beyond the spec). Phase 2 of the two-phase workflow: infrastructure first (Phase 1, from Manager), then behavior here.
+15. **Executable Requirements** - Name a requirements set (a path, or a folder already in `docs/requirements/`), say "implement reqs" — I copy it in if needed —, and I execute the spec end-to-end — logic, APIs, Kafka integration — reporting any "ad libs" (decisions I made beyond the spec). Phase 2 of the two-phase workflow: infrastructure first (Phase 1, from Manager), then behavior here.
 16. **Governance Report** - Say "vital signs" or "health check" — I scan your logic files and report rule adoption, dependency tracking correctness, docstring hygiene, and logic organization. For each finding I offer to fix it.
 17. **Logic Diagram** - Say "create logic diagram" or "create logic diagram from <requirement>" — I generate an SVG showing the rule chain: which tables/columns are involved, how data flows from the trigger event through copy/formula/sum rules. Requires `brew install graphviz` once. See `docs/training/logic_diagrams/logic_diagram.md`.
 18. **Queries and Dashboards** - Ask for a query, report, or a dashboard/chart ("graph sales by category") — I write a custom API endpoint (aggregate SQLAlchemy query), and for dashboards also wire the chart into the Admin App home page. See `docs/training/queries_dashboards.md`.
@@ -686,6 +695,32 @@ simulated run when a broker was answering.
 
 ---
 
+## 🧱 Create Tests
+
+**ACTIVATION TRIGGERS:**
+- "create tests from rules" / "create tests" / "write the tests" / "generate behave tests"
+- The same request as one step inside a longer script or prompt: the sequence below still applies in full.
+
+**MANDATORY SEQUENCE:**
+
+```
+STEP 1: Read docs/training/testing.md: the "Test Generation Workflow" at the top, including its COVERAGE MATRIX.
+STEP 2: Write the coverage plan to docs/requirements/<name>/test_plan.md (<name> = the requirements set the tests
+        are for): a table with one row per rule and the scenarios you will write (create / change / delete /
+        move to another parent / enters and leaves a where= / boundary / accepted and rejected).
+        The file exists before any .feature file, steps file or API probing.
+STEP 3: Write the tests: one Feature per requirement, named as its `Feature:` line in requirements.md.
+        A live-only scenario goes in the Feature of the requirement it tests, never in a file without a `Feature:` line.
+STEP 4: Close out in the same file: add the scenario name beside each row. A row with no scenario says NOT covered
+        and why. Then tell the user, in one line, where test_plan.md is and how many rows are NOT covered.
+STEP 5: Creating tests writes files; running them is the separate "run the tests" request (next section).
+```
+
+**❌ FORBIDDEN:** planning only in your head ("I've laid out the plan" in a summary is not the plan); writing a
+test file before test_plan.md exists; finishing without the close-out in test_plan.md.
+
+---
+
 ## 🧪 Run Tests / Behave Report
 
 **ACTIVATION TRIGGERS:**
@@ -727,6 +762,13 @@ STEP 1: Check graphviz is installed: dot -V
         If missing: tell user to run: brew install graphviz  (macOS)
                                    or: sudo apt install graphviz  (Linux)
 
+STEP 1b: Subtype groups appear automatically; the user never has to ask for them and nothing needs adding to
+        admin.yaml. The generators read the groups from the rule code itself: a column belongs to a subtype when every
+        guarded read of it sits in that subtype's branch (`if row.type == 'hourly':`, code after `if row.type !=
+        'hourly': return`, or `row.type == 'hourly' or row.union_id is None`), and a derived column whose same-table
+        inputs all sit in one subtype joins it. `show_when` entries in admin.yaml are honored too. The Requirements
+        Traceability Report's ER diagram uses the same inference, so it shows the same groups. Nothing to do here but run STEP 2.
+
 STEP 2: Run from Manager root:
         # Full diagram (all rules):
         python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py <project_name>
@@ -761,6 +803,9 @@ implements it (the file's module docstring carries the requirement text) and pas
 - Right side arcs = formula dependencies (intra-table)
 - Orange annotation on column = formula expression
 - Green = events, red border = constraint
+- Tinted group inside a table = a subtype (single-table inheritance): the columns that apply only
+  to that type, with a small label (for example Employee: hourly, commissioned, military).
+  Shared columns stay untinted at the top. Arrows address columns, so grouping never changes them
 - Numbers match the Rules legend at the bottom
 
 **See:** `docs/training/logic_diagrams/logic_diagram.md` for full guide and per-project shortcut:
@@ -769,6 +814,41 @@ python docs/training/logic_diagrams/generate_logic_diagram.py              # ful
 python docs/training/logic_diagrams/generate_logic_diagram.py check_credit # scoped
 python docs/training/logic_diagrams/generate_logic_diagram.py --each       # one per logic file (use case)
 ```
+
+---
+
+## 🧬 Ontology and Lineage
+
+**ACTIVATION TRIGGERS:**
+- "create the ontology" / "create an ontology" / "generate the ontology" / "export the ontology"
+- "show the lineage" / "what feeds <column>" / "create the lineage"
+- Any similar request for an ontology, SHACL shapes, or column lineage
+
+**MANDATORY SEQUENCE:**
+
+```
+STEP 1: Run from Manager root (no packages are needed to generate):
+        python system/ApiLogicServer-Internal-Dev/ontology_gv.py <project_name>
+        It reads database/models.py and logic/logic_discovery (subtype groups come from the rule code; admin.yaml show_when is honored too), and writes
+        docs/ontology/: genai-logic.ttl (shared rule vocabulary), <project>.ttl (OWL: classes, subtypes, properties,
+        every rule as a linked individual), <project>.shapes.ttl (SHACL), <project>.html, lineage.csv, lineage.json.
+STEP 2: Validation is automatic: if rdflib and pyshacl are installed, the files are parsed and the project's own data
+        (database/db.sqlite) is checked against the shapes. If they are missing, the generator says so and skips only
+        that step. NEVER install them unless the user's text says to ("validate it if rdflib is available" is not
+        permission to install).
+STEP 3: Tell the user, in two or three lines: the counts the generator printed (classes, subtypes, rules, how many
+        "inferred", constraints translated to SHACL, lineage edges), the validation result, and that
+        docs/ontology/<project>.html is the page to open. Do not paste file contents.
+```
+
+**What it is:** the ontology says what things mean; the rules make sure the data stays true to that meaning. Rules appear
+as `gl:Rule` individuals (`gl:derives`, `gl:validates`, `gl:dependsOn`, `gl:requirement`, `gl:origin`); constraints are also
+SHACL shapes ("translated" where SHACL can state the condition, "descriptive" where it is code). `gl:origin` is
+`specified` when the rule matches a line of the requirement, else `inferred` (a judgment call: see ad-libs.md).
+`gl:dependsOn` is column-level lineage.
+
+**❌ FORBIDDEN:** writing or editing the `.ttl` by hand or by AI authoring (it drifts from the engine): regenerate it.
+Do not claim the ontology enforces anything: the engine enforces; the ontology and shapes describe, and let other tools check.
 
 ---
 
@@ -834,6 +914,13 @@ STEP 5: Read docs/training/implement_requirements.md COMPLETELY (silently)
            [ ] EAI / Kafka consume detected? → blob table needed (ShipmentXml, OrderXml, etc.)
            [ ] Rule.sum or Rule.count needed? → derived columns needed on parent table
            [ ] row_event side-effects (matching, enrichment)? → no schema change, but note the pattern
+           [ ] Request Pattern (a value chosen by AI, or an email / Kafka message / external call whose result the rules use)?
+               → a Sys*Req table is needed, so it belongs on the DDL list now, before any logic: input columns, result
+               columns, and the audit columns `request TEXT` and `created_on TEXT`; every FK the handler sets after the
+               insert (and every parent link made from a new row's event) nullable. Column rules: "System Creation
+               Services" step 4c. Create it with SQL DDL + rebuild-from-database, never by editing models.py by hand.
+               REAL CASE (demo_ai_rules_supplier, Nov 2026): the table was created only because the build script said
+               to; this checklist did not ask for it.
            [ ] Any requirement references a column that does not exist in models.py? → add it now
            Produce a complete list of ALL DDL changes needed across ALL steps.
            Run DDL + rebuild-from-database ONCE before writing any logic or mapper files.
@@ -851,6 +938,16 @@ STEP 5: Read docs/training/implement_requirements.md COMPLETELY (silently)
 STEP 6: Implement all steps in requirements.md in sequence.
          Schema is already correct from the assessment above — no DDL surprises mid-implementation.
          LOGIC FILES: before writing each logic file:
+           [ ] A clause that names something the data does not define ("authorized courier", "designated
+               office", "approved supplier") is IMPLEMENTED, never skipped. Pick the closest column the
+               data does carry, put the compared value in a SysConfig column (Step 4a), default it to what the
+               sample messages carry, write the rule and its scenarios, and log a 🔴 ad-lib saying what you
+               assumed and how to change it. A stated clause left unimplemented fails the requirement for
+               every shipment, silently; an assumed one fails only if the assumption is wrong, visibly.
+               Only a clause that needs a row that may never arrive stays blocked (STEP 8, step 4).
+               REAL CASE (demo_customs_clvs, Nov 2026): three builds implemented "authorized CLVS courier"
+               as service_type_cd equal to a SysConfig value, flagged 🔴; a fourth left it out ("no courier
+               data"), so shipments from any courier passed the eligibility check.
            [ ] Any multi-line logic → write a function, wire with calling=my_func — this
                applies to EVERY Rule.* that accepts calling=, not just Rule.formula. In
                particular Rule.constraint has BOTH as_condition= (lambda, row only) and
@@ -1203,6 +1300,7 @@ changelog:
 1. **Discovery Systems**: 
    - **Logic Discovery**: Business rules automatically loaded from all `logic/logic_discovery/*.py` files via `logic/logic_discovery/auto_discovery.py` — create one file per use case, named after it (e.g., `check_credit.py`)
    - **API Discovery**: Custom APIs automatically loaded from `api/api_discovery/[service_name].py` via `api/api_discovery/auto_discovery.py`
+     `api/api_discovery/readme_api_discovery.md` tells the user about the `*_debug` services and what to ask you for (verify, test, reset, why is a message stuck); point to it when they ask what is in that folder.
    - Do NOT manually duplicate rule calls or API registrations
 
 2. **API Record ID Pattern**: When creating records via custom APIs, use `session.flush()` before accessing the ID to ensure it's generated:
@@ -1421,7 +1519,7 @@ The sections below provide complete details on each service. I'll reference thes
 - **Send email** - Insert SysMailReq row → event checks opt-out, sends email, logs activity
 - **Kafka integration** - Insert request row → event publishes message to topic
 - **AI Logic** - Insert SysSupplierReq → event calls AI to find optimal supplier based on cost, lead time, world conditions
-- **Audit trails** - Insert SysAuditReq → event captures operation details
+- **Audit of a service call** - Insert SysAuditReq → event captures the operation's details (to record CHANGES to existing data, use `RuleExtension.copy_row` or an audit event: Step 2.8)
 - **External API calls** - Insert request row → event calls external service, captures response
 
 **Implementation pattern:**
@@ -1818,7 +1916,7 @@ an ad-lib — do not do it silently.
    1. Read `database/models.py` — find the discriminator column and its `Enum` values
    2. Read `logic/logic_discovery/` files — map each column to its type by scanning `row.type ==` guards
    3. Write `show_when` entries derived from that scan — do not guess
-   Do NOT auto-rewrite `admin.yaml` for existing projects; it may contain user customizations.
+   Do NOT rewrite `admin.yaml` for existing projects; it may contain user customizations. (Diagrams and the ontology do not need these entries: they read the subtype groups from the rules.)
 
    **🚨 Type hierarchy scan — verification before writing any DDL:**
    - [ ] Prompt contains "X are Y" / "X is a type of Y" / "subtypes" phrasing?
@@ -1897,6 +1995,28 @@ This auto-generates correct `models.py` with all boilerplate intact.
    This applies to System Creation Services (Method 4 / "See It Work") just as much as to
    logic added later — do not skip it because the project was just created.
 
+8b. **Subtype (STI) closing scan — only if step 4d applied** (the prompt had "X are Y with Z" subtypes, or a
+   classification axis such as military / non-military). **Run it as commands against the finished project;
+   do not answer it from memory.** REAL CASE (demo_emp_types, Nov 2026): a build read step 4d and shipped with
+   none of the four items below; a reference build of the same prompt had all of them.
+   ```bash
+   grep -c show_when ui/admin/admin.yaml     # must be > 0 (one entry per subtype-specific column)
+   grep -n "is_" database/models.py          # no `is_<axis>` INTEGER discriminator
+   ```
+   - [ ] **`show_when` written.** `ui/admin/admin.yaml` has a `show_when` for every subtype-specific column in the
+     step 4d list. Method 4 writes them now, right after the logic files. This step is on no numbered list in the
+     prompt, which is why it is the one most often skipped.
+   - [ ] **Null-exclusion constraint per subtype-specific column.** Every hourly-only, commissioned-only or
+     military-only column in `models.py` is named by a `Rule.constraint` that requires it to be null for the other
+     types. A column with no constraint naming it is the gap (the 4d "Inferred constraints" list, applied).
+   - [ ] **Classification axis is TEXT `"yes"`/`"no"` named `military`**, not `is_military` INTEGER 0/1: the underscore
+     breaks `show_when` (see "Boolean axis naming" in step 4d). Add a constraint that the column is `yes` or `no`.
+   - [ ] **"Only X may have Y"** (only Commissioned employees may have Orders) is a `Rule.count` of Y on the parent
+     (`order_count`) plus a parent constraint (`row.type == 'commissioned' or row.order_count == 0`). Not a
+     constraint on the child that reads `row.employee.type`: the child form is checked only when an order is saved,
+     so it misses an Employee whose type changes after it already has orders.
+   Log anything you add here as 🟡 FYI in `ad-libs.md`; anything you decide NOT to add is 🔴 with the reason.
+
 9. **Press F5** — full JSON:API + Admin UI + logic enforcement.
 
 **🚨 Before-you're-done scan — verify these two are actually present, not just planned:**
@@ -1908,6 +2028,16 @@ This auto-generates correct `models.py` with all boilerplate intact.
      transcript (e.g. `/export docs/requirements/transcript_creation`), confirm that file
      exists now. This step is easy to skip because it comes after the "real" work feels done —
      check for the file, don't rely on remembering to run the command.
+   - **No `sys_config_id` FK on a domain table.** Run `grep -n sys_config_id database/models.py`: the only hits
+     allowed are an ad-libbed frozen-snapshot design (step 2 of "System Creation Services"). Read constants with
+     `models.SysConfig.current(logic_row.session).<column>` inside the `calling=` function. Symptoms of the wrong
+     design: a `Rule.copy` of a SysConfig constant onto the domain table, a constraint that passes when that copy is
+     None (`... or row.max_x is None or ...`, which silently accepts the case it exists to reject), and an
+     `early_row_event` whose only job is to default `sys_config_id` because the DB `server_default` is not visible
+     to rules before flush. REAL CASE (demo_emp_types, Nov 2026): all three appeared together, plus a separate
+     `employee_sys_config.py` logic file that is not in any requirement; the reference build used `.current()` and
+     had none of them. The FK-vs-`.current()` test is "is there a real relationship" (a singleton has none), never
+     "is the FK easy to add".
    - **Rollup/aggregate columns:** scan `database/models.py` for every column whose name reads
      as an aggregate (`total_*`, `*_total`, `*_count`, `*_amount`, `sum_*`, `num_*`, or similar)
      on any table the logic file(s) you just wrote touch. For each one, confirm a matching
@@ -2257,12 +2387,31 @@ STEP 2.7: Check for Insert-Only Constraint (Grandfather Clause) pattern:
         - `Rule.constraint(calling=...)`, not `as_condition=` (need `old_row` access)
         - comparing `row.<count> > old_row.<count>` to detect "a new child was just
           added this transaction" vs. "some other parent attribute changed"
+   IF NO → Continue to Step 2.8
+
+STEP 2.8: Check for Audit / change-recording:
+   Signal phrases (ANY of these = record changes): "audit", "auditing", "audit trail", "audit log",
+   "history", "change history", "version history", "track changes", "keep a record of", "log who changed",
+   "who and when", "before and after", "old value", "record every override / approval / exception".
+   IF YES →
+      ⛔ STOP. Read PATTERN 3c "Recording Changes (Auditing)" in `docs/training/logic_bank_patterns.md` NOW,
+      even if you already read that file this session. Route by what is wanted:
+        - a copy of a row when attributes change      → `RuleExtension.copy_row` into an audit table (one rule)
+        - the OLD value too, a reason, who/when       → a hand-written `commit_row_event` that inserts the audit row
+        - a decision / override / approval recorded   → the same event form, where the decision is taken
+        - a caller asks and reads a result back       → Request Pattern (Step 3) - NOT an audit
+      ❌ Do NOT create a `Sys*Req` / `SysAuditReq` table for "record changes to existing data": nobody
+         inserts a request when a value is edited. ❌ Do not use `copy_row`'s `initialize_target` (never called).
+      The stamping handler is OFF by default: set who/when explicitly (see PATTERN 3c).
+      Add the audit table to the DDL analysis (step 4a-4c) BEFORE writing the DDL, and list the choice and any
+      unstated detail (deletes audited? retention? who may read?) in ad-libs.
    IF NO → Continue to Step 3
 
 STEP 3: Analyze the prompt for Request Pattern signals:
    - Does prompt say "calculate/determine/select [X] when [Y] is given"?
    - Integration service needed (AI, external API, messaging, email)?
-   - Compliance/audit domain (customs, finance, healthcare)?
+   - Compliance/audit domain (customs, finance, healthcare)? (this means an integration service whose result needs a
+     trail; recording changes to data is NOT this - see Step 2.8)
    - IF YES → Use Request Pattern (see RequestObjectPattern.md)
    - IF NO → Continue to Step 4
    ❌ NOT Request Pattern: a gate/constraint on new inserts based on a related record's

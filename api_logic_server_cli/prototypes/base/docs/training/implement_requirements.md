@@ -39,6 +39,22 @@ The prompt author is a domain expert. They wrote only what they needed to contro
 
 ## Part 1: Data Model Principles
 
+### Money Columns Are NUMERIC(15,2), Not REAL
+
+Any column holding a currency amount (`salary`, `amount`, `budget`, `*_total`, `*_dues`, `*_stipend`, `balance`) is
+`NUMERIC(15,2)` in the DDL (`Numeric(15, 2)` in the generated `models.py`), not `REAL`/`Float`. Binary floating point
+cannot represent most cents exactly, so sums drift and a budget or credit-limit comparison can fail by a fraction of a
+cent. Rates, percentages and counts (`dues_rate`, `tax_rate`, `hours_worked`) may stay `REAL`.
+
+In rule code, money arithmetic uses `Decimal`; convert any `REAL` operand with `Decimal(str(x))`:
+
+```python
+return Decimal(str(row.hours_worked or 0)) * Decimal(str(row.hourly_rate or 0))   # REAL * REAL -> Decimal
+return (row.base_salary or Decimal(0)) + (row.commission_total or Decimal(0))      # NUMERIC + NUMERIC
+```
+
+---
+
 ### Always Use Autoincrement Primary Keys
 
 **✅ CORRECT:**

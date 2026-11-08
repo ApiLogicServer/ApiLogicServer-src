@@ -37,9 +37,9 @@
             ],
             "fields": [
                 "id",
+                "Type",
                 "name",
                 "dept_id",
-                "Type",
                 "salary",
                 "hours_worked",
                 "hourly_rate",
@@ -57,9 +57,9 @@
             ],
             "filterable": [
                 "id",
+                "Type",
                 "name",
                 "dept_id",
-                "Type",
                 "salary",
                 "hours_worked",
                 "hourly_rate",
@@ -108,14 +108,14 @@
             "fields": [
                 "id",
                 "employee_id",
-                "customer_name",
-                "amount"
+                "amount",
+                "customer_name"
             ],
             "filterable": [
                 "id",
                 "employee_id",
-                "customer_name",
-                "amount"
+                "amount",
+                "customer_name"
             ]
         },
         {
@@ -134,7 +134,7 @@
                 "tax_rate",
                 "notes",
                 "max_hourly_weekly_salary",
-                "military_stipend_per_service_year"
+                "military_stipend_per_year"
             ],
             "filterable": [
                 "id",
@@ -143,7 +143,7 @@
                 "tax_rate",
                 "notes",
                 "max_hourly_weekly_salary",
-                "military_stipend_per_service_year"
+                "military_stipend_per_year"
             ]
         }
     ]

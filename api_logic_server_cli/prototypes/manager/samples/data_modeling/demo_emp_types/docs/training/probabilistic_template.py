@@ -78,7 +78,7 @@ def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, lo
     # Product has suppliers - call wrapper
     supplier_req = get_supplier_selection_from_ai(
         product_id=row.product_id,
-        item_id=row.id,
+        item=row,        # the object, not row.id: the id does not exist yet (see the wrapper)
         logic_row=logic_row
     )
     
@@ -145,7 +145,7 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
     
     test_context = {}
     if context_file.exists():
-        with open(str(context_file), 'r') as f:
+        with open(str(context_file), 'r', encoding='utf-8') as f:
             test_context = yaml.safe_load(f) or {}
     
     world_conditions = test_context.get('world_conditions', 'normal conditions')
@@ -258,7 +258,7 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
         row.chosen_unit_price = selected_supplier.unit_cost
         logic_row.log(f"Selected supplier {selected_supplier.supplier_id} with price {selected_supplier.unit_cost}")
 
-def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: LogicRow) -> models.SysSupplierReq:
+def get_supplier_selection_from_ai(product_id: int, item: models.Item, logic_row: LogicRow) -> models.SysSupplierReq:
     """
     Typically called from Item (Receiver) early event 
     to get AI results from chosen ProductSupplier (Provider).
@@ -274,6 +274,11 @@ def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: Log
     - Standard AI Audit: request, reason, created_on, fallback_used
     - Parent Context Links: item_id, product_id
     - AI Results: chosen_supplier_id, chosen_unit_price
+
+    Link the request to the triggering row BY OBJECT (`item`), never by `item.id`. This runs inside an
+    early_row_event, before the Item is flushed, so a new Item's id is still None and an id-based link
+    is silently saved as NULL (the audit row is then orphaned, and the Admin App asks for Item `-`: a 404).
+    Assigning `supplier_req.item = item` lets SQLAlchemy save the Item first and fill in item_id.
     """
     # 1. Create request row using parent's logic_row
     supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
@@ -281,7 +286,10 @@ def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: Log
     
     # 2. Set parent context (FK links)
     supplier_req.product_id = product_id
-    supplier_req.item_id = item_id
+    # Link to the triggering row BY OBJECT, never by id. This runs inside an early event, before the row is
+    # flushed, so a new row's id is still None: `item_id = item.id` would silently save a NULL link.
+    # Assigning the object lets SQLAlchemy save the Item first and fill in item_id itself.
+    supplier_req.item = item
     
     # 3. Insert triggers early event which populates AI values
     supplier_req_logic_row.insert(reason="AI supplier selection request")
@@ -304,7 +312,7 @@ KEY PATTERNS SUMMARY
 
 2. WRAPPER FUNCTION
    - Hides Request Pattern complexity
-   - Takes simple parameters: product_id, item_id, logic_row
+   - Takes simple parameters: product_id, item (the triggering row, passed as an object), logic_row
    - Returns populated request object
 
 3. REQUEST PATTERN

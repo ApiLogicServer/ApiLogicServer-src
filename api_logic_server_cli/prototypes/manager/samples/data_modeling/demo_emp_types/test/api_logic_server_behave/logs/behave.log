@@ -1,0 +1,245 @@
+Feature: Commissioned Employees # features/commissioned_employees.feature:1
+
+  Scenario: Order raises commission_total and order_count                      # features/commissioned_employees.feature:3
+    Given a department with budget 1000000                                     # features/steps/emp_types_steps.py:94
+    And an employee of type commissioned with name="Comm Add" base_salary=1000 # features/steps/emp_types_steps.py:112
+    When an order of 500 is added for the employee                             # features/steps/emp_types_steps.py:133
+    Then the employee commission_total is 500                                  # features/steps/emp_types_steps.py:210
+    And the employee order_count is 1                                          # features/steps/emp_types_steps.py:210
+    And the employee salary is 1500                                            # features/steps/emp_types_steps.py:210
+
+  Scenario: Order amount change adjusts commission_total                          # features/commissioned_employees.feature:11
+    Given a department with budget 1000000                                        # features/steps/emp_types_steps.py:94
+    And an employee of type commissioned with name="Comm Change" base_salary=1000 # features/steps/emp_types_steps.py:112
+    And an order of 500 is added for the employee                                 # features/steps/emp_types_steps.py:133
+    When the order amount is changed to 800                                       # features/steps/emp_types_steps.py:160
+    Then the employee commission_total is 800                                     # features/steps/emp_types_steps.py:210
+    And the employee salary is 1800                                               # features/steps/emp_types_steps.py:210
+
+  Scenario: Deleting an order lowers commission_total and order_count             # features/commissioned_employees.feature:19
+    Given a department with budget 1000000                                        # features/steps/emp_types_steps.py:94
+    And an employee of type commissioned with name="Comm Delete" base_salary=1000 # features/steps/emp_types_steps.py:112
+    And an order of 500 is added for the employee                                 # features/steps/emp_types_steps.py:133
+    When the order is deleted                                                     # features/steps/emp_types_steps.py:184
+    Then the employee commission_total is 0                                       # features/steps/emp_types_steps.py:210
+    And the employee order_count is 0                                             # features/steps/emp_types_steps.py:210
+
+  Scenario: Moving an order adjusts both employees                                 # features/commissioned_employees.feature:27
+    Given a department with budget 1000000                                         # features/steps/emp_types_steps.py:94
+    And an employee of type commissioned with name="Comm From" base_salary=1000    # features/steps/emp_types_steps.py:112
+    And another employee of type commissioned with name="Comm To" base_salary=2000 # features/steps/emp_types_steps.py:119
+    And an order of 500 is added for the employee                                  # features/steps/emp_types_steps.py:133
+    When the order is moved to the other employee                                  # features/steps/emp_types_steps.py:172
+    Then the employee commission_total is 0                                        # features/steps/emp_types_steps.py:210
+    And the other employee commission_total is 500                                 # features/steps/emp_types_steps.py:205
+    And the other employee order_count is 1                                        # features/steps/emp_types_steps.py:205
+
+  Scenario: Base salary change adjusts salary                                   # features/commissioned_employees.feature:37
+    Given a department with budget 1000000                                      # features/steps/emp_types_steps.py:94
+    And an employee of type commissioned with name="Comm Base" base_salary=1000 # features/steps/emp_types_steps.py:112
+    And an order of 500 is added for the employee                               # features/steps/emp_types_steps.py:133
+    When the employee base_salary is changed to 2000                            # features/steps/emp_types_steps.py:148
+    Then the employee salary is 2500                                            # features/steps/emp_types_steps.py:210
+
+  Scenario: Salaried employee may not have orders                                   # features/commissioned_employees.feature:44
+    Given a department with budget 1000000                                          # features/steps/emp_types_steps.py:94
+    And an employee of type salaried with name="Order Sal" salary=1000              # features/steps/emp_types_steps.py:112
+    When an order of 100 is added for the employee                                  # features/steps/emp_types_steps.py:133
+    Then the request is rejected with "Only commissioned employees may have Orders" # features/steps/emp_types_steps.py:198
+
+  Scenario: Hourly employee may not have base_salary                                                              # features/commissioned_employees.feature:50
+    Given a department with budget 1000000                                                                        # features/steps/emp_types_steps.py:94
+    When an employee of type hourly is created with name="Base Hour" hours_worked=1 hourly_rate=1 base_salary=100 # features/steps/emp_types_steps.py:126
+    Then the request is rejected with "base_salary applies only to commissioned employees"                        # features/steps/emp_types_steps.py:198
+
+Feature: Department Budget # features/department_budget.feature:1
+
+  Scenario: Employee added to a department raises total_salary                    # features/department_budget.feature:3
+    Given a department with budget 100000                                         # features/steps/emp_types_steps.py:94
+    When an employee of type salaried is created with name="Add Emp" salary=40000 # features/steps/emp_types_steps.py:126
+    Then the department total_salary is 40000                                     # features/steps/emp_types_steps.py:220
+
+  Scenario: Salary change adjusts the department total                  # features/department_budget.feature:8
+    Given a department with budget 100000                               # features/steps/emp_types_steps.py:94
+    And an employee of type salaried with name="Raise Emp" salary=40000 # features/steps/emp_types_steps.py:112
+    When the employee salary is changed to 55000                        # features/steps/emp_types_steps.py:148
+    Then the department total_salary is 55000                           # features/steps/emp_types_steps.py:220
+
+  Scenario: Deleting an employee lowers total_salary                     # features/department_budget.feature:14
+    Given a department with budget 100000                                # features/steps/emp_types_steps.py:94
+    And an employee of type salaried with name="Delete Emp" salary=40000 # features/steps/emp_types_steps.py:112
+    When the employee is deleted                                         # features/steps/emp_types_steps.py:178
+    Then the department total_salary is 0                                # features/steps/emp_types_steps.py:220
+
+  Scenario: Moving an employee adjusts both departments                # features/department_budget.feature:20
+    Given a department with budget 100000                              # features/steps/emp_types_steps.py:94
+    And another department with budget 100000                          # features/steps/emp_types_steps.py:100
+    And an employee of type salaried with name="Move Emp" salary=40000 # features/steps/emp_types_steps.py:112
+    When the employee is moved to the other department                 # features/steps/emp_types_steps.py:166
+    Then the department total_salary is 0                              # features/steps/emp_types_steps.py:220
+    And the other department total_salary is 40000                     # features/steps/emp_types_steps.py:215
+
+  Scenario: Total salary equal to the budget is accepted                               # features/department_budget.feature:28
+    Given a department with budget 50000                                               # features/steps/emp_types_steps.py:94
+    When an employee of type salaried is created with name="Boundary Emp" salary=50000 # features/steps/emp_types_steps.py:126
+    Then the request is accepted                                                       # features/steps/emp_types_steps.py:192
+    And the department total_salary is 50000                                           # features/steps/emp_types_steps.py:220
+
+  Scenario: Total salary over the budget is rejected                               # features/department_budget.feature:34
+    Given a department with budget 50000                                           # features/steps/emp_types_steps.py:94
+    When an employee of type salaried is created with name="Over Emp" salary=50001 # features/steps/emp_types_steps.py:126
+    Then the request is rejected with "exceeds budget"                             # features/steps/emp_types_steps.py:198
+
+Feature: Employee Types # features/employee_types.feature:1
+
+  Scenario: Salaried salary is the entered value                                  # features/employee_types.feature:3
+    Given a department with budget 1000000                                        # features/steps/emp_types_steps.py:94
+    When an employee of type salaried is created with name="Sal Emp" salary=70000 # features/steps/emp_types_steps.py:126
+    Then the employee salary is 70000                                             # features/steps/emp_types_steps.py:210
+
+  Scenario: Salaried salary change is kept                               # features/employee_types.feature:8
+    Given a department with budget 1000000                               # features/steps/emp_types_steps.py:94
+    And an employee of type salaried with name="Sal Change" salary=70000 # features/steps/emp_types_steps.py:112
+    When the employee salary is changed to 72000                         # features/steps/emp_types_steps.py:148
+    Then the employee salary is 72000                                    # features/steps/emp_types_steps.py:210
+
+  Scenario: Hourly salary is hours_worked times hourly_rate                                        # features/employee_types.feature:14
+    Given a department with budget 1000000                                                         # features/steps/emp_types_steps.py:94
+    When an employee of type hourly is created with name="Hour Emp" hours_worked=40 hourly_rate=25 # features/steps/emp_types_steps.py:126
+    Then the employee salary is 1000                                                               # features/steps/emp_types_steps.py:210
+
+  Scenario: Hourly salary follows a change of hours_worked                               # features/employee_types.feature:19
+    Given a department with budget 1000000                                               # features/steps/emp_types_steps.py:94
+    And an employee of type hourly with name="Hour Hours" hours_worked=40 hourly_rate=25 # features/steps/emp_types_steps.py:112
+    When the employee hours_worked is changed to 20                                      # features/steps/emp_types_steps.py:148
+    Then the employee salary is 500                                                      # features/steps/emp_types_steps.py:210
+
+  Scenario: Hourly salary follows a change of hourly_rate                               # features/employee_types.feature:25
+    Given a department with budget 1000000                                              # features/steps/emp_types_steps.py:94
+    And an employee of type hourly with name="Hour Rate" hours_worked=40 hourly_rate=25 # features/steps/emp_types_steps.py:112
+    When the employee hourly_rate is changed to 30                                      # features/steps/emp_types_steps.py:148
+    Then the employee salary is 1200                                                    # features/steps/emp_types_steps.py:210
+
+  Scenario: Each employee type is accepted                                                  # features/employee_types.feature:31
+    Given a department with budget 1000000                                                  # features/steps/emp_types_steps.py:94
+    When an employee of type commissioned is created with name="Type Comm" base_salary=1000 # features/steps/emp_types_steps.py:126
+    Then the request is accepted                                                            # features/steps/emp_types_steps.py:192
+
+  Scenario: Unknown employee type is rejected                                       # features/employee_types.feature:36
+    Given a department with budget 1000000                                          # features/steps/emp_types_steps.py:94
+    When an employee of type contractor is created with name="Type Bad" salary=1000 # features/steps/emp_types_steps.py:126
+    Then the request is rejected with "must be salaried, hourly or commissioned"    # features/steps/emp_types_steps.py:198
+
+Feature: Hourly Employees # features/hourly_employees.feature:1
+
+  Scenario: Union dues are hours_worked times the union dues_rate                                                  # features/hourly_employees.feature:3
+    Given a department with budget 1000000                                                                         # features/steps/emp_types_steps.py:94
+    And a union with dues rate 2.5                                                                                 # features/steps/emp_types_steps.py:105
+    When an employee of type hourly is created with name="Dues Emp" hours_worked=40 hourly_rate=25 union_id=@union # features/steps/emp_types_steps.py:126
+    Then the employee union_dues is 100                                                                            # features/steps/emp_types_steps.py:210
+
+  Scenario: Union dues follow a change of hours_worked                                                   # features/hourly_employees.feature:9
+    Given a department with budget 1000000                                                               # features/steps/emp_types_steps.py:94
+    And a union with dues rate 2.5                                                                       # features/steps/emp_types_steps.py:105
+    And an employee of type hourly with name="Dues Hours" hours_worked=40 hourly_rate=25 union_id=@union # features/steps/emp_types_steps.py:112
+    When the employee hours_worked is changed to 10                                                      # features/steps/emp_types_steps.py:148
+    Then the employee union_dues is 25                                                                   # features/steps/emp_types_steps.py:210
+
+  Scenario: Union dues follow a change of the union dues_rate                                           # features/hourly_employees.feature:16
+    Given a department with budget 1000000                                                              # features/steps/emp_types_steps.py:94
+    And a union with dues rate 2.5                                                                      # features/steps/emp_types_steps.py:105
+    And an employee of type hourly with name="Dues Rate" hours_worked=40 hourly_rate=25 union_id=@union # features/steps/emp_types_steps.py:112
+    When the union dues_rate is changed to 5                                                            # features/steps/emp_types_steps.py:154
+    Then the employee union_dues is 200                                                                 # features/steps/emp_types_steps.py:210
+
+  Scenario: Hourly employee with no union pays no dues                                             # features/hourly_employees.feature:23
+    Given a department with budget 1000000                                                         # features/steps/emp_types_steps.py:94
+    When an employee of type hourly is created with name="No Union" hours_worked=40 hourly_rate=25 # features/steps/emp_types_steps.py:126
+    Then the employee union_dues is 0                                                              # features/steps/emp_types_steps.py:210
+
+  Scenario: Removing the union resets dues to zero                                                        # features/hourly_employees.feature:28
+    Given a department with budget 1000000                                                                # features/steps/emp_types_steps.py:94
+    And a union with dues rate 2.5                                                                        # features/steps/emp_types_steps.py:105
+    And an employee of type hourly with name="Leave Union" hours_worked=40 hourly_rate=25 union_id=@union # features/steps/emp_types_steps.py:112
+    When the employee union_id is changed to null                                                         # features/steps/emp_types_steps.py:148
+    Then the employee union_dues is 0                                                                     # features/steps/emp_types_steps.py:210
+
+  Scenario: Hourly salary equal to 5000 is accepted                                                # features/hourly_employees.feature:35
+    Given a department with budget 1000000                                                         # features/steps/emp_types_steps.py:94
+    When an employee of type hourly is created with name="Cap Emp" hours_worked=100 hourly_rate=50 # features/steps/emp_types_steps.py:126
+    Then the request is accepted                                                                   # features/steps/emp_types_steps.py:192
+    And the employee salary is 5000                                                                # features/steps/emp_types_steps.py:210
+
+  Scenario: Hourly salary above 5000 is rejected                                                       # features/hourly_employees.feature:41
+    Given a department with budget 1000000                                                             # features/steps/emp_types_steps.py:94
+    When an employee of type hourly is created with name="Cap Over" hours_worked=100 hourly_rate=50.01 # features/steps/emp_types_steps.py:126
+    Then the request is rejected with "Hourly salary"                                                  # features/steps/emp_types_steps.py:198
+
+  Scenario: Only hourly employees may have a union                                                 # features/hourly_employees.feature:46
+    Given a department with budget 1000000                                                         # features/steps/emp_types_steps.py:94
+    And a union with dues rate 2.5                                                                 # features/steps/emp_types_steps.py:105
+    When an employee of type salaried is created with name="Union Sal" salary=1000 union_id=@union # features/steps/emp_types_steps.py:126
+    Then the request is rejected with "Only hourly employees may have a union_id"                  # features/steps/emp_types_steps.py:198
+
+  Scenario: Hourly employee may have a union                                                                       # features/hourly_employees.feature:52
+    Given a department with budget 1000000                                                                         # features/steps/emp_types_steps.py:94
+    And a union with dues rate 2.5                                                                                 # features/steps/emp_types_steps.py:105
+    When an employee of type hourly is created with name="Union Hour" hours_worked=1 hourly_rate=1 union_id=@union # features/steps/emp_types_steps.py:126
+    Then the request is accepted                                                                                   # features/steps/emp_types_steps.py:192
+
+  Scenario: Hours worked are rejected for a non-hourly employee                                   # features/hourly_employees.feature:58
+    Given a department with budget 1000000                                                        # features/steps/emp_types_steps.py:94
+    When an employee of type salaried is created with name="Hours Sal" salary=1000 hours_worked=5 # features/steps/emp_types_steps.py:126
+    Then the request is rejected with "apply only to hourly employees"                            # features/steps/emp_types_steps.py:198
+
+Feature: Military Employees # features/military_employees.feature:1
+
+  Scenario: Military stipend is service_years times 100                                                                                       # features/military_employees.feature:3
+    Given a department with budget 1000000                                                                                                    # features/steps/emp_types_steps.py:94
+    When an employee of type salaried is created with name="Mil Emp" salary=50000 military="yes" branch="Navy" rank="Captain" service_years=8 # features/steps/emp_types_steps.py:126
+    Then the employee military_stipend is 800                                                                                                 # features/steps/emp_types_steps.py:210
+    And the employee total_compensation is 50800                                                                                              # features/steps/emp_types_steps.py:210
+
+  Scenario: Stipend follows a change of service_years                                                                             # features/military_employees.feature:9
+    Given a department with budget 1000000                                                                                        # features/steps/emp_types_steps.py:94
+    And an employee of type salaried with name="Mil Years" salary=50000 military="yes" branch="Army" rank="Major" service_years=8 # features/steps/emp_types_steps.py:112
+    When the employee service_years is changed to 10                                                                              # features/steps/emp_types_steps.py:148
+    Then the employee military_stipend is 1000                                                                                    # features/steps/emp_types_steps.py:210
+    And the employee total_compensation is 51000                                                                                  # features/steps/emp_types_steps.py:210
+
+  Scenario: Leaving the military removes the stipend                                                                                    # features/military_employees.feature:16
+    Given a department with budget 1000000                                                                                              # features/steps/emp_types_steps.py:94
+    And an employee of type salaried with name="Mil Leave" salary=50000 military="yes" branch="Marines" rank="Sergeant" service_years=4 # features/steps/emp_types_steps.py:112
+    When the employee leaves the military                                                                                               # features/steps/emp_types_steps.py:142
+    Then the employee military_stipend is 0                                                                                             # features/steps/emp_types_steps.py:210
+    And the employee total_compensation is 50000                                                                                        # features/steps/emp_types_steps.py:210
+
+  Scenario: Non-military total compensation equals salary                         # features/military_employees.feature:23
+    Given a department with budget 1000000                                        # features/steps/emp_types_steps.py:94
+    When an employee of type salaried is created with name="Civ Emp" salary=50000 # features/steps/emp_types_steps.py:126
+    Then the employee total_compensation is 50000                                 # features/steps/emp_types_steps.py:210
+
+  Scenario: Military total compensation follows a salary change                                                                                          # features/military_employees.feature:28
+    Given a department with budget 1000000                                                                                                               # features/steps/emp_types_steps.py:94
+    And an employee of type hourly with name="Mil Hourly" hours_worked=10 hourly_rate=10 military="yes" branch="Air Force" rank="Airman" service_years=2 # features/steps/emp_types_steps.py:112
+    When the employee hours_worked is changed to 20                                                                                                      # features/steps/emp_types_steps.py:148
+    Then the employee total_compensation is 400                                                                                                          # features/steps/emp_types_steps.py:210
+
+  Scenario: Unknown branch is rejected                                                                                                               # features/military_employees.feature:34
+    Given a department with budget 1000000                                                                                                           # features/steps/emp_types_steps.py:94
+    When an employee of type salaried is created with name="Bad Branch" salary=1000 military="yes" branch="Space Force" rank="Cadet" service_years=1 # features/steps/emp_types_steps.py:126
+    Then the request is rejected with "must be Army, Navy"                                                                                           # features/steps/emp_types_steps.py:198
+
+  Scenario: Military columns on a non-military employee are rejected                              # features/military_employees.feature:39
+    Given a department with budget 1000000                                                        # features/steps/emp_types_steps.py:94
+    When an employee of type salaried is created with name="Civ Branch" salary=1000 branch="Navy" # features/steps/emp_types_steps.py:126
+    Then the request is rejected with "apply only to military employees"                          # features/steps/emp_types_steps.py:198
+
+  Scenario: Unknown military value is rejected                                                    # features/military_employees.feature:44
+    Given a department with budget 1000000                                                        # features/steps/emp_types_steps.py:94
+    When an employee of type salaried is created with name="Bad Mil" salary=1000 military="maybe" # features/steps/emp_types_steps.py:126
+    Then the request is rejected with "military must be yes or no"                                # features/steps/emp_types_steps.py:198
+
+&nbsp;&nbsp;
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_emp_types/test/api_logic_server_behave/behave_run.py completed at November 07, 2026 16:58:00
+Behave run time: 0.497 s

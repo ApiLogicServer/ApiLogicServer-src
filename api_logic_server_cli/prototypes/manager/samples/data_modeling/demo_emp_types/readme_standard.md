@@ -39,17 +39,9 @@ See readme files under api, logic and security.
 
 # 📋 Project Summary
 
-This is an HR payroll system for departments, employees, unions and sales orders, where one
-`employee` table carries two independent classifications: employment type (salaried, hourly,
-commissioned) and military status. Declarative rules derive each employee's salary by type
-(hours x rate for hourly, base salary plus the sum of their orders for commissioned), union dues,
-military stipend and total compensation, and roll every salary up into `Department.total_salary`.
-Constraints keep subtype-only data (union, orders, hours, base salary, military details) on the
-right kind of employee, cap hourly pay at the weekly maximum in `sys_config`, and reject a department
-over budget unless the signed-in Keycloak user holds the `manager` role.
+This is a Department and Employee system with two independent classification axes on one Employee table: employment type (salaried, hourly, commissioned) and military status. Eighteen declarative rules derive each employee's salary by type, union dues, commission totals, military stipend and total compensation, roll salaries up to the department, and enforce the department budget, the weekly cap for hourly pay, and which employee types may have a union or orders. Two constants (the hourly cap and the stipend per year of service) live in `sys_config`.
 
-See [project_creation_report.md](docs/requirements/project_creation_report.md)
-for how this was built.
+See [project_creation_report.md](docs/requirements/project_creation_report.md) for how this was built.
 
 ---
 

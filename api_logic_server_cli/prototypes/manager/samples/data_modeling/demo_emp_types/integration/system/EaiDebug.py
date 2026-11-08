@@ -85,7 +85,7 @@ def register_consume_debug(app, topic: str, simulate, port=5656, sample_file: st
         if mode not in ("auto", "simulated", "live"):
             return jsonify({"success": False, "message": "mode must be auto, simulated or live"}), 400
         try:
-            payload = Path(file_path).read_text()
+            payload = Path(file_path).read_text(encoding='utf-8')
         except OSError as e:
             return jsonify({"success": False, "topic": topic, "error": "cannot read the file"}), 400
 

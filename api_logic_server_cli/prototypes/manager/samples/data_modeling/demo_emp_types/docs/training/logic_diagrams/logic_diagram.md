@@ -2,6 +2,8 @@
 title: Logic Diagram — Generation and Viewing Guide
 version: 1.4
 changelog:
+  - 1.5 (2026-11-03) - Documented STI subtype groups (tinted blocks inside a table). Groups are now inferred from the
+                        rule code (admin.yaml show_when no longer required, still honored)
   - 1.4 (2026-05-21) - Intra-table arcs injected directly into SVG (Graphviz drops self-loops
                         on spline layouts); multiple arcs on same node fan out with staggered
                         bulge distances; ONE arc per formula rule (not one per dep)
@@ -36,6 +38,9 @@ Open `docs/requirements/logic_diagram.svg` in a browser (drag-and-drop) or VSCod
   - **Green dashed** = event (`after_flush_row_event` etc.) — side-effect after commit
 - Orange annotation on column = formula expression (e.g. `= quantity * unit_price`, `= _clvs_reason(row)`)
 - Red-bordered table = has a `Rule.constraint`
+- **Tinted group inside a table** = a subtype under single-table inheritance (for example Employee:
+  `hourly`, `commissioned`, `military`). The group holds the columns that apply only to that type, under a
+  small label; shared columns stay untinted at the top. Arrows address columns, so grouping never moves them
 - **Rules legend** = numbered natural-language rule descriptions matching the arrows
 
 ## Regenerating
@@ -96,6 +101,13 @@ python docs/generate_logic_diagram.py check_credit
      bulge distances (20, 38, 56 ... px) so they read clearly in the whitespace
 
 ## Known Issues
+
+**Subtype groups** — read from the rule code, so they need no `admin.yaml`: a column belongs to a subtype when every guarded
+read of it sits in that subtype's branch (`if row.type == 'hourly':`, code after an early `return` on `!=`, or a lambda like
+`row.type == 'hourly' or row.union_id is None`), and a derived column whose same-table inputs all sit in one subtype joins it.
+`show_when` entries in `admin.yaml` are honored as well. A table needs 2+ subtypes to be grouped. A column read in more than one
+subtype's branch, or computed by a formula that branches over several, stays shared (untinted). The ER diagram in the
+Requirements Traceability Report uses the same inference and labels each group and each attribute with the subtype name.
 
 **Intra-table formula arcs** — `Rule.formula` rules where all inputs are on the same table (e.g. `amount = quantity * unit_price`, or `clvs_eligible` depending on `prohibited_commodity_count`) are recorded as `// INTRA:` comments in the `.dot` file and injected as SVG bezier paths in post-processing. If arcs are missing, check that `docs/db.dbml` exists. Multiple arcs on the same node fan out automatically.
 

@@ -11,9 +11,9 @@ Table Department {
 
 Table Employee {
     id INTEGER [primary key]
+    Type TEXT 
     name TEXT 
     dept_id INTEGER 
-    Type TEXT 
     salary NUMERIC(15, 2) 
     hours_worked FLOAT 
     hourly_rate FLOAT 
@@ -39,8 +39,8 @@ Table LaborUnion {
 Table Order {
     id INTEGER [primary key]
     employee_id INTEGER 
-    customer_name TEXT 
     amount NUMERIC(15, 2) 
+    customer_name TEXT 
     }
 
 Table SysConfig {
@@ -49,8 +49,8 @@ Table SysConfig {
     discount_rate FLOAT 
     tax_rate FLOAT 
     notes TEXT 
-    max_hourly_weekly_salary FLOAT 
-    military_stipend_per_service_year FLOAT 
+    max_hourly_weekly_salary NUMERIC(15, 2) 
+    military_stipend_per_year NUMERIC(15, 2) 
     }
 
 

@@ -3,8 +3,8 @@ title: LogicBank Probabilistic Rules API (AI Value Computation)
 description: Training document for translating natural language into probabilistic value computation rules
 source: Generic training for ApiLogicServer projects with probabilistic rules
 usage: AI assistants read this to generate probabilistic + deterministic rules implementations
-version: 3.1
-date: November 21, 2025
+version: 3.2
+date: November 4, 2026
 prerequisites:
   - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery)
   - docs/training/logic_bank_patterns.md (event signatures, logging, request pattern)
@@ -213,14 +213,17 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
 
 **Wrapper function should:**
 ```python
-def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: LogicRow):
+def get_supplier_selection_from_ai(product_id: int, item: models.Item, logic_row: LogicRow):
     supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
     supplier_req = supplier_req_logic_row.row
     
     # Set parent context (FK links)
     # Note: request/reason populated by AI event handler with actual data
     supplier_req.product_id = product_id
-    supplier_req.item_id = item_id
+    # Link to the triggering row BY OBJECT, never by id. This runs inside an early event, before the row is
+    # flushed, so a new row's id is still None: `item_id = item.id` would silently save a NULL link.
+    # Assigning the object lets SQLAlchemy save the Item first and fill in item_id itself.
+    supplier_req.item = item
     
     # Insert triggers AI handler which populates request/reason
     supplier_req_logic_row.insert(reason="AI supplier selection request")
@@ -347,7 +350,7 @@ def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, lo
     logic_row.log(f"Product {product.name} has {product.count_suppliers} suppliers, requesting AI selection")
     supplier_req = get_supplier_selection_from_ai(
         product_id=row.product_id,
-        item_id=row.id,
+        item=row,        # the object, not row.id: the id does not exist yet (see the wrapper)
         logic_row=logic_row
     )
     
@@ -547,7 +550,7 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
         row.chosen_unit_price = selected_supplier.unit_cost
         logic_row.log(f"Selected supplier {selected_supplier.supplier_id} with price {selected_supplier.unit_cost}")
 
-def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: LogicRow) -> models.SysSupplierReq:
+def get_supplier_selection_from_ai(product_id: int, item: models.Item, logic_row: LogicRow) -> models.SysSupplierReq:
     """
     Wrapper function called from Item (Receiver) early event.
     
@@ -563,6 +566,11 @@ def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: Log
     - Standard AI Audit: request, reason, created_on, fallback_used
     - Parent Context Links: item_id, product_id
     - AI Results: chosen_supplier_id, chosen_unit_price
+
+    Link the request to the triggering row BY OBJECT (`item`), never by `item.id`. This runs inside an
+    early_row_event, before the Item is flushed, so a new Item's id is still None and an id-based link
+    is silently saved as NULL (the audit row is then orphaned, and the Admin App asks for Item `-`: a 404).
+    Assigning `supplier_req.item = item` lets SQLAlchemy save the Item first and fill in item_id.
     """
     # 1. Create request row using parent's logic_row
     supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
@@ -571,7 +579,10 @@ def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: Log
     # 2. Set parent context (FK links)
     # Note: request/reason fields populated by AI event handler with actual prompt/candidate data
     supplier_req.product_id = product_id
-    supplier_req.item_id = item_id
+    # Link to the triggering row BY OBJECT, never by id. This runs inside an early event, before the row is
+    # flushed, so a new row's id is still None: `item_id = item.id` would silently save a NULL link.
+    # Assigning the object lets SQLAlchemy save the Item first and fill in item_id itself.
+    supplier_req.item = item
     
     # 3. Insert triggers early event which populates AI values (chosen_* fields, request, reason)
     supplier_req_logic_row.insert(reason="AI supplier selection request")
@@ -754,6 +765,21 @@ if not api_key:
 
 Why: Tests should run consistently without requiring OpenAI API key. Test context is explicitly provided configuration that should override API calls.
 
+**FAILURE #7: Link the Request Row to the Triggering Row by Id**
+```python
+# ❌ WRONG - runs in an early_row_event, before the Item is flushed: item.id is still None
+supplier_req.item_id = row.id
+```
+**What happens**: No error. The audit row is saved with item_id NULL, so it is linked to the Product but not to the order line that caused the AI call. The Admin App's Item screen shows no requests, and its fetch of Item `-` logs a 404.
+**Why it fails**: A new row has no primary key until the database assigns it at flush; early events run before that.
+**Fix**: Link by object, and let SQLAlchemy fill in the key when both rows are saved.
+
+✅ **CORRECT** (pass the Item itself, not its id):
+```python
+supplier_req.item = row          # wrapper signature: get_supplier_selection_from_ai(product_id, item, logic_row)
+```
+The same applies to any request row created from a new row's event or `Rule.formula` (email, Kafka, audit): link to the parent by object, never by `parent.id`.
+
 =============================================================================
 🚨 CRITICAL: Model Relationship Checklist
 =============================================================================
@@ -902,7 +928,7 @@ def assign_multiple_values(row: models.Order, old_row, logic_row):
     # Call wrapper - returns object
     req = get_supplier_selection_from_ai(
         product_id=row.product_id,
-        item_id=row.id,
+        item=row,        # the object, not row.id: the id does not exist yet (see the wrapper)
         logic_row=logic_row
     )
     

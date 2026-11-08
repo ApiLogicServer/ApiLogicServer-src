@@ -24,7 +24,7 @@ docs/requirements/
 ## Workflow
 
 **Phase 1** (done — in Manager): `genai-logic create` → running API + Admin UI  
-**Phase 2** (here): copy a requirements set, say "implement reqs" → AI executes spec, reports ad-libs
+**Phase 2** (here): name a requirements set, say "implement reqs" → AI copies it here, executes the spec, reports ad-libs
 
 ## Sample requirement sets
 
@@ -35,15 +35,12 @@ Available in the Manager at `samples/requirements/`:
 - `students_courses_attendance_sweep/` — phase 2 of `students_courses`: an externally-triggered sweep endpoint + `Enrollment` table that resolves the blocked clause (run it in a project where `students_courses` is already implemented)
 - `RFI/` — a real conversational-interview transcript showing how a `requirements.md` is drafted
 
-Copy one into this folder:
-```bash
-cp -r <manager>/samples/requirements/demo_eai/docs/requirements/demo_eai docs/requirements/
+Point at one by path; the AI copies it into this folder for you:
+```
+implement requirements samples/requirements/demo_eai/docs/requirements/demo_eai
 ```
 
-A flat set named for its `implement reqs <name>` command is copied as the folder itself:
-```bash
-cp -r <manager>/samples/requirements/students_courses_attendance_sweep docs/requirements/
-```
+Or copy your own set here first, then say `implement reqs <name>`.
 
 ## Ad-libs report
 
