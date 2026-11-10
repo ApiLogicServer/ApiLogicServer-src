@@ -211,6 +211,7 @@ def check_broken_links(target: Path) -> list:
     if not readme.exists():
         return broken
     text = readme.read_text(errors="ignore")
+    text = re.sub(r"<!--.*?-->", "", text, flags=re.S)  # authoring notes in comments show example links (e.g. images/...) - not real links
     for link in MD_LINK_RE.findall(text):
         if link in ACCEPTED_BROKEN_LINKS:
             continue
