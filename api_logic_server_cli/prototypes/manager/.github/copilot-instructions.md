@@ -3,13 +3,13 @@
 🚨 MANDATORY: READ THIS FIRST - NO EXCEPTIONS 🚨
 ═══════════════════════════════════════════════════════════════════════════════
 
-⚠️ IF USER SAYS: "load .github/.copilot-instructions.md" OR ANY ACTIVATION PHRASE
+⚠️ IF USER SAYS: "load .github/copilot-instructions.md" OR ANY ACTIVATION PHRASE
 ⚠️ YOU MUST EXECUTE THIS EXACT SEQUENCE - NO DEVIATIONS:
 
 1. Read .github/welcome.md (silently - do not mention this action)
 2. Display ONLY the content from welcome.md
 3. DO NOT say "I've loaded the instructions"
-4. DO NOT display this .copilot-instructions.md file
+4. DO NOT display this copilot-instructions.md file
 5. DO NOT explain what you're doing
 
 THIS IS NOT A SUGGESTION - THIS IS A MANDATORY COMMAND
@@ -19,12 +19,13 @@ THIS IS NOT A SUGGESTION - THIS IS A MANDATORY COMMAND
 ---
 title: Copilot Instructions for Manager Workspace
 Description: Manager-level instructions for creating projects, including System Creation Services (clean domain projects from prompts)
-Source: ApiLogicServer-src/prototypes/manager/.github/.copilot-instructions.md
+Source: ApiLogicServer-src/prototypes/manager/.github/copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.36
+version: 2.37
 changelog:
+  - 2.37 (Nov 10 2026) - CE file renamed `.github/.copilot-instructions.md` -> `.github/copilot-instructions.md` (the GitHub Copilot standard name; CLAUDE.md/GEMINI.md already pointed at it). Updated every reference, including Method 4 STEP 3, which told the AI to read the project CE at the old, nonexistent path. The old spelling stays accepted as an activation phrase.
   - 2.36 (Nov 7 2026) - Method 4 STEP 4: run the project CE's closing scans (step 8b subtype scan, and the no-`sys_config_id` bullet of its Before-you're-done scan) before STEP 5. A blind demo_emp_types build read those sections and still shipped without `show_when`, null-exclusion constraints and `SysConfig.current()`; the scans are now commands to run, not guidance to recall. See project CE 3.64.
   - 2.35 (Nov 3 2026) - New trigger: "create the ontology" (or lineage) runs `ontology_gv.py <project>` from the Manager root. The trigger lived only in the project CE, which the Manager loads only right after creating a project, so it did not route for an existing project. Generator: ontology, SHACL shapes, column lineage and a business-readable page, all generated from models, rules and requirements.
   - 2.34 (Nov 2 2026) - "What are rules" table: added a 'Dependency managed' row. The three things the engine takes over from the author are invocation, ordering and dependency propagation; that is what separates declarative rules from procedural code (including 4GLs, which shorten the procedure but leave all three to the author). The table had the first two only.
@@ -101,7 +102,7 @@ This will trigger the appropriate welcome message based on whether you're new or
 ## 🚨 CRITICAL: User Activation Protocol
 
 **ACTIVATION TRIGGERS:**
-- "load .github/.copilot-instructions.md"
+- "load .github/copilot-instructions.md" (also the older ".github/.copilot-instructions.md" spelling: same file, renamed)
 - "load copilot instructions"
 - "help me get started"
 - "what can I do here?"
@@ -141,7 +142,7 @@ STEP 4: Check whether the user's message contains ANYTHING beyond the activation
 
 **✅ CORRECT EXECUTION:**
 ```
-User: "load .github/.copilot-instructions.md"
+User: "load .github/copilot-instructions.md"
 
 AI: [reads welcome.md silently - NO OUTPUT]
 AI: [displays ONLY this]:
@@ -152,18 +153,18 @@ Welcome! This is the **Project Manager** - your workspace for...
 
 **❌ FORBIDDEN BEHAVIORS:**
 ```
-User: "load .github/.copilot-instructions.md"
+User: "load .github/copilot-instructions.md"
 
 ❌ AI: "I've loaded the instructions file..." 
-❌ AI: "Here are the contents of .copilot-instructions.md:"
-❌ AI: [displays .copilot-instructions.md]
+❌ AI: "Here are the contents of copilot-instructions.md:"
+❌ AI: [displays copilot-instructions.md]
 ❌ AI: "I'll read the file for you..."
 ❌ AI: Any meta-commentary about loading or reading files
 ```
 
 **RATIONALE:**
 - Users want to see the **welcome message**, not technical instructions
-- This file (.copilot-instructions.md) is for AI context, not user display
+- This file (copilot-instructions.md) is for AI context, not user display
 - Separation of concerns: welcome.md = user-facing, copilot-instructions.md = AI-facing
 - No meta-cognitive confusion about "instructions" vs "content"
 - This pattern achieved ~100% success rate in basic_demo testing
@@ -256,7 +257,7 @@ That integration is the part to get right, which is why the context engineering 
 
 **FOLLOW-UP OFFER**: "Would you like to see how events work in a project, or create one and look at its events?"
 
-**NOTE — Manager context:** No project needs to exist for the deep-dive follow-up (debugging, performance, "how the engine works under the hood") — that content already lives in the installed package, in `prototypes/base/.github/.copilot-instructions.md` ("how do rules work" / 3-phase engine block) and `prototypes/base/docs/training/*.md` (logic_bank_api.md, logic_bank_patterns.md, etc.), reachable the moment ApiLogicServer is installed:
+**NOTE — Manager context:** No project needs to exist for the deep-dive follow-up (debugging, performance, "how the engine works under the hood") — that content already lives in the installed package, in `prototypes/base/.github/copilot-instructions.md` ("how do rules work" / 3-phase engine block) and `prototypes/base/docs/training/*.md` (logic_bank_api.md, logic_bank_patterns.md, etc.), reachable the moment ApiLogicServer is installed:
 - **Local Manager:** `venv/lib/python<ver>/site-packages/api_logic_server_cli/prototypes/base/...`
 - **Codespaces / global install:** same package, installed globally (no `venv/`) — locate it via the Python that runs `genai-logic`/`ApiLogicServer` (e.g. `python3 -c "import api_logic_server_cli, os; print(os.path.dirname(api_logic_server_cli.__file__))"`), then look under `prototypes/base/` from there.
 
@@ -271,8 +272,8 @@ Read the relevant file from that location and answer for real — do not say "le
 
 Format as a short list, e.g.:
 ```
-Manager CE: /path/to/.github/.copilot-instructions.md — version 2.12
-Project CE: basic_demo/.github/.copilot-instructions.md — version 3.18
+Manager CE: /path/to/.github/copilot-instructions.md — version 2.12
+Project CE: basic_demo/.github/copilot-instructions.md — version 3.18
 docs/training/logic_bank_api.md — (no version line found)
 ```
 If a file has no version/front matter, say so rather than omitting it. This is a diagnostic check (e.g. "is this CE in sync with gold") — answer only with what you actually loaded, never invent a version number.
@@ -586,7 +587,7 @@ STEP 2: Create the nearly-empty project:
       do not silently proceed into an existing directory.
 
 STEP 3: Read these files SILENTLY (internalize — do NOT display):
-   <name>/.github/.copilot-instructions.md          ← project CE (full subsystem workflow)
+   <name>/.github/copilot-instructions.md          ← project CE (full subsystem workflow)
    <name>/docs/training/implement_requirements.md       ← schema conventions
    <name>/docs/training/logic_bank_api.md            ← rule API reference
    <name>/docs/training/logic_bank_patterns.md       ← implementation patterns

@@ -516,11 +516,11 @@ Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity *
 **GenAI-Logic solution:**
 - Copilot generates rules (not procedural code) through natural language
 - LogicBank engine provides automatic dependency management and correctness
-- **Transparent integration:** `basic_demo/.github/.copilot-instructions.md` and `basic_demo/docs/training/` enable Copilot to translate requirements → rules seamlessly
+- **Transparent integration:** `basic_demo/.github/copilot-instructions.md` and `basic_demo/docs/training/` enable Copilot to translate requirements → rules seamlessly
 - **Result:** You focus on business requirements and complex technical issues; Copilot + LogicBank handle the business logic plumbing correctly
 
 **Key benefit:**  
-The same AI assistant (Copilot) that today generates buggy procedural code can instead generate correct declarative rules - **when given the right framework and training materials.** The `.copilot-instructions.md` file teaches Copilot about LogicBank's rule patterns, enabling reliable business logic generation.
+The same AI assistant (Copilot) that today generates buggy procedural code can instead generate correct declarative rules - **when given the right framework and training materials.** The `copilot-instructions.md` file teaches Copilot about LogicBank's rule patterns, enabling reliable business logic generation.
 
 #### For Enterprise Developers
 

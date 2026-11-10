@@ -17,7 +17,7 @@ This folder contains **generic, reusable training materials** for ApiLogicServer
 ## Intended Use
 
 These training files are:
-1. **Read by AI assistants** (GitHub Copilot, ChatGPT) via `.github/.copilot-instructions.md`
+1. **Read by AI assistants** (GitHub Copilot, ChatGPT) via `.github/copilot-instructions.md`
 2. **Copied to new projects** when creating similar systems
 3. **Maintained centrally** and propagated across projects
 

@@ -47,7 +47,7 @@ This sample illustrates:
 
 **🤖 Bootstrap your AI assistant — paste into chat (Agent mode, Claude Sonnet 4.6 recommended):**
 ```bash title='🤖 Bootstrap your AI assistant — paste into chat (Agent mode, Claude Sonnet 4.6 recommended)'
-Please load `.github/.copilot-instructions.md`
+Please load `.github/copilot-instructions.md`
 ```
 
 <br>

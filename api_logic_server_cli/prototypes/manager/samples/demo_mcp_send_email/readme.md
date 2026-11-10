@@ -57,7 +57,7 @@ In this demo, we will **use Natural Language (NL) to create an MCP service (send
 4. **MCP Client**: enable business users to invoke services with natural language, here via the automatically created Admin App (or, use your own app)
 
 ``` bash title='🤖 Bootstrap your AI Assistant — paste into chat (Agent mode, e.g. Claude Sonnet 4.6)'
-Please load `.github/.copilot-instructions.md`
+Please load `.github/copilot-instructions.md`
 ```
 
 > **Important:** be sure CoPilot is in "Agent" Mode.  "Ask" will not work.  Also, we get consistently good results with `Claude Sonnet 4.6`.
@@ -115,7 +115,7 @@ The project should automatically open a new window in VSCode. <br>
 
 **🤖 Again, bootstrap Copilot by pasting the following into the chat:**
 ``` bash title='🤖 Again, bootstrap Copilot by pasting the following into the chat'
-Please load `.github/.copilot-instructions.md`.
+Please load `.github/copilot-instructions.md`.
 ```
 
 Run it as follows:
@@ -251,7 +251,7 @@ The server is automatically mcp-enabled, but we also require a user-interface to
 
 &nbsp;
 
-We use the **Request Pattern** to send emails, via Copilot (in conjunction with substantial Context Engineering in your project at `.github/.copilot-instructions.md` and `docs/training`):
+We use the **Request Pattern** to send emails, via Copilot (in conjunction with substantial Context Engineering in your project at `.github/copilot-instructions.md` and `docs/training`):
 
 <br>
 

@@ -44,7 +44,7 @@ This base image bakes in api_logic_server_cli/prototypes/ via `COPY . .` straigh
 org_git/ApiLogicServer-src at image-build time (see docker/api_logic_server.Dockerfile),
 built/pushed manually with `docker buildx build --push ...` — NOT by BLT, NOT by this
 script. So a Codespace gets CE from two independent places that can disagree:
-  - committed samples/*/.github/.copilot-instructions.md in this repo  -> refreshed by --release/--push
+  - committed samples/*/.github/copilot-instructions.md in this repo  -> refreshed by --release/--push
   - CE baked into the apilogicserver/api_logic_server image (used if the user runs
     `genai-logic create` live inside the Codespace) -> stale until that image is rebuilt+pushed
 A gold-source CE edit (prototypes/base or prototypes/manager) needs: BLT (refresh local

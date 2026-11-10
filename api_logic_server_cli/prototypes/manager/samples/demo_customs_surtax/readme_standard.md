@@ -1,6 +1,6 @@
 <!--
   readme.md — GenAI-Logic / ApiLogicServer prototype base template
-  Version: 3.14  (Apr 9, 2026) — in sync with .github/.copilot-instructions.md
+  Version: 3.14  (Apr 9, 2026) — in sync with .github/copilot-instructions.md
   Propagation: copied as-is into every created project (no marker substitution)
     - Demo-named projects (basic_demo, demo_eai, …): this becomes readme_standard.md;
       a demo-specific readme is fetched from Docs repo via create_readme.py

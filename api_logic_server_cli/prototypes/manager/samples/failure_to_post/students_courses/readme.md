@@ -108,7 +108,7 @@ claude
 ! source ../venv/bin/activate
 
 # D - load context engineering to teach claude about rules, GenAI-Logic
-Please load `.github/.copilot-instructions.md`.
+Please load `.github/copilot-instructions.md`.
 
 # E - in created project, get the requirements
 ! cp -rv ../samples/requirements/students_courses/docs/requirements/students_courses/. docs/requirements/students_courses/ | wc -l

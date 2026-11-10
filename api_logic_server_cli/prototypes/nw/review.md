@@ -8,7 +8,7 @@ date: 2026-07-03
 
 ## Caveat
 
-nw_sample is **not** a pure "pre-AI" fossil — it has been retrofitted with current-generation CE scaffolding (`docs/training/*`, `logic/logic_discovery/`, `.github/.copilot-instructions.md` matching the current Manager version, a governance report, an auto-generated `docs/requirements/logic_flow_nw_sample.md`). What's genuinely pre-CE is the **domain content** (`declare_logic.py`, `models.py`, `admin.yaml`, `security/declare_security.py`) — a long-accumulated teaching/demo corpus, not something Method 4 would produce today. That gap — CE scaffolding present vs. CE conventions actually followed — is itself informative.
+nw_sample is **not** a pure "pre-AI" fossil — it has been retrofitted with current-generation CE scaffolding (`docs/training/*`, `logic/logic_discovery/`, `.github/copilot-instructions.md` matching the current Manager version, a governance report, an auto-generated `docs/requirements/logic_flow_nw_sample.md`). What's genuinely pre-CE is the **domain content** (`declare_logic.py`, `models.py`, `admin.yaml`, `security/declare_security.py`) — a long-accumulated teaching/demo corpus, not something Method 4 would produce today. That gap — CE scaffolding present vs. CE conventions actually followed — is itself informative.
 
 ---
 
@@ -88,7 +88,7 @@ Patterns nw_sample uses that current CE training docs don't teach, and arguably 
 
 9. **Multi-filter security interaction example is richer than what's likely in `security.md`.** `security/declare_security.py:51-70` stacks 4 `GlobalFilter`s (tenant isolation, department level, sales region, discontinued-product hiding) plus an explicit comment on how Filters AND together while Grants OR (lines 62-63, 87-89), with a worked resulting WHERE clause. Strong candidate to lift into `docs/training/security.md` if it doesn't already have an example this concrete.
 
-10. **Dashboard/graphics generation isn't in CE's capabilities list.** `api/api_discovery/dashboard_services.py` references a `genai-graphics` CLI command (line 22: "rebuilt on `als genai-graphics`") — a first-class generated feature missing from `.github/.copilot-instructions.md`'s capabilities section.
+10. **Dashboard/graphics generation isn't in CE's capabilities list.** `api/api_discovery/dashboard_services.py` references a `genai-graphics` CLI command (line 22: "rebuilt on `als genai-graphics`") — a first-class generated feature missing from `.github/copilot-instructions.md`'s capabilities section.
 
 ---
 

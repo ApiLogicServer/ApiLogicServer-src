@@ -94,14 +94,14 @@ This file is the **entry point** for understanding GenAI-Logic architecture. Add
 🚨 MANDATORY: READ THIS FIRST - NO EXCEPTIONS 🚨
 ═══════════════════════════════════════════════════════════════════════════════
 
-⚠️ IF USER SAYS: "load .github/.copilot-instructions.md" OR ANY ACTIVATION PHRASE
+⚠️ IF USER SAYS: "load .github/copilot-instructions.md" OR ANY ACTIVATION PHRASE
 ⚠️ YOU MUST EXECUTE THIS EXACT SEQUENCE - NO DEVIATIONS:
 
-1. Read .github/.copilot-instructions.md COMPLETELY (silently - internalize all instructions)
+1. Read .github/copilot-instructions.md COMPLETELY (silently - internalize all instructions)
 2. Read .github/welcome.md (silently - do not mention this action)
 3. Display ONLY the content from welcome.md
 4. DO NOT say "I've loaded the instructions"
-5. DO NOT display this .copilot-instructions.md file
+5. DO NOT display this copilot-instructions.md file
 6. DO NOT explain what you're doing
 
 THIS IS NOT A SUGGESTION - THIS IS A MANDATORY COMMAND

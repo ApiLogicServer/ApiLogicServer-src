@@ -841,7 +841,7 @@
                                                                                 
   D - load context engineering to teach claude about rules, GenAI-Logic         
                                                                                 
-  Please load .github/.copilot-instructions.md.                                 
+  Please load .github/copilot-instructions.md.                                 
                                                                                 
   E - in created project, get the requirements                                  
                                                                                 

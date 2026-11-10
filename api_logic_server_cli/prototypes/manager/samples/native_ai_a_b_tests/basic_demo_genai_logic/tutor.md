@@ -151,7 +151,7 @@ For the full story of how these guidelines emerged, see `tutor-meta.md`.
 
 **⚠️ WHEN USER SAYS "guide me through" or similar activation phrase:**
 
-First, if you haven't already presented the Welcome section from `.github/.copilot-instructions.md`, present it now.
+First, if you haven't already presented the Welcome section from `.github/copilot-instructions.md`, present it now.
 
 Then continue with:
 

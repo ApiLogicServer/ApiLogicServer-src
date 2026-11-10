@@ -1095,7 +1095,7 @@ WHEN YOU DO NEED is_inserted()/is_updated()/is_deleted() INSIDE A CONSTRAINT:
 ⚠️ CRITICAL — ADJUSTMENT ASSUMES THE STARTING VALUE IS ALREADY CORRECT:
   Rule.sum/Rule.count are performance-optimized as DELTA adjustments, not
   recomputations — see "How does this perform at scale?" in this project's
-  .copilot-instructions.md: inserting a child does `current_count + 1`, NOT
+  copilot-instructions.md: inserting a child does `current_count + 1`, NOT
   `SELECT COUNT(*) FROM children`. This is O(1) per change instead of O(n)
   over the table, and it applies to every Rule.sum/Rule.count automatically.
 

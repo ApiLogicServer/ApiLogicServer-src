@@ -77,7 +77,7 @@ The system is created from requirements, as follows:
 
 This simulates a common real-world case: an *existing* database, plus a *new* set of requirements — prepared by the BA team as a requirements folder (`samples/requirements/customs_demo_clvs`) — that need to be implemented against it.
 
-It is one script. From the Manager, with Claude Code open (`claude`, shared Manager venv active), load the context engineering (*"Please load `.github/.copilot-instructions.md`"*) and paste `samples/requirements/customs_demo_clvs/create_script.txt` to the AI:
+It is one script. From the Manager, with Claude Code open (`claude`, shared Manager venv active), load the context engineering (*"Please load `.github/copilot-instructions.md`"*) and paste `samples/requirements/customs_demo_clvs/create_script.txt` to the AI:
 
 ```text title="create_script.txt - paste to AI"
 Check for Docker or Podman. If neither is running, continue in degraded mode (Kafka simulated through the debug endpoint) and tell me so up front.

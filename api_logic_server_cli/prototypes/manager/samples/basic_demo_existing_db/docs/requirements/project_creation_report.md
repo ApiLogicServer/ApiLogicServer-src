@@ -78,7 +78,7 @@ You can still add business logic at any time - say **"implement requirements"** 
 
 ## CE/Training Files Read
 
-- Manager CE: `.github/.copilot-instructions.md` (Manager root) — read at session start
-- Project CE: `basic_demo_existing_db/.github/.copilot-instructions.md` — read at STEP 3, full file
+- Manager CE: `.github/copilot-instructions.md` (Manager root) — read at session start
+- Project CE: `basic_demo_existing_db/.github/copilot-instructions.md` — read at STEP 3, full file
 - `basic_demo_existing_db/docs/training/logic_bank_api.md` — read at STEP 3, ~31 KB (partial —
   first ~1028 lines of ~1508 total; contained the Rule.* API reference and examples needed)

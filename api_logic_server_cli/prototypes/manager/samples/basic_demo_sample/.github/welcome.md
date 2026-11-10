@@ -1,6 +1,6 @@
 ---
 use: welcome for basic_demo - please start the tour
-instuctions: copy api_logic_server_cli/prototypes/base/.github/.copilot-instructions.md, then paste as the Welcome section 
+instuctions: copy api_logic_server_cli/prototypes/base/.github/copilot-instructions.md, then paste as the Welcome section 
 ---
 
 ## Welcome to the `basic_demo` project

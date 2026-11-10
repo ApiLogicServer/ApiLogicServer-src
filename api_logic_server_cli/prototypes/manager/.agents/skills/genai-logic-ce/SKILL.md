@@ -14,7 +14,7 @@ Read the following authoritative files when performing tasks:
 1. **Manager Workflow & Project Creation**:
    - `file:///.github/copilot-instructions.md` — Complete reference for Method 4 (System Creation Services), Socratic interview (Step 1a/1b), DDL generation, rebuild, and provenance requirements.
 2. **Project CE & Training**:
-   - `<project_name>/.github/.copilot-instructions.md` — Subsystem workflow for created projects.
+   - `<project_name>/.github/copilot-instructions.md` — Subsystem workflow for created projects.
    - `docs/training/logic_bank_api.md` — Declarative rule syntax (`declare_logic()`, formulas, constraints, parent/child derivations).
    - `docs/training/logic_bank_patterns.md` — Common patterns (allocation, audits, multi-table rollups).
    - `docs/training/implement_requirements.md` — Schema conventions, primary keys, foreign keys.

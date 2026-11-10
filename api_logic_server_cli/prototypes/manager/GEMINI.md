@@ -16,7 +16,7 @@ This workspace is the **Project Manager** for GenAI-Logic (ApiLogicServer), equi
 
 2. **Project CE (Inside created projects)**:
    - For an active project `<project_name>`, consult:
-     - `<project_name>/.github/.copilot-instructions.md` (Project CE)
+     - `<project_name>/.github/copilot-instructions.md` (Project CE)
      - `<project_name>/docs/training/implement_requirements.md`
      - `<project_name>/docs/training/logic_bank_api.md`
      - `<project_name>/docs/training/logic_bank_patterns.md`

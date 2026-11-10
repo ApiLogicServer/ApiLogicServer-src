@@ -159,13 +159,13 @@ implem
 
 ## Claude (2026-11-02T01:22:17.977Z)
 
-**[Bash]** `cd demo_customs_clvs && wc -l .github/.copilot-instructions.md docs/training/*.md | tail -40; ls docs/requirements; cat .github/.copilot-instructions.md`
+**[Bash]** `cd demo_customs_clvs && wc -l .github/copilot-instructions.md docs/training/*.md | tail -40; ls docs/requirements; cat .github/copilot-instructions.md`
 
 <details><summary>result</summary>
 
 ```
 Exit code 1
-wc: .github/.copilot-instructions.md: open: No such file or directory
+wc: .github/copilot-instructions.md: open: No such file or directory
       21 docs/training/$readme.md
      323 docs/training/MCP_Copilot_Integration.md
       64 docs/training/OVERVIEW.md
@@ -272,7 +272,7 @@ version: 3.61 - 11/1/26 - Executable Requirements STEP 6 checklist: a clause tha
 
 ```
     3527 .github/copilot-instructions.md
-290:STEP 1: Read .github/.copilot-instructions.md COMPLETELY (silently - internalize all instructions)
+290:STEP 1: Read .github/copilot-instructions.md COMPLETELY (silently - internalize all instructions)
 292:STEP 2: Read .github/welcome.md (silently)
 293:STEP 3: Display welcome.md content ONLY
 294:STEP 4: Check whether the user's message contains ANYTHING beyond the trigger

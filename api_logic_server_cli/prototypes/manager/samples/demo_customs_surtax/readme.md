@@ -59,7 +59,7 @@ implement project demo_customs_surtax from samples/prompts/customs_cbsa.prompt
 
 This single instruction drives Method 4 (System Creation Services) end-to-end:
 
-1. Loads Context Engineering (`.github/.copilot-instructions.md`)
+1. Loads Context Engineering (`.github/copilot-instructions.md`)
 2. Creates the project (`genai-logic create --project_name=demo_customs_surtax ...`), generating the database, models, API, and Admin App from the prompt
 3. Translates the prompt's business rules into declarative `logic/logic_discovery` rules (not procedural FrankenCode)
 4. Generates seed test data and runs the test suite
@@ -144,7 +144,7 @@ The GenAI-Logic `create` command also builds test services and Context Engineeri
 
 ### Authoring
 
-1. Copilot loads Context Engineering (`.github/.copilot-instructions.md`, `docs/training`)
+1. Copilot loads Context Engineering (`.github/copilot-instructions.md`, `docs/training`)
 2. Invokes `genai-logic create --project_name=demo_customs_surtax ...` to scaffold the project — database, models, API, Admin App — all runnable, but no logic yet
 3. Copilot then, under the guidance of Context Engineering:
     * Translates the prompt's business rules into declarative rules (`logic/logic_discovery`, *not FrankenCode*)

@@ -11,7 +11,7 @@ Entry point: `api_logic_server.py` → `create_project_and_overlay_prototypes()`
 **Pattern: base clone + conditional overlays**
 
 1. **Clone `prototypes/base`** → new project directory (`shutil.copytree`)  
-   Every project gets this — it contains the universal foundation: api/, logic/, database/, .github/.copilot-instructions.md, docs/training/, .vscode/, devops/, etc.
+   Every project gets this — it contains the universal foundation: api/, logic/, database/, .github/copilot-instructions.md, docs/training/, .vscode/, devops/, etc.
 
 2. **Overlay sample-specific prototypes** (`recursive_overwrite` on top of base):
 
@@ -92,8 +92,8 @@ else:
 | New sample type / prototype overlay | `clone_and_overlay_prototypes/project_overlay.py` |
 | New demo readme mapping | `Docs/docs/Manager-readme.md` front-matter (gold: Docs repo) |
 | Manager workspace defaults (`.claude/`, `.vscode/`, etc.) | `prototypes/manager/` (takes effect on clean install only — see above) |
-| Project CE / copilot instructions | `prototypes/base/.github/.copilot-instructions.md` |
-| basic_demo-specific CE | `prototypes/basic_demo/.github/.copilot-instructions.md` |
+| Project CE / copilot instructions | `prototypes/base/.github/copilot-instructions.md` |
+| basic_demo-specific CE | `prototypes/basic_demo/.github/copilot-instructions.md` |
 | Training materials (all projects) | `prototypes/base/docs/training/` |
 | add-cust tutor content | `prototypes/manager/samples/basic_demo_sample/` |
 

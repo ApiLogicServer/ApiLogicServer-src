@@ -66,9 +66,9 @@
      … +21 lines (ctrl+o to expand)
 
 ⏺ Bash(cd /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-
-      logic/demo_eai_modernized; wc -c .github/.copilot-instructions.md
+      logic/demo_eai_modernized; wc -c .github/copilot-instructions.md
       docs/training/*.md; c…)
-  ⎿  wc: .github/.copilot-instructions.md: open: No such file or directory
+  ⎿  wc: .github/copilot-instructions.md: open: No such file or directory
          1619 docs/training/$readme.md
         12290 docs/training/MCP_Copilot_Integration.md
      … +55 lines (ctrl+o to expand)
