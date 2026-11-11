@@ -1480,10 +1480,8 @@ from database import <project.bind_key>_models
             self.is_genai_demo = True
 
 
-        if self.genai_using != "":
-            from api_logic_server_cli.genai.genai import GenAI
-            gen_ai = GenAI(self)  
-            gen_ai.create_db_models()  # create_db_models.py used to create database to build project
+        if self.genai_using != "":  # genai commands are retired (see internal_dev/genai_retired_PE)
+            raise Exception("genai project creation is retired - use your IDE coding assistant")
 
         if (self.from_model != "" or self.genai_using != ""):  # and not self.is_genai_demo:  # use create_db_from_model.py
             try:
@@ -1688,9 +1686,6 @@ def key_module_map():
     import create_from_model.ui_admin_creator as ui_admin_creator
     import create_from_model.api_expose_api_models_creator as api_expose_api_models_creator
     import sqlacodegen_wrapper.sqlacodegen_wrapper as sqlacodegen_wrapper
-    import api_logic_server_cli.genai.genai as genai
-
-    genai.key_module_map()                                  # alt entry - create project from genai
 
     ProjectRun.create_project()                             # main driver from CLI, calls...
     create_utils.copy_md()                                  # copy md files
