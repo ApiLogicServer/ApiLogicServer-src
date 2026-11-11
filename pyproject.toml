@@ -133,7 +133,11 @@ classifiers=[
 
 [project.optional-dependencies]
 # opt in with: pip install apilogicserver[ai-rules]
-# backs WebGenAI / genai-logic genai* / genai-add-app / runtime "AI Rules" that call OpenAI directly.
+# NOT NEEDED by anything this package ships (Nov 2026): runtime AI rules and the MCP executor call the LLM through
+# integration/ai/llm_client.py (urllib only, no vendor SDK: OpenAI, Claude, Gemini, Ollama by environment variables),
+# and the genai-logic genai* / genai-add-app commands that used openai are retired (internal_dev/genai_retired_PE).
+# Kept only so AI-rule handlers generated BEFORE Nov 2026, which import openai directly, still work for anyone who
+# installs it; the project CE's "Migrate AI Rules" section moves them to llm_client, after which this extra is unused.
 # kept out of the base install so SCA/dependency scans of a stock install show no openai package.
 ai-rules = [
     "openai==1.55.3",
