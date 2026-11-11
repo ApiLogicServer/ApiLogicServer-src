@@ -14,6 +14,18 @@ Configuration (environment variables)
     APILOGICSERVER_LLM_API_KEY    optional for local endpoints; also accepted: APILOGICSERVER_CHATGPT_APIKEY
     APILOGICSERVER_LLM_TIMEOUT    seconds, default 30
 
+Provider examples (all through the OpenAI-compatible protocol - no provider-specific code):
+    Ollama (local)   BASE_URL=http://localhost:11434/v1      MODEL=<a model you have pulled>      (no key)
+    OpenAI           BASE_URL=https://api.openai.com/v1      MODEL=gpt-4o                         KEY=<openai key>
+    Claude           BASE_URL=https://api.anthropic.com/v1/  MODEL=<a Claude model id>            KEY=<anthropic key>
+    Gemini           BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
+                     MODEL=<a Gemini model id>                                                    KEY=<Gemini API key>
+  Only Ollama-style and OpenAI endpoints have been exercised so far (against a stub; OpenAI once, live).
+  Claude and Gemini go through those providers' OpenAI-compatibility endpoints and are UNVERIFIED until run
+  with real keys - those layers are partial (some request fields are ignored or unsupported).  If one proves
+  unreliable, add a native branch for that provider only (Anthropic native: POST /v1/messages with x-api-key
+  and anthropic-version headers, top-level system prompt, max_tokens required).
+
 If BASE_URL is not set:
     - an API key present            -> OpenAI (https://api.openai.com/v1, model default gpt-4o)
     - no key                        -> a quick check for a local Ollama (http://localhost:11434/v1);
@@ -23,7 +35,8 @@ If BASE_URL is not set:
 Callers should catch LLMError and use their deterministic fallback (see the supplier-selection pattern in
 docs/training/probabilistic_logic.md).  This client never installs or downloads anything.
 
-Azure OpenAI is NOT supported yet (see _azure_notes below) - untested, so deliberately a stub.
+Azure OpenAI and Google Vertex AI are NOT supported yet - their auth differs (Azure: api-key header, deployment
+in the URL; Vertex: Google Cloud tokens) and they cannot be tested without a cloud account, so they are stubs.
 
 Usage
     from integration.ai.llm_client import chat_json, LLMError
@@ -67,6 +80,8 @@ class LLMNotAvailable(LLMError):
 # To add it: detect "openai.azure.com" in the base url and build the url/headers accordingly.
 # ---------------------------------------------------------------------------------------------
 _azure_notes = "Azure OpenAI is not supported by llm_client yet - see comment above"
+# Vertex AI (Gemini, enterprise): endpoint is regional (https://<region>-aiplatform.googleapis.com/...) and auth is a
+# short-lived Google Cloud access token (service account / application default credentials), not an API key.
 
 
 def _env(*names: str, default: str = "") -> str:
