@@ -23,8 +23,9 @@ Source: ApiLogicServer-src/prototypes/manager/.github/copilot-instructions.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this when user opens Manager workspace
 User Activation: Say "What can I do here?" or "Help me get started"
-version: 2.37
+version: 2.38
 changelog:
+  - 2.38 (Nov 10 2026) - The `genai-logic genai` family is retired and the commands are removed (genai, genai-utils, genai-logic, genai-graphics, genai-add-app, genai-iterate); `genai-create` remains only as a stub that prints 'retired - use your IDE coding assistant'. `genai-add-mcp-client` is kept. Method 2 now says so. Project CE 3.67.
   - 2.37 (Nov 10 2026) - CE file renamed `.github/.copilot-instructions.md` -> `.github/copilot-instructions.md` (the GitHub Copilot standard name; CLAUDE.md/GEMINI.md already pointed at it). Updated every reference, including Method 4 STEP 3, which told the AI to read the project CE at the old, nonexistent path. The old spelling stays accepted as an activation phrase.
   - 2.36 (Nov 7 2026) - Method 4 STEP 4: run the project CE's closing scans (step 8b subtype scan, and the no-`sys_config_id` bullet of its Before-you're-done scan) before STEP 5. A blind demo_emp_types build read those sections and still shipped without `show_when`, null-exclusion constraints and `SysConfig.current()`; the scans are now commands to run, not guidance to recall. See project CE 3.64.
   - 2.35 (Nov 3 2026) - New trigger: "create the ontology" (or lineage) runs `ontology_gv.py <project>` from the Manager root. The trigger lived only in the project CE, which the Manager loads only right after creating a project, so it did not route for an existing project. Generator: ontology, SHACL shapes, column lineage and a business-readable page, all generated from models, rules and requirements.
@@ -395,7 +396,7 @@ There are multiple ways to create projects (aka systems, microservices) - see th
 
 **KEY DISTINCTION:**
 - `genai-logic create` - Creates infrastructure only (API, UI, models) - **NO business logic rules**
-- `genai-logic genai` - ⛔ SUPER-DEPRECATED, see Method 2 below — do not use
+- `genai-logic genai` - ⛔ RETIRED (command removed), see Method 2 below
 
 ### Method 1: Create Projects from an existing database (Infrastructure Only)
 
@@ -409,16 +410,9 @@ genai-logic create  --project_name=nw --db_url=sqlite:///samples/dbs/nw.sqlite
 
 **To add logic:** We can add rules together using natural language in `logic/declare_logic.py`, or you can code them manually with IDE autocomplete.
 
-### Method 2: Create Projects with GenAI — ⛔ SUPER-DEPRECATED, DO NOT USE
+### Method 2: Create Projects with GenAI — ⛔ RETIRED (command removed)
 
-**⚠️ NEVER run `genai-logic genai` — not even for prompt files. Use Method 4 instead.**
-
-This command is obsolete. It is documented here only for historical reference — do not run it, do not suggest it, do not use it as a fallback even if Method 4 hits an obstacle.
-
-```bash
-# ⛔ DO NOT RUN — kept for reference only:
-genai-logic genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
-```
+The `genai-logic genai` family (genai, genai-utils, genai-logic, genai-graphics, genai-add-app, genai-iterate) no longer exists. `genai-create` prints a "retired - use your IDE coding assistant" message and exits. Do not try to run any of them; use Method 4.
 
 **Use Method 4 (System Creation Services) instead** for any domain project with database + business logic requirements.
 
