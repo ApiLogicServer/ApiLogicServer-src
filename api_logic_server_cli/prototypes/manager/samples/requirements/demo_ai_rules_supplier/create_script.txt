@@ -1,11 +1,12 @@
 // create_script.txt: AI Rules (the optimal-supplier sample) built from requirements, tested, and traced.
-// Setup that makes this sample hard by hand, handled here: the openai package (the ai-rules extra), the
-// OpenAI key (APILOGICSERVER_CHATGPT_APIKEY), and the world conditions file (config/ai_test_context.yaml).
+// Setup that makes this sample hard by hand, handled here: checking whether an LLM is configured
+// (APILOGICSERVER_LLM_API_KEY / _BASE_URL / _MODEL, or the older APILOGICSERVER_CHATGPT_APIKEY), and the
+// world conditions file (config/ai_test_context.yaml).
 // The SysSupplierReq audit table (basic_demo.sqlite does not have it) is not mentioned: the CE creates it for a Request Pattern.
 // The Admin UI swap is approved here (the CE never replaces admin.yaml without being told to), so the audit table shows in the Admin App.
 // Without a key the build still completes: the AI step falls back to the minimum-cost supplier, and the verdict is DEGRADED.
 // Lines starting with // are notes for the human reader.
-Before anything else, check three things, report them in ONE line, and continue whatever the answers (never stop): (1) is `openai` importable in the Manager venv; if not, install exactly `openai==1.55.3` (this script gives permission for that one package, nothing else); (2) is the environment variable APILOGICSERVER_CHATGPT_APIKEY set (check only, never print its value); if not, say "no API key: AI rules will use the minimum-cost fallback" and continue; (3) is Docker or Podman running; if neither, Kafka publishing is simulated, and do not start or install anything.
+Before anything else, check two things, report them in ONE line, and continue whatever the answers (never stop): (1) is an LLM configured: any of APILOGICSERVER_LLM_API_KEY, APILOGICSERVER_LLM_BASE_URL or APILOGICSERVER_CHATGPT_APIKEY set (check only, never print a value); if none, say "no LLM configured: AI rules will use the minimum-cost fallback" and continue; do not install any packages for this; (2) is Docker or Podman running; if neither, Kafka publishing is simulated, and do not start or install anything.
 
 create project demo_ai_rules_supplier from samples/dbs/basic_demo.sqlite
 
