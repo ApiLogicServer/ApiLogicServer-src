@@ -1387,11 +1387,13 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
 
     # openai moved to pyproject.toml's optional "ai-rules" extra (2026-08-13, keeps the base
     # install/Docker image free of the openai package for SCA scans) - same pattern as pyodbc
-    # above: BLT installs it explicitly here since do_test_genai (als genai --using=...) needs it.
+    # above: BLT installs it explicitly here. Still needed (neutral-llm branch) only so runtime AI-rule
+    # handlers (e.g. samples/basic_demo_ai_rules-supplier) can call OpenAI when a key is set; the retired
+    # `als genai` tests no longer use it. Remove once those handlers use llm_client (no SDK).
     result_openai = run_command(
         f'{set_venv} && {python} -m pip install openai==1.55.3',
         cwd=install_api_logic_server_path,
-        msg=f'\nInstall openai (for genai tests)')
+        msg=f'\nInstall openai (for runtime AI-rule handlers; see comment above)')
 
 if just_build := False:  # most times, we need to create mgr and run nw
     if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
@@ -1448,129 +1450,8 @@ if len(sys.argv) > 1 and 'build-only' in sys.argv[1]:
 
 
 
-if Config.do_test_genai:
-    def test_genai():
-        # read environment variable APILOGICSERVER_TEST_GENAI
-        test_genai_env = os.getenv('APILOGICSERVER_TEST_GENAI', 'False').lower() in ('true', '1', 't')
-        if os.getenv('APILOGICSERVER_TEST_GENAI') is None:
-            test_genai_env = True
-        if test_genai_env:
-            print("Running GenAI tests as per environment variable APILOGICSERVER_TEST_GENAI")
-            # smoke test, part 1: als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
-            create_in = install_api_logic_server_path
-            test_name = 'tests/genai_demo'
-            prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo.prompt')
-            assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
-            do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path} --retries=3'
-            result_genai = run_command(do_test_genai_cmd,
-                cwd=create_in,
-                msg=f'\nCreate {test_name}')
-            # genai_demo_path = install_api_logic_server_path.joinpath(test_name)
-            start_api_logic_server(project_name=f'../{test_name}')
-            stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
-        else:
-            print("Skipping GenAI tests as per environment variable APILOGICSERVER_TEST_GENAI")
-
-        db_loc = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_models_with_addr.sqlite')
-        db_loc_str = str(db_loc)
-        genai_with_address = f'sqlite:////{db_loc_str}'
-        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/genai_demo_models_with_addr --{db_url}={genai_with_address}',
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
-        result = start_api_logic_server(project_name='genai_demo_models_with_addr', do_return=True) 
-
-        get_uri = "http://localhost:5656/api/Address/?include=customer_account&fields%5BAddress%5D=customer_account_id%2Cstreet%2Ccity%2Cstate%2Czipcode%2C_check_sum_%2CS_CheckSum&page%5Boffset%5D=0&page%5Blimit%5D=10&sort=id"
-        r = requests.get(url=get_uri)
-        response_text = r.text
-        result_data = json.loads(response_text) 
-        assert len(result_data["data"]) > 0, "genai_demo_models_with_addr: Did not find any rows"
-
-        stop_server(msg="genai_demo_models_with_addr\n")
-
-        # test genai, using copy of pre-supplied ChatGPT response (to avoid api key issues)
-        # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
-        prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai.response')
-        assert prompt_path.exists() , f'do_test_genai error: prompt path not found: {str(prompt_path)}'
-        # FIXME - add --project-name=tests/xxx
-        result_genai = run_command(f'{set_venv} && als genai --project-name=tests/genai_demo --using=genai_demo.prompt --repaired-response={prompt_path}',
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate genai_demo')
-        genai_demo_path = install_api_logic_server_path.joinpath('tests/genai_demo')
-        add_cust_genai = run_command(f'{set_venv} && cd {genai_demo_path} && als add-cust',
-            cwd=genai_demo_path,
-            msg=f'\nCustomize genai_demo')
-        start_api_logic_server(project_name="genai_demo")
-        stop_server(msg="*** genai_demo TESTS COMPLETE ***\n")
-    
-    run_test("test_genai", "GenAI creation and validation tests", test_genai,
-             folders="genai_demo, genai_demo_models_with_addr")
-
-    
-if Config.do_test_multi_reln:
-    def test_multi_reln():
-        ''' Lost test: based in pre-parsed response
-        # first, some tests for genai, not starting server.  Prompts from tests, avoid too many samples
-        prompt_path = 'genai_demo_outdented_reln'
-        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_retry_outdented_relns_fixed/genai.response')
-        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-        result_genai = run_command(f'{set_venv} && als genai  --project-name=tests/genai_demo_retry_outdented_relns_fixed --using={prompt_path} --repaired-response={response_path}',
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate outdented_relns_fixed')
-
-        prompt_path = 'genai_demo_decimals'
-        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_decimal/genai.response')
-        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-        result_genai = run_command(f'{set_venv} && als genai --project-name=tests/genai_demo_decimal --using={prompt_path} --repaired-response={response_path}',
-            cwd=install_api_logic_server_path,
-            msg=f'\ngenai_demo_decimals')
-
-        # depends on `import decimal`` in api_logic_server_cli/prototypes/manager/system/genai/create_db_models_inserts/create_db_models_prefix.py
-        prompt_path = 'time_cards_decimal'  # really a sqlacodegen test - classes table --> Class (reserved word)
-        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
-        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-        result_genai = run_command(f'{set_venv} && als genai --project-name=tests/dnd --using={prompt_path} --repaired-response={response_path}',
-            cwd=install_api_logic_server_path,
-            msg=f'\ntime cards decimal')
-
-        prompt_path = 'time_cards_kw'  # really a sqlacodegen test - classes table --> Class (reserved word)
-        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
-        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-        result_genai = run_command(f'{set_venv} && als genai --project-name=tests/time_card_decimal --using={prompt_path} --repaired-response={response_path}',
-            cwd=install_api_logic_server_path,
-            msg=f'\ntime cards keyword')    
-        '''  
-
-        prompt_path = 'dungeons_and_dragons'  # really a sqlacodegen test - classes table --> Class (odd plural, reserved word?)
-        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/dnd/dnd.response')
-        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-        result_genai = run_command(f'{set_venv} && als genai --project-name=tests/dnd --using={prompt_path} --repaired-response={response_path}',
-            cwd=install_api_logic_server_path,
-            msg=f'\ndungeons_and_dragons')
-
-
-        # test for using genai-relns (tries, fails, retries with use-relns False)
-        prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_4.response')
-        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_4.response')
-        assert response_path.exists() , f'do_test_multi_reln error: response path not found: {str(response_path)}'
-        result_genai = run_command(f'{set_venv} && als genai --using=tests/airport_4 --project-name=tests/airport_4 --repaired-response={response_path}',
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate airport_4')
-        start_api_logic_server(project_name="airport_4")
-        stop_server(msg="*** airport TESTS COMPLETE ***\n")
-
-        # test genai, using pre-supplied ChatGPT response (to avoid api key issues)
-        # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
-        prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_10.prompt')
-        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_10.response')
-        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-        result_genai = run_command(f'{set_venv} && als genai --using=tests/airport_10 --project-name=tests/airport_10 --using={prompt_path} --repaired-response={response_path}',
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate airport_10')
-        start_api_logic_server(project_name="airport_10")
-        stop_server(msg="*** airport TESTS COMPLETE ***\n")
-    
-    run_test("test_multi_reln", "Multi-relationship GenAI tests", test_multi_reln,
-             folders="dnd, airport_4, airport_10")
+# genai (PE) tests retired - `als genai` no longer exists (see internal_dev/genai_retired_PE).
+# Config.do_test_genai / do_test_multi_reln are no longer read.
 
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)
     def test_create_shipping():
