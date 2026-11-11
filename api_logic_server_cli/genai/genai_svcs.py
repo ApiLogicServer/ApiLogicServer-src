@@ -11,6 +11,7 @@ import os
 import sys
 import create_from_model.api_logic_server_utils as utils
 from api_logic_server_cli.genai.genai_fatal_excp import GenAIException
+from api_logic_server_cli.create_from_model.api_logic_server_utils import get_manager_path, remove_als_from_models_py  # moved to core utils (neutral-llm)
 import time
 try:
     from openai import OpenAI  # optional: pip install apilogicserver[ai-rules]
@@ -986,63 +987,6 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str, r
         log.error(f"\n\nError: ChatGPT call failed\n- please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuratio\n{inst}\n\n")
         sys.exit(1)
 
-def get_manager_path(project: object = None) -> Path:
-    """ Checks cwd, parent, and grandparent for system/genai
-
-    * Possibly could add cli arg later
-
-    Args:
-        project: instance of Project - best practice is caller provides, so can use install loc if cannot find manager
-
-    Returns:
-        Path: Manager path (contains system/genai)
-    """
-
-    if project is not None:
-        result_path = project.manager_path
-        check_system_genai = result_path.joinpath('system/genai/temp')    
-        if check_system_genai.exists():
-            return result_path
-        return result_path # todo - verify what this does (should not occur)
-
-    result_path = Path(os.getcwd())  # normal case - project at manager root
-    check_system_genai = result_path.joinpath('system/genai/temp')    
-    if check_system_genai.exists():
-        return result_path
-    
-    result_path = result_path.parent  # try pwd parent
-    check_system_genai = result_path.joinpath('system/genai/temp')
-    if check_system_genai.exists():
-        return result_path
-    
-    result_path = result_path.parent  # try pwd grandparent
-    check_system_genai = result_path.joinpath('system/genai/temp')
-    if check_system_genai.exists():
-        return result_path
-    
-    result_path = result_path.parent 
-    check_system_genai = result_path.joinpath('system/genai/temp')
-    if check_system_genai.exists():
-        return result_path
-    
-    result_path = result_path.parent  
-    check_system_genai = result_path.joinpath('system/genai/temp')
-    if check_system_genai.exists():
-        return result_path
-    
-    result_path = result_path.parent  
-    check_system_genai = result_path.joinpath('system/genai/temp')
-    if check_system_genai.exists():
-        return result_path
-
-    result_path = result_path.parent  # try ancestors - this is for import testing
-    check_system_genai = result_path.joinpath('system/genai/temp')
-
-    if not check_system_genai.exists():
-        check_system_genai.exists(), f"Manager Directory not found and APILOGICSERVER_HOME not set: {check_system_genai}"
-    return result_path
-
-
 def as_json(value: str) -> dict:
     """returns json or None from string value
 
@@ -1057,41 +1001,6 @@ def as_json(value: str) -> dict:
     if isinstance(value, str) and (value.startswith('{') or value.startswith('[')):
         return_json = json.loads(value)
     return return_json
-
-def remove_als_from_models_py(file_path, safrs_basex: bool = True) -> List[str]:
-    """ 
-    convert als model.py to non-als (returns lines[]) - remove:
-     * SAFRSBaseX (iff safrs_basex), and 
-     * checksum @json attrs
-
-
-    this code courtesy of @jamesdavidmiller/Copilot
-    """
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-
-    start_marker = '@json'
-    end_marker = 'S_CheckSum'
-    inside_markers = False
-    result_lines = []
-
-    for line in lines:
-        if start_marker in line:
-            inside_markers = True
-        if not inside_markers:
-            out_line = line
-            if safrs_basex:
-                if 'import SAFRSBaseX' in line:
-                    debug_string = "good breakpoint - SAFRSBaseX"
-                    out_line = '# ' + line
-                else:
-                    out_line = line.replace('SAFRSBaseX, ', '')
-            result_lines.append(out_line)
-        if end_marker in line:
-            inside_markers = False
-
-    return result_lines
-
 
 if __name__ == '__main__':
     """

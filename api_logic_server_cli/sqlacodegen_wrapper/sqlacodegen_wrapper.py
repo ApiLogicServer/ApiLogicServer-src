@@ -440,9 +440,9 @@ def create_models_py(model_creation_services: "ModelCreationServices", abs_db_ur
 
             models_mem, num_models = create_models_memstring(code_gen_args)  # calls sqlcodegen
             write_models_py(model_full_file_name, models_mem)
-            import api_logic_server_cli.genai.genai_svcs as genai_svcs
+            import api_logic_server_cli.create_from_model.api_logic_server_utils as als_utils
             if do_no_als_model_format:
-                no_als_model_lines = genai_svcs.remove_als_from_models_py(model_full_file_name, safrs_basex=False)
+                no_als_model_lines = als_utils.remove_als_from_models_py(model_full_file_name, safrs_basex=False)
                 with open(model_full_file_name, "w") as file:
                     file.write("".join(no_als_model_lines))
             model_creation_services.schema_loaded = True
@@ -452,11 +452,12 @@ def create_models_py(model_creation_services: "ModelCreationServices", abs_db_ur
             if model_creation_services.project.use_model == '.':
                 log.debug(f' a.  Use existing {model_full_file_name} - no copy')
             else:
+                import api_logic_server_cli.create_from_model.api_logic_server_utils as als_utils
                 use_model_path = Path(model_creation_services.project.use_model).absolute()
                 log.debug(f' a.  Use existing {use_model_path} - copy to {project_directory + "/database/models.py"}')
                 copyfile(use_model_path, model_full_file_name)
                 if do_no_als_model_format:  # remove ALS formatting (it's lots of code in sqlacodegen)
-                    no_als_model_lines = genai_svcs.remove_als_from_models_py(model_full_file_name, safrs_basex=False)
+                    no_als_model_lines = als_utils.remove_als_from_models_py(model_full_file_name, safrs_basex=False)
                     with open(model_full_file_name, "w") as file:
                         file.write("".join(no_als_model_lines))
     elif project.command == 'create-ui':
