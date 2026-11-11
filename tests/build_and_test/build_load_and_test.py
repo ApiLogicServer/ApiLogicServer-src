@@ -2281,7 +2281,9 @@ print(f"    {python} -m twine upload  --skip-existing dist/*  \n")
 
 results = []
 
-results.append(f"\n{__file__} {__version__} [{str(int(time.time() - start_time))} secs]  - created in blt/tests\n")
+elapsed_secs = int(time.time() - start_time)
+elapsed_mm_ss = f"{elapsed_secs // 60:02d}:{elapsed_secs % 60:02d}"   # mm:ss (155 secs -> 02:35)
+results.append(f"\n{__file__} {__version__} [{elapsed_mm_ss}]  - created in blt/tests\n")
 
 # Test Summary
 results.append(f"TOTAL TESTS: {total_tests}")
