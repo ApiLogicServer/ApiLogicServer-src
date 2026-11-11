@@ -1385,7 +1385,7 @@ changelog:
 ### MCP Client (Included)
 - **Client Executor**: `integration/mcp/mcp_client_executor.py`
 - **Natural Language**: Process queries like "List customers with credit_limit > 1000"
-- **LLM Integration**: Uses OpenAI GPT-4 to translate natural language → API calls
+- **LLM Integration**: Uses an LLM, through `integration/ai/llm_client.py` (OpenAI, Claude, Gemini, Ollama by environment variables; see `docs/training/probabilistic_logic.md`), to translate natural language → API calls
 - **Example Usage**:
   ```bash
   cd basic_demo
