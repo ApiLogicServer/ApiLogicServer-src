@@ -840,8 +840,9 @@ Rules:
   `APILOGICSERVER_LLM_BASE_URL`, `APILOGICSERVER_LLM_MODEL`, `APILOGICSERVER_LLM_API_KEY`
   (the old `APILOGICSERVER_CHATGPT_APIKEY` is still accepted). With none set, the client uses OpenAI if an
   API key exists, else looks for a local Ollama, else raises `LLMNotAvailable`.
-- **Provider examples** (verify before relying on them: Claude and Gemini go through those vendors'
-  OpenAI-compatibility endpoints, not yet run with real keys):
+- **Provider examples** (OpenAI and Claude have run live; Gemini is not yet verified. Claude and Gemini go through
+  those vendors' OpenAI-compatibility endpoints, which are partial: Claude rejects `temperature`, and the client
+  drops it and remembers):
   Ollama `http://localhost:11434/v1`; OpenAI `https://api.openai.com/v1`; Claude `https://api.anthropic.com/v1/`;
   Gemini `https://generativelanguage.googleapis.com/v1beta/openai/`. Azure OpenAI and Vertex AI are not supported yet.
 - **Existing handlers** that import `openai` directly keep working while `openai` is installed (the `ai-rules`
