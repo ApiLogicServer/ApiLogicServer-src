@@ -8,11 +8,19 @@ process you run yourself such as Ollama or vLLM) is up to you.  No SDK, no new d
 It speaks the OpenAI-compatible chat protocol (POST {base_url}/chat/completions), which OpenAI, Ollama,
 vLLM, LM Studio and others accept.
 
-Configuration (environment variables)
+Configuration (environment variables; how to set them is below)
     APILOGICSERVER_LLM_BASE_URL   e.g. http://localhost:11434/v1 (Ollama) or https://api.openai.com/v1
     APILOGICSERVER_LLM_MODEL      model name, e.g. gpt-4o or llama3.1
     APILOGICSERVER_LLM_API_KEY    optional for local endpoints; also accepted: APILOGICSERVER_CHATGPT_APIKEY
     APILOGICSERVER_LLM_TIMEOUT    seconds, default 30
+
+Setting them (a persistent change is seen only by NEW terminals and processes: restart VS Code / the IDE too):
+    macOS / Linux    add lines like  export APILOGICSERVER_LLM_API_KEY="..."  to ~/.zprofile (zsh) or ~/.bashrc
+    Windows          most common, persistent for your user (PowerShell or cmd):  setx APILOGICSERVER_LLM_API_KEY "..."
+                     this session only, PowerShell:   $env:APILOGICSERVER_LLM_API_KEY = "..."
+                     this session only, cmd.exe:      set APILOGICSERVER_LLM_API_KEY=...
+                     or the GUI: Start menu -> "Edit environment variables for your account" -> New
+    Keep a key out of files that are committed, or open in an editor while an AI assistant session is running.
 
 Provider examples (all through the OpenAI-compatible protocol - no provider-specific code):
     Ollama (local)   BASE_URL=http://localhost:11434/v1      MODEL=<a model you have pulled>      (no key)
@@ -20,9 +28,9 @@ Provider examples (all through the OpenAI-compatible protocol - no provider-spec
     Claude           BASE_URL=https://api.anthropic.com/v1/  MODEL=<a Claude model id>            KEY=<anthropic key>
     Gemini           BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
                      MODEL=<a Gemini model id>                                                    KEY=<Gemini API key>
-  Only Ollama-style and OpenAI endpoints have been exercised so far (against a stub; OpenAI once, live).
-  Claude and Gemini go through those providers' OpenAI-compatibility endpoints and are UNVERIFIED until run
-  with real keys - those layers are partial (some request fields are ignored or unsupported).  If one proves
+  Status: OpenAI and Claude (claude-sonnet-5-5, through Anthropic's OpenAI-compatibility endpoint) have run live;
+  Ollama-style endpoints only against a stub; Gemini is UNVERIFIED until run with a real key.  Compatibility
+  layers are partial: Claude rejects `temperature`, which the client drops and remembers.  If a provider proves
   unreliable, add a native branch for that provider only (Anthropic native: POST /v1/messages with x-api-key
   and anthropic-version headers, top-level system prompt, max_tokens required).
 
