@@ -13,16 +13,17 @@ The early_row_event on Charge (registered in charge_distribution.py BEFORE Alloc
 calls identify_project_for_charge(), which inserts a SysProjectReq to trigger this
 handler and then reads back matched_project_id.
 
-version: 1.0
+version: 1.1
 date: March 12, 2026
+migrated to integration/ai/llm_client.py (no openai SDK): Nov 10, 2026
 """
 from __future__ import annotations
 
-import os
 from datetime import datetime
 from logic_bank.logic_bank import Rule
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from database import models
+from integration.ai.llm_client import chat_json, describe, LLMError, LLMNotAvailable  # vendor-neutral LLM call; no SDK import
 
 
 # ── SysProjectReq handler ────────────────────────────────────────────────────
@@ -85,11 +86,9 @@ def _identify_project(row: models.SysProjectReq, old_row, logic_row: LogicRow):
         f"contractor_past=[{past_summary}]"
     )
 
-    api_key = os.environ.get("OPENAI_API_KEY")
-
-    if api_key and active_projects:
+    if active_projects:  # ask the LLM; with none configured (or on any failure) _ai_match uses the keyword fallback
         matched, confidence, reason = _ai_match(
-            description, active_projects, past_project_ids, api_key
+            description, active_projects, past_project_ids, logic_row
         )
     else:
         matched, confidence, reason = _keyword_match(
@@ -154,44 +153,39 @@ def _keyword_match(
     return None, 0.0, "no match"
 
 
-# ── OpenAI match ─────────────────────────────────────────────────────────────
+# ── LLM match ────────────────────────────────────────────────────────────────
 
-def _ai_match(description: str, active_projects: list, past_project_ids: list[int], api_key: str) -> tuple:
+def _ai_match(description: str, active_projects: list, past_project_ids: list[int], logic_row: LogicRow) -> tuple:
     """
-    Call OpenAI to select the best matching active project.
-    Returns (project | None, confidence, reason).
+    Ask the LLM (integration/ai/llm_client.py) to select the best matching active project.
+    Returns (project | None, confidence, reason). With no LLM configured, or if the call fails or the reply is
+    unusable, uses the keyword fallback; an id that is not an active project returns no match (as before).
     """
+    project_list = "\n".join(
+        f"  id={p.id}: {p.name}"
+        + (" [past contractor]" if p.id in past_project_ids else "")
+        for p in active_projects
+    )
+
+    prompt = (
+        f"A contractor submitted a charge with description: '{description}'.\n"
+        f"Active projects:\n{project_list}\n\n"
+        f"Select the best matching project. "
+        f"Respond with JSON: {{\"project_id\": <int>, \"confidence\": <0-1 float>, \"reason\": <string>}}"
+    )
+
     try:
-        import json
-        import openai
-        openai.api_key = api_key
-
-        project_list = "\n".join(
-            f"  id={p.id}: {p.name}"
-            + (" [past contractor]" if p.id in past_project_ids else "")
-            for p in active_projects
-        )
-
-        prompt = (
-            f"A contractor submitted a charge with description: '{description}'.\n"
-            f"Active projects:\n{project_list}\n\n"
-            f"Select the best matching project. "
-            f"Respond with JSON: {{\"project_id\": <int>, \"confidence\": <0-1 float>, \"reason\": <string>}}"
-        )
-
-        response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
-        )
-        content = response.choices[0].message.content
-        data = json.loads(content)
+        logic_row.log(f"Calling LLM ({describe()}) to match description='{description}' to {len(active_projects)} active projects")
+        data = chat_json(system="You match contractor charge descriptions to projects. Respond with valid JSON only.",
+                         user=prompt)
         pid = int(data["project_id"])
-        matched = next((p for p in active_projects if p.id == pid), None)
-        return matched, float(data.get("confidence", 0.5)), str(data.get("reason", "AI selection"))
-    except Exception as exc:
-        # Fallback to keyword on any AI error
+    except LLMNotAvailable:
+        return _keyword_match(description, active_projects, past_project_ids)   # no LLM configured
+    except (LLMError, KeyError, TypeError, ValueError) as exc:
+        logic_row.log(f"LLM match failed ({str(exc)[:100]}); using keyword fallback")
         return _keyword_match(description, active_projects, past_project_ids)
+    matched = next((p for p in active_projects if p.id == pid), None)
+    return matched, float(data.get("confidence", 0.5)), str(data.get("reason", "AI selection"))
 
 
 # ── Wrapper called from Charge early_row_event ───────────────────────────────
