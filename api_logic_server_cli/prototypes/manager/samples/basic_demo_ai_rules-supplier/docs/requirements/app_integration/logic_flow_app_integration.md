@@ -13,7 +13,7 @@
 
 ### Rules
 
-1. `Order` → `send_row_to_kafka` (after_flush)
+1. `Order` → `send_order_to_kafka` (after_flush) — Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set
 
 </td>
 </tr>
@@ -25,11 +25,7 @@
 Requirement: App Integration
 
 1. Publish the Order to Kafka topic 'order_shipping' if the date_shipped is not None
-
-version: 1.0
-created: 2026-11-04
-created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
 ```
 
 ---
-_Generated 2026-11-04 17:42_
+_Generated 2026-11-10 17:34_

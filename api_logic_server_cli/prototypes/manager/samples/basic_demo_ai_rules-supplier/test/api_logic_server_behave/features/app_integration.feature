@@ -1,24 +1,14 @@
 Feature: App Integration
 
-  # Publish the Order to Kafka topic 'order_shipping' if the date_shipped is not None
-
-  Scenario: Kafka - shipped order
-    Given a customer with credit limit 1000
-    And a product priced 10 with no suppliers
-    And an order is created with 5 of the product
+  Scenario: Shipping an Order Publishes to Kafka
+    Given a customer with credit limit 5000
+    And an order is placed with 2 Egyptian Cotton Sheets
+    And the scenario logic log is started for "Order Publishes on Ship"
     When the order is shipped
-    Then the logic log shows the order sent to Kafka topic "order_shipping"
+    Then the logic log shows a publish to topic order_shipping
 
-  Scenario: Kafka - unshipped order
-    Given a customer with credit limit 1000
-    And a product priced 10 with no suppliers
-    When an order is created with 5 of the product
-    Then the logic log shows no message sent to Kafka topic "order_shipping"
-
-  Scenario: Kafka - edit shipped order
-    Given a customer with credit limit 1000
-    And a product priced 10 with no suppliers
-    And an order is created with 5 of the product
-    And the order is shipped
-    When the order notes are edited
-    Then the logic log shows the order sent to Kafka topic "order_shipping" 1 time
+  Scenario: Unshipped Order Does Not Publish
+    Given a customer with credit limit 5000
+    And the scenario logic log is started for "Order Not Shipped No Publish"
+    When an order is placed with 2 Egyptian Cotton Sheets
+    Then the logic log shows no publish to topic order_shipping

@@ -10,17 +10,17 @@
 <g id="node1" class="node">
 <title>TRIGGER</title>
 <polygon fill="#e8f5e9" stroke="none" points="8,-17.62 8,-50.62 170.75,-50.62 170.75,-17.62 8,-17.62" />
-<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-18.62 9,-49.62 169.75,-49.62 169.75,-18.62 9,-18.62" />
 <text xml:space="preserve" text-anchor="start" x="17" y="-32.17" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ SysSupplierReq inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-18.62 9,-49.62 169.75,-49.62 169.75,-18.62 9,-18.62" />
 </g>
 
 <g id="node2" class="node">
 <title>SysSupplierReq</title>
-<polygon fill="none" stroke="#4a6fa5" points="316,-17.12 316,-51.12 412.75,-51.12 412.75,-17.12 316,-17.12" />
 <polygon fill="#4a6fa5" stroke="none" points="317,-34.12 317,-50.12 411.75,-50.12 411.75,-34.12 317,-34.12" />
 <text xml:space="preserve" text-anchor="start" x="319" y="-38.67" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> SysSupplierReq </text>
 <polygon fill="#dbe4f0" stroke="none" points="346.58,-18.12 346.58,-34.12 382.17,-34.12 382.17,-18.12 346.58,-18.12" />
 <text xml:space="preserve" text-anchor="start" x="361.38" y="-23.12" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e">  </text>
+<polygon fill="none" stroke="#4a6fa5" points="316,-17.12 316,-51.12 412.75,-51.12 412.75,-17.12 316,-17.12" />
 </g>
 
 <g id="edge1" class="edge">
@@ -32,8 +32,8 @@
 <g id="node3" class="node">
 <title>evt_select_supplier_via_ai</title>
 <polygon fill="#e8f5e9" stroke="none" points="661,-20 661,-48.25 783.75,-48.25 783.75,-20 661,-20" />
-<polygon fill="none" stroke="#27ae60" points="661,-20 661,-48.25 783.75,-48.25 783.75,-20 661,-20" />
 <text xml:space="preserve" text-anchor="start" x="668" y="-30.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ select_supplier_via_ai</text>
+<polygon fill="none" stroke="#27ae60" points="661,-20 661,-48.25 783.75,-48.25 783.75,-20 661,-20" />
 </g>
 
 <g id="edge2" class="edge">

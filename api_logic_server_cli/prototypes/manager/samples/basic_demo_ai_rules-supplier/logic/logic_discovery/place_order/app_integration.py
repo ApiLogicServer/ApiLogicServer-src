@@ -2,20 +2,19 @@
 Requirement: App Integration
 
 1. Publish the Order to Kafka topic 'order_shipping' if the date_shipped is not None
-
-version: 1.0
-created: 2026-11-04
-created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
 """
-
 from logic_bank.logic_bank import Rule
-from database import models
+from logic_bank.exec_row_logic.logic_row import LogicRow
 from integration.kafka import kafka_producer
+from database import models
 
 
 def declare_logic():
-    """Business logic rules for App Integration use case."""
+    Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_kafka)
 
-    Rule.after_flush_row_event(on_class=models.Order, calling=kafka_producer.send_row_to_kafka,
-                               when_condition=lambda row: row.date_shipped is not None,
-                               with_args={"topic": "order_shipping"})
+
+def send_order_to_kafka(row: models.Order, old_row: models.Order, logic_row: LogicRow):
+    """Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set
+    and differs from its prior value (old_row is None on insert)."""
+    if row.date_shipped is not None and (old_row is None or row.date_shipped != old_row.date_shipped):
+        kafka_producer.publish_kafka_message(topic="order_shipping", logic_row=logic_row)

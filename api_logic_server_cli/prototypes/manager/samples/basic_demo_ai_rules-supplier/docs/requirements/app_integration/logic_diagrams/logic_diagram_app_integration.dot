@@ -22,7 +22,7 @@ digraph logic {
   // ── events (right cluster) ─────────────────────────────────────
   subgraph cluster_events {
     style=invis
-    evt_send_row_to_kafka [label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60" POINT-SIZE="10">&#9889; send_row_to_kafka</FONT></TD></TR></TABLE>>, shape=plaintext]
+    evt_send_order_to_kafka [label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60" POINT-SIZE="10">&#9889; send_order_to_kafka</FONT></TD></TR></TABLE>>, shape=plaintext]
   }
-  Order -> evt_send_row_to_kafka [label="after_flush", color="#27ae60", style=dashed, arrowhead=open, penwidth=1.2, fontcolor="#27ae60", constraint=false]
+  Order -> evt_send_order_to_kafka [label="after_flush", color="#27ae60", style=dashed, arrowhead=open, penwidth=1.2, fontcolor="#27ae60", constraint=false]
 }

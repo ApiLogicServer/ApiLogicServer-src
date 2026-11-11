@@ -10,17 +10,17 @@
 <g id="node1" class="node">
 <title>TRIGGER</title>
 <polygon fill="#e8f5e9" stroke="none" points="8,-17.62 8,-50.62 116,-50.62 116,-17.62 8,-17.62" />
-<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-18.62 9,-49.62 115,-49.62 115,-18.62 9,-18.62" />
 <text xml:space="preserve" text-anchor="start" x="17" y="-32.17" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ Order inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="9,-18.62 9,-49.62 115,-49.62 115,-18.62 9,-18.62" />
 </g>
 
 <g id="node2" class="node">
 <title>Order</title>
-<polygon fill="none" stroke="#4a6fa5" points="262,-17.12 262,-51.12 304,-51.12 304,-17.12 262,-17.12" />
 <polygon fill="#4a6fa5" stroke="none" points="263,-34.12 263,-50.12 303,-50.12 303,-34.12 263,-34.12" />
 <text xml:space="preserve" text-anchor="start" x="265" y="-38.67" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Order </text>
 <polygon fill="#dbe4f0" stroke="none" points="274.33,-18.12 274.33,-34.12 291.67,-34.12 291.67,-18.12 274.33,-18.12" />
 <text xml:space="preserve" text-anchor="start" x="280" y="-23.12" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e">  </text>
+<polygon fill="none" stroke="#4a6fa5" points="262,-17.12 262,-51.12 304,-51.12 304,-17.12 262,-17.12" />
 </g>
 
 <g id="edge1" class="edge">
@@ -30,17 +30,17 @@
 </g>
 
 <g id="node3" class="node">
-<title>evt_send_row_to_kafka</title>
-<polygon fill="#e8f5e9" stroke="none" points="549.25,-20 549.25,-48.25 660.75,-48.25 660.75,-20 549.25,-20" />
-<polygon fill="none" stroke="#27ae60" points="549.25,-20 549.25,-48.25 660.75,-48.25 660.75,-20 549.25,-20" />
-<text xml:space="preserve" text-anchor="start" x="556.25" y="-30.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ send_row_to_kafka</text>
+<title>evt_send_order_to_kafka</title>
+<polygon fill="#e8f5e9" stroke="none" points="546.25,-20 546.25,-48.25 663.75,-48.25 663.75,-20 546.25,-20" />
+<text xml:space="preserve" text-anchor="start" x="553.25" y="-30.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ send_order_to_kafka</text>
+<polygon fill="none" stroke="#27ae60" points="546.25,-20 546.25,-48.25 663.75,-48.25 663.75,-20 546.25,-20" />
 </g>
 
 <g id="edge2" class="edge">
-<title>Order-&gt;evt_send_row_to_kafka</title>
-<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M311.86,-34.12C360.55,-34.12 460.51,-34.12 530.09,-34.12" />
-<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="539.95,-34.13 529.95,-38.63 536.41,-34.23 529.95,-34.23 529.95,-34.13 529.95,-34.03 536.41,-34.03 529.95,-29.63 539.95,-34.13" />
-<text xml:space="preserve" text-anchor="middle" x="426.62" y="-38.88" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">after_flush</text>
+<title>Order-&gt;evt_send_order_to_kafka</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M311.86,-34.12C359.82,-34.12 457.52,-34.12 526.93,-34.12" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="536.79,-34.13 526.79,-38.63 533.25,-34.23 526.79,-34.23 526.79,-34.13 526.79,-34.03 533.25,-34.03 526.79,-29.63 536.79,-34.13" />
+<text xml:space="preserve" text-anchor="middle" x="425.12" y="-38.88" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">after_flush</text>
 </g>
 </g>
 </svg>

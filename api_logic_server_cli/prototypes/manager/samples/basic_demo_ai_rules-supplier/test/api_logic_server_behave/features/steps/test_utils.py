@@ -123,7 +123,7 @@ def login(user: str = 'aneu') -> dict:
 
 def does_file_contain(search_for: str, in_file: str) -> bool:
     """ returns True if <search_for> is <in_file> """
-    with open(Path(in_file), 'r+') as fp:
+    with open(Path(in_file), 'r+', encoding='utf-8') as fp:
         file_lines = fp.readlines()  # lines is list of lines, each element '...\n'
         found = False
         insert_line = 0

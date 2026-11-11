@@ -1,5 +1,4 @@
-# Test context: INPUT conditions passed to the AI supplier-selection prompt (not predetermined outputs).
-# Uncomment exactly one world_conditions line.
+# World conditions fed to the AI supplier selection (INPUT context, not a predetermined answer).
 world_conditions: 'Suez Canal blocked - use alternate shipping routes'
 # world_conditions: 'normal conditions'
 # world_conditions: 'pandemic supply chain disruptions'

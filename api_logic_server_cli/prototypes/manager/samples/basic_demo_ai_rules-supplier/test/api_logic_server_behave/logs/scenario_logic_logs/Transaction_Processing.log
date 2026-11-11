@@ -1,19 +1,73 @@
 
 The following rules have been activated
- - 2026-11-04 18:03:00,334 - logic_logger - DEBUG
-Rule Bank[0x10bb75940] (loaded 2026-11-04 18:02:58.763190)		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-Mapped Class[SysSupplierReq] rules:		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-  RowEvent SysSupplierReq.select_supplier_via_ai() 		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-Mapped Class[Order] rules:		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-  RowEvent Order.send_row_to_kafka() 		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-Mapped Class[Customer] rules:		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-  Constraint Function: None 		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10c1f6e80>)		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-Mapped Class[Item] rules:		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-  Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-  RowEvent Item.set_item_unit_price_from_supplier() 		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-Mapped Class[Product] rules:		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-  Derive <class 'database.models.Product'>.count_suppliers as Count(<class 'database.models.ProductSupplier'> Where  - None)		##   - 2026-11-04 18:03:00,334 - logic_logger - INFO
-Logic Bank - 14 rules loaded - 2026-11-04 18:03:00,334 - logic_logger - INFO
-Logic Bank - 14 rules loaded - 2026-11-04 18:03:00,334 - logic_logger - INFO
+ - 2026-11-10 17:41:50,370 - logic_logger - DEBUG
+Rule Bank[0x1094e1a90] (loaded 2026-11-10 17:41:46.006232)		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+Mapped Class[Order] rules:		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+  RowEvent Order.send_order_to_kafka() 		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+Mapped Class[Customer] rules:		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+  Constraint Function: None 		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x109b7d1c0>)		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+Mapped Class[Item] rules:		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+  RowEvent Item.set_item_unit_price_from_supplier() 		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+Mapped Class[Product] rules:		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+  Derive <class 'database.models.Product'>.count_suppliers as Count(<class 'database.models.ProductSupplier'> Where  - None)		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+Mapped Class[SysSupplierReq] rules:		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+  RowEvent SysSupplierReq.select_supplier_via_ai() 		##   - 2026-11-10 17:41:50,370 - logic_logger - INFO
+Logic Bank - 14 rules loaded - 2026-11-10 17:41:50,370 - logic_logger - INFO
+Logic Bank - 14 rules loaded - 2026-11-10 17:41:50,370 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109e48d60) (sqlalchemy before_flush)			 - 2026-11-10 17:41:50,372 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: Test Cust 1794361310371, balance: 0, credit_limit: 5000, email: None, email_opt_out: None  row: 0x109df31d0  session: 0x109e48d60  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:50,372 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: Test Cust 1794361310371, balance: 0, credit_limit: 5000, email: None, email_opt_out: None  row: 0x109df31d0  session: 0x109e48d60  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:50,372 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109e48d60)   										 - 2026-11-10 17:41:50,372 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109e48d60)   										 - 2026-11-10 17:41:50,373 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-10 17:41:50,373 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x109e48d60))       	 - 2026-11-10 17:41:50,373 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109c9efd0) (sqlalchemy before_flush)			 - 2026-11-10 17:41:50,376 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave, customer_id: 18, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109df39d0  session: 0x109c9efd0  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:50,376 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave, customer_id: 18, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109df39d0  session: 0x109c9efd0  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:50,376 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109c9efd0)   										 - 2026-11-10 17:41:50,376 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109c9efd0)   										 - 2026-11-10 17:41:50,376 - logic_logger - INFO
+..Order[20] {AfterFlush Event} id: 20, notes: behave, customer_id: 18, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109df39d0  session: 0x109c9efd0  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:50,376 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-10 17:41:50,376 - logic_logger - INFO
+  Customer		## - 2026-11-10 17:41:50,376 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x109b7d1c0>)		## - 2026-11-10 17:41:50,376 - logic_logger - INFO
+  Order		## - 2026-11-10 17:41:50,376 - logic_logger - INFO
+    2. RowEvent Order.send_order_to_kafka() 		## - 2026-11-10 17:41:50,376 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x109c9efd0))       	 - 2026-11-10 17:41:50,376 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109e05f20) (sqlalchemy before_flush)			 - 2026-11-10 17:41:50,381 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 20, product_id: 6, quantity: 2, amount: None, unit_price: None  row: 0x109e16e50  session: 0x109e05f20  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:50,381 - logic_logger - INFO
+..Item[None] {Product Egyptian Cotton Sheets has 2 suppliers, requesting AI selection} id: None, order_id: 20, product_id: 6, quantity: 2, amount: None, unit_price: None  row: 0x109e16e50  session: 0x109e05f20  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:50,382 - logic_logger - INFO
+....SysSupplierReq[None] {Insert - AI supplier selection request} id: None, request: None, reason: None, created_on: None, fallback_used: None, item_id: None, product_id: 6, chosen_supplier_id: None, chosen_unit_price: None  row: 0x109e8c190  session: 0x109e05f20  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:50,382 - logic_logger - INFO
+....SysSupplierReq[None] {Calling LLM with 2 candidates, world conditions: Suez Canal blocked - use alternate shipping routes} id: None, request: Select supplier for Egyptian Cotton Sheets: Candidates=[Sheets for Less of NJ($205.0, New Jersey, 2days), Genuine Sheets of Cairo($105.0, Near East, 1days)], World=Suez Canal blocked - use alternate shipping routes, reason: None, created_on: 2026-11-10T17:41:50, fallback_used: None, item_id: None, product_id: 6, chosen_supplier_id: None, chosen_unit_price: None  row: 0x109e8c190  session: 0x109e05f20  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:50,383 - logic_logger - INFO
+....SysSupplierReq[None] {LLM response: {'chosen_supplier_id': 2, 'chosen_unit_price': 205.0, 'reason': 'With the Suez Canal blocked, alternate shipping routes will likely cause significant delays for supplier 1 from the Near East. Supplier 2, based in New Jersey, offers a fast and reliable 2-day delivery within the region, ensuring the fastest delivery under current conditions.'}} id: None, request: Select supplier for Egyptian Cotton Sheets: Candidates=[Sheets for Less of NJ($205.0, New Jersey, 2days), Genuine Sheets of Cairo($105.0, Near East, 1days)], World=Suez Canal blocked - use alternate shipping routes, reason: None, created_on: 2026-11-10T17:41:50, fallback_used: None, item_id: None, product_id: 6, chosen_supplier_id: None, chosen_unit_price: None  row: 0x109e8c190  session: 0x109e05f20  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:51,992 - logic_logger - INFO
+..Item[None] {AI Request: Select supplier for Egyptian Cotton Sheets: Candidates=[Sheets for Less of NJ($205.0, New Jersey, 2days), Genuine Sheets of Cairo($105.0, Near East, 1days)], World=Suez Canal blocked - use alternate shipping routes} id: None, order_id: 20, product_id: 6, quantity: 2, amount: None, unit_price: None  row: 0x109e16e50  session: 0x109e05f20  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:51,993 - logic_logger - INFO
+..Item[None] {AI Results: supplier_id=2, price=205.0000000000, reason=AI: Sheets for Less of NJ ($205.0000000000) - With the Suez Canal blocked, alternate shipping routes will likely cause significant delays for supplier 1 from the Near East. Supplier 2, based in New Jersey, offers a fast and reliable 2-day delivery within the region, ensuring the fastest delivery under current conditions.} id: None, order_id: 20, product_id: 6, quantity: 2, amount: None, unit_price: None  row: 0x109e16e50  session: 0x109e05f20  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:51,993 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 20, product_id: 6, quantity: 2, amount: 410.0000000000, unit_price: 205.0000000000  row: 0x109e16e50  session: 0x109e05f20  ins_upd_dlt: ins, initial: ins - 2026-11-10 17:41:51,993 - logic_logger - INFO
+....Order[20] {Update - Adjusting order: amount_total} id: 20, notes: behave, customer_id: 18, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 410.0000000000  row: 0x109e7d2d0  session: 0x109e05f20  ins_upd_dlt: upd, initial: upd - 2026-11-10 17:41:51,994 - logic_logger - INFO
+......Customer[18] {Update - Adjusting customer: balance} id: 18, name: Test Cust 1794361310371, balance:  [0E-10-->] 410.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x109e7ced0  session: 0x109e05f20  ins_upd_dlt: upd, initial: upd - 2026-11-10 17:41:51,995 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109e05f20)   										 - 2026-11-10 17:41:51,996 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109e05f20)   										 - 2026-11-10 17:41:51,998 - logic_logger - INFO
+....Order[20] {AfterFlush Event} id: 20, notes: behave, customer_id: 18, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 410.0000000000  row: 0x109e7d2d0  session: 0x109e05f20  ins_upd_dlt: upd, initial: upd - 2026-11-10 17:41:51,998 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-10 17:41:51,998 - logic_logger - INFO
+  Customer		## - 2026-11-10 17:41:51,999 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x109b7d1c0>)		## - 2026-11-10 17:41:51,999 - logic_logger - INFO
+  Item		## - 2026-11-10 17:41:51,999 - logic_logger - INFO
+    2. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		## - 2026-11-10 17:41:51,999 - logic_logger - INFO
+    3. RowEvent Item.set_item_unit_price_from_supplier() 		## - 2026-11-10 17:41:51,999 - logic_logger - INFO
+  Order		## - 2026-11-10 17:41:51,999 - logic_logger - INFO
+    4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		## - 2026-11-10 17:41:51,999 - logic_logger - INFO
+    5. RowEvent Order.send_order_to_kafka() 		## - 2026-11-10 17:41:51,999 - logic_logger - INFO
+  SysSupplierReq		## - 2026-11-10 17:41:51,999 - logic_logger - INFO
+    6. RowEvent SysSupplierReq.select_supplier_via_ai() 		## - 2026-11-10 17:41:51,999 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x109e05f20))       	 - 2026-11-10 17:41:51,999 - logic_logger - INFO

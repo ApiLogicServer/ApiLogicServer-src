@@ -4,16 +4,16 @@ This project was created by `genai-logic create`.
 
 - **Project name:** demo_ai_rules_supplier
 - **Database:** `sqlite:///samples/dbs/basic_demo.sqlite`
-- **Created:** November 04, 2026 17:39:57
+- **Created:** November 10, 2026 17:33:44
 
 ## Scaffold
 
 Every project starts from a scaffold - the template `create` clones and customizes.
 This project's scaffold:
 
-- **Base template:** `/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/venv/lib/python3.13/site-packages/api_logic_server_cli/prototypes/base` (always the foundation - every project starts here)
+- **Base template:** `/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/venv/lib/python3.13/site-packages/api_logic_server_cli/prototypes/base` (always the foundation - every project starts here)
 - **Overlay:** none - this project is the unmodified base template
-- **Overlay (Project Context Engineering):** `/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/system/project_context_engineering` (training file additions/overrides copied into `docs/training/` - see this project's `docs/training/$readme.md` for the exact overlay timestamp/version)
+- **Overlay (Project Context Engineering):** `/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/system/project_context_engineering` (training file additions/overrides copied into `docs/training/` - see this project's `docs/training/$readme.md` for the exact overlay timestamp/version)
 
 The scaffold provides, out of the box:
 
@@ -44,4 +44,6 @@ You can still add business logic at any time - say **"implement requirements"** 
 
 *(each `impl req` run appends a link here to its `docs/requirements/<use_case>/ad-libs.md`)*
 
-- [demo_ai_rules_supplier](demo_ai_rules_supplier/ad-libs.md) — credit check with AI supplier selection, Kafka publish, 2026-11-04
+
+## Use Cases
+- [Check Credit / App Integration: ad-libs](demo_ai_rules_supplier/ad-libs.md); [test plan](demo_ai_rules_supplier/test_plan.md)

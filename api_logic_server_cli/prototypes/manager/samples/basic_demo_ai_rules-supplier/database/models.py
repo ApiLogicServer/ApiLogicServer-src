@@ -1,6 +1,6 @@
 # coding: utf-8
 from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
-from sqlalchemy import Boolean, Column, DECIMAL, Date, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, DECIMAL, Date, ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -10,8 +10,8 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  November 04, 2026 17:40:39
-# Database: sqlite:////Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_ai_rules_supplier/database/db.sqlite
+# Created:  November 10, 2026 17:34:00
+# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_ai_rules_supplier/database/db.sqlite
 # Dialect:  sqlite
 #
 # mypy: ignore-errors
@@ -162,14 +162,14 @@ class SysSupplierReq(Base):  # type: ignore
     _s_collection_name = 'SysSupplierReq'  # type: ignore
 
     id = Column(Integer, primary_key=True)
+    request = Column(Text)
+    reason = Column(Text)
+    created_on = Column(Text)
+    fallback_used = Column(Boolean)
     item_id = Column(ForeignKey('item.id'))
     product_id = Column(ForeignKey('product.id'))
     chosen_supplier_id = Column(ForeignKey('supplier.id'))
-    chosen_unit_price : DECIMAL = Column(DECIMAL)
-    request = Column(Text)
-    reason = Column(Text)
-    fallback_used = Column(Boolean)
-    created_on = Column(Text)
+    chosen_unit_price = Column(Numeric)
 
     # parent relationships (access parent)
     chosen_supplier : Mapped["Supplier"] = relationship(back_populates=("SysSupplierReqList"))

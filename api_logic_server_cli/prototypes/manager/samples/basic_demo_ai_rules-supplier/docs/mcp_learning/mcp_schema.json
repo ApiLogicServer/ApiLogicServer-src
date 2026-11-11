@@ -167,25 +167,25 @@
             ],
             "fields": [
                 "id",
+                "request",
+                "reason",
+                "created_on",
+                "fallback_used",
                 "item_id",
                 "product_id",
                 "chosen_supplier_id",
-                "chosen_unit_price",
-                "request",
-                "reason",
-                "fallback_used",
-                "created_on"
+                "chosen_unit_price"
             ],
             "filterable": [
                 "id",
+                "request",
+                "reason",
+                "created_on",
+                "fallback_used",
                 "item_id",
                 "product_id",
                 "chosen_supplier_id",
-                "chosen_unit_price",
-                "request",
-                "reason",
-                "fallback_used",
-                "created_on"
+                "chosen_unit_price"
             ]
         }
     ]

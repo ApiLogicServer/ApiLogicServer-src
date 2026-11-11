@@ -96,7 +96,7 @@ def get_exported_rules(rule_code_dir):
         return []
 
     try:
-        with open(export_file) as f:
+        with open(export_file, encoding='utf-8') as f:
             export = json.load(f)
         rules = export.get("rules", [])
     except Exception as exc:
@@ -113,7 +113,7 @@ def get_exported_rules(rule_code_dir):
             rule_code_str = check_rule_code_syntax(rule["code"])
             if not rule_code_str:
                 continue
-            with open(rule_file, "w") as temp_file:
+            with open(rule_file, "w", encoding='utf-8') as temp_file:
                 rule_code = "\n".join([f"  {code}" for code in rule_code_str.split("\n")])
                 temp_file.write(rule_import_template.format(rule_code=rule_code))
                 temp_file_path = temp_file.name
@@ -191,7 +191,7 @@ def load_verify_rules():
     
     # Add FileHandler to root_logger
     log_file = Path(os.getenv("LOG_DIR",tempfile.mkdtemp())) / "load_verify_rules.log"
-    file_handler = logging.FileHandler(log_file)
+    file_handler = logging.FileHandler(log_file, encoding='utf-8')
     root_logger = logging.getLogger()
     root_logger.addHandler(file_handler)
     

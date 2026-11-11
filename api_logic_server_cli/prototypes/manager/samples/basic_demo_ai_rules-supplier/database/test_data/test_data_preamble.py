@@ -34,7 +34,7 @@ data_log : list[str] = []
 
 logging_config = project_dir / 'config/logging.yml'
 if logging_config.is_file():
-    with open(logging_config,'rt') as f:  
+    with open(logging_config,'rt', encoding='utf-8') as f:  
         config=yaml.safe_load(f.read())
     logging.config.dictConfig(config)
 logic_logger = logging.getLogger('logic_logger')
@@ -65,7 +65,7 @@ except Exception as e:
     logging.error(f'Error creating engine: {e}')
     data_log.append(f'Error creating engine: {e}')
     print('\n'.join(data_log))
-    with open(project_dir / 'database/test_data/test_data_code_log.txt', 'w') as log_file:
+    with open(project_dir / 'database/test_data/test_data_code_log.txt', 'w', encoding='utf-8') as log_file:
         log_file.write('\n'.join(data_log))
     print('\n'.join(data_log))
     raise

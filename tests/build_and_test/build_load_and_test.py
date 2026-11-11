@@ -1385,15 +1385,8 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
             cwd=install_api_logic_server_path,
             msg=f'\nInstall pyodbc')
 
-    # openai moved to pyproject.toml's optional "ai-rules" extra (2026-08-13, keeps the base
-    # install/Docker image free of the openai package for SCA scans) - same pattern as pyodbc
-    # above: BLT installs it explicitly here. Still needed (neutral-llm branch) only so runtime AI-rule
-    # handlers (e.g. samples/basic_demo_ai_rules-supplier) can call OpenAI when a key is set; the retired
-    # `als genai` tests no longer use it. Remove once those handlers use llm_client (no SDK).
-    result_openai = run_command(
-        f'{set_venv} && {python} -m pip install openai==1.55.3',
-        cwd=install_api_logic_server_path,
-        msg=f'\nInstall openai (for runtime AI-rule handlers; see comment above)')
+    # openai is no longer installed here: runtime AI rules call the LLM through integration/ai/llm_client.py
+    # (urllib, no SDK); the retired `als genai` tests were its only other user (neutral-llm branch).
 
 if just_build := False:  # most times, we need to create mgr and run nw
     if len(sys.argv) > 1 and sys.argv[1] == 'build-only':

@@ -13,7 +13,7 @@
 
 ### Rules
 
-1. `SysSupplierReq` → `select_supplier_via_ai` (early) — SysSupplierReq event: chooses the optimal ProductSupplier by calling OpenAI with the candidates and
+1. `SysSupplierReq` → `select_supplier_via_ai` (early) — SysSupplierReq event: picks the optimal supplier via the LLM (world conditions from the test context),
 
 </td>
 </tr>
@@ -22,11 +22,10 @@
 ## Requirements
 
 ```
-AI Supplier Selection - Request Pattern handler for Check Credit clause 6.
-
-Not a requirement file: it implements "Use AI to Set Item field unit_price by finding the optimal
-Product Supplier based on cost, lead time, and world conditions" (see place_order/check_credit.py).
+AI Supplier Selection (Request Pattern): chooses the optimal Product Supplier from cost, lead time and
+world conditions (config/ai_test_context.yaml). Every call is audited in SysSupplierReq. With no LLM
+configured, or on an LLM error / invalid answer, falls back to the minimum-cost supplier (fallback_used).
 ```
 
 ---
-_Generated 2026-11-04 17:42_
+_Generated 2026-11-10 17:34_

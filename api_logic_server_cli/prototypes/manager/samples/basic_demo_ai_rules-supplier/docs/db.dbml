@@ -56,14 +56,14 @@ Table Supplier {
 
 Table SysSupplierReq {
     id INTEGER [primary key]
+    request TEXT 
+    reason TEXT 
+    created_on TEXT 
+    fallback_used BOOLEAN 
     item_id INTEGER 
     product_id INTEGER 
     chosen_supplier_id INTEGER 
-    chosen_unit_price DECIMAL 
-    request TEXT 
-    reason TEXT 
-    fallback_used BOOLEAN 
-    created_on TEXT 
+    chosen_unit_price NUMERIC 
     }
 
 

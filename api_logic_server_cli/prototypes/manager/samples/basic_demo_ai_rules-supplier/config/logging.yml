@@ -19,6 +19,7 @@ handlers:
     file:
         class: logging.handlers.RotatingFileHandler
         filename: logs/als.log
+        encoding: utf-8
         maxBytes: 2097152
         backupCount: 1
         level: DEBUG

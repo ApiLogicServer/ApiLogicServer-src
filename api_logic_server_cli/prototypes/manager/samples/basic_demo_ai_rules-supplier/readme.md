@@ -6,19 +6,6 @@ do_process_code_block_titles: True
 version: 1.0 from docsite, for readme, for readme 2/16/2026
 ---
 
-
-&nbsp;
-**Key Takeways - TL;DR - AI Rules: governed judgment calls inside deterministic logic**
-&nbsp;
-
-    Created by: › genai-logic create --project_name=demo_ai_rules_supplier --db_url=sqlite:///samples/dbs/basic_demo.sqlite
-
-    * An AI Rule (Request Pattern) picks the optimal Product Supplier, based on cost, lead time, and world conditions
-    * The AI's "proposal" is still governed by the deterministic rules around it — it can't violate business policy
-    * Full audit trail of every AI request and response
-
-    Status: Reference implementation
-
 <style>
   -typeset h1,
   -content__button {
@@ -26,59 +13,38 @@ version: 1.0 from docsite, for readme, for readme 2/16/2026
   }
 </style>
 
-![example](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/sample-ai/copilot/AI-Rules-Audit.png)
-
 
 &nbsp;
-**TL;DR - Integrated Deterministic and AI Rules**
-&nbsp;
-##
-AI provides creativity and reasoning that businesses want... how do we provide that, *with deterministic goverance?*.  
-
-For example - a business can continue to operate even if a tanker has blocked the Suez canal by choosing an alternate supplier, as declared in the prompt shown below (rule 6).
-
-This sample illustrates:
-
-1. Using **AI Rules** to pick the optimal supplier (calls AI at runtime, with auditing shown above)
-2. Other rules provide Governance - whether AI rules, or calling client (e.g., check credit)
+**Key Takeways - TL;DR - AI Rules: governed judgment calls inside deterministic logic**
 &nbsp;
 
-<br>
+    Created by: › executable requirements - paste to ai: `samples/requirements/demo_ai_rules_supplier/create_script.txt`
 
-**🤖 Bootstrap your AI assistant — paste into chat (Agent mode, Claude Sonnet 4.6 recommended):**
-```bash title='🤖 Bootstrap your AI assistant — paste into chat (Agent mode, Claude Sonnet 4.6 recommended)'
-Please load `.github/copilot-instructions.md`
-```
+    AI provides creativity and reasoning that businesses want... how do we provide that, *with deterministic goverance?*.
 
-<br>
+    * An AI Rule (Request Pattern) picks the optimal Product Supplier, based on cost, lead time, and world conditions
+        - For example - a business can continue to operate even if a tanker has blocked the Suez canal by choosing an alternate supplier, as declared in the prompt shown below (rule 6). 
+    * The AI's "proposal" is still governed by the deterministic rules around it — it can't violate business policy
+    * Full audit trail of every AI request and response
 
-## Declare and Test
+    Status: Reference implementation
 
-If you have not already created the sample project, you can create it in the Manager using Copilot:
 
-&emsp;*Create a system named basic_demo from samples/dbs/basic_demo.sqlite*.  
+verview
 
-Then:
+ave entered an order for Egyptian Cotton Sheets, a product with 2 suppliers.  AI choses the supplier, and create an audit of the AI call (including the chosen supplier and reason).
 
+-rules-audit](images/sample-ai/copilot/AI-Rules-Audit.png)
 
 &nbsp;
-**Paste this logic into Copilot chat (note: takes several minutes)**
+
+## Creation and Setup
+
+![example](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/sample-ai/creation.png)
+
 &nbsp;
 
-    On Placing Orders, Requirement Check Credit:
-
-    1. The Customer's balance is less than the credit limit
-    2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
-    3. The Order's amount_total is the sum of the Item amount
-    4. The Item amount is the quantity * unit_price
-    5. The Product count suppliers is the sum of the Product Suppliers
-    6. Use AI to Set Item field unit_price by finding the optimal Product Supplier based on cost, lead time, and world conditions
-
-    Requirement: App Integration
-
-    1. Publish the Order to Kafka topic 'order_shipping' if the date_shipped is not None
-
-Developers review this DSL before execution, providing a natural human-in-the-loop checkpoint.
+## Test
 
 To test:
 
@@ -89,16 +55,12 @@ To test:
 
 &nbsp;
 
-
 ## Logic Governance Architecture
 
 1. **Context Engineering** directs AI to generate Data Rules — not procedural code. Without it, AI pattern-matches to FrankenCode. With it, intent becomes declarations.
-
-2. **Data Rules** distill path-dependent logic into *path-independent rules on data*. See them below — `Rule.constraint`, `Rule.sum`. No missed paths. Every path inherits them automatically.
-
-3. The **Commit Listener** hooks into the ORM commit. Every transaction — API, agent, workflow — passes through one control point. Nothing bypasses it.
-
-4. The **Rule Engine** computes dependency order from the Data Rules at startup — deterministically. No pattern-matching, no subtle ordering bugs.
+1. **Data Rules** distill path-dependent logic into *path-independent rules on data*. See them below — `Rule.constraint`, `Rule.sum`. No missed paths. Every path inherits them automatically.
+1. The **Commit Listener** hooks into the ORM commit. Every transaction — API, agent, workflow — passes through one control point. Nothing bypasses it.
+1. The **Rule Engine** computes dependency order from the Data Rules at startup — deterministically. No pattern-matching, no subtle ordering bugs.
 
 ![Logic Governance Architecture](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/architecture/logic-architecture.png)
 
@@ -114,13 +76,15 @@ Agentic systems are evolving quickly, and a clearer architectural picture is for
 
 Different kinds of logic naturally call for different tools, as in this unified example:
 
-* **Deterministic Logic** — logic that must always be correct, consistent, and governed.  
+* **Deterministic Logic** — logic that must always be correct, consistent, and governed.
+
 *Example:* “Customer balance must not exceed credit limit.”
 
-* **AI Logic** — logic that benefits from exploration, adaptation, and probabilistic reasoning.  
+* **AI Logic** — logic that benefits from exploration, adaptation, and probabilistic reasoning.
+
 *Example:* “Which supplier can still deliver if shipping lanes are disrupted?”
 
-    * **Creative reasoning needs boundaries.<br>Deterministic rules supply the guardrails that keep outcomes correct, consistent, and governed.**
+* **Creative reasoning needs boundaries.<br>Deterministic rules supply the guardrails that keep outcomes correct, consistent, and governed.**
 
 <br>
 
@@ -129,17 +93,14 @@ Different kinds of logic naturally call for different tools, as in this unified 
 GenAI-Logic provides support for *AI Rules:*
 
 - At declaration time (e.g., in VSCode/Copilot):
-
-    * **D1:** Accepts a unified declarative NL request
-    * **D2.** Uses GenAI to create
-        * Rules (in Python DSL: Domain Specific Logic) for deterministic Logic
-        * LLM calls for Probablistic
-
+    - **D1:** Accepts a unified declarative NL request
+    - **D2.** Uses GenAI to create
+        - Rules (in Python DSL: Domain Specific Logic) for deterministic Logic
+        - LLM calls for Probablistic
 - At runtime, during commit
-
-    * **R1:** DSL is executed by the Rules Engine (deterministic - no NL processing occurs)
-    * **R2:** LLM calls are made to compute values (e.g., optimal supplier)
-    * The rules engine ensures that R2 logic results are governed by R1 rules
+    - **R1:** DSL is executed by the Rules Engine (deterministic - no NL processing occurs)
+    - **R2:** LLM calls are made to compute values (e.g., optimal supplier)
+    - The rules engine ensures that R2 logic results are governed by R1 rules
 
 ![Bus-Logic-Engine](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/mcp/Bus-Logic-Agent.png)
 
@@ -154,7 +115,7 @@ adaptive where helpful, reliable where essential.
 
 ## AI Logic Pattern: Pick Optimal
 
-In this example, we leverage AI by providing a list of suppliers and the selection criteria (*"finding the optimal Product Supplier based on cost, lead time, and world conditions"*).  
+In this example, we leverage AI by providing a list of suppliers and the selection criteria (*"finding the optimal Product Supplier based on cost, lead time, and world conditions"*).
 
 
 &nbsp;
@@ -162,17 +123,19 @@ In this example, we leverage AI by providing a list of suppliers and the selecti
 &nbsp;
 
      Invoke AI providing a prompt (*find optimal <criteria>*) and a *list of candidates*.
-     
+
      AI computes the selected object.
 
      Examples:
 
-     1. Choose Optimal Supplier (this example)
-     2. Shipping Carrier/Route Selection
-     3. Dynamic Pricing/Discount Strategy
-     4. Task/Resource Assignment
-     5. Inventory Sourcing/Replenishment
+1. Choose Optimal Supplier (this example)
+2. Shipping Carrier/Route Selection
+3. Dynamic Pricing/Discount Strategy
+4. Task/Resource Assignment
+5. Inventory Sourcing/Replenishment
+
 &nbsp;
+
 <br>
 
 ## Design
@@ -200,33 +163,28 @@ AI can not only create the implementation, it can explain it:
 
 1. **Early Row Event on Item Fires** - see `./check_credit.py`
 
-    - Early row event: `set_item_unit_price_from_supplier()`
-    - Checks if suppliers exist for the product (fallback to Product.unit_price if no suppliers)
-    - Invokes wrapper
+   - Early row event: `set_item_unit_price_from_supplier()`
+   - Checks if suppliers exist for the product (fallback to Product.unit_price if no suppliers)
+   - Invokes wrapper
+1. **Wrapper Function** invokes request pattern on `SysSupplierReq`
 
-2. **Wrapper Function** invokes request pattern on `SysSupplierReq`
+   - See `./ai_requests/supplier_selection.py` -- `get_supplier_selection_from_ai()` 
+   - Hides complexity from rule, above, by using the *Request Pattern*:
+       - Creates new `SysSupplierReq` row instance
+       - Sets parent context links (`product_id`, `item_id`)
+       - Inserts the request row: `SysSupplierReq` - runs its logic...
+1. Insert →  ***early_row_event:*** `select_supplier_via_ai()` - *Request Pattern* implementation
 
-    - See `./ai_requests/supplier_selection.py` -- `get_supplier_selection_from_ai()` 
-    - Hides complexity from rule, above, by using the *Request Pattern*:
+   - See same file: `./ai_requests/supplier_selection.py`
+   - Get world conditions from `config/ai_test_context.yaml` (e.g., "Suez Canal blocked")
+   - Sends supplier data (cost, lead time, region) + world conditions to the configured LLM (OpenAI, Claude, Gemini or a local Ollama, chosen by environment variables; no LLM configured means the minimum-cost fallback)
+   - AI analyzes and selects optimal supplier
+   - Populates `SysSupplierReq` result fields: `chosen_supplier_id`, `chosen_unit_price`, `reason`, `request`
+1. **Wrapper Returns** → Returns populated `SysSupplierReq` row with AI results
 
-        - Creates new `SysSupplierReq` row instance
-        - Sets parent context links (`product_id`, `item_id`)
-        - Inserts the request row: `SysSupplierReq` - runs its logic...
-   
-3. Insert →  ***early_row_event:*** `select_supplier_via_ai()` - *Request Pattern* implementation
-
-    - See same file: `./ai_requests/supplier_selection.py`
-    - Get world conditions from `config/ai_test_context.yaml` (e.g., "Suez Canal blocked")
-    - Sends supplier data (cost, lead time, region) + world conditions to OpenAI
-    - AI analyzes and selects optimal supplier
-    - Populates `SysSupplierReq` result fields: `chosen_supplier_id`, `chosen_unit_price`, `reason`, `request`
-
-4. **Wrapper Returns** → Returns populated `SysSupplierReq` row with AI results
-
-    - Caller extracts: `supplier_req.chosen_unit_price`
-    - Item's `unit_price` is set from this AI-chosen value
-
-5. **Standard Rule Chaining provides Governance**: Formula rules automatically recalculate `Item.amount` → `Order.amount_total` → `Customer.balance`, triggering credit limit constraint check
+   - Caller extracts: `supplier_req.chosen_unit_price`
+   - Item's `unit_price` is set from this AI-chosen value
+1. **Standard Rule Chaining provides Governance**: Formula rules automatically recalculate `Item.amount` → `Order.amount_total` → `Customer.balance`, triggering credit limit constraint check
 
 **Key Pattern**: 
 

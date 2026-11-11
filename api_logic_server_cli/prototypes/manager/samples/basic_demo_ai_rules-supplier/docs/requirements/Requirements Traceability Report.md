@@ -9,9 +9,9 @@ A governable system is one you can **read**, **trust**, and **maintain**: each r
 It is generated from the project's own files, nothing written by hand, so it is as current as the last run and covers the whole project, not a sample. Open **Background** (below the summary) for what the terms mean, how to read the report, and what it can and can't tell you.
 
 
-**Project:** basic_demo_ai_rules-supplier &nbsp;|&nbsp; **Generated:** November 04, 2026 18:12 &nbsp;|&nbsp; **Rules:** 9 &nbsp;|&nbsp; **Test scenarios:** 18 &nbsp;|&nbsp; **Generator:** requirements_traceability_report.py 2.15
+**Project:** demo_ai_rules_supplier &nbsp;|&nbsp; **Generated:** November 10, 2026 17:42 &nbsp;|&nbsp; **Rules:** 9 &nbsp;|&nbsp; **Test scenarios:** 12 &nbsp;|&nbsp; **Generator:** requirements_traceability_report.py 2.15
 
-**Last test run:** November 04, 2026 18:03, took 4.7 s (9m before this report; test results and logic logs below are from that run)
+**Last test run:** November 10, 2026 17:42, took 15.6 s (0m before this report; test results and logic logs below are from that run)
 
 
 &nbsp;
@@ -19,15 +19,15 @@ It is generated from the project's own files, nothing written by hand, so it is 
 
 ## At a Glance
 
-**✅ 2 requirement(s), all implemented; 2 tested; 18 of 18 scenarios passed; last run 9m ago.**
+**✅ 2 requirement(s), all implemented; 2 tested; 12 of 12 scenarios passed; last run 0m ago.**
 
 | | |
 |---|---|
 | Requirements | 2 (2 implemented) |
 | Tested | 2 of 2 |
-| Last test run | ✅ 18 passed, 0 failed (November 04, 2026 18:03, 9m ago); took 4.7 s |
+| Last test run | ✅ 12 passed, 0 failed (November 10, 2026 17:42, 0m ago); took 15.6 s |
 | Rules | 9 (5 declarative, 0 Python functions, 4 Python events) |
-| Rules shown running in a test log | 7 of 9 |
+| Rules shown running in a test log | 6 of 9 |
 | Security | not enabled; 10 role(s), 0 row-level grant(s) |
 | Messages and APIs | 0 Kafka topic(s) in, 1 out; 0 HTTP endpoint(s) |
 | Kafka | simulated, no broker: messages are tested through /consume_debug; live delivery not verified |
@@ -224,9 +224,9 @@ Every requirement should have rules that implement it, and tests that prove it. 
 | Use cases | 1: Place Order |
 | Implementation not traced to a requirement | `security/declare_security.py`, `logic/logic_discovery/system/all_classes_stamping.py` |
 | Tests not traced to a requirement | none |
-| Test results (last run) | ✅ 18 passed, 0 failed; took 4.7 s |
-| Scenarios with a logic log | 18 of 18 |
-| Rules seen in at least one scenario's log | 7 of 9 (2 not counted: the engine's log does not name `Order.after_flush_row_event → kafka_producer.send_row_to_kafka()`, `all classes.early_row_event → handle_all()`, so it cannot be matched) |
+| Test results (last run) | ✅ 12 passed, 0 failed; took 15.6 s |
+| Scenarios with a logic log | 0 of 12 (plus the scaffold's shared log, which is included) |
+| Rules seen in at least one scenario's log | 6 of 9 - not seen: `Customer: balance <= credit_limit`, `Product.count_suppliers = count(ProductSupplier)` (1 not counted: the engine's log does not name `all classes.early_row_event → handle_all()`, so it cannot be matched) |
 
 _Test results are as current as the last run (see the header). A gap is any requirement with no implementation or no test._
 
@@ -245,8 +245,8 @@ Test results are read from `logs/behave.log`, so they are only as current as tha
 
 | Use case | Requirement | Implemented by | Rules | Tests |
 |---|---|---|---|---|
-| Place Order | Check Credit | [logic/logic_discovery/place_order/check_credit.py](../../logic/logic_discovery/place_order/check_credit.py)<br>[logic/logic_discovery/ai_requests/supplier_selection.py](../../logic/logic_discovery/ai_requests/supplier_selection.py) | 7 | ✅ 15 scenario(s): 15 passed |
-| Place Order | App Integration | [logic/logic_discovery/place_order/app_integration.py](../../logic/logic_discovery/place_order/app_integration.py) | 1 | ✅ 3 scenario(s): 3 passed |
+| Place Order | Check Credit | [logic/logic_discovery/place_order/check_credit.py](../../logic/logic_discovery/place_order/check_credit.py)<br>[logic/logic_discovery/place_order/ai_requests/supplier_selection.py](../../logic/logic_discovery/place_order/ai_requests/supplier_selection.py) | 7 | ✅ 10 scenario(s): 10 passed |
+| Place Order | App Integration | [logic/logic_discovery/place_order/app_integration.py](../../logic/logic_discovery/place_order/app_integration.py) | 1 | ✅ 2 scenario(s): 2 passed |
 
 
 &nbsp;
@@ -255,14 +255,14 @@ Test results are read from `logs/behave.log`, so they are only as current as tha
 
 | Rule | Requirement | Seen in |
 |---|---|---|
-| `SysSupplierReq.early_row_event → select_supplier_via_ai()` | Check Credit | 2: AI - chooses a supplier; AI - product change |
-| `Order.after_flush_row_event → kafka_producer.send_row_to_kafka()` | App Integration | n/a - cannot be matched to the engine's log |
-| `Customer: balance <= credit_limit` | Check Credit | 1: Credit - over the limit |
-| `Customer.balance = sum(Order.amount_total) where date_shipped is None` | Check Credit | 16: Kafka - shipped order; Kafka - unshipped order; Kafka - edit shipped order; +13 more |
-| `Order.amount_total = sum(Item.amount)` | Check Credit | 16: Kafka - shipped order; Kafka - unshipped order; Kafka - edit shipped order; +13 more |
-| `Item.amount = quantity * unit_price` | Check Credit | 16: Kafka - shipped order; Kafka - unshipped order; Kafka - edit shipped order; +13 more |
-| `Product.count_suppliers = count(ProductSupplier)` | Check Credit | 4: Suppliers - add and remove; Suppliers - move; AI - chooses a supplier; +1 more |
-| `Item.early_row_event → set_item_unit_price_from_supplier()` | Check Credit | 16: Kafka - shipped order; Kafka - unshipped order; Kafka - edit shipped order; +13 more |
+| `SysSupplierReq.early_row_event → select_supplier_via_ai()` | Check Credit | 1: Transaction Processing (shared log) |
+| `Order.after_flush_row_event → send_order_to_kafka()` | App Integration | 1: Transaction Processing (shared log) |
+| `Customer: balance <= credit_limit` | Check Credit | ⚠ not seen in any scenario's log |
+| `Customer.balance = sum(Order.amount_total) where date_shipped is None` | Check Credit | 1: Transaction Processing (shared log) |
+| `Order.amount_total = sum(Item.amount)` | Check Credit | 1: Transaction Processing (shared log) |
+| `Item.amount = quantity * unit_price` | Check Credit | 1: Transaction Processing (shared log) |
+| `Product.count_suppliers = count(ProductSupplier)` | Check Credit | ⚠ not seen in any scenario's log |
+| `Item.early_row_event → set_item_unit_price_from_supplier()` | Check Credit | 1: Transaction Processing (shared log) |
 | `all classes.early_row_event → handle_all()` | (none) | n/a - cannot be matched to the engine's log |
 
 _"Seen" means the engine's log shows the rule ran, not proof that it took effect._
@@ -298,7 +298,7 @@ create logic diagram for each requirement
 or run this from the Manager root (`genai-logic`):
 
 ```
-python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py samples/basic_demo_ai_rules-supplier --each
+python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py demo_ai_rules_supplier --each
 ```
 
 Each diagram is saved under `docs/requirements/<name>/logic_diagrams/`. Then regenerate this report (`python requirements_traceability_report.py run`, from `test/api_logic_server_behave`).
@@ -312,7 +312,7 @@ Each diagram is saved under `docs/requirements/<name>/logic_diagrams/`. Then reg
 
 Use case: Place Order
 
-Tests: ✅ 15 scenario(s): 15 passed
+Tests: ✅ 10 scenario(s): 10 passed
 
 ```
 1. The Customer's balance is less than the credit limit
@@ -325,13 +325,13 @@ Tests: ✅ 15 scenario(s): 15 passed
 
 | Rule / item | Type | Logic | Description | Where |
 |---|---|---|---|---|
-| `Customer: balance <= credit_limit` | constraint | declarative | Error: Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit}) | [check_credit.py](../../logic/logic_discovery/place_order/check_credit.py) |
+| `Customer: balance <= credit_limit` | constraint | declarative | Error: balance ({row.balance}) exceeds credit limit ({row.credit_limit}) | [check_credit.py](../../logic/logic_discovery/place_order/check_credit.py) |
 | `Customer.balance = sum(Order.amount_total) where date_shipped is None` | sum | declarative |  | [check_credit.py](../../logic/logic_discovery/place_order/check_credit.py) |
 | `Order.amount_total = sum(Item.amount)` | sum | declarative |  | [check_credit.py](../../logic/logic_discovery/place_order/check_credit.py) |
 | `Item.amount = quantity * unit_price` | formula | declarative |  | [check_credit.py](../../logic/logic_discovery/place_order/check_credit.py) |
 | `Product.count_suppliers = count(ProductSupplier)` | count | declarative |  | [check_credit.py](../../logic/logic_discovery/place_order/check_credit.py) |
-| `Item.early_row_event → set_item_unit_price_from_supplier()` | early_row_event | event (Python) | Item event: sets unit_price before Item.amount is derived - by AI supplier selection when the Product has suppliers, else copied from Product.unit_price. | [check_credit.py](../../logic/logic_discovery/place_order/check_credit.py) |
-| `SysSupplierReq.early_row_event → select_supplier_via_ai()` | early_row_event | event (Python) | SysSupplierReq event: chooses the optimal ProductSupplier by calling OpenAI with the candidates and the world conditions from config/ai_test_context.yaml; falls back to minimum cost when there is no API key or the call fails, and records request, reason, fallback_used and the choice as the audit trail. | [supplier_selection.py](../../logic/logic_discovery/ai_requests/supplier_selection.py) |
+| `Item.early_row_event → set_item_unit_price_from_supplier()` | early_row_event | event (Python) | Item event: sets unit_price by asking the AI (Request Pattern, audited in SysSupplierReq) to pick the optimal Product Supplier; products with no suppliers get Product.unit_price. Early, so Item.amount sees it. | [check_credit.py](../../logic/logic_discovery/place_order/check_credit.py) |
+| `SysSupplierReq.early_row_event → select_supplier_via_ai()` | early_row_event | event (Python) | SysSupplierReq event: picks the optimal supplier via the LLM (world conditions from the test context), else the minimum-cost supplier; records request, reason, fallback_used and the chosen supplier and price. | [supplier_selection.py](../../logic/logic_discovery/place_order/ai_requests/supplier_selection.py) |
 
 <details markdown>
 <summary>Logic diagram: check_credit</summary>
@@ -351,7 +351,7 @@ Tests: ✅ 15 scenario(s): 15 passed
 
 Use case: Place Order
 
-Tests: ✅ 3 scenario(s): 3 passed
+Tests: ✅ 2 scenario(s): 2 passed
 
 ```
 1. Publish the Order to Kafka topic 'order_shipping' if the date_shipped is not None
@@ -359,7 +359,7 @@ Tests: ✅ 3 scenario(s): 3 passed
 
 | Rule / item | Type | Logic | Description | Where |
 |---|---|---|---|---|
-| `Order.after_flush_row_event → kafka_producer.send_row_to_kafka()` | after_flush_row_event | event (Python) | (no docstring) | [app_integration.py](../../logic/logic_discovery/place_order/app_integration.py) |
+| `Order.after_flush_row_event → send_order_to_kafka()` | after_flush_row_event | event (Python) | Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set and differs from its prior value (old_row is None on insert). | [app_integration.py](../../logic/logic_discovery/place_order/app_integration.py) |
 
 <details markdown>
 <summary>Logic diagram: app_integration</summary>
@@ -446,7 +446,7 @@ How data enters and leaves beyond the standard API: Kafka topics in and out, cus
 
 | Direction | Channel | Name | Tests mention it | Handler | Tables created | Message shape | Requirement |
 |---|---|---|---|---|---|---|---|
-| ⬅ out | Kafka | `order_shipping` | ⚠ message checked in the log, not on the topic | Order.after_flush_row_event → kafka_producer.send_row_to_kafka() - (no docstring) |  |  | App Integration |
+| ⬅ out | Kafka | `order_shipping` | ⚠ message checked in the log, not on the topic | Order.after_flush_row_event → send_order_to_kafka() - Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set and differs from its prior value (old_row is None on insert). |  |  | App Integration |
 
 _"Tests mention it" checks the test sources, not delivery._
 
@@ -471,7 +471,7 @@ Topics and endpoints are read from the discovery folders. The condition that tri
 
 ## Tests and Results
 
-**✅ 18 scenario(s): 18 passed, 0 failed; took 4.7 s** (from the last run, `logs/behave.log`).
+**✅ 12 scenario(s): 12 passed, 0 failed; took 15.6 s** (from the last run, `logs/behave.log`).
 
 Each test drives the running system the way any client would — create an order, change a quantity, ship it — and checks the result.
 
@@ -549,186 +549,27 @@ python requirements_traceability_report.py run
 &nbsp;
 &nbsp;
 
-#### Scenario: Kafka - shipped order ✅ (0.05 s)
-&emsp;  Scenario: Kafka - shipped order  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    And an order is created with 5 of the product  
+#### Scenario: Shipping an Order Publishes to Kafka ✅ (1.6 s)
+&emsp;  Scenario: Shipping an Order Publishes to Kafka  
+&emsp;&emsp;    Given a customer with credit limit 5000  
+&emsp;&emsp;    And an order is placed with 2 Egyptian Cotton Sheets  
+&emsp;&emsp;    And the scenario logic log is started for "Order Publishes on Ship"  
 &emsp;&emsp;    When the order is shipped  
-&emsp;&emsp;    Then the logic log shows the order sent to Kafka topic "order_shipping"  
+&emsp;&emsp;    Then the logic log shows a publish to topic order_shipping  
 
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
-
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
 
+#### Scenario: Unshipped Order Does Not Publish ✅ (1.6 s)
+&emsp;  Scenario: Unshipped Order Does Not Publish  
+&emsp;&emsp;    Given a customer with credit limit 5000  
+&emsp;&emsp;    And the scenario logic log is started for "Order Not Shipped No Publish"  
+&emsp;&emsp;    When an order is placed with 2 Egyptian Cotton Sheets  
+&emsp;&emsp;    Then the logic log shows no publish to topic order_shipping  
 
-**Rules Used** in Scenario: Kafka - shipped order
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Kafka - shipped order (3 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c3162c0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,359 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180355, customer_id: 24, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c47b1d0  session: 0x10c3162c0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,359 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180355, customer_id: 24, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c47b1d0  session: 0x10c3162c0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,359 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c3162c0)   										 - 2026-11-04 18:03:00,360 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c3162c0)   										 - 2026-11-04 18:03:00,361 - logic_logger - INFO
-..Order[23] {AfterFlush Event} id: 23, notes: test 1793844180355, customer_id: 24, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c47b1d0  session: 0x10c3162c0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,361 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c316780) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,367 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 23, product_id: 27, quantity: 5, amount: None, unit_price: None  row: 0x10c47a9d0  session: 0x10c316780  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,367 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180348, using product unit_price} id: None, order_id: 23, product_id: 27, quantity: 5, amount: None, unit_price: None  row: 0x10c47a9d0  session: 0x10c316780  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,369 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 23, product_id: 27, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c47a9d0  session: 0x10c316780  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,370 - logic_logger - INFO
-....Order[23] {Update - Adjusting order: amount_total} id: 23, notes: test 1793844180355, customer_id: 24, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c4b57d0  session: 0x10c316780  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,370 - logic_logger - INFO
-......Customer[24] {Update - Adjusting customer: balance} id: 24, name: Test Customer 1793844180339, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c4b5ad0  session: 0x10c316780  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,371 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c316780)   										 - 2026-11-04 18:03:00,371 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c316780)   										 - 2026-11-04 18:03:00,373 - logic_logger - INFO
-....Order[23] {AfterFlush Event} id: 23, notes: test 1793844180355, customer_id: 24, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c4b57d0  session: 0x10c316780  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,373 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10bbb1c70) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,380 - logic_logger - INFO
-..Order[23] {Update - client} id: 23, notes: test 1793844180355, customer_id: 24, CreatedOn: None, date_shipped:  [None-->] 2026-11-04 00:00:00, amount_total: 50.0000000000  row: 0x10c4b7050  session: 0x10bbb1c70  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,380 - logic_logger - INFO
-....Customer[24] {Update - Adjusting customer: balance} id: 24, name: Test Customer 1793844180339, balance:  [50.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c5204d0  session: 0x10bbb1c70  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,381 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10bbb1c70)   										 - 2026-11-04 18:03:00,381 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10bbb1c70)   										 - 2026-11-04 18:03:00,382 - logic_logger - INFO
-..Order[23] {AfterFlush Event} id: 23, notes: test 1793844180355, customer_id: 24, CreatedOn: None, date_shipped:  [None-->] 2026-11-04 00:00:00, amount_total: 50.0000000000  row: 0x10c4b7050  session: 0x10bbb1c70  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,382 - logic_logger - INFO
-..Order[23] {Sending Order to Kafka topic 'order_shipping' [Note: **Kafka not enabled** ]} id: 23, notes: test 1793844180355, customer_id: 24, CreatedOn: None, date_shipped:  [None-->] 2026-11-04 00:00:00, amount_total: 50.0000000000  row: 0x10c4b7050  session: 0x10bbb1c70  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,382 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Kafka - unshipped order ✅ (0.03 s)
-&emsp;  Scenario: Kafka - unshipped order  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    When an order is created with 5 of the product  
-&emsp;&emsp;    Then the logic log shows no message sent to Kafka topic "order_shipping"  
-
-<details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Kafka - unshipped order
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Kafka - unshipped order (2 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c09e0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,401 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180399, customer_id: 25, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c47bbd0  session: 0x10c4c09e0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,401 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180399, customer_id: 25, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c47bbd0  session: 0x10c4c09e0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,402 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c09e0)   										 - 2026-11-04 18:03:00,402 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c09e0)   										 - 2026-11-04 18:03:00,402 - logic_logger - INFO
-..Order[24] {AfterFlush Event} id: 24, notes: test 1793844180399, customer_id: 25, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c47bbd0  session: 0x10c4c09e0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,403 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c1150) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,407 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 24, product_id: 28, quantity: 5, amount: None, unit_price: None  row: 0x10c4793d0  session: 0x10c4c1150  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,407 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180394, using product unit_price} id: None, order_id: 24, product_id: 28, quantity: 5, amount: None, unit_price: None  row: 0x10c4793d0  session: 0x10c4c1150  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,408 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 24, product_id: 28, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c4793d0  session: 0x10c4c1150  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,408 - logic_logger - INFO
-....Order[24] {Update - Adjusting order: amount_total} id: 24, notes: test 1793844180399, customer_id: 25, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c47b1d0  session: 0x10c4c1150  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,408 - logic_logger - INFO
-......Customer[25] {Update - Adjusting customer: balance} id: 25, name: Test Customer 1793844180388, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c520bd0  session: 0x10c4c1150  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,409 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c1150)   										 - 2026-11-04 18:03:00,409 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c1150)   										 - 2026-11-04 18:03:00,410 - logic_logger - INFO
-....Order[24] {AfterFlush Event} id: 24, notes: test 1793844180399, customer_id: 25, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c47b1d0  session: 0x10c4c1150  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,410 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Kafka - edit shipped order ✅ (0.04 s)
-&emsp;  Scenario: Kafka - edit shipped order  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    And an order is created with 5 of the product  
-&emsp;&emsp;    And the order is shipped  
-&emsp;&emsp;    When the order notes are edited  
-&emsp;&emsp;    Then the logic log shows the order sent to Kafka topic "order_shipping" 1 time  
-
-<details markdown>
-<summary>Rules exercised and logic log (4 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Kafka - edit shipped order
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Kafka - edit shipped order (4 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c19d0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,427 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180425, customer_id: 26, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c4b6a50  session: 0x10c4c19d0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,427 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180425, customer_id: 26, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b6a50  session: 0x10c4c19d0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,427 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c19d0)   										 - 2026-11-04 18:03:00,428 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c19d0)   										 - 2026-11-04 18:03:00,428 - logic_logger - INFO
-..Order[25] {AfterFlush Event} id: 25, notes: test 1793844180425, customer_id: 26, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b6a50  session: 0x10c4c19d0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,428 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c1bf0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,434 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 25, product_id: 29, quantity: 5, amount: None, unit_price: None  row: 0x10c4b48d0  session: 0x10c4c1bf0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,434 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180421, using product unit_price} id: None, order_id: 25, product_id: 29, quantity: 5, amount: None, unit_price: None  row: 0x10c4b48d0  session: 0x10c4c1bf0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,435 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 25, product_id: 29, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c4b48d0  session: 0x10c4c1bf0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,435 - logic_logger - INFO
-....Order[25] {Update - Adjusting order: amount_total} id: 25, notes: test 1793844180425, customer_id: 26, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c5209d0  session: 0x10c4c1bf0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,435 - logic_logger - INFO
-......Customer[26] {Update - Adjusting customer: balance} id: 26, name: Test Customer 1793844180416, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c47bbd0  session: 0x10c4c1bf0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,436 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c1bf0)   										 - 2026-11-04 18:03:00,436 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c1bf0)   										 - 2026-11-04 18:03:00,437 - logic_logger - INFO
-....Order[25] {AfterFlush Event} id: 25, notes: test 1793844180425, customer_id: 26, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c5209d0  session: 0x10c4c1bf0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,437 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c3d3bd0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,443 - logic_logger - INFO
-..Order[25] {Update - client} id: 25, notes: test 1793844180425, customer_id: 26, CreatedOn: None, date_shipped:  [None-->] 2026-11-04 00:00:00, amount_total: 50.0000000000  row: 0x10c4b7050  session: 0x10c3d3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,443 - logic_logger - INFO
-....Customer[26] {Update - Adjusting customer: balance} id: 26, name: Test Customer 1793844180416, balance:  [50.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c520250  session: 0x10c3d3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,444 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c3d3bd0)   										 - 2026-11-04 18:03:00,444 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c3d3bd0)   										 - 2026-11-04 18:03:00,445 - logic_logger - INFO
-..Order[25] {AfterFlush Event} id: 25, notes: test 1793844180425, customer_id: 26, CreatedOn: None, date_shipped:  [None-->] 2026-11-04 00:00:00, amount_total: 50.0000000000  row: 0x10c4b7050  session: 0x10c3d3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,445 - logic_logger - INFO
-..Order[25] {Sending Order to Kafka topic 'order_shipping' [Note: **Kafka not enabled** ]} id: 25, notes: test 1793844180425, customer_id: 26, CreatedOn: None, date_shipped:  [None-->] 2026-11-04 00:00:00, amount_total: 50.0000000000  row: 0x10c4b7050  session: 0x10c3d3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,445 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c3d3f00) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,451 - logic_logger - INFO
-..Order[25] {Update - client} id: 25, notes:  [test 1793844180425-->] edited 1793844180448, customer_id: 26, CreatedOn: None, date_shipped: 2026-11-04, amount_total: 50.0000000000  row: 0x10c4b77d0  session: 0x10c3d3f00  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,451 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c3d3f00)   										 - 2026-11-04 18:03:00,451 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c3d3f00)   										 - 2026-11-04 18:03:00,452 - logic_logger - INFO
-..Order[25] {AfterFlush Event} id: 25, notes:  [test 1793844180425-->] edited 1793844180448, customer_id: 26, CreatedOn: None, date_shipped: 2026-11-04, amount_total: 50.0000000000  row: 0x10c4b77d0  session: 0x10c3d3f00  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,452 - logic_logger - INFO
-
-```
-</details>
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
@@ -738,980 +579,130 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c3d3f00)   										 - 2026-11-04 
 &nbsp;
 &nbsp;
 
-#### Scenario: Credit - within limit ✅ (0.04 s)
-&emsp;  Scenario: Credit - within limit  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    When an order is created with 5 of the product  
-&emsp;&emsp;    Then the customer balance is 50  
-&emsp;&emsp;    And the order amount total is 50  
-&emsp;&emsp;    And the item amount is 50  
+#### Scenario: Good Order with AI supplier selection ✅ (1.8 s)
+&emsp;  Scenario: Good Order with AI supplier selection  
+&emsp;&emsp;    Given a customer with credit limit 5000  
+&emsp;&emsp;    When an order is placed with 2 Egyptian Cotton Sheets  
+&emsp;&emsp;    Then the item unit_price is one of the product's supplier costs  
+&emsp;&emsp;    And an audit row exists linked to the item with a chosen supplier of that product  
+&emsp;&emsp;    And the order amount_total is quantity times unit_price  
+&emsp;&emsp;    And the customer balance equals the order amount_total  
 
-<details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
-
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
 
+#### Scenario: Item Quantity Change ✅ (1.1 s)
+&emsp;  Scenario: Item Quantity Change  
+&emsp;&emsp;    Given a customer with credit limit 5000  
+&emsp;&emsp;    And an order is placed with 2 Egyptian Cotton Sheets  
+&emsp;&emsp;    When the item quantity is changed to 3  
+&emsp;&emsp;    Then the order amount_total is quantity times unit_price  
+&emsp;&emsp;    And the customer balance equals the order amount_total  
 
-**Rules Used** in Scenario: Credit - within limit
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Credit - within limit (2 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c1150) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,472 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180471, customer_id: 27, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c4b4450  session: 0x10c4c1150  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,473 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180471, customer_id: 27, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b4450  session: 0x10c4c1150  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,473 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c1150)   										 - 2026-11-04 18:03:00,473 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c1150)   										 - 2026-11-04 18:03:00,474 - logic_logger - INFO
-..Order[26] {AfterFlush Event} id: 26, notes: test 1793844180471, customer_id: 27, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b4450  session: 0x10c4c1150  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,474 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c09e0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,478 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 26, product_id: 30, quantity: 5, amount: None, unit_price: None  row: 0x10c4793d0  session: 0x10c4c09e0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,479 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180465, using product unit_price} id: None, order_id: 26, product_id: 30, quantity: 5, amount: None, unit_price: None  row: 0x10c4793d0  session: 0x10c4c09e0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,479 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 26, product_id: 30, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c4793d0  session: 0x10c4c09e0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,479 - logic_logger - INFO
-....Order[26] {Update - Adjusting order: amount_total} id: 26, notes: test 1793844180471, customer_id: 27, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c520ed0  session: 0x10c4c09e0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,480 - logic_logger - INFO
-......Customer[27] {Update - Adjusting customer: balance} id: 27, name: Test Customer 1793844180459, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c5214d0  session: 0x10c4c09e0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,480 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c09e0)   										 - 2026-11-04 18:03:00,480 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c09e0)   										 - 2026-11-04 18:03:00,481 - logic_logger - INFO
-....Order[26] {AfterFlush Event} id: 26, notes: test 1793844180471, customer_id: 27, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c520ed0  session: 0x10c4c09e0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,481 - logic_logger - INFO
-
-```
-</details>
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
 
-#### Scenario: Credit - at the limit ✅ (0.03 s)
-&emsp;  Scenario: Credit - at the limit  
-&emsp;&emsp;    Given a customer with credit limit 100  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    When an order is created with 10 of the product  
-&emsp;&emsp;    Then the customer balance is 100  
-
-<details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Credit - at the limit
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Credit - at the limit (2 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c1e10) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,507 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180505, customer_id: 28, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c4b7350  session: 0x10c4c1e10  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,507 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180505, customer_id: 28, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b7350  session: 0x10c4c1e10  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,507 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c1e10)   										 - 2026-11-04 18:03:00,508 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c1e10)   										 - 2026-11-04 18:03:00,508 - logic_logger - INFO
-..Order[27] {AfterFlush Event} id: 27, notes: test 1793844180505, customer_id: 28, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b7350  session: 0x10c4c1e10  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,508 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c2030) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,512 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 27, product_id: 31, quantity: 10, amount: None, unit_price: None  row: 0x10c4b7c50  session: 0x10c4c2030  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,512 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180501, using product unit_price} id: None, order_id: 27, product_id: 31, quantity: 10, amount: None, unit_price: None  row: 0x10c4b7c50  session: 0x10c4c2030  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,513 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 27, product_id: 31, quantity: 10, amount: 100.0000000000, unit_price: 10.0000000000  row: 0x10c4b7c50  session: 0x10c4c2030  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,513 - logic_logger - INFO
-....Order[27] {Update - Adjusting order: amount_total} id: 27, notes: test 1793844180505, customer_id: 28, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 100.0000000000  row: 0x10c520b50  session: 0x10c4c2030  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,513 - logic_logger - INFO
-......Customer[28] {Update - Adjusting customer: balance} id: 28, name: Test Customer 1793844180496, balance:  [0E-10-->] 100.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10c521d50  session: 0x10c4c2030  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,514 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2030)   										 - 2026-11-04 18:03:00,514 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2030)   										 - 2026-11-04 18:03:00,515 - logic_logger - INFO
-....Order[27] {AfterFlush Event} id: 27, notes: test 1793844180505, customer_id: 28, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 100.0000000000  row: 0x10c520b50  session: 0x10c4c2030  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,515 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Credit - over the limit ✅ (0.03 s)
-&emsp;  Scenario: Credit - over the limit  
-&emsp;&emsp;    Given a customer with credit limit 100  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    When an order is created with 11 of the product  
-&emsp;&emsp;    Then the item is rejected with a message containing "exceeds credit limit"  
+#### Scenario: Delete Item ✅ (2.3 s)
+&emsp;  Scenario: Delete Item  
+&emsp;&emsp;    Given a customer with credit limit 5000  
+&emsp;&emsp;    And an order is placed with 2 Egyptian Cotton Sheets  
+&emsp;&emsp;    When the item is deleted  
+&emsp;&emsp;    Then the order amount_total is 0  
 &emsp;&emsp;    And the customer balance is 0  
 
-<details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
-
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
 
+#### Scenario: Move Item to Another Order ✅ (1.2 s)
+&emsp;  Scenario: Move Item to Another Order  
+&emsp;&emsp;    Given a customer with credit limit 5000  
+&emsp;&emsp;    And an order is placed with 2 Egyptian Cotton Sheets  
+&emsp;&emsp;    And a second order for a second customer exists  
+&emsp;&emsp;    When the item is moved to the second order  
+&emsp;&emsp;    Then the first order amount_total is 0 and the first customer balance is 0  
+&emsp;&emsp;    And the second customer balance equals the item amount  
 
-**Rules Used** in Scenario: Credit - over the limit
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-    2. Constraint Function: None  
-  Order  
-    3. RowEvent Order.send_row_to_kafka()  
-    4. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    6. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Credit - over the limit (2 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c27a0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,535 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180533, customer_id: 29, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c47add0  session: 0x10c4c27a0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,535 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180533, customer_id: 29, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c47add0  session: 0x10c4c27a0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,535 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c27a0)   										 - 2026-11-04 18:03:00,536 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c27a0)   										 - 2026-11-04 18:03:00,536 - logic_logger - INFO
-..Order[28] {AfterFlush Event} id: 28, notes: test 1793844180533, customer_id: 29, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c47add0  session: 0x10c4c27a0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,536 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c29c0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,541 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 28, product_id: 32, quantity: 11, amount: None, unit_price: None  row: 0x10c479150  session: 0x10c4c29c0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,541 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180528, using product unit_price} id: None, order_id: 28, product_id: 32, quantity: 11, amount: None, unit_price: None  row: 0x10c479150  session: 0x10c4c29c0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,541 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 28, product_id: 32, quantity: 11, amount: 110.0000000000, unit_price: 10.0000000000  row: 0x10c479150  session: 0x10c4c29c0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,542 - logic_logger - INFO
-....Order[28] {Update - Adjusting order: amount_total} id: 28, notes: test 1793844180533, customer_id: 29, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 110.0000000000  row: 0x10c5215d0  session: 0x10c4c29c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,542 - logic_logger - INFO
-......Customer[29] {Update - Adjusting customer: balance} id: 29, name: Test Customer 1793844180523, balance:  [0E-10-->] 110.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10c5224d0  session: 0x10c4c29c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,542 - logic_logger - INFO
-......Customer[29] {Constraint Failure: Customer balance (110.0000000000) exceeds credit limit (100.0000000000)} id: 29, name: Test Customer 1793844180523, balance:  [0E-10-->] 110.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10c5224d0  session: 0x10c4c29c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,542 - logic_logger - INFO
-
-```
-</details>
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
 
-#### Scenario: Balance - ship and unship ✅ (0.04 s)
-&emsp;  Scenario: Balance - ship and unship  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    And an order is created with 5 of the product  
+#### Scenario: Ship Order Leaves Balance ✅ (1.1 s)
+&emsp;  Scenario: Ship Order Leaves Balance  
+&emsp;&emsp;    Given a customer with credit limit 5000  
+&emsp;&emsp;    And an order is placed with 2 Egyptian Cotton Sheets  
 &emsp;&emsp;    When the order is shipped  
 &emsp;&emsp;    Then the customer balance is 0  
-&emsp;&emsp;    When the order is un-shipped  
-&emsp;&emsp;    Then the customer balance is 50  
 
-<details markdown>
-<summary>Rules exercised and logic log (4 transactions)</summary>
-
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
 
+#### Scenario: Unship Order Enters Balance ✅ (1.4 s)
+&emsp;  Scenario: Unship Order Enters Balance  
+&emsp;&emsp;    Given a customer with credit limit 5000  
+&emsp;&emsp;    And an order is placed with 2 Egyptian Cotton Sheets  
+&emsp;&emsp;    And the order is shipped  
+&emsp;&emsp;    When the order is unshipped  
+&emsp;&emsp;    Then the customer balance equals the order amount_total  
 
-**Rules Used** in Scenario: Balance - ship and unship
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Balance - ship and unship (4 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c3460) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,566 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180564, customer_id: 30, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c521f50  session: 0x10c4c3460  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,566 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180564, customer_id: 30, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c521f50  session: 0x10c4c3460  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,566 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c3460)   										 - 2026-11-04 18:03:00,567 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c3460)   										 - 2026-11-04 18:03:00,567 - logic_logger - INFO
-..Order[29] {AfterFlush Event} id: 29, notes: test 1793844180564, customer_id: 30, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c521f50  session: 0x10c4c3460  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,567 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c3790) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,571 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 29, product_id: 33, quantity: 5, amount: None, unit_price: None  row: 0x10c521ad0  session: 0x10c4c3790  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,571 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180560, using product unit_price} id: None, order_id: 29, product_id: 33, quantity: 5, amount: None, unit_price: None  row: 0x10c521ad0  session: 0x10c4c3790  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,572 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 29, product_id: 33, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c521ad0  session: 0x10c4c3790  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,572 - logic_logger - INFO
-....Order[29] {Update - Adjusting order: amount_total} id: 29, notes: test 1793844180564, customer_id: 30, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c64c7d0  session: 0x10c4c3790  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,572 - logic_logger - INFO
-......Customer[30] {Update - Adjusting customer: balance} id: 30, name: Test Customer 1793844180555, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64d5d0  session: 0x10c4c3790  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,573 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c3790)   										 - 2026-11-04 18:03:00,573 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c3790)   										 - 2026-11-04 18:03:00,573 - logic_logger - INFO
-....Order[29] {AfterFlush Event} id: 29, notes: test 1793844180564, customer_id: 30, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c64c7d0  session: 0x10c4c3790  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,574 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c2140) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,578 - logic_logger - INFO
-..Order[29] {Update - client} id: 29, notes: test 1793844180564, customer_id: 30, CreatedOn: None, date_shipped:  [None-->] 2026-11-04 00:00:00, amount_total: 50.0000000000  row: 0x10c64c2d0  session: 0x10c4c2140  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,578 - logic_logger - INFO
-....Customer[30] {Update - Adjusting customer: balance} id: 30, name: Test Customer 1793844180555, balance:  [50.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64d950  session: 0x10c4c2140  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,579 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2140)   										 - 2026-11-04 18:03:00,579 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2140)   										 - 2026-11-04 18:03:00,579 - logic_logger - INFO
-..Order[29] {AfterFlush Event} id: 29, notes: test 1793844180564, customer_id: 30, CreatedOn: None, date_shipped:  [None-->] 2026-11-04 00:00:00, amount_total: 50.0000000000  row: 0x10c64c2d0  session: 0x10c4c2140  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,579 - logic_logger - INFO
-..Order[29] {Sending Order to Kafka topic 'order_shipping' [Note: **Kafka not enabled** ]} id: 29, notes: test 1793844180564, customer_id: 30, CreatedOn: None, date_shipped:  [None-->] 2026-11-04 00:00:00, amount_total: 50.0000000000  row: 0x10c64c2d0  session: 0x10c4c2140  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,580 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c3ac0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,588 - logic_logger - INFO
-..Order[29] {Update - client} id: 29, notes: test 1793844180564, customer_id: 30, CreatedOn: None, date_shipped:  [2026-11-04-->] None, amount_total: 50.0000000000  row: 0x10c64d350  session: 0x10c4c3ac0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,588 - logic_logger - INFO
-....Customer[30] {Update - Adjusting customer: balance} id: 30, name: Test Customer 1793844180555, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64dbd0  session: 0x10c4c3ac0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,589 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c3ac0)   										 - 2026-11-04 18:03:00,589 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c3ac0)   										 - 2026-11-04 18:03:00,589 - logic_logger - INFO
-..Order[29] {AfterFlush Event} id: 29, notes: test 1793844180564, customer_id: 30, CreatedOn: None, date_shipped:  [2026-11-04-->] None, amount_total: 50.0000000000  row: 0x10c64d350  session: 0x10c4c3ac0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,589 - logic_logger - INFO
-
-```
-</details>
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
 
-#### Scenario: Balance - move order ✅ (0.04 s)
-&emsp;  Scenario: Balance - move order  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a second customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    And an order is created with 5 of the product  
-&emsp;&emsp;    When the order is moved to the second customer  
-&emsp;&emsp;    Then the customer balance is 0  
-&emsp;&emsp;    And the second customer balance is 50  
+#### Scenario: Credit Limit Boundary Accepted ✅ (1.5 s)
+&emsp;  Scenario: Credit Limit Boundary Accepted  
+&emsp;&emsp;    Given a customer whose credit limit equals the cost of 2 Egyptian Cotton Sheets  
+&emsp;&emsp;    When an order is placed with 2 Egyptian Cotton Sheets  
+&emsp;&emsp;    Then the order is accepted  
 
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
-
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
 
+#### Scenario: Exceed Credit Rejected ✅ (1.8 s)
+&emsp;  Scenario: Exceed Credit Rejected  
+&emsp;&emsp;    Given a customer with credit limit 1  
+&emsp;&emsp;    When an order is placed with 2 Egyptian Cotton Sheets  
+&emsp;&emsp;    Then the item is rejected with "exceeds credit limit"  
 
-**Rules Used** in Scenario: Balance - move order
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Balance - move order (3 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c3ce0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,613 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180611, customer_id: 31, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c479b50  session: 0x10c4c3ce0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,613 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180611, customer_id: 31, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c479b50  session: 0x10c4c3ce0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,613 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c3ce0)   										 - 2026-11-04 18:03:00,614 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c3ce0)   										 - 2026-11-04 18:03:00,615 - logic_logger - INFO
-..Order[30] {AfterFlush Event} id: 30, notes: test 1793844180611, customer_id: 31, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c479b50  session: 0x10c4c3ce0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,615 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c38a0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,619 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 30, product_id: 34, quantity: 5, amount: None, unit_price: None  row: 0x10c479750  session: 0x10c4c38a0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,619 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180606, using product unit_price} id: None, order_id: 30, product_id: 34, quantity: 5, amount: None, unit_price: None  row: 0x10c479750  session: 0x10c4c38a0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,619 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 30, product_id: 34, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c479750  session: 0x10c4c38a0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,620 - logic_logger - INFO
-....Order[30] {Update - Adjusting order: amount_total} id: 30, notes: test 1793844180611, customer_id: 31, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c47add0  session: 0x10c4c38a0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,620 - logic_logger - INFO
-......Customer[31] {Update - Adjusting customer: balance} id: 31, name: Test Customer 1793844180597, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c5204d0  session: 0x10c4c38a0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,620 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c38a0)   										 - 2026-11-04 18:03:00,620 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c38a0)   										 - 2026-11-04 18:03:00,621 - logic_logger - INFO
-....Order[30] {AfterFlush Event} id: 30, notes: test 1793844180611, customer_id: 31, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c47add0  session: 0x10c4c38a0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,621 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c39b0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,626 - logic_logger - INFO
-..Order[30] {Update - client} id: 30, notes: test 1793844180611, customer_id:  [31-->] 32, CreatedOn: None, date_shipped: None, amount_total: 50.0000000000  row: 0x10c4b7350  session: 0x10c4c39b0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,626 - logic_logger - INFO
-....Customer[32] {Update - Adjusting customer: balance, balance} id: 32, name: Test Customer 1793844180601, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c5221d0  session: 0x10c4c39b0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,627 - logic_logger - INFO
-....Customer[31] {Update - Adjusting Old customer} id: 31, name: Test Customer 1793844180597, balance:  [50.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c5215d0  session: 0x10c4c39b0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,627 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c39b0)   										 - 2026-11-04 18:03:00,627 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c39b0)   										 - 2026-11-04 18:03:00,628 - logic_logger - INFO
-..Order[30] {AfterFlush Event} id: 30, notes: test 1793844180611, customer_id:  [31-->] 32, CreatedOn: None, date_shipped: None, amount_total: 50.0000000000  row: 0x10c4b7350  session: 0x10c4c39b0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,628 - logic_logger - INFO
-
-```
-</details>
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
 
-#### Scenario: Balance - delete order ✅ (0.04 s)
-&emsp;  Scenario: Balance - delete order  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    And an order is created with 5 of the product  
-&emsp;&emsp;    When the order and its item are deleted  
-&emsp;&emsp;    Then the customer balance is 0  
+#### Scenario: Product Without Suppliers Uses Product Price ✅ (0.03 s)
+&emsp;  Scenario: Product Without Suppliers Uses Product Price  
+&emsp;&emsp;    Given a customer with credit limit 5000  
+&emsp;&emsp;    When an order is placed with 2 Widget  
+&emsp;&emsp;    Then the item unit_price equals the Widget product price  
+&emsp;&emsp;    And no audit row exists for the item  
 
-<details markdown>
-<summary>Rules exercised and logic log (4 transactions)</summary>
-
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
 
-
-**Rules Used** in Scenario: Balance - delete order
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Balance - delete order (4 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c3130) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,650 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180649, customer_id: 33, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c4b7bd0  session: 0x10c4c3130  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,650 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180649, customer_id: 33, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b7bd0  session: 0x10c4c3130  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,651 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c3130)   										 - 2026-11-04 18:03:00,651 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c3130)   										 - 2026-11-04 18:03:00,652 - logic_logger - INFO
-..Order[31] {AfterFlush Event} id: 31, notes: test 1793844180649, customer_id: 33, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b7bd0  session: 0x10c4c3130  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,652 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c3350) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,655 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 31, product_id: 35, quantity: 5, amount: None, unit_price: None  row: 0x10c47b850  session: 0x10c4c3350  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,655 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180644, using product unit_price} id: None, order_id: 31, product_id: 35, quantity: 5, amount: None, unit_price: None  row: 0x10c47b850  session: 0x10c4c3350  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,656 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 31, product_id: 35, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c47b850  session: 0x10c4c3350  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,656 - logic_logger - INFO
-....Order[31] {Update - Adjusting order: amount_total} id: 31, notes: test 1793844180649, customer_id: 33, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c520a50  session: 0x10c4c3350  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,656 - logic_logger - INFO
-......Customer[33] {Update - Adjusting customer: balance} id: 33, name: Test Customer 1793844180639, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c520850  session: 0x10c4c3350  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,656 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c3350)   										 - 2026-11-04 18:03:00,657 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c3350)   										 - 2026-11-04 18:03:00,657 - logic_logger - INFO
-....Order[31] {AfterFlush Event} id: 31, notes: test 1793844180649, customer_id: 33, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c520a50  session: 0x10c4c3350  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,657 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c2cf0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,662 - logic_logger - INFO
-..Item[30] {Delete - client} id: 30, order_id: 31, product_id: 35, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c521c50  session: 0x10c4c2cf0  ins_upd_dlt: dlt, initial: dlt - 2026-11-04 18:03:00,662 - logic_logger - INFO
-....Order[31] {Update - Adjusting order: amount_total} id: 31, notes: test 1793844180649, customer_id: 33, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 0E-10  row: 0x10c521e50  session: 0x10c4c2cf0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,662 - logic_logger - INFO
-......Customer[33] {Update - Adjusting customer: balance} id: 33, name: Test Customer 1793844180639, balance:  [50.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64d7d0  session: 0x10c4c2cf0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,663 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2cf0)   										 - 2026-11-04 18:03:00,663 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2cf0)   										 - 2026-11-04 18:03:00,664 - logic_logger - INFO
-....Order[31] {AfterFlush Event} id: 31, notes: test 1793844180649, customer_id: 33, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 0E-10  row: 0x10c521e50  session: 0x10c4c2cf0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,664 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c2ad0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,668 - logic_logger - INFO
-..Order[31] {Delete - client} id: 31, notes: test 1793844180649, customer_id: 33, CreatedOn: None, date_shipped: None, amount_total: 0E-10  row: 0x10c520bd0  session: 0x10c4c2ad0  ins_upd_dlt: dlt, initial: dlt - 2026-11-04 18:03:00,668 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2ad0)   										 - 2026-11-04 18:03:00,668 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2ad0)   										 - 2026-11-04 18:03:00,669 - logic_logger - INFO
-..Order[31] {AfterFlush Event} id: 31, notes: test 1793844180649, customer_id: 33, CreatedOn: None, date_shipped: None, amount_total: 0E-10  row: 0x10c520bd0  session: 0x10c4c2ad0  ins_upd_dlt: dlt, initial: dlt - 2026-11-04 18:03:00,669 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Item - change quantity ✅ (0.04 s)
-&emsp;  Scenario: Item - change quantity  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    And an order is created with 5 of the product  
-&emsp;&emsp;    When the item quantity is changed to 8  
-&emsp;&emsp;    Then the item amount is 80  
-&emsp;&emsp;    And the order amount total is 80  
-&emsp;&emsp;    And the customer balance is 80  
-
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Item - change quantity
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Item - change quantity (3 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c2250) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,686 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180684, customer_id: 34, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c521650  session: 0x10c4c2250  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,686 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180684, customer_id: 34, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c521650  session: 0x10c4c2250  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,686 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2250)   										 - 2026-11-04 18:03:00,687 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2250)   										 - 2026-11-04 18:03:00,687 - logic_logger - INFO
-..Order[32] {AfterFlush Event} id: 32, notes: test 1793844180684, customer_id: 34, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c521650  session: 0x10c4c2250  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,687 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c2030) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,691 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 32, product_id: 36, quantity: 5, amount: None, unit_price: None  row: 0x10c521250  session: 0x10c4c2030  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,691 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180680, using product unit_price} id: None, order_id: 32, product_id: 36, quantity: 5, amount: None, unit_price: None  row: 0x10c521250  session: 0x10c4c2030  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,692 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 32, product_id: 36, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c521250  session: 0x10c4c2030  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,692 - logic_logger - INFO
-....Order[32] {Update - Adjusting order: amount_total} id: 32, notes: test 1793844180684, customer_id: 34, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c64c750  session: 0x10c4c2030  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,692 - logic_logger - INFO
-......Customer[34] {Update - Adjusting customer: balance} id: 34, name: Test Customer 1793844180675, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64e2d0  session: 0x10c4c2030  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,692 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2030)   										 - 2026-11-04 18:03:00,693 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2030)   										 - 2026-11-04 18:03:00,694 - logic_logger - INFO
-....Order[32] {AfterFlush Event} id: 32, notes: test 1793844180684, customer_id: 34, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c64c750  session: 0x10c4c2030  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,694 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c3d3bd0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,699 - logic_logger - INFO
-..Item[31] {Update - client} id: 31, order_id: 32, product_id: 36, quantity:  [5-->] 8, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c520750  session: 0x10c3d3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,699 - logic_logger - INFO
-..Item[31] {Formula amount} id: 31, order_id: 32, product_id: 36, quantity:  [5-->] 8, amount:  [50.0000000000-->] 80.0000000000, unit_price: 10.0000000000  row: 0x10c520750  session: 0x10c3d3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,699 - logic_logger - INFO
-....Order[32] {Update - Adjusting order: amount_total} id: 32, notes: test 1793844180684, customer_id: 34, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 80.0000000000  row: 0x10c4b7dd0  session: 0x10c3d3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,699 - logic_logger - INFO
-......Customer[34] {Update - Adjusting customer: balance} id: 34, name: Test Customer 1793844180675, balance:  [50.0000000000-->] 80.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c4b7e50  session: 0x10c3d3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,700 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c3d3bd0)   										 - 2026-11-04 18:03:00,700 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c3d3bd0)   										 - 2026-11-04 18:03:00,701 - logic_logger - INFO
-....Order[32] {AfterFlush Event} id: 32, notes: test 1793844180684, customer_id: 34, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 80.0000000000  row: 0x10c4b7dd0  session: 0x10c3d3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,701 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Item - delete ✅ (0.04 s)
-&emsp;  Scenario: Item - delete  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    And an order is created with 5 of the product  
-&emsp;&emsp;    And a second item is added with 2 of the product  
-&emsp;&emsp;    When the item is deleted  
-&emsp;&emsp;    Then the order amount total is 20  
-&emsp;&emsp;    And the customer balance is 20  
-
-<details markdown>
-<summary>Rules exercised and logic log (4 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Item - delete
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Item - delete (4 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c2690) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,728 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180726, customer_id: 35, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c5216d0  session: 0x10c4c2690  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,728 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180726, customer_id: 35, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c5216d0  session: 0x10c4c2690  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,729 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2690)   										 - 2026-11-04 18:03:00,729 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2690)   										 - 2026-11-04 18:03:00,730 - logic_logger - INFO
-..Order[33] {AfterFlush Event} id: 33, notes: test 1793844180726, customer_id: 35, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c5216d0  session: 0x10c4c2690  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,730 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c2ad0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,734 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 33, product_id: 37, quantity: 5, amount: None, unit_price: None  row: 0x10c521a50  session: 0x10c4c2ad0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,734 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180722, using product unit_price} id: None, order_id: 33, product_id: 37, quantity: 5, amount: None, unit_price: None  row: 0x10c521a50  session: 0x10c4c2ad0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,735 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 33, product_id: 37, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c521a50  session: 0x10c4c2ad0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,735 - logic_logger - INFO
-....Order[33] {Update - Adjusting order: amount_total} id: 33, notes: test 1793844180726, customer_id: 35, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c5220d0  session: 0x10c4c2ad0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,735 - logic_logger - INFO
-......Customer[35] {Update - Adjusting customer: balance} id: 35, name: Test Customer 1793844180716, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64cdd0  session: 0x10c4c2ad0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,735 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2ad0)   										 - 2026-11-04 18:03:00,736 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2ad0)   										 - 2026-11-04 18:03:00,736 - logic_logger - INFO
-....Order[33] {AfterFlush Event} id: 33, notes: test 1793844180726, customer_id: 35, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c5220d0  session: 0x10c4c2ad0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,736 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c2cf0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,741 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 33, product_id: 37, quantity: 2, amount: None, unit_price: None  row: 0x10c47b850  session: 0x10c4c2cf0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,741 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180722, using product unit_price} id: None, order_id: 33, product_id: 37, quantity: 2, amount: None, unit_price: None  row: 0x10c47b850  session: 0x10c4c2cf0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,742 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 33, product_id: 37, quantity: 2, amount: 20.0000000000, unit_price: 10.0000000000  row: 0x10c47b850  session: 0x10c4c2cf0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,742 - logic_logger - INFO
-....Order[33] {Update - Adjusting order: amount_total} id: 33, notes: test 1793844180726, customer_id: 35, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 70.0000000000  row: 0x10c521e50  session: 0x10c4c2cf0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,742 - logic_logger - INFO
-......Customer[35] {Update - Adjusting customer: balance} id: 35, name: Test Customer 1793844180716, balance:  [50.0000000000-->] 70.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64cbd0  session: 0x10c4c2cf0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,743 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2cf0)   										 - 2026-11-04 18:03:00,743 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2cf0)   										 - 2026-11-04 18:03:00,744 - logic_logger - INFO
-....Order[33] {AfterFlush Event} id: 33, notes: test 1793844180726, customer_id: 35, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 70.0000000000  row: 0x10c521e50  session: 0x10c4c2cf0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,744 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c2f10) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,749 - logic_logger - INFO
-..Item[32] {Delete - client} id: 32, order_id: 33, product_id: 37, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c4b7c50  session: 0x10c4c2f10  ins_upd_dlt: dlt, initial: dlt - 2026-11-04 18:03:00,749 - logic_logger - INFO
-....Order[33] {Update - Adjusting order: amount_total} id: 33, notes: test 1793844180726, customer_id: 35, CreatedOn: None, date_shipped: None, amount_total:  [70.0000000000-->] 20.0000000000  row: 0x10c64c9d0  session: 0x10c4c2f10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,749 - logic_logger - INFO
-......Customer[35] {Update - Adjusting customer: balance} id: 35, name: Test Customer 1793844180716, balance:  [70.0000000000-->] 20.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64d750  session: 0x10c4c2f10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,749 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2f10)   										 - 2026-11-04 18:03:00,750 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2f10)   										 - 2026-11-04 18:03:00,751 - logic_logger - INFO
-....Order[33] {AfterFlush Event} id: 33, notes: test 1793844180726, customer_id: 35, CreatedOn: None, date_shipped: None, amount_total:  [70.0000000000-->] 20.0000000000  row: 0x10c64c9d0  session: 0x10c4c2f10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,751 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Item - move to order ✅ (0.05 s)
-&emsp;  Scenario: Item - move to order  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    And an order is created with 5 of the product  
-&emsp;&emsp;    And a second order is created with 2 of the product  
-&emsp;&emsp;    When the item is moved to the second order  
-&emsp;&emsp;    Then the order amount total is 0  
-&emsp;&emsp;    And the second order amount total is 70  
-&emsp;&emsp;    And the customer balance is 70  
-
-<details markdown>
-<summary>Rules exercised and logic log (5 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Item - move to order
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Item - move to order (5 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c3680) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,770 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180768, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c5206d0  session: 0x10c4c3680  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,770 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180768, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c5206d0  session: 0x10c4c3680  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,770 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c3680)   										 - 2026-11-04 18:03:00,771 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c3680)   										 - 2026-11-04 18:03:00,771 - logic_logger - INFO
-..Order[34] {AfterFlush Event} id: 34, notes: test 1793844180768, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c5206d0  session: 0x10c4c3680  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,771 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c2140) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,775 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 34, product_id: 38, quantity: 5, amount: None, unit_price: None  row: 0x10c4b75d0  session: 0x10c4c2140  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,775 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180764, using product unit_price} id: None, order_id: 34, product_id: 38, quantity: 5, amount: None, unit_price: None  row: 0x10c4b75d0  session: 0x10c4c2140  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,775 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 34, product_id: 38, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c4b75d0  session: 0x10c4c2140  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,775 - logic_logger - INFO
-....Order[34] {Update - Adjusting order: amount_total} id: 34, notes: test 1793844180768, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c64ddd0  session: 0x10c4c2140  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,776 - logic_logger - INFO
-......Customer[36] {Update - Adjusting customer: balance} id: 36, name: Test Customer 1793844180759, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64e3d0  session: 0x10c4c2140  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,776 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2140)   										 - 2026-11-04 18:03:00,776 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2140)   										 - 2026-11-04 18:03:00,777 - logic_logger - INFO
-....Order[34] {AfterFlush Event} id: 34, notes: test 1793844180768, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c64ddd0  session: 0x10c4c2140  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,777 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c3ac0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,783 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180780, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c5207d0  session: 0x10c4c3ac0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,783 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180780, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c5207d0  session: 0x10c4c3ac0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,783 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c3ac0)   										 - 2026-11-04 18:03:00,784 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c3ac0)   										 - 2026-11-04 18:03:00,784 - logic_logger - INFO
-..Order[35] {AfterFlush Event} id: 35, notes: test 1793844180780, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c5207d0  session: 0x10c4c3ac0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,784 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c3bd0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,789 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 35, product_id: 38, quantity: 2, amount: None, unit_price: None  row: 0x10c4b4fd0  session: 0x10c4c3bd0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,789 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180764, using product unit_price} id: None, order_id: 35, product_id: 38, quantity: 2, amount: None, unit_price: None  row: 0x10c4b4fd0  session: 0x10c4c3bd0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,790 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 35, product_id: 38, quantity: 2, amount: 20.0000000000, unit_price: 10.0000000000  row: 0x10c4b4fd0  session: 0x10c4c3bd0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,790 - logic_logger - INFO
-....Order[35] {Update - Adjusting order: amount_total} id: 35, notes: test 1793844180780, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 20.0000000000  row: 0x10c64cb50  session: 0x10c4c3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,790 - logic_logger - INFO
-......Customer[36] {Update - Adjusting customer: balance} id: 36, name: Test Customer 1793844180759, balance:  [50.0000000000-->] 70.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64e950  session: 0x10c4c3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,790 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c3bd0)   										 - 2026-11-04 18:03:00,790 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c3bd0)   										 - 2026-11-04 18:03:00,791 - logic_logger - INFO
-....Order[35] {AfterFlush Event} id: 35, notes: test 1793844180780, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 20.0000000000  row: 0x10c64cb50  session: 0x10c4c3bd0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,791 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c1e10) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,797 - logic_logger - INFO
-..Item[34] {Update - client} id: 34, order_id:  [34-->] 35, product_id: 38, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c64d450  session: 0x10c4c1e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,797 - logic_logger - INFO
-..Item[34] {Prune Formula: amount [['quantity', 'unit_price']]} id: 34, order_id:  [34-->] 35, product_id: 38, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c64d450  session: 0x10c4c1e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,797 - logic_logger - INFO
-....Order[35] {Update - Adjusting order: amount_total, amount_total} id: 35, notes: test 1793844180780, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total:  [20.0000000000-->] 70.0000000000  row: 0x10c64d0d0  session: 0x10c4c1e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,798 - logic_logger - INFO
-......Customer[36] {Update - Adjusting customer: balance} id: 36, name: Test Customer 1793844180759, balance:  [70.0000000000-->] 120.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64f250  session: 0x10c4c1e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,798 - logic_logger - INFO
-....Order[34] {Update - Adjusting Old order} id: 34, notes: test 1793844180768, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 0E-10  row: 0x10c64dcd0  session: 0x10c4c1e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,798 - logic_logger - INFO
-......Customer[36] {Update - Adjusting customer: balance} id: 36, name: Test Customer 1793844180759, balance:  [120.0000000000-->] 70.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64f250  session: 0x10c4c1e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,798 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c1e10)   										 - 2026-11-04 18:03:00,798 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c1e10)   										 - 2026-11-04 18:03:00,799 - logic_logger - INFO
-....Order[35] {AfterFlush Event} id: 35, notes: test 1793844180780, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total:  [20.0000000000-->] 70.0000000000  row: 0x10c64d0d0  session: 0x10c4c1e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,799 - logic_logger - INFO
-....Order[34] {AfterFlush Event} id: 34, notes: test 1793844180768, customer_id: 36, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 0E-10  row: 0x10c64dcd0  session: 0x10c4c1e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,799 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Item - change product ✅ (0.04 s)
-&emsp;  Scenario: Item - change product  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    And a second product priced 30 with no suppliers  
-&emsp;&emsp;    And an order is created with 5 of the product  
-&emsp;&emsp;    When the item product is changed to the second product  
-&emsp;&emsp;    Then the item unit price is 30  
-&emsp;&emsp;    And the item amount is 150  
-
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Item - change product
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: Item - change product (3 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c1150) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,830 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180827, customer_id: 37, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c4b61d0  session: 0x10c4c1150  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,830 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180827, customer_id: 37, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b61d0  session: 0x10c4c1150  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,831 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c1150)   										 - 2026-11-04 18:03:00,831 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c1150)   										 - 2026-11-04 18:03:00,831 - logic_logger - INFO
-..Order[36] {AfterFlush Event} id: 36, notes: test 1793844180827, customer_id: 37, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b61d0  session: 0x10c4c1150  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,832 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c16a0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,835 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 36, product_id: 39, quantity: 5, amount: None, unit_price: None  row: 0x10c4b6350  session: 0x10c4c16a0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,836 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180818, using product unit_price} id: None, order_id: 36, product_id: 39, quantity: 5, amount: None, unit_price: None  row: 0x10c4b6350  session: 0x10c4c16a0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,836 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 36, product_id: 39, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c4b6350  session: 0x10c4c16a0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,836 - logic_logger - INFO
-....Order[36] {Update - Adjusting order: amount_total} id: 36, notes: test 1793844180827, customer_id: 37, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c64e350  session: 0x10c4c16a0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,836 - logic_logger - INFO
-......Customer[37] {Update - Adjusting customer: balance} id: 37, name: Test Customer 1793844180813, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64f8d0  session: 0x10c4c16a0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,837 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c16a0)   										 - 2026-11-04 18:03:00,837 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c16a0)   										 - 2026-11-04 18:03:00,838 - logic_logger - INFO
-....Order[36] {AfterFlush Event} id: 36, notes: test 1793844180827, customer_id: 37, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c64e350  session: 0x10c4c16a0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,838 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c18c0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,843 - logic_logger - INFO
-..Item[36] {Update - client} id: 36, order_id: 36, product_id:  [39-->] 40, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c64f750  session: 0x10c4c18c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,843 - logic_logger - INFO
-..Item[36] {No suppliers for Test Product 1793844180823, using product unit_price} id: 36, order_id: 36, product_id:  [39-->] 40, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c64f750  session: 0x10c4c18c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,843 - logic_logger - INFO
-..Item[36] {Formula amount} id: 36, order_id: 36, product_id:  [39-->] 40, quantity: 5, amount:  [50.0000000000-->] 150.0000000000, unit_price:  [10.0000000000-->] 30.0000000000  row: 0x10c64f750  session: 0x10c4c18c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,843 - logic_logger - INFO
-....Order[36] {Update - Adjusting order: amount_total} id: 36, notes: test 1793844180827, customer_id: 37, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 150.0000000000  row: 0x10c64ecd0  session: 0x10c4c18c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,844 - logic_logger - INFO
-......Customer[37] {Update - Adjusting customer: balance} id: 37, name: Test Customer 1793844180813, balance:  [50.0000000000-->] 150.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c688150  session: 0x10c4c18c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,844 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c18c0)   										 - 2026-11-04 18:03:00,844 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c18c0)   										 - 2026-11-04 18:03:00,845 - logic_logger - INFO
-....Order[36] {AfterFlush Event} id: 36, notes: test 1793844180827, customer_id: 37, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 150.0000000000  row: 0x10c64ecd0  session: 0x10c4c18c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,845 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Suppliers - add and remove ✅ (0.04 s)
-&emsp;  Scenario: Suppliers - add and remove  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    When a supplier is added to the product costing 7  
-&emsp;&emsp;    Then the product supplier count is 1  
-&emsp;&emsp;    When a second supplier is added to the product costing 9  
-&emsp;&emsp;    Then the product supplier count is 2  
-&emsp;&emsp;    When the first supplier is removed from the product  
-&emsp;&emsp;    Then the product supplier count is 1  
-
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Suppliers - add and remove
-```
-  Product  
-    1. Derive Product.count_suppliers as Count(ProductSupplier Where  - None)  
-```
-**Logic Log** in Scenario: Suppliers - add and remove (3 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c694270) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,868 - logic_logger - INFO
-..ProductSupplier[None] {Insert - client} id: None, product_id: 41, supplier_id: 1, supplier_part_number: None, unit_cost: 7, lead_time_days: 3  row: 0x10c4b79d0  session: 0x10c694270  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,868 - logic_logger - INFO
-....Product[41] {Update - Adjusting product: count_suppliers} id: 41, name: Test Product 1793844180860, count_suppliers:  [0-->] 1, unit_price: 10.0000000000  row: 0x10c644670  session: 0x10c694270  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,870 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c694270)   										 - 2026-11-04 18:03:00,870 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c694270)   										 - 2026-11-04 18:03:00,871 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c19d0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,878 - logic_logger - INFO
-..ProductSupplier[None] {Insert - client} id: None, product_id: 41, supplier_id: 2, supplier_part_number: None, unit_cost: 9, lead_time_days: 3  row: 0x10c5206d0  session: 0x10c4c19d0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,879 - logic_logger - INFO
-....Product[41] {Update - Adjusting product: count_suppliers} id: 41, name: Test Product 1793844180860, count_suppliers:  [1-->] 2, unit_price: 10.0000000000  row: 0x10c525da0  session: 0x10c4c19d0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,879 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c19d0)   										 - 2026-11-04 18:03:00,879 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c19d0)   										 - 2026-11-04 18:03:00,880 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c18c0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,887 - logic_logger - INFO
-..ProductSupplier[10] {Delete - client} id: 10, product_id: 41, supplier_id: 1, supplier_part_number: None, unit_cost: 7.0000000000, lead_time_days: 3  row: 0x10c5215d0  session: 0x10c4c18c0  ins_upd_dlt: dlt, initial: dlt - 2026-11-04 18:03:00,887 - logic_logger - INFO
-....Product[41] {Update - Adjusting product: count_suppliers} id: 41, name: Test Product 1793844180860, count_suppliers:  [2-->] 1, unit_price: 10.0000000000  row: 0x10c5259b0  session: 0x10c4c18c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,887 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c18c0)   										 - 2026-11-04 18:03:00,888 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c18c0)   										 - 2026-11-04 18:03:00,888 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Suppliers - move ✅ (0.03 s)
-&emsp;  Scenario: Suppliers - move  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    And a second product priced 20 with no suppliers  
-&emsp;&emsp;    And a supplier is added to the product costing 7  
-&emsp;&emsp;    When the product supplier is moved to the second product  
-&emsp;&emsp;    Then the product supplier count is 0  
-&emsp;&emsp;    And the second product supplier count is 1  
-
-<details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Suppliers - move
-```
-  Product  
-    1. Derive Product.count_suppliers as Count(ProductSupplier Where  - None)  
-```
-**Logic Log** in Scenario: Suppliers - move (2 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c0050) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,910 - logic_logger - INFO
-..ProductSupplier[None] {Insert - client} id: None, product_id: 42, supplier_id: 1, supplier_part_number: None, unit_cost: 7, lead_time_days: 3  row: 0x10c47b0d0  session: 0x10c4c0050  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,910 - logic_logger - INFO
-....Product[42] {Update - Adjusting product: count_suppliers} id: 42, name: Test Product 1793844180899, count_suppliers:  [0-->] 1, unit_price: 10.0000000000  row: 0x10c525390  session: 0x10c4c0050  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,911 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c0050)   										 - 2026-11-04 18:03:00,911 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c0050)   										 - 2026-11-04 18:03:00,912 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c07c0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,916 - logic_logger - INFO
-..ProductSupplier[12] {Update - client} id: 12, product_id:  [42-->] 43, supplier_id: 1, supplier_part_number: None, unit_cost: 7.0000000000, lead_time_days: 3  row: 0x10c64f5d0  session: 0x10c4c07c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,916 - logic_logger - INFO
-....Product[43] {Update - Adjusting product: count_suppliers, count_suppliers} id: 43, name: Test Product 1793844180904, count_suppliers:  [0-->] 1, unit_price: 20.0000000000  row: 0x10c525010  session: 0x10c4c07c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,917 - logic_logger - INFO
-....Product[42] {Update - Adjusting Old product} id: 42, name: Test Product 1793844180899, count_suppliers:  [1-->] 0, unit_price: 10.0000000000  row: 0x10c524e50  session: 0x10c4c07c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,917 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c07c0)   										 - 2026-11-04 18:03:00,917 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c07c0)   										 - 2026-11-04 18:03:00,918 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: AI - no suppliers ✅ (0.03 s)
-&emsp;  Scenario: AI - no suppliers  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    When an order is created with 5 of the product  
-&emsp;&emsp;    Then the item unit price is 10  
-&emsp;&emsp;    And no AI audit row exists for the item  
-
-<details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: AI - no suppliers
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    2. RowEvent Order.send_row_to_kafka()  
-    3. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    4. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    5. RowEvent Item.set_item_unit_price_from_supplier()  
-```
-**Logic Log** in Scenario: AI - no suppliers (2 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c3ac0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,940 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180938, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c4b7dd0  session: 0x10c4c3ac0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,940 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180938, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b7dd0  session: 0x10c4c3ac0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,940 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c3ac0)   										 - 2026-11-04 18:03:00,941 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c3ac0)   										 - 2026-11-04 18:03:00,941 - logic_logger - INFO
-..Order[37] {AfterFlush Event} id: 37, notes: test 1793844180938, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c4b7dd0  session: 0x10c4c3ac0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,941 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c2140) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,946 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 37, product_id: 44, quantity: 5, amount: None, unit_price: None  row: 0x10c5220d0  session: 0x10c4c2140  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,946 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844180933, using product unit_price} id: None, order_id: 37, product_id: 44, quantity: 5, amount: None, unit_price: None  row: 0x10c5220d0  session: 0x10c4c2140  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,947 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 37, product_id: 44, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c5220d0  session: 0x10c4c2140  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,947 - logic_logger - INFO
-....Order[37] {Update - Adjusting order: amount_total} id: 37, notes: test 1793844180938, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c64f6d0  session: 0x10c4c2140  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,947 - logic_logger - INFO
-......Customer[40] {Update - Adjusting customer: balance} id: 40, name: Test Customer 1793844180928, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c64e950  session: 0x10c4c2140  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,947 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c2140)   										 - 2026-11-04 18:03:00,947 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c2140)   										 - 2026-11-04 18:03:00,948 - logic_logger - INFO
-....Order[37] {AfterFlush Event} id: 37, notes: test 1793844180938, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x10c64f6d0  session: 0x10c4c2140  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,948 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: AI - chooses a supplier ✅ (2.6 s)
-&emsp;  Scenario: AI - chooses a supplier  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 50 with suppliers costing 7 and 9  
-&emsp;&emsp;    When an order is created with 5 of the product  
-&emsp;&emsp;    Then the AI chose one of the product suppliers and an audit row exists  
-&emsp;&emsp;    And the item amount is the quantity times the chosen price  
-&emsp;&emsp;    And the customer balance is the item amount  
-
-<details markdown>
-<summary>Rules exercised and logic log (4 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: AI - chooses a supplier
-```
-  Product  
-    1. Derive Product.count_suppliers as Count(ProductSupplier Where  - None)  
-  Customer  
-    2. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    3. RowEvent Order.send_row_to_kafka()  
-    4. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    6. RowEvent Item.set_item_unit_price_from_supplier()  
-  SysSupplierReq  
-    7. RowEvent SysSupplierReq.select_supplier_via_ai()  
-```
-**Logic Log** in Scenario: AI - chooses a supplier (4 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c4c1f20) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,973 - logic_logger - INFO
-..ProductSupplier[None] {Insert - client} id: None, product_id: 45, supplier_id: 1, supplier_part_number: None, unit_cost: 7, lead_time_days: 3  row: 0x10c4b55d0  session: 0x10c4c1f20  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,974 - logic_logger - INFO
-....Product[45] {Update - Adjusting product: count_suppliers} id: 45, name: Test Product 1793844180967, count_suppliers:  [0-->] 1, unit_price: 50.0000000000  row: 0x10c525080  session: 0x10c4c1f20  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,974 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c1f20)   										 - 2026-11-04 18:03:00,974 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c1f20)   										 - 2026-11-04 18:03:00,975 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c1d00) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,978 - logic_logger - INFO
-..ProductSupplier[None] {Insert - client} id: None, product_id: 45, supplier_id: 2, supplier_part_number: None, unit_cost: 9, lead_time_days: 3  row: 0x10c4b7dd0  session: 0x10c4c1d00  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,978 - logic_logger - INFO
-....Product[45] {Update - Adjusting product: count_suppliers} id: 45, name: Test Product 1793844180967, count_suppliers:  [1-->] 2, unit_price: 50.0000000000  row: 0x10c5252b0  session: 0x10c4c1d00  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:00,979 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c1d00)   										 - 2026-11-04 18:03:00,979 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c1d00)   										 - 2026-11-04 18:03:00,980 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c1260) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,984 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844180982, customer_id: 41, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c5223d0  session: 0x10c4c1260  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,984 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844180982, customer_id: 41, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c5223d0  session: 0x10c4c1260  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,984 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c1260)   										 - 2026-11-04 18:03:00,984 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c1260)   										 - 2026-11-04 18:03:00,985 - logic_logger - INFO
-..Order[38] {AfterFlush Event} id: 38, notes: test 1793844180982, customer_id: 41, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c5223d0  session: 0x10c4c1260  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,985 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c4c1040) (sqlalchemy before_flush)			 - 2026-11-04 18:03:00,988 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 38, product_id: 45, quantity: 5, amount: None, unit_price: None  row: 0x10c521e50  session: 0x10c4c1040  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,988 - logic_logger - INFO
-..Item[None] {Product Test Product 1793844180967 has 2 suppliers, requesting AI selection} id: None, order_id: 38, product_id: 45, quantity: 5, amount: None, unit_price: None  row: 0x10c521e50  session: 0x10c4c1040  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,989 - logic_logger - INFO
-....SysSupplierReq[None] {Insert - AI supplier selection request} id: None, item_id: None, product_id: 45, chosen_supplier_id: None, chosen_unit_price: None, request: None, reason: None, fallback_used: None, created_on: None  row: 0x10c6632f0  session: 0x10c4c1040  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:00,989 - logic_logger - INFO
-....SysSupplierReq[None] {Calling OpenAI with 2 candidates, world conditions: Suez Canal blocked - use alternate shipping routes} id: None, item_id: None, product_id: 45, chosen_supplier_id: None, chosen_unit_price: None, request: Select supplier for Test Product 1793844180967: Candidates=[Genuine Sheets of Cairo($7.0, Near East, 3days), Sheets for Less of NJ($9.0, New Jersey, 3days)], World=Suez Canal blocked - use alternate shipping routes, reason: None, fallback_used: None, created_on: 2026-11-04T18:03:00  row: 0x10c6632f0  session: 0x10c4c1040  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:01,206 - logic_logger - INFO
-....SysSupplierReq[None] {OpenAI response: {"chosen_supplier_id": 2, "chosen_unit_price": 9.0, "reason": "Despite the higher cost, Sheets for Less of NJ offers a similar lead time without being affected by the Suez Canal blockage, ensuring faster and more reliable delivery."}} id: None, item_id: None, product_id: 45, chosen_supplier_id: None, chosen_unit_price: None, request: Select supplier for Test Product 1793844180967: Candidates=[Genuine Sheets of Cairo($7.0, Near East, 3days), Sheets for Less of NJ($9.0, New Jersey, 3days)], World=Suez Canal blocked - use alternate shipping routes, reason: None, fallback_used: None, created_on: 2026-11-04T18:03:00  row: 0x10c6632f0  session: 0x10c4c1040  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,508 - logic_logger - INFO
-....SysSupplierReq[None] {Selected supplier 2 with price 9.0000000000} id: None, item_id: None, product_id: 45, chosen_supplier_id: 2, chosen_unit_price: 9.0000000000, request: Select supplier for Test Product 1793844180967: Candidates=[Genuine Sheets of Cairo($7.0, Near East, 3days), Sheets for Less of NJ($9.0, New Jersey, 3days)], World=Suez Canal blocked - use alternate shipping routes, reason: AI: Sheets for Less of NJ ($9.0000000000) - Despite the higher cost, Sheets for Less of NJ offers a similar lead time without being affected by the Suez Canal blockage, ensuring faster and more reliable delivery., fallback_used: False, created_on: 2026-11-04T18:03:00  row: 0x10c6632f0  session: 0x10c4c1040  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,509 - logic_logger - INFO
-..Item[None] {AI Request: Select supplier for Test Product 1793844180967: Candidates=[Genuine Sheets of Cairo($7.0, Near East, 3days), Sheets for Less of NJ($9.0, New Jersey, 3days)], World=Suez Canal blocked - use alternate shipping routes} id: None, order_id: 38, product_id: 45, quantity: 5, amount: None, unit_price: None  row: 0x10c521e50  session: 0x10c4c1040  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,509 - logic_logger - INFO
-..Item[None] {AI Results: supplier_id=2, price=9.0000000000, reason=AI: Sheets for Less of NJ ($9.0000000000) - Despite the higher cost, Sheets for Less of NJ offers a similar lead time without being affected by the Suez Canal blockage, ensuring faster and more reliable delivery.} id: None, order_id: 38, product_id: 45, quantity: 5, amount: None, unit_price: None  row: 0x10c521e50  session: 0x10c4c1040  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,509 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 38, product_id: 45, quantity: 5, amount: 45.0000000000, unit_price: 9.0000000000  row: 0x10c521e50  session: 0x10c4c1040  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,510 - logic_logger - INFO
-....Order[38] {Update - Adjusting order: amount_total} id: 38, notes: test 1793844180982, customer_id: 41, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 45.0000000000  row: 0x10c64ea50  session: 0x10c4c1040  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:03,510 - logic_logger - INFO
-......Customer[41] {Update - Adjusting customer: balance} id: 41, name: Test Customer 1793844180962, balance:  [0E-10-->] 45.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x113003dd0  session: 0x10c4c1040  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:03,513 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c4c1040)   										 - 2026-11-04 18:03:03,513 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c4c1040)   										 - 2026-11-04 18:03:03,518 - logic_logger - INFO
-....Order[38] {AfterFlush Event} id: 38, notes: test 1793844180982, customer_id: 41, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 45.0000000000  row: 0x10c64ea50  session: 0x10c4c1040  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:03,518 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: AI - product change ✅ (1.4 s)
-&emsp;  Scenario: AI - product change  
-&emsp;&emsp;    Given a customer with credit limit 1000  
-&emsp;&emsp;    And a product priced 10 with no suppliers  
-&emsp;&emsp;    And a second product priced 50 with suppliers costing 7 and 9  
-&emsp;&emsp;    And an order is created with 5 of the product  
-&emsp;&emsp;    When the item product is changed to the second product  
-&emsp;&emsp;    Then the AI chose one of the product suppliers and an audit row exists  
-
-<details markdown>
-<summary>Rules exercised and logic log (5 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: AI - product change
-```
-  Product  
-    1. Derive Product.count_suppliers as Count(ProductSupplier Where  - None)  
-  Customer  
-    2. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Order  
-    3. RowEvent Order.send_row_to_kafka()  
-    4. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-  Item  
-    5. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    6. RowEvent Item.set_item_unit_price_from_supplier()  
-  SysSupplierReq  
-    7. RowEvent SysSupplierReq.select_supplier_via_ai()  
-```
-**Logic Log** in Scenario: AI - product change (5 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10df118c0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:03,574 - logic_logger - INFO
-..ProductSupplier[None] {Insert - client} id: None, product_id: 47, supplier_id: 1, supplier_part_number: None, unit_cost: 7, lead_time_days: 3  row: 0x10dcb10d0  session: 0x10df118c0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,574 - logic_logger - INFO
-....Product[47] {Update - Adjusting product: count_suppliers} id: 47, name: Test Product 1793844183568, count_suppliers:  [0-->] 1, unit_price: 50.0000000000  row: 0x10df02cf0  session: 0x10df118c0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:03,575 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10df118c0)   										 - 2026-11-04 18:03:03,575 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10df118c0)   										 - 2026-11-04 18:03:03,575 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10df119d0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:03,579 - logic_logger - INFO
-..ProductSupplier[None] {Insert - client} id: None, product_id: 47, supplier_id: 2, supplier_part_number: None, unit_cost: 9, lead_time_days: 3  row: 0x10c403ad0  session: 0x10df119d0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,579 - logic_logger - INFO
-....Product[47] {Update - Adjusting product: count_suppliers} id: 47, name: Test Product 1793844183568, count_suppliers:  [1-->] 2, unit_price: 50.0000000000  row: 0x10df02e40  session: 0x10df119d0  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:03,580 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10df119d0)   										 - 2026-11-04 18:03:03,580 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10df119d0)   										 - 2026-11-04 18:03:03,581 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10df11ae0) (sqlalchemy before_flush)			 - 2026-11-04 18:03:03,584 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: test 1793844183583, customer_id: 42, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10c64fad0  session: 0x10df11ae0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,584 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test 1793844183583, customer_id: 42, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c64fad0  session: 0x10df11ae0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,584 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10df11ae0)   										 - 2026-11-04 18:03:03,585 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10df11ae0)   										 - 2026-11-04 18:03:03,585 - logic_logger - INFO
-..Order[39] {AfterFlush Event} id: 39, notes: test 1793844183583, customer_id: 42, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x10c64fad0  session: 0x10df11ae0  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,585 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10df11f20) (sqlalchemy before_flush)			 - 2026-11-04 18:03:03,589 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: 39, product_id: 46, quantity: 5, amount: None, unit_price: None  row: 0x10c4793d0  session: 0x10df11f20  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,589 - logic_logger - INFO
-..Item[None] {No suppliers for Test Product 1793844183563, using product unit_price} id: None, order_id: 39, product_id: 46, quantity: 5, amount: None, unit_price: None  row: 0x10c4793d0  session: 0x10df11f20  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,589 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: 39, product_id: 46, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10c4793d0  session: 0x10df11f20  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,589 - logic_logger - INFO
-....Order[39] {Update - Adjusting order: amount_total} id: 39, notes: test 1793844183583, customer_id: 42, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x113048550  session: 0x10df11f20  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:03,590 - logic_logger - INFO
-......Customer[42] {Update - Adjusting customer: balance} id: 42, name: Test Customer 1793844183556, balance:  [0E-10-->] 50.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x11304a2d0  session: 0x10df11f20  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:03,590 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10df11f20)   										 - 2026-11-04 18:03:03,590 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10df11f20)   										 - 2026-11-04 18:03:03,591 - logic_logger - INFO
-....Order[39] {AfterFlush Event} id: 39, notes: test 1793844183583, customer_id: 42, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 50.0000000000  row: 0x113048550  session: 0x10df11f20  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:03,591 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10df11e10) (sqlalchemy before_flush)			 - 2026-11-04 18:03:03,595 - logic_logger - INFO
-..Item[39] {Update - client} id: 39, order_id: 39, product_id:  [46-->] 47, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x113000350  session: 0x10df11e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:03,595 - logic_logger - INFO
-..Item[39] {Product Test Product 1793844183568 has 2 suppliers, requesting AI selection} id: 39, order_id: 39, product_id:  [46-->] 47, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x113000350  session: 0x10df11e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:03,596 - logic_logger - INFO
-....SysSupplierReq[None] {Insert - AI supplier selection request} id: None, item_id: None, product_id: 47, chosen_supplier_id: None, chosen_unit_price: None, request: None, reason: None, fallback_used: None, created_on: None  row: 0x10c662350  session: 0x10df11e10  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,596 - logic_logger - INFO
-....SysSupplierReq[None] {Calling OpenAI with 2 candidates, world conditions: Suez Canal blocked - use alternate shipping routes} id: None, item_id: None, product_id: 47, chosen_supplier_id: None, chosen_unit_price: None, request: Select supplier for Test Product 1793844183568: Candidates=[Genuine Sheets of Cairo($7.0, Near East, 3days), Sheets for Less of NJ($9.0, New Jersey, 3days)], World=Suez Canal blocked - use alternate shipping routes, reason: None, fallback_used: None, created_on: 2026-11-04T18:03:03  row: 0x10c662350  session: 0x10df11e10  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:03,597 - logic_logger - INFO
-....SysSupplierReq[None] {OpenAI response: {"chosen_supplier_id": 2, "chosen_unit_price": 9.0, "reason": "With the Suez Canal blocked, Genuine Sheets of Cairo may face delays due to alternate shipping routes, making Sheets for Less of NJ a more reliable choice for fastest delivery."}} id: None, item_id: None, product_id: 47, chosen_supplier_id: None, chosen_unit_price: None, request: Select supplier for Test Product 1793844183568: Candidates=[Genuine Sheets of Cairo($7.0, Near East, 3days), Sheets for Less of NJ($9.0, New Jersey, 3days)], World=Suez Canal blocked - use alternate shipping routes, reason: None, fallback_used: None, created_on: 2026-11-04T18:03:03  row: 0x10c662350  session: 0x10df11e10  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:04,914 - logic_logger - INFO
-....SysSupplierReq[None] {Selected supplier 2 with price 9.0000000000} id: None, item_id: None, product_id: 47, chosen_supplier_id: 2, chosen_unit_price: 9.0000000000, request: Select supplier for Test Product 1793844183568: Candidates=[Genuine Sheets of Cairo($7.0, Near East, 3days), Sheets for Less of NJ($9.0, New Jersey, 3days)], World=Suez Canal blocked - use alternate shipping routes, reason: AI: Sheets for Less of NJ ($9.0000000000) - With the Suez Canal blocked, Genuine Sheets of Cairo may face delays due to alternate shipping routes, making Sheets for Less of NJ a more reliable choice for fastest delivery., fallback_used: False, created_on: 2026-11-04T18:03:03  row: 0x10c662350  session: 0x10df11e10  ins_upd_dlt: ins, initial: ins - 2026-11-04 18:03:04,914 - logic_logger - INFO
-..Item[39] {AI Request: Select supplier for Test Product 1793844183568: Candidates=[Genuine Sheets of Cairo($7.0, Near East, 3days), Sheets for Less of NJ($9.0, New Jersey, 3days)], World=Suez Canal blocked - use alternate shipping routes} id: 39, order_id: 39, product_id:  [46-->] 47, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x113000350  session: 0x10df11e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:04,915 - logic_logger - INFO
-..Item[39] {AI Results: supplier_id=2, price=9.0000000000, reason=AI: Sheets for Less of NJ ($9.0000000000) - With the Suez Canal blocked, Genuine Sheets of Cairo may face delays due to alternate shipping routes, making Sheets for Less of NJ a more reliable choice for fastest delivery.} id: 39, order_id: 39, product_id:  [46-->] 47, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x113000350  session: 0x10df11e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:04,915 - logic_logger - INFO
-..Item[39] {Formula amount} id: 39, order_id: 39, product_id:  [46-->] 47, quantity: 5, amount:  [50.0000000000-->] 45.0000000000, unit_price:  [10.0000000000-->] 9.0000000000  row: 0x113000350  session: 0x10df11e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:04,915 - logic_logger - INFO
-....Order[39] {Update - Adjusting order: amount_total} id: 39, notes: test 1793844183583, customer_id: 42, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 45.0000000000  row: 0x11304b650  session: 0x10df11e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:04,917 - logic_logger - INFO
-......Customer[42] {Update - Adjusting customer: balance} id: 42, name: Test Customer 1793844183556, balance:  [50.0000000000-->] 45.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x11304bd50  session: 0x10df11e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:04,918 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10df11e10)   										 - 2026-11-04 18:03:04,918 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10df11e10)   										 - 2026-11-04 18:03:04,922 - logic_logger - INFO
-....Order[39] {AfterFlush Event} id: 39, notes: test 1793844183583, customer_id: 42, CreatedOn: None, date_shipped: None, amount_total:  [50.0000000000-->] 45.0000000000  row: 0x11304b650  session: 0x10df11e10  ins_upd_dlt: upd, initial: upd - 2026-11-04 18:03:04,922 - logic_logger - INFO
-
-```
-</details>
-
+#### Scenario: Supplier Count Adjusts ✅ (0.02 s)
+&emsp;  Scenario: Supplier Count Adjusts  
+&emsp;&emsp;    Given a new product with no suppliers  
+&emsp;&emsp;    When a supplier is added to the new product  
+&emsp;&emsp;    Then the product count_suppliers is 1  
+&emsp;&emsp;    And when the product supplier is deleted the product count_suppliers is 0  
+
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 &nbsp;&nbsp;  
-/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_ai_rules_supplier/test/api_logic_server_behave/behave_run.py completed at November 04, 2026 18:03:04  
-Behave run time: 4.711 s  
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_ai_rules_supplier/test/api_logic_server_behave/behave_run.py completed at November 10, 2026 17:42:05  
+Behave run time: 15.572 s  
 
 
 &nbsp;
@@ -1721,12 +712,12 @@ Behave run time: 4.711 s
 
 | | |
 |---|---|
-| Generated | November 04, 2026 18:12 |
+| Generated | November 10, 2026 17:42 |
 | Generator | `requirements_traceability_report.py` 2.15 |
 | Report text from | reports/Requirements Traceability Report Template.md (sha256 a19673a13fa0) |
-| Tests last ran | November 04, 2026 18:03 |
-| Project | basic_demo_ai_rules-supplier |
-| Project created | November 04, 2026 17:39:57 |
+| Tests last ran | November 10, 2026 17:42 |
+| Project | demo_ai_rules_supplier |
+| Project created | November 10, 2026 17:33:44 |
 | Requirement files read | `docs/requirements/app_integration/requirements.md` (sha256 f1ca8662)<br>`docs/requirements/check_credit/requirements.md` (sha256 965d672e)<br>`docs/requirements/demo_ai_rules_supplier/requirements.md` (sha256 f3a7037e) |
 | Regenerate | `python requirements_traceability_report.py run`, from `test/api_logic_server_behave` |
 

@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Wndows Run Behave" type="PythonConfigurationType" factoryName="Python">
-    <module name="basic_demo_ai_rules-supplier" />
+    <module name="demo_ai_rules_supplier" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
