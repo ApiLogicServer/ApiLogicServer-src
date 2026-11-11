@@ -388,7 +388,7 @@ from logic_bank.logic_bank import Rule
 from database import models
 from decimal import Decimal
 import os
-from integration.ai.llm_client import chat_json, LLMError, LLMNotAvailable  # vendor-neutral LLM call; no SDK import
+from integration.ai.llm_client import chat_json, describe, LLMError, LLMNotAvailable  # vendor-neutral LLM call; no SDK import
 
 def declare_logic():
     """
@@ -490,7 +490,7 @@ Respond with ONLY a valid JSON object in this exact format (no markdown, no code
 }}
 """
     try:
-        logic_row.log(f"Calling LLM with {len(candidate_data)} candidates, world conditions: {world_conditions}")
+        logic_row.log(f"Calling LLM ({describe()}) with {len(candidate_data)} candidates, world conditions: {world_conditions}")
         ai_result = chat_json(system="You are a supply chain expert. Respond with valid JSON only.",
                               user=prompt, temperature=0.7)
         logic_row.log(f"LLM response: {ai_result}")
@@ -820,7 +820,7 @@ process and calls whatever endpoint the environment configures. It speaks the Op
 so OpenAI, Claude, Gemini, Ollama and others are a configuration choice, not a code change.
 
 ```python
-from integration.ai.llm_client import chat_json, LLMError, LLMNotAvailable
+from integration.ai.llm_client import chat_json, describe, LLMError, LLMNotAvailable
 
 try:
     result = chat_json(system="You are a supply chain expert. Respond with valid JSON only.",
@@ -832,6 +832,7 @@ except LLMError as e:
 ```
 
 Rules:
+- **Log which model answered.** `describe()` returns e.g. `claude-sonnet-5-5 @ api.anthropic.com` (never the key); put it in the "Calling LLM" log line, as in the template, so a log shows which provider served the call.
 - **Fallback is mandatory.** Catch `LLMNotAvailable` and `LLMError`; set `fallback_used = True` and say why in `reason`.
 - **Validate the answer.** The model can return an id that is not a candidate; check it before using it.
 - **Say "JSON" in the prompt.** Some endpoints reject JSON mode unless the word appears; the client retries without it, but prompt for JSON anyway.
