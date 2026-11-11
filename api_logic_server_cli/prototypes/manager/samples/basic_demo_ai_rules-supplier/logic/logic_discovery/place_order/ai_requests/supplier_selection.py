@@ -11,7 +11,7 @@ from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
 
 from database import models
-from integration.ai.llm_client import chat_json, LLMError, LLMNotAvailable
+from integration.ai.llm_client import chat_json, describe, LLMError, LLMNotAvailable
 
 
 def declare_logic():
@@ -76,7 +76,7 @@ Respond with ONLY a valid JSON object in this exact format (no markdown, no code
     ai_result = None
     fallback_cause = None
     try:
-        logic_row.log(f"Calling LLM with {len(candidate_data)} candidates, world conditions: {world_conditions}")
+        logic_row.log(f"Calling LLM ({describe()}) with {len(candidate_data)} candidates, world conditions: {world_conditions}")
         ai_result = chat_json(system="You are a supply chain expert. Respond with valid JSON only.",
                               user=prompt, temperature=0.7)
         logic_row.log(f"LLM response: {ai_result}")

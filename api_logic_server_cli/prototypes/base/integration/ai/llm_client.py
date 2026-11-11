@@ -50,6 +50,7 @@ import json
 import logging
 import os
 import urllib.error
+import urllib.parse
 import urllib.request
 
 log = logging.getLogger(__name__)
@@ -61,6 +62,7 @@ DEFAULT_TIMEOUT = 30.0
 PROBE_TIMEOUT = 0.5
 
 _probe_cache: dict = {}    # base_url -> bool, one probe per process
+_rejected_params: dict = {}   # (base_url, model) -> params the endpoint rejected with HTTP 400; not sent again
 
 
 class LLMError(Exception):
@@ -130,6 +132,17 @@ def _resolve() -> tuple:
     return base_url.rstrip("/"), model, api_key
 
 
+def describe() -> str:
+    """Which model at which endpoint a call would use, for logs and audit text, e.g. 'claude-sonnet-5-5 @ api.anthropic.com'.
+
+    Never includes the API key or the URL path/query.  Returns 'no LLM configured' when nothing is configured."""
+    try:
+        base_url, model, _key = _resolve()
+    except LLMError:
+        return "no LLM configured"
+    return f"{model} @ {urllib.parse.urlparse(base_url).netloc or base_url}"
+
+
 def _post(url: str, body: dict, api_key: str, timeout: float) -> dict:
     headers = {"Content-Type": "application/json"}
     if api_key:
@@ -143,19 +156,25 @@ def chat_text(system: str, user: str, temperature: float = 0.0, json_mode: bool 
     """Ask the model; returns the reply text.  Raises LLMError (or LLMNotAvailable)."""
     base_url, model, api_key = _resolve()
     timeout = float(_env("APILOGICSERVER_LLM_TIMEOUT", default=str(DEFAULT_TIMEOUT)))
+    dropped = _rejected_params.get((base_url, model), set())
     body = {"model": model,
-            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
-            "temperature": temperature}
-    if json_mode:
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}
+    if temperature and "temperature" not in dropped:     # some models (e.g. claude-sonnet-5-5) reject `temperature`
+        body["temperature"] = temperature
+    if json_mode and "response_format" not in dropped:
         body["response_format"] = {"type": "json_object"}
     url = base_url + "/chat/completions"
+    log.info("LLM call: %s", describe())
     try:
         try:
             reply = _post(url, body, api_key, timeout)
         except urllib.error.HTTPError as e:
-            if json_mode and e.code == 400:      # endpoint may not support response_format: retry without
-                body.pop("response_format")
+            optional = [p for p in ("response_format", "temperature") if p in body]
+            if e.code == 400 and optional:       # an optional parameter may be unsupported: retry once without them
+                for p in optional:
+                    body.pop(p)
                 reply = _post(url, body, api_key, timeout)
+                _rejected_params[(base_url, model)] = dropped | set(optional)   # only remembered if the retry worked
             else:
                 raise
         return (reply["choices"][0]["message"]["content"] or "").strip()

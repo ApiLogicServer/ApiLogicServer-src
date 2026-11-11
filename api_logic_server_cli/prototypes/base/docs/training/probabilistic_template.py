@@ -19,7 +19,7 @@ in generated files (supplier_selection.py, check_credit.py) with:
 """
 
 import database.models as models
-from integration.ai.llm_client import chat_json, LLMError, LLMNotAvailable  # vendor-neutral LLM call; no SDK import
+from integration.ai.llm_client import chat_json, describe, LLMError, LLMNotAvailable  # vendor-neutral LLM call; no SDK import
 
 def declare_logic():
     from logic_bank.logic_bank import Rule
@@ -201,7 +201,7 @@ Respond with ONLY a valid JSON object in this exact format (no markdown, no code
 }}
 """
     try:
-        logic_row.log(f"Calling LLM with {len(candidate_data)} candidates, world conditions: {world_conditions}")
+        logic_row.log(f"Calling LLM ({describe()}) with {len(candidate_data)} candidates, world conditions: {world_conditions}")
         ai_result = chat_json(system="You are a supply chain expert. Respond with valid JSON only.",
                               user=prompt, temperature=0.7)
         logic_row.log(f"LLM response: {ai_result}")

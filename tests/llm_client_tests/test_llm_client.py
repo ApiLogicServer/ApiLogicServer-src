@@ -25,6 +25,7 @@ class Stub(BaseHTTPRequestHandler):
     reply_text = '{"chosen_supplier_id": 2, "reason": "fast"}'
     status = 200
     reject_response_format = False
+    reject_temperature = False
     seen = []
 
     def log_message(self, *a):  # quiet
@@ -36,6 +37,8 @@ class Stub(BaseHTTPRequestHandler):
     def do_POST(self):
         body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
         Stub.seen.append({"path": self.path, "auth": self.headers.get("Authorization"), "body": body})
+        if Stub.reject_temperature and "temperature" in body:
+            self.send_response(400); self.end_headers(); return
         if Stub.reject_response_format and "response_format" in body:
             self.send_response(400); self.end_headers(); return
         if Stub.status != 200:
@@ -62,8 +65,10 @@ class TestLLMClient(unittest.TestCase):
         Stub.reply_text = '{"chosen_supplier_id": 2, "reason": "fast"}'
         Stub.status = 200
         Stub.reject_response_format = False
+        Stub.reject_temperature = False
         Stub.seen = []
         llm._probe_cache.clear()
+        llm._rejected_params.clear()
         llm.OLLAMA_BASE_URL = "http://127.0.0.1:9/v1"   # nothing listens: no accidental real Ollama
 
     def configure(self, **extra):
@@ -105,6 +110,37 @@ class TestLLMClient(unittest.TestCase):
         self.assertEqual(llm.chat_json("s", "u")["reason"], "fast")
         self.assertEqual(len(Stub.seen), 2)
         self.assertNotIn("response_format", Stub.seen[1]["body"])
+
+    def test_temperature_rejected_is_dropped_and_remembered(self):
+        self.configure()
+        Stub.reject_temperature = True
+        self.assertEqual(llm.chat_json("s", "u", temperature=0.7)["reason"], "fast")
+        self.assertEqual(len(Stub.seen), 2)                      # first rejected, retry worked
+        self.assertNotIn("temperature", Stub.seen[1]["body"])
+        Stub.seen.clear()
+        llm.chat_json("s", "u", temperature=0.7)
+        self.assertEqual(len(Stub.seen), 1)                      # remembered: one request, no temperature
+        self.assertNotIn("temperature", Stub.seen[0]["body"])
+
+    def test_failed_retry_is_not_remembered(self):
+        self.configure()
+        Stub.status = 400                                        # everything is rejected, not just the parameters
+        with self.assertRaises(llm.LLMError):
+            llm.chat_json("s", "u", temperature=0.7)
+        Stub.status = 200
+        Stub.seen.clear()
+        llm.chat_json("s", "u", temperature=0.7)
+        self.assertEqual(Stub.seen[0]["body"]["temperature"], 0.7)   # temperature still sent: nothing was cached
+
+    def test_describe_shows_model_and_host_but_never_the_key(self):
+        self.configure(APILOGICSERVER_LLM_API_KEY="sk-secret")
+        text = llm.describe()
+        self.assertIn("test-model @ 127.0.0.1:", text)
+        self.assertNotIn("sk-secret", text)
+        self.assertNotIn("/v1", text)
+
+    def test_describe_when_nothing_configured(self):
+        self.assertEqual(llm.describe(), "no LLM configured")
 
     def test_http_error_raises(self):
         self.configure()
