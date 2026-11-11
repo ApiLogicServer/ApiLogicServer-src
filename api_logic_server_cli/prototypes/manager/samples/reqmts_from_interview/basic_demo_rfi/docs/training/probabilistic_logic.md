@@ -3,8 +3,8 @@ title: LogicBank Probabilistic Rules API (AI Value Computation)
 description: Training document for translating natural language into probabilistic value computation rules
 source: Generic training for ApiLogicServer projects with probabilistic rules
 usage: AI assistants read this to generate probabilistic + deterministic rules implementations
-version: 3.2
-date: November 4, 2026
+version: 3.3
+date: November 10, 2026
 prerequisites:
   - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery)
   - docs/training/logic_bank_patterns.md (event signatures, logging, request pattern)
@@ -188,7 +188,7 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
         row.reason = f"TEST MODE: Selected {selected_supplier.supplier.name} (${selected_supplier.unit_cost}) - world: {world}"
     
     # AI CALL case
-    elif api_key:
+    elif ai_result is not None:  # llm_client answered
         # Populate BEFORE calling AI
         row.request = f"AI Prompt: Product={product.name}, World={world_conditions}, Candidates={len(candidate_data)}: {candidate_summary}"
         
@@ -198,9 +198,9 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
     
     # FALLBACK case
     else:
-        row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}] - NO API KEY"
+        row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}] - NO LLM CONFIGURED"
         fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
-        row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - minimum cost (no API key)"
+        row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - minimum cost (no LLM configured)"
 ```
 
 **Key Points:**
@@ -388,6 +388,7 @@ from logic_bank.logic_bank import Rule
 from database import models
 from decimal import Decimal
 import os
+from integration.ai.llm_client import chat_json, describe, LLMError, LLMNotAvailable  # vendor-neutral LLM call; no SDK import
 
 def declare_logic():
     """
@@ -408,7 +409,7 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
     Strategy:
     1. Load test context for INPUT conditions (world conditions like "Suez Canal blocked")
     2. Always try AI with those conditions
-    3. If no API key or API fails, use fallback (min cost)
+    3. If no LLM is configured (LLMNotAvailable) or the call fails (LLMError), use fallback (min cost)
     """
     if not logic_row.is_inserted():
         return
@@ -441,34 +442,37 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
     
     selected_supplier = None
     
-    # Try AI (check for API key)
-    if True:  # Always try AI unless no key
-        api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
-        if api_key:
-            try:
-                # Call OpenAI API with structured prompt
-                from openai import OpenAI
-                import json
-                
-                client = OpenAI(api_key=api_key)
-                
-                # Build candidate data for prompt - include ALL supplier fields for AI decision
-                candidate_data = []
-                for supplier in suppliers:
-                    supplier_obj = supplier.supplier
-                    candidate_data.append({
-                        'supplier_id': supplier.supplier_id,
-                        'supplier_name': supplier_obj.name if supplier_obj else 'Unknown',
-                        'supplier_region': supplier_obj.region if supplier_obj else None,
-                        'supplier_contact': supplier_obj.contact_name if supplier_obj else None,
-                        'supplier_phone': supplier_obj.phone if supplier_obj else None,
-                        'supplier_email': supplier_obj.email if supplier_obj else None,
-                        'unit_cost': float(supplier.unit_cost) if supplier.unit_cost else 0.0,
-                        'lead_time_days': supplier.lead_time_days if hasattr(supplier, 'lead_time_days') else None,
-                        'supplier_part_number': supplier.supplier_part_number if hasattr(supplier, 'supplier_part_number') else None
-                    })
-                
-                prompt = f"""
+    # Ask the LLM via llm_client (vendor-neutral: OpenAI, Claude, Gemini, Ollama... chosen by environment
+    # variables, see "LLM calls" in docs/training/probabilistic_logic.md).  If no LLM is configured
+    # (LLMNotAvailable) or the call fails (LLMError), use the deterministic fallback (minimum cost).
+    selected_supplier = None
+    ai_result = None
+    fallback_cause = None
+
+    # Build candidate data for prompt - include ALL supplier fields for the AI decision
+    candidate_data = []
+    for supplier in suppliers:
+        supplier_obj = supplier.supplier
+        candidate_data.append({
+            'supplier_id': supplier.supplier_id,
+            'supplier_name': supplier_obj.name if supplier_obj else 'Unknown',
+            'supplier_region': supplier_obj.region if supplier_obj else None,
+            'supplier_contact': supplier_obj.contact_name if supplier_obj else None,
+            'supplier_phone': supplier_obj.phone if supplier_obj else None,
+            'supplier_email': supplier_obj.email if supplier_obj else None,
+            'unit_cost': float(supplier.unit_cost) if supplier.unit_cost else 0.0,
+            'lead_time_days': supplier.lead_time_days if hasattr(supplier, 'lead_time_days') else None,
+            'supplier_part_number': supplier.supplier_part_number if hasattr(supplier, 'supplier_part_number') else None
+        })
+
+    # Populate request field with the prompt summary including key fields (the audit trail)
+    candidate_summary = ', '.join([
+        f"{c['supplier_name']}(${c['unit_cost']}, {c['supplier_region'] or 'unknown region'}, {c['lead_time_days'] or '?'}days)"
+        for c in candidate_data
+    ])
+    row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}], World={world_conditions}"
+
+    prompt = f"""
 You are a supply chain optimization expert. Select the best supplier from the candidates below.
 
 World Conditions: {world_conditions}
@@ -478,72 +482,43 @@ Optimization Goal: fastest reliable delivery while keeping costs reasonable
 Candidates:
 {yaml.dump(candidate_data, default_flow_style=False)}
 
-Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
+Respond with ONLY a valid JSON object in this exact format (no markdown, no code blocks):
 {{
     "chosen_supplier_id": <id>,
     "chosen_unit_price": <price>,
     "reason": "<brief explanation>"
 }}
 """
-                
-                # Populate request field with actual prompt summary including key fields
-                candidate_summary = ', '.join([
-                    f"{c['supplier_name']}(${c['unit_cost']}, {c['supplier_region'] or 'unknown region'}, {c['lead_time_days'] or '?'}days)" 
-                    for c in candidate_data
-                ])
-                row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}], World={world_conditions}"
-                
-                logic_row.log(f"Calling OpenAI API with {len(candidate_data)} candidates, world conditions: {world_conditions}")
-                
-                response = client.chat.completions.create(
-                    model="gpt-4o-2024-08-06",
-                    messages=[
-                        {"role": "system", "content": "You are a supply chain expert. Respond with valid JSON only."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    temperature=0.7
-                )
-                
-                response_text = (response.choices[0].message.content or "").strip()
-                # GPT-4o sometimes wraps JSON in ```json ... ``` despite instructions — strip fences
-                if response_text.startswith('```'):
-                    lines = response_text.split('\n')
-                    response_text = '\n'.join(lines[1:-1]).strip()
-                logic_row.log(f"OpenAI response: {response_text}")
+    try:
+        logic_row.log(f"Calling LLM ({describe()}) with {len(candidate_data)} candidates, world conditions: {world_conditions}")
+        ai_result = chat_json(system="You are a supply chain expert. Respond with valid JSON only.",
+                              user=prompt, temperature=0.7)
+        logic_row.log(f"LLM response: {ai_result}")
+    except LLMNotAvailable:
+        fallback_cause = "no LLM configured"
+    except LLMError as e:
+        fallback_cause = f"LLM error: {str(e)[:100]}"
 
-                ai_result = json.loads(response_text)
-                
-                # Find the selected supplier
-                selected_supplier = next((s for s in suppliers if s.supplier_id == ai_result['chosen_supplier_id']), None)
-                if selected_supplier:
-                    supplier_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
-                    row.reason = f"Selected {supplier_name} (${selected_supplier.unit_cost}) - {ai_result.get('reason', 'No reason provided')}"
-                    row.fallback_used = False
-                else:
-                    logic_row.log(f"AI selected invalid supplier_id {ai_result['chosen_supplier_id']}, using fallback")
-                    selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
-                    fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
-                    row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - AI returned invalid supplier"
-                    row.fallback_used = True
-                    
-            except Exception as e:
-                logic_row.log(f"OpenAI API error: {e}, using fallback")
-                selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
-                fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
-                candidate_summary = ', '.join([f"{s.supplier.name if s.supplier else 'Unknown'}(${s.unit_cost})" for s in suppliers])
-                row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}] - API ERROR"
-                row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - API error: {str(e)[:100]}"
-                row.fallback_used = True
+    if ai_result is not None:  # validate the answer: the model may return an id that is not a candidate
+        try:
+            chosen_id = int(ai_result['chosen_supplier_id'])
+        except (KeyError, TypeError, ValueError):
+            chosen_id = None
+        selected_supplier = next((s for s in suppliers if s.supplier_id == chosen_id), None)
+        if selected_supplier:
+            supplier_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+            row.reason = f"AI: {supplier_name} (${selected_supplier.unit_cost}) - {ai_result.get('reason', 'No reason provided')}"
+            row.fallback_used = False
         else:
-            # No API key - use fallback strategy (min cost)
-            logic_row.log("No API key, using fallback: minimum cost")
-            selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
-            fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
-            candidate_summary = ', '.join([f"{s.supplier.name if s.supplier else 'Unknown'}(${s.unit_cost})" for s in suppliers])
-            row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}] - NO API KEY"
-            row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - minimum cost (no API key)"
-            row.fallback_used = True
-    
+            fallback_cause = "AI returned an invalid supplier"
+
+    if selected_supplier is None:  # deterministic fallback: minimum cost
+        logic_row.log(f"Using fallback (minimum cost): {fallback_cause}")
+        selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
+        fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+        row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - minimum cost ({fallback_cause})"
+        row.fallback_used = True
+
     # Populate AI results
     if selected_supplier:
         row.chosen_supplier_id = int(selected_supplier.supplier_id)  # Must be int for SQLite FK
@@ -606,13 +581,13 @@ def get_supplier_selection_from_ai(product_id: int, item: models.Item, logic_row
 - Example: `world_conditions: "Suez Canal blocked, use alternate shipping routes"`
 
 **AI Strategy:**
-- Always try AI if API key exists
+- Always try the LLM (llm_client) unless test context applies; fall back on LLMNotAvailable or LLMError
 - Pass world_conditions from test context to AI prompt
 - AI makes decision based on those conditions
 
 **Fallback Strategy:**
 - When no suppliers: Set `fallback_used = True`, return early
-- When no API key: Use min cost fallback
+- When no LLM is configured, or the call fails: Use min cost fallback
 - When API call fails: Use min cost fallback
 
 **Type Handling:**
@@ -733,20 +708,21 @@ supplier_req_logic_row.insert(reason="AI supplier selection")
 **Why it fails**: No automatic propagation between tables
 **Fix**: Explicitly copy: `item_row.unit_price = supplier_req.chosen_unit_price`
 
-**FAILURE #6: Test Context Checked After API Key**
+**FAILURE #6: Test Context Checked After the LLM Call**
 ```python
-# ❌ WRONG - API key checked first
-api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
-if not api_key:
-    # Apply fallback - tests never reach test context!
+# ❌ WRONG - the LLM (or its fallback) decides first; test context never gets a say
+try:
+    ai_result = chat_json(system, prompt)
+except LLMNotAvailable:
+    ...  # fallback - tests never reach test context!
     return
 
 test_context = _load_test_context(logic_row)  # Never reached in tests
 ```
-**What happens**: Tests use fallback logic instead of test context
+**What happens**: Tests use fallback logic (or a live model) instead of test context
 **Error**: Non-deterministic tests, "fallback_used" flag set incorrectly
-**Why it fails**: Test context should override API key check
-**Fix**: Check test context FIRST, then API key
+**Why it fails**: Test context should override the LLM call
+**Fix**: Check test context FIRST, then call llm_client
 
 ✅ **CORRECT ORDER** (test context first):
 ```python
@@ -756,14 +732,15 @@ if test_context and 'selected_supplier_id' in test_context:
     # Use test context
     return
 
-# Then check API key
-api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
-if not api_key:
+# Then ask the LLM; LLMNotAvailable / LLMError -> deterministic fallback
+try:
+    ai_result = chat_json(system, prompt)
+except LLMError:
     # Apply fallback
     return
 ```
 
-Why: Tests should run consistently without requiring OpenAI API key. Test context is explicitly provided configuration that should override API calls.
+Why: Tests should run consistently without requiring an LLM endpoint or API key. Test context is explicitly provided configuration that should override LLM calls.
 
 **FAILURE #7: Link the Request Row to the Triggering Row by Id**
 ```python
@@ -835,27 +812,41 @@ class Item(Base):  # Has FK from SysSupplierReq.item_id
 # ✅ DO NOT add relationship to ProductSupplier (no FK exists)
 ```
 
-### OpenAI API (v1.0.0+)
+### LLM calls: always use `integration/ai/llm_client.py`
 
-**CRITICAL: Use modern OpenAI API**
+**CRITICAL: never import `openai`, `anthropic` or any other vendor SDK in a handler.** Every project already has
+`integration/ai/llm_client.py`: a small client (urllib only, no SDK, no new dependency) that runs inside your
+process and calls whatever endpoint the environment configures. It speaks the OpenAI-compatible chat protocol,
+so OpenAI, Claude, Gemini, Ollama and others are a configuration choice, not a code change.
 
-❌ OLD API (deprecated, will fail):
 ```python
-import openai
-openai.api_key = api_key
-response = openai.ChatCompletion.create(...)  # ❌ Not supported in openai>=1.0.0
+from integration.ai.llm_client import chat_json, describe, LLMError, LLMNotAvailable
+
+try:
+    result = chat_json(system="You are a supply chain expert. Respond with valid JSON only.",
+                       user=prompt, temperature=0.7)     # -> dict
+except LLMNotAvailable:
+    ...   # nothing configured: use the deterministic fallback
+except LLMError as e:
+    ...   # call failed or reply was not JSON: use the fallback, record str(e)[:100] in the audit row
 ```
 
-✅ NEW API (correct pattern):
-```python
-from openai import OpenAI
-
-client = OpenAI(api_key=api_key)
-response = client.chat.completions.create(
-    model="gpt-4o-2024-08-06",
-    messages=[...]
-)
-```
+Rules:
+- **Log which model answered.** `describe()` returns e.g. `claude-sonnet-5-5 @ api.anthropic.com` (never the key); put it in the "Calling LLM" log line, as in the template, so a log shows which provider served the call.
+- **Fallback is mandatory.** Catch `LLMNotAvailable` and `LLMError`; set `fallback_used = True` and say why in `reason`.
+- **Validate the answer.** The model can return an id that is not a candidate; check it before using it.
+- **Say "JSON" in the prompt.** Some endpoints reject JSON mode unless the word appears; the client retries without it, but prompt for JSON anyway.
+- **Configuration is by environment variables** (the client's docstring is the reference):
+  `APILOGICSERVER_LLM_BASE_URL`, `APILOGICSERVER_LLM_MODEL`, `APILOGICSERVER_LLM_API_KEY`
+  (the old `APILOGICSERVER_CHATGPT_APIKEY` is still accepted). With none set, the client uses OpenAI if an
+  API key exists, else looks for a local Ollama, else raises `LLMNotAvailable`.
+- **Provider examples** (verify before relying on them: Claude and Gemini go through those vendors'
+  OpenAI-compatibility endpoints, not yet run with real keys):
+  Ollama `http://localhost:11434/v1`; OpenAI `https://api.openai.com/v1`; Claude `https://api.anthropic.com/v1/`;
+  Gemini `https://generativelanguage.googleapis.com/v1beta/openai/`. Azure OpenAI and Vertex AI are not supported yet.
+- **Existing handlers** that import `openai` directly keep working while `openai` is installed (the `ai-rules`
+  extra). To move one to the client, see "Migrate AI rules to the LLM client" in the project's
+  `.github/copilot-instructions.md`.
 
 ### Common Pitfalls
 

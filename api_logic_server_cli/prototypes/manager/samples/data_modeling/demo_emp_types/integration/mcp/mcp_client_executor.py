@@ -1,7 +1,7 @@
 """ 
 A basic MCP Client Executor: takes a natural language query and:
 1. Discovers MCP servers (from mcp_server_discovery.json)
-2. Queries OpenAI's GPT-4 model to obtain the tool context, based on a provided schema and a natural language query
+2. Queries an LLM (integration/ai/llm_client.py: OpenAI, Claude, Gemini, Ollama... by environment variables) to obtain the tool context, based on a provided schema and a natural language query
 3. Processes the tool context (calls the indicated MCP (als) endpoints)
 
 To run:
@@ -21,7 +21,7 @@ See: https://apilogicserver.github.io/Docs/Integration-MCP/
 ################
 
 create_tool_context_from_llm = False
-''' set to False to bypass LLM call and OpenAI API Key requirement. '''
+''' set to False to bypass the LLM call (no LLM endpoint or API key needed). '''
 
 import os, logging, logging.config, sys
 from pathlib import Path
@@ -34,15 +34,7 @@ sys.path.append(str(project_path))  # add project root to sys.path
 
 import re
 import json
-try:
-    from openai import OpenAIError
-    import openai
-    openai.api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")  # Set your OpenAI API key
-except ImportError:
-    # openai is an optional dependency (pip install apilogicserver[ai-rules]) - not present
-    # in a stock install. Only raises if this file's actual OpenAI call paths are exercised.
-    OpenAIError = Exception
-    openai = None
+from integration.ai.llm_client import chat_text, LLMError  # vendor-neutral; no SDK
 import requests
 from flask import Flask, request, has_request_context
 
@@ -142,13 +134,8 @@ def query_llm_with_nl(learnings_and_schema: str, nl_query: str):
     # log.debug(schema_print)
 
     if create_tool_context_from_llm:  # takes 2-3 seconds...
-        response = openai.chat.completions.create(
-            model="gpt-4",
-            messages=messages,
-            temperature=0.2
-        )
-        tool_context_str = response.choices[0].message.content
-    else:  # this is so folks can try mcp without an OpenAI API key
+        tool_context_str = chat_text(system=messages[0]["content"], user=messages[1]["content"], temperature=0.2)
+    else:  # this is so folks can try mcp without an LLM endpoint or API key
         # read integration/mcp/mcp_tool_context.json
         tool_context_file_path = os.path.join(os.path.dirname(__file__), "../../integration/mcp/examples/mcp_tool_context_response_get.json")
         if 'email' in nl_query:
@@ -356,15 +343,11 @@ Step Result: {json.dumps(context[-1], indent=2)}
 Based on this, generate the next tool_context step(s) as a JSON list.
 """
         try:
-            import openai
-            response = openai.chat.completions.create(
-                model="gpt-4",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.0
-            )
-            return json.loads(response.choices[0].message.content)
-        except OpenAIError as e:
-            log.info(f"OpenAI error: {e}")
+            reply = chat_text(system="Return only the JSON list of tool_context steps, no other text.",
+                              user=prompt, temperature=0.0)
+            return json.loads(reply)
+        except LLMError as e:
+            log.info(f"LLM error: {e}")
             return []
         except Exception as e:
             log.info(f"Failed LLM call: {e}")

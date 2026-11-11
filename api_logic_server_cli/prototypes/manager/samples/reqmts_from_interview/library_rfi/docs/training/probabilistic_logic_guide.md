@@ -151,7 +151,7 @@ def supplier_id_from_ai(row: models.SysSupplierReq, old_row, logic_row):
     suppliers = row.product.ProductSupplierList
     
     # AI computation (or fallback)
-    if not has_api_key():
+    if not llm_available():   # i.e. chat_json raised LLMNotAvailable / LLMError (integration/ai/llm_client.py)
         min_supplier = min(suppliers, key=lambda s: s.unit_cost)
     else:
         # Load test context for INPUT conditions (world_conditions)
@@ -453,7 +453,7 @@ world_conditions: "Suez Canal blocked, alternate routes required"
 **Testing Strategy:**
 - **Normal conditions:** AI should optimize for cost
 - **Disrupted conditions:** AI should prioritize reliability/alternate routes
-- **No API key:** System uses fallback (min cost)
+- **No LLM configured (or the call fails):** System uses fallback (min cost)
 
 **Key Insight:** Test context lets you verify AI adapts to different scenarios WITHOUT mocking the AI itself.
 
