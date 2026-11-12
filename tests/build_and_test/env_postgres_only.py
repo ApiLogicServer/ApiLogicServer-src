@@ -20,7 +20,6 @@ class Config:
     do_test_api_logic_project_with_auth = True  # run the behave tests (test logic, api)
     
     # SKIP non-PostgreSQL tests
-    do_test_genai = False                   # skip genai tests
     do_test_multi_reln = False              # skip multi-relation tests
     do_create_shipping = False              # skip shipping tests
     do_run_shipping = False                 # skip shipping tests
