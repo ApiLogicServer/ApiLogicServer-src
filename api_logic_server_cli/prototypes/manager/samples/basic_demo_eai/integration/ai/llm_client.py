@@ -122,7 +122,9 @@ def _resolve() -> tuple:
     model = _env("APILOGICSERVER_LLM_MODEL")
     api_key = _env("APILOGICSERVER_LLM_API_KEY", "APILOGICSERVER_CHATGPT_APIKEY")
 
-    if base_url and "openai.azure.com" in base_url:
+    # compare the host, not a substring of the URL (also what CodeQL's URL-substring check expects)
+    azure_host = (urllib.parse.urlparse(base_url).hostname or "") if base_url else ""
+    if azure_host == "openai.azure.com" or azure_host.endswith(".openai.azure.com"):
         raise LLMError(_azure_notes)
 
     if not base_url:
