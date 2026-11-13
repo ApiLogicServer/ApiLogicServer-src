@@ -1,5 +1,5 @@
 from pathlib import Path
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from urllib.parse import quote
 import datetime
 import html
@@ -41,6 +41,21 @@ Tips
 * for tab: & emsp;
 
 Changelog:
+  2.15 - A helper is traced to the requirement that uses it. A logic file that a requirement's implementing file imports
+        (check_credit.py importing place_order/ai_requests/supplier_selection.py) belongs to that requirement: it appears under
+        "Implemented by", its rules count and are listed with the requirement, and it is no longer reported as untraced.
+        Read from the import statements, so nothing is guessed from folder or file names.
+  2.14 - Use case level, and requirements that are not Gherkin. The hierarchy is [Process >] Use case > Requirement > Test;
+        the process level is not generated and every level is optional. A requirement can be written as a block of the
+        original prompt ("On Placing Orders:" then "Requirement Check Credit:" / "Requirement: App Integration:"), not only as a
+        numbered section with a Feature line; before, such a file counted as one requirement named for its folder. The use case is
+        the logic folder that implements the requirement (logic_discovery/place_order/check_credit.py is use case Place Order),
+        else the prompt's context phrase, else none; with none specified, the report is unchanged. Added a Use case column to the
+        matrix, a Use cases row to the coverage summary, and a Use case line to each requirement's detail. A prompt-format
+        requirement is matched to its logic file by name ("Check Credit" = check_credit.py).
+  2.13 - The Security row of At a Glance names the authentication provider ("enabled (SQL provider)" or "(Keycloak
+        provider)"), read from SECURITY_PROVIDER (environment, config/default.env, else config/config.py). With the Kafka
+        row, it shows at a glance whether a run used containers (Keycloak, live Kafka) or ran degraded (SQL, simulated).
   2.12 - Messages and APIs now lists custom API methods (@jsonapi_rpc, served at /api/<Class>/<method>) and the EAI debug
         endpoints (register_consume_debug / register_queue_reset in the project's thin debug file); before, only
         @app.route functions were found, so a project whose API is a jsonapi_rpc class showed "0 HTTP endpoints". A use-case
@@ -102,7 +117,7 @@ Changelog:
 
 """
 
-__version__ = "2.12"
+__version__ = "2.15"
 
 tab = "&emsp;"
 behave_debug_info = " # "
@@ -123,6 +138,8 @@ API_STUB_FILES = {"auto_discovery.py", "system.py", "new_service.py", "newer_ser
 C_HEADER = "#3f6792"
 C_ROW = "#f2f2f2"
 C_DERIVED = "#dbe6f3"
+C_GROUP_TINTS = ["#fdf3e0", "#e6f3ea", "#f0e6f5", "#e6eef8"]   # one per subtype group, cycled
+C_GROUP_LABEL = "#7a5c00"
 C_EDGE = "#9b9ca4"
 C_CANVAS = "#fbfbfb"
 
@@ -218,7 +235,7 @@ def show_logic(scenario: str, logic_logs_dir: str):
         wiki_data.append("_No logic log for this scenario: the test does not open one, so no rules are shown "
                          "for it (see \"How to add more tests\")._")
         return
-    with open(logic_file_name_path) as logic:
+    with open(logic_file_name_path, encoding='utf-8', errors='replace') as logic:
         logic_lines = logic.readlines()
     sections = log_sections(logic_lines)
     if not sections:
@@ -265,7 +282,7 @@ def get_docStrings(steps_dir: str):
     for each_steps_dir_file in steps_dir_files:
         each_steps_dir_file_path = Path(steps_dir).joinpath(each_steps_dir_file)
         if each_steps_dir_file_path.is_file() and each_steps_dir_file_path.suffix == ".py":
-            with open(each_steps_dir_file_path) as f:
+            with open(each_steps_dir_file_path, encoding='utf-8') as f:
                 step_code = f.readlines()
             for index, each_step_code_line in enumerate(step_code):
                 if each_step_code_line.startswith('@when'):
@@ -308,7 +325,7 @@ def build_test_evidence(behave_log: str, scenario_logs: str) -> list:
     wiki_data = []
     get_docStrings(steps_dir="features/steps")
 
-    with open(behave_log) as f:
+    with open(behave_log, encoding='utf-8', errors='replace') as f:
         contents = f.read().splitlines()
 
     results = scenario_results(behave_log) or {}
@@ -392,7 +409,7 @@ def build_test_evidence(behave_log: str, scenario_logs: str) -> list:
 
 def _read(path: Path) -> str:
     try:
-        return path.read_text(errors="ignore")
+        return path.read_text(encoding="utf-8", errors="ignore")
     except Exception:
         return ""
 
@@ -609,9 +626,67 @@ def _requirement_text(section: str) -> list:
     return _cap(_clean_markdown(lines), 25)[0]
 
 
+CONTEXT_REQ_RE = re.compile(r'^\s*(?:On|When|For)\s+(.+?)\s*,\s*(?:Requirement|Use\s*case)\s*:?\s+([^.:]{1,60}?)\s*:\s*$', re.I)
+REQUIREMENT_RE = re.compile(r'^\s*(?:Requirement|Use\s*case)\s*(?::\s*([^.:]{1,60}?)\s*:?|\s+([^.:]{1,60}?)\s*:)\s*$', re.I)
+CONTEXT_RE = re.compile(r'^\s*(?:On|When|For)\s+(.+?)\s*:\s*$', re.I)
+HEADING_RE = re.compile(r'^\s*#{1,6}\s')
+
+
+def _prompt_requirements(text: str) -> list:
+    """ requirements written as blocks of the original prompt, not as Gherkin:
+
+            On Placing Orders:                       <- context phrase: the use case
+                Requirement Check Credit:            <- a requirement (also "Requirement: App Integration:")
+                1. The Customer's balance ...
+        or      On Placing Orders, Requirement Check Credit:
+
+        returns [(use case phrase or None, requirement name, body lines)]; a heading ends a block """
+    found, context, current = [], None, None
+    for line in text.splitlines():
+        m = CONTEXT_REQ_RE.match(line)
+        if m:
+            context = m.group(1)
+            current = [context, m.group(2), []]
+            found.append(current)
+            continue
+        m = REQUIREMENT_RE.match(line)
+        if m:
+            current = [context, m.group(1) or m.group(2), []]
+            found.append(current)
+            continue
+        m = CONTEXT_RE.match(line)
+        if m:
+            context, current = m.group(1), None
+            continue
+        if HEADING_RE.match(line):
+            current = None
+            continue
+        if current is not None:
+            current[2].append(line)
+    return [tuple(each) for each in found]
+
+
+def _humanize(folder: str) -> str:
+    """ 'place_order' -> 'Place Order' """
+    return folder.replace("_", " ").strip().title()
+
+
+def _use_case_of(files: list):
+    """ the use case is the logic folder that holds the implementing file: logic_discovery/place_order/check_credit.py is
+        use case 'Place Order'. A file straight in logic_discovery (or in system/) has none: the level is optional. """
+    for rel in files:
+        parts = Path(rel).parts
+        if "logic_discovery" in parts:
+            i = parts.index("logic_discovery")
+            if len(parts) > i + 2 and parts[i + 1] != "system":
+                return _humanize(parts[i + 1])
+    return None
+
+
 def parse_requirements(root: Path) -> list:
     """ requirement items from docs/requirements/**/requirements.md:
-        '## N. Title' sections (with Feature: lines), else one item per use-case folder """
+        '## N. Title' sections (with Feature: lines); else blocks of the original prompt ('Requirement <name>:');
+        else one item per use-case folder """
     items = OrderedDict()
     base = root / "docs" / "requirements"
     if not base.is_dir():
@@ -632,15 +707,28 @@ def parse_requirements(root: Path) -> list:
                     item["text"] = _requirement_text(section)
                 if rel not in item["sources"]:
                     item["sources"].append(rel)
-        else:
-            use_case = each.parent.name
-            key = (None, use_case)
-            item = items.setdefault(key, {"num": None, "title": use_case,
-                                          "features": set(), "sources": []})
-            item["features"] |= {f.strip() for f in re.findall(r'Feature:\s*(.+)', text)}
-            if not item.get("text"):
-                item["text"] = _requirement_text(text)
-            item["sources"].append(rel)
+            continue
+        blocks = _prompt_requirements(text)
+        if blocks:
+            for pos, (context, name, body) in enumerate(blocks):
+                item = items.setdefault((None, _norm(name)), {"num": None, "title": name, "features": set(),
+                                                              "sources": [], "use_case": None, "order": (0, 0)})
+                item["title"] = name                      # the spec's wording beats a folder name
+                item["use_case"] = item.get("use_case") or context
+                item["order"] = min(item["order"], (-len(blocks), pos)) if item["order"] != (0, 0) \
+                    else (-len(blocks), pos)               # the file with most blocks (the spec) sets the order
+                if not item.get("text"):
+                    item["text"] = _requirement_text("\n".join(body))
+                if rel not in item["sources"]:
+                    item["sources"].append(rel)
+            continue
+        use_case = each.parent.name
+        item = items.setdefault((None, _norm(use_case)), {"num": None, "title": use_case,
+                                                          "features": set(), "sources": []})
+        item["features"] |= {f.strip() for f in re.findall(r'Feature:\s*(.+)', text)}
+        if not item.get("text"):
+            item["text"] = _requirement_text(text)
+        item["sources"].append(rel)
     # A use-case folder's requirements.md is the verbatim excerpt that anchors its logic file; when its Feature lines are
     # all in a numbered section, it is the same requirement, not another one (it would be counted twice).
     numbered_features = set()
@@ -649,7 +737,7 @@ def parse_requirements(root: Path) -> list:
             numbered_features |= each["features"]
     kept = [each for each in items.values()
             if not (each["num"] is None and each["features"] and each["features"] <= numbered_features)]
-    return sorted(kept, key=lambda i: (i["num"] is None, i["num"] or 0, i["title"]))
+    return sorted(kept, key=lambda i: (i["num"] is None, i["num"] or 0, i.get("order", (0, 0)), i["title"]))
 
 
 def implementation_files(root: Path) -> list:
@@ -720,8 +808,21 @@ def _diagram_blocks(stems: list, root: Path, report_dir: Path) -> list:
     for stem in stems:
         svg = root / "docs" / "requirements" / stem / "logic_diagrams" / f"logic_diagram_{stem}.svg"
         if svg.is_file():
-            out += ["", "<details markdown>", f"<summary>Logic diagram: {stem}</summary>", "",
-                    f"![logic diagram: {stem}]({_link(svg, report_dir)})", "", "</details>"]
+            img = f"![logic diagram: {stem}]({_link(svg, report_dir)})"
+            # the numbers on the diagram's arrows are the numbered rules in logic_flow_<stem>.md:
+            # show that list beside the diagram (same numbering), so the reader can match them
+            flow = svg.parent.parent / f"logic_flow_{stem}.md"
+            numbered = []
+            if flow.is_file():
+                numbered = [ln.strip().removesuffix("<br>") for ln in flow.read_text(encoding="utf-8").splitlines()
+                            if re.match(r"\d+\. ", ln.strip())]
+            if numbered:
+                rules_html = "<br>\n".join(numbered)
+                body = ["", '<table><tr valign="top">', '<td width="65%">', "", img, "", "</td>",
+                        '<td width="35%">', "", "**Rules**", "", rules_html, "", "</td>", "</tr></table>"]
+            else:
+                body = ["", img]
+            out += ["", "<details markdown>", f"<summary>Logic diagram: {stem}</summary>"] + body + ["", "</details>"]
     return out
 
 
@@ -866,6 +967,17 @@ def _gap_list(labels: list) -> str:
     return ", ".join(labels) if labels else "none"
 
 
+def _imported_logic_files(src: str, root: Path) -> list:
+    """ logic files a source file imports: 'from logic.logic_discovery.place_order.ai_requests.supplier_selection import f'
+        names logic/logic_discovery/place_order/ai_requests/supplier_selection.py. Read from the import statements. """
+    found = []
+    for m in re.finditer(r'^\s*(?:from|import)\s+(logic\.logic_discovery(?:\.\w+)+)', src, re.M):
+        path = root / (m.group(1).replace(".", "/") + ".py")
+        if path.is_file() and _rel(path, root) not in found:
+            found.append(_rel(path, root))
+    return found
+
+
 def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
                      behave_log: str = "logs/behave.log", scenario_logs: str = "logs/scenario_logic_logs") -> tuple:
     """ requirements traceability: coverage summary, matrix, rule coverage by tests, detail per requirement.
@@ -897,16 +1009,31 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
             if not hit and item["num"] is not None:
                 hit = re.search(rf'§\s*{item["num"]}\b', src) is not None
             if not hit and item["num"] is None:
-                hit = Path(rel).stem == item["title"]
+                hit = _norm(Path(rel).stem) == _norm(item["title"])
             if hit:
                 matched.append(rel)
                 traced.add(rel)
                 req_by_file.setdefault(rel, []).append(label)
+        i = 0
+        while i < len(matched):             # helpers the implementing files import are part of the requirement (and theirs, in turn)
+            for helper in _imported_logic_files(sources.get(matched[i], ""), root):
+                if helper in sources and helper not in matched:
+                    matched.append(helper)
+                    traced.add(helper)
+                    req_by_file.setdefault(helper, []).append(label)
+            i += 1
         wanted = {_norm(f) for f in item["features"]} | {_norm(item["title"])}
         scenarios = sum(n for name, n in features.items() if _norm(name) in wanted)
         records.append({"item": item, "label": label, "matched": matched, "wanted": wanted,
+                        "use_case": _use_case_of(matched) or item.get("use_case"),
                         "scenarios": scenarios,
                         "n_rules": sum(1 for r in rules if r["file"] in matched)})
+
+    # use cases are optional: with none specified nothing below changes. Requirements are grouped by use case, in order of appearance.
+    use_cases = list(dict.fromkeys(r["use_case"] for r in records if r["use_case"]))
+    has_uc = bool(use_cases)
+    if has_uc:
+        records.sort(key=lambda r: use_cases.index(r["use_case"]) if r["use_case"] else len(use_cases))
 
     # ---- coverage summary
     all_wanted = set().union(*[r["wanted"] for r in records]) if records else set()
@@ -929,6 +1056,8 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
                  + (f" - gap: {_gap_list(no_impl)}" if no_impl else "") + " |")
     lines.append(f"| Tested (at least one scenario) | {n - len(no_tests)} of {n}"
                  + (f" - gap: {_gap_list(no_tests)}" if no_tests else "") + " |")
+    if has_uc:
+        lines.append(f"| Use cases | {len(use_cases)}: {_cell(', '.join(use_cases))} |")
     FACTS.clear()
     FACTS.update(n_req=n, no_impl=list(no_impl), no_tests=list(no_tests), n_rules=len(rules),
                  n_declarative=declarative, n_python=python_fn, n_events=events, seen=None,
@@ -979,12 +1108,14 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
                      "`implement reqs <name>` to turn them into rules, and name the same `Feature:` in the "
                      "logic file and the tests so this report can link them.")
     else:
-        lines += ["| Requirement | Implemented by | Rules | Tests |", "|---|---|---|---|"]
+        lines += (["| Use case | Requirement | Implemented by | Rules | Tests |", "|---|---|---|---|---|"] if has_uc
+                  else ["| Requirement | Implemented by | Rules | Tests |", "|---|---|---|---|"])
     for rec in records:
         impl = "<br>".join(f"[{m}]({_link(root / m, report_dir)})" for m in rec["matched"]) \
             if rec["matched"] else "⚠ none found"
         tests = _tests_text(rec, results, defined=True)
-        lines.append(f"| {_cell(rec['label'])} | {impl} | {rec['n_rules']} | {tests} |")
+        uc_cell = f"{_cell(rec['use_case'] or '-')} | " if has_uc else ""
+        lines.append(f"| {uc_cell}{_cell(rec['label'])} | {impl} | {rec['n_rules']} | {tests} |")
 
     # ---- rule coverage by tests
     lines += ["", f"### {title('rule-coverage')}", ""] + text("rule-coverage")
@@ -1020,7 +1151,8 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
     for rec in records:
         item, matched = rec["item"], rec["matched"]
         tests = _tests_text(rec, results, defined=False)
-        block = ["", f"#### {rec['label']}", "", f"Tests: {tests}", "", "```"]
+        block = ["", f"#### {rec['label']}", ""] + ([f"Use case: {rec['use_case']}", ""] if rec["use_case"] else []) \
+            + [f"Tests: {tests}", "", "```"]
         block += item.get("text") or ["(no requirement text found)"]
         block += ["```", ""]
         rows = []
@@ -1052,6 +1184,181 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
 #  Data model
 # ======================================================================================
 
+def infer_subtype_groups(project):
+    """
+    Subtype groups (single-table inheritance) read from the rule code, so they need no admin.yaml.
+    A column belongs to a group when every guarded read of it sits in that group's branch (`if row.type == 'hourly':`,
+    code after `if row.type != 'hourly': return ...`, or a lambda like `row.type == 'hourly' or row.union_id is None`).
+    A derived column whose formula branches over 2+ groups is shared; one whose same-table inputs all sit in one group joins it.
+    Returns {table: OrderedDict[(discriminator column, value)] -> [columns, in model order]}, 2+ groups per table.
+    """
+    project = Path(project)
+    cols_of = OrderedDict()
+    tree = ast.parse((project / "database" / "models.py").read_text(encoding="utf-8"))
+    for node in tree.body:
+        if isinstance(node, ast.ClassDef):
+            cols = [st.targets[0].id for st in node.body if isinstance(st, ast.Assign) and len(st.targets) == 1
+                    and isinstance(st.targets[0], ast.Name) and isinstance(st.value, ast.Call)
+                    and getattr(st.value.func, "id", getattr(st.value.func, "attr", "")) == "Column"]
+            if cols:
+                cols_of[node.name] = cols
+    ld = project / "logic" / "logic_discovery"
+    files = sorted(p for p in ld.rglob("*.py") if p.name not in ("auto_discovery.py", "use_case.py", "__init__.py")
+                   and "system" not in p.parts and "__pycache__" not in p.parts)
+    evidence = defaultdict(set)      # (table, col) -> {(disc, value)} seen in guarded branches
+    discs = defaultdict(set)         # table -> discriminator columns
+    blocked = set()                  # (table, col) derived by a formula that branches over 2+ groups
+    derived = []                     # (table, col, [same-table input cols])
+
+    def _name(n):
+        return n.attr if isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) and n.value.id == "row" else None
+
+    def _attrs(node, table, aliases):
+        out = set()
+        for n in ast.walk(node):
+            c = _name(n)
+            if c and c in cols_of.get(table, []):
+                out.add(c)
+        return out
+
+    def _guards(test, table, aliases):
+        """[(disc, value, positive)] for `row.col == 'v'` / `!= 'v'` (directly or through an alias) inside the test."""
+        found = []
+        for n in ast.walk(test):
+            if isinstance(n, ast.Compare) and len(n.ops) == 1 and isinstance(n.comparators[0], ast.Constant) \
+                    and isinstance(n.comparators[0].value, str) and isinstance(n.ops[0], (ast.Eq, ast.NotEq)):
+                c = _name(n.left) or aliases.get(getattr(n.left, "id", None))
+                if c in cols_of.get(table, []) and n.comparators[0].value != "no":
+                    found.append((c, n.comparators[0].value, isinstance(n.ops[0], ast.Eq)))
+        return found
+
+    def _ends(stmts):
+        return bool(stmts) and isinstance(stmts[-1], (ast.Return, ast.Raise))
+
+    def _visit(stmts, table, aliases, group, seen):
+        """group None = unguarded; a (disc, value) tuple = inside that subtype's branch; a [group] list = its complement."""
+        for st in stmts:
+            if isinstance(st, ast.Assign) and len(st.targets) == 1 and isinstance(st.targets[0], ast.Name) and _name(st.value):
+                aliases[st.targets[0].id] = _name(st.value)
+            if isinstance(st, ast.If):
+                gs = _guards(st.test, table, aliases)
+                pos = [g for g in gs if g[2]]
+                neg = [g for g in gs if not g[2]]
+                for g in gs:
+                    discs[table].add(g[0])
+                if pos and not neg:
+                    g = (pos[0][0], pos[0][1])
+                    seen.add(g)
+                    for c in _attrs(st.test, table, aliases) - {pos[0][0]}:
+                        evidence[(table, c)].add(g)
+                    _visit(st.body, table, aliases, g, seen)
+                    _visit(st.orelse, table, aliases, [g], seen)
+                    if _ends(st.body):
+                        group = [g]
+                elif neg and not pos and _ends(st.body):
+                    g = (neg[0][0], neg[0][1])
+                    seen.add(g)
+                    for c in _attrs(st.test, table, aliases) - {neg[0][0]}:
+                        evidence[(table, c)].add(g)
+                    _visit(st.orelse, table, aliases, [g], seen)
+                    group = g
+                else:
+                    _visit(st.body, table, aliases, group, seen)
+                    _visit(st.orelse, table, aliases, group, seen)
+                continue
+            if isinstance(group, tuple):
+                for c in _attrs(st, table, aliases):
+                    evidence[(table, c)].add(group)
+            elif isinstance(group, list):   # complement of a guard: `x is None` checks say the column belongs to the guard's group
+                for n in ast.walk(st):
+                    if isinstance(n, ast.Compare) and len(n.ops) == 1 and isinstance(n.ops[0], ast.Is) \
+                            and isinstance(n.comparators[0], ast.Constant) and n.comparators[0].value is None \
+                            and _name(n.left) in cols_of.get(table, []):
+                        evidence[(table, _name(n.left))].add(group[0])
+        return group
+
+    for f in files:
+        mod = ast.parse(f.read_text(encoding="utf-8"))
+        funcs = {n.name: n for n in ast.walk(mod) if isinstance(n, ast.FunctionDef)}
+        for call in [n for n in ast.walk(mod) if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+                     and isinstance(n.func.value, ast.Name) and n.func.value.id == "Rule"]:
+            kw = {k.arg: k.value for k in call.keywords}
+            if call.func.attr not in ("constraint", "commit_constraint", "formula", "sum", "count"):
+                continue
+            tgt = kw.get("derive") or kw.get("validate")
+            parts = ast.unparse(tgt).replace("models.", "").split(".")
+            table = parts[0] if call.func.attr in ("constraint", "commit_constraint") else parts[-2] if len(parts) > 1 else None
+            if table not in cols_of:
+                continue
+            derive_col = parts[-1] if call.func.attr in ("formula", "sum", "count") else None
+            callee = kw.get("calling")
+            body = funcs.get(callee.id) if isinstance(callee, ast.Name) else kw.get("as_condition") or kw.get("as_expression")
+            if body is None:
+                continue
+            seen = set()
+            if isinstance(body, ast.FunctionDef):
+                _visit(body.body, table, {}, None, seen)
+            else:   # lambda: `row.type == 'hourly' or row.union_id is None`
+                gs = _guards(body.body, table, {})
+                for g in gs:
+                    discs[table].add(g[0])
+                    seen.add((g[0], g[1]))
+                if len(gs) == 1:
+                    for c in _attrs(body.body, table, {}) - {gs[0][0]}:
+                        evidence[(table, c)].add((gs[0][0], gs[0][1]))
+            if derive_col:
+                if len(seen) >= 2:
+                    blocked.add((table, derive_col))
+                derived.append((table, derive_col, sorted(_attrs(body, table, {}) - {derive_col})))
+    groups = defaultdict(OrderedDict)
+    assigned = {}
+    for (table, col), ev in evidence.items():
+        if col not in discs[table] and len(ev) == 1 and (table, col) not in blocked and col != "id":
+            assigned[(table, col)] = next(iter(ev))
+    changed = True
+    while changed:
+        changed = False
+        for table, col, ins in derived:
+            if (table, col) in assigned or (table, col) in blocked or col in discs[table]:
+                continue
+            ins = [c for c in ins if c not in discs[table]]
+            gs = {assigned.get((table, c)) for c in ins}
+            if ins and None not in gs and len(gs) == 1:
+                assigned[(table, col)] = gs.pop()
+                changed = True
+    for table, cols in cols_of.items():
+        for col in cols:
+            g = assigned.get((table, col))
+            if g:
+                groups[table].setdefault(g, []).append(col)
+    return {t: g for t, g in groups.items() if len(g) >= 2}
+
+
+_SQL_TYPE = {"Integer": "INTEGER", "Text": "TEXT", "Float": "FLOAT", "String": "VARCHAR", "DateTime": "DATETIME",
+             "Date": "DATE", "Boolean": "BOOLEAN", "Numeric": "NUMERIC", "DECIMAL": "DECIMAL", "BigInteger": "BIGINT"}
+
+
+def model_types(root: Path) -> dict:
+    """ (class, column) -> the type as declared in database/models.py, e.g. NUMERIC(15,2); the dbml says FLOAT for it. """
+    path = root / "database" / "models.py"
+    out = {}
+    if not path.is_file():
+        return out
+    for node in ast.parse(_read(path)).body:
+        if not isinstance(node, ast.ClassDef):
+            continue
+        for st in node.body:
+            if isinstance(st, ast.Assign) and len(st.targets) == 1 and isinstance(st.targets[0], ast.Name) \
+                    and isinstance(st.value, ast.Call) and getattr(st.value.func, "id", getattr(st.value.func, "attr", "")) == "Column":
+                for a in st.value.args:
+                    base = a.func if isinstance(a, ast.Call) else a
+                    name = getattr(base, "id", getattr(base, "attr", ""))
+                    if name in _SQL_TYPE:
+                        args = ",".join(str(x.value) for x in getattr(a, "args", []) if isinstance(x, ast.Constant))
+                        out[(node.name, st.targets[0].id)] = _SQL_TYPE[name] + (f"({args})" if args else "")
+    return out
+
+
 def parse_dbml(path: Path) -> tuple:
     """ (tables: OrderedDict name -> [(col, type, is_pk)], refs: [(child, col, parent, col)]) """
     text = _read(path)
@@ -1073,30 +1380,51 @@ def parse_dbml(path: Path) -> tuple:
     return tables, refs
 
 
-def build_dot(tables: OrderedDict, refs: list, derived: set) -> str:
-    """ ER diagram in graphviz: parents above children (rankdir=TB, edge parent -> child) """
+def build_dot(tables: OrderedDict, refs: list, derived: set, groups: dict = None, types: dict = None) -> str:
+    """ ER diagram in graphviz: parents above children (rankdir=TB, edge parent -> child).
+        groups: {table: OrderedDict[(discriminator, value)] -> [columns]}: subtype columns sit under a labelled group.
+        types: {(table, column): declared type}, used instead of the dbml type when present. """
+    groups, types = groups or {}, types or {}
     fk_cols = {(child, col) for child, col, _, _ in refs}
     out = ['digraph db {',
            f'  graph [rankdir=TB, bgcolor="{C_CANVAS}", pad=0.3, nodesep=0.6, ranksep=0.9, fontname="Helvetica"];',
            '  node [shape=plain, fontname="Helvetica", fontsize=11];',
            f'  edge [color="{C_EDGE}", penwidth=1.2, dir=both, arrowtail=tee, arrowhead=crow, arrowsize=0.8];']
+
+    def row(name, col, col_type, is_pk, tint=None, group_name=None):
+        is_derived = (name, col) in derived
+        bg = f' BGCOLOR="{tint}"' if tint else ""   # colour is the subtype group's; a derived column is marked in italics
+        label = f"<B>{html.escape(col)}</B>" if is_pk else (f"<I>{html.escape(col)}</I>" if is_derived else html.escape(col))
+        tags = ""
+        if is_pk:
+            tags += f' <FONT POINT-SIZE="8" COLOR="{C_HEADER}">PK</FONT>'
+        if (name, col) in fk_cols:
+            tags += f' <FONT POINT-SIZE="8" COLOR="{C_HEADER}">FK</FONT>'
+        if is_derived:
+            tags += ' <FONT POINT-SIZE="8" COLOR="#777777"><I>derived</I></FONT>'
+        if group_name:
+            tags += f' <FONT POINT-SIZE="8" COLOR="{C_GROUP_LABEL}"><I>{html.escape(group_name)}</I></FONT>'
+        shown = types.get((name, col), col_type)
+        return (f'<TR><TD ALIGN="LEFT"{bg}>{label}{tags}&nbsp;&nbsp;</TD>'
+                f'<TD ALIGN="RIGHT"{bg}><FONT POINT-SIZE="9" COLOR="#777777">{html.escape(shown)}</FONT></TD></TR>')
+
     for name, cols in tables.items():
         rows = [f'<TR><TD COLSPAN="2" ALIGN="LEFT" BGCOLOR="{C_HEADER}">'
                 f'<FONT COLOR="white" POINT-SIZE="12"><B>{html.escape(name)}</B></FONT></TD></TR>']
+        by_col = {c: (c, t, pk) for c, t, pk in cols}
+        grouped = {c for g in groups.get(name, {}).values() for c in g}
         for col, col_type, is_pk in cols:
-            is_derived = (name, col) in derived
-            bg = f' BGCOLOR="{C_DERIVED}"' if is_derived else ""
-            label = f"<B>{html.escape(col)}</B>" if is_pk else html.escape(col)
-            tags = ""
-            if is_pk:
-                tags += f' <FONT POINT-SIZE="8" COLOR="{C_HEADER}">PK</FONT>'
-            if (name, col) in fk_cols:
-                tags += f' <FONT POINT-SIZE="8" COLOR="{C_HEADER}">FK</FONT>'
-            if is_derived:
-                tags += ' <FONT POINT-SIZE="8" COLOR="#777777"><I>derived</I></FONT>'
-            rows.append(f'<TR><TD ALIGN="LEFT"{bg}>{label}{tags}&nbsp;&nbsp;</TD>'
-                        f'<TD ALIGN="RIGHT"{bg}><FONT POINT-SIZE="9" COLOR="#777777">'
-                        f'{html.escape(col_type)}</FONT></TD></TR>')
+            if col not in grouped:
+                rows.append(row(name, col, col_type, is_pk))
+        for i, ((disc, value), gcols) in enumerate(groups.get(name, {}).items()):
+            tint = C_GROUP_TINTS[i % len(C_GROUP_TINTS)]
+            disc_name = next((c for c, _, _ in cols if c.lower() == disc.lower()), disc)
+            gname = disc_name.lower() if str(value).lower() in ("yes", "y", "true", "1") else str(value)   # a yes/no axis is named for the axis
+            rows.append(f'<TR><TD COLSPAN="2" ALIGN="LEFT" BGCOLOR="{tint}"><FONT POINT-SIZE="9" COLOR="{C_GROUP_LABEL}">'
+                        f'<B>{html.escape(gname)}</B>  ({html.escape(disc_name)} = {html.escape(str(value))})</FONT></TD></TR>')
+            for col in gcols:
+                if col in by_col:
+                    rows.append(row(name, *by_col[col], tint=tint, group_name=gname))
         out.append(f'  "{name}" [label=<<TABLE BORDER="1" COLOR="#d9d9d9" CELLBORDER="0" '
                    f'CELLSPACING="0" CELLPADDING="5" BGCOLOR="{C_ROW}">' + "".join(rows) + '</TABLE>>];')
     for child, _, parent, _ in refs:
@@ -1133,10 +1461,18 @@ def sec_data_model(root: Path, rules: list, report_dir: Path) -> list:
                      f"`docs/db.dbml`; schema changes are not reflected in it automatically._")
     elif dbml.is_file():
         tables, refs = parse_dbml(dbml)
-        dot_text = build_dot(tables, refs, derived)
+        try:
+            groups = infer_subtype_groups(root)
+        except Exception:   # a diagram without subtype groups is better than no diagram
+            groups = {}
+        try:
+            types = model_types(root)
+        except Exception:
+            types = {}
+        dot_text = build_dot(tables, refs, derived, groups, types)
         dot_path = report_dir / "db_diagram.generated.dot"
         svg_path = report_dir / "db_diagram.generated.svg"
-        dot_path.write_text(dot_text)
+        dot_path.write_text(dot_text, encoding='utf-8')
         if shutil.which("dot"):
             result = subprocess.run(["dot", "-Tsvg", str(dot_path), "-o", str(svg_path)],
                                     capture_output=True, text=True)
@@ -1229,6 +1565,26 @@ def _security_enabled(root: Path) -> bool:
     env = _read(root / "config" / "default.env")
     m = re.search(r'^\s*SECURITY_ENABLED\s*=\s*(\w+)', env, re.M)
     return (m.group(1).lower() in ("true", "yes", "1")) if m else False
+
+
+def _security_provider(root: Path) -> str:
+    """ which authentication provider the project uses ("Keycloak" or "SQL"), or "" if it cannot be told.
+        Mirrors config/config.py: the class used is the KC_ alias if the SECURITY_PROVIDER string names keycloak
+        (environment, config/default.env, else the literal in config.py), else the SQL_ alias.
+        `add-auth --provider-type=X` rewrites the import lines, not the literal, so the imports decide. """
+    cfg = _read(root / "config" / "config.py")
+    value = os.environ.get("SECURITY_PROVIDER")
+    if value is None:
+        m = re.search(r'^\s*SECURITY_PROVIDER\s*=\s*(\w+)', _read(root / "config" / "default.env"), re.M)
+        value = m.group(1) if m else None
+    if value is None:
+        m = re.search(r"""^\s*SECURITY_PROVIDER\s*=\s*(?:os\.getenv\(\s*['"]SECURITY_PROVIDER['"]\s*,\s*)?['"](\w+)['"]""", cfg, re.M)
+        value = m.group(1) if m else ""
+    alias = "KC_" if "keycloak" in value.lower() else "SQL_"
+    m = re.search(r'^\s*from security\.authentication_provider\.(\w+)\.auth_provider import '
+                  r'Authentication_Provider as ' + alias + 'Authentication_Provider', cfg, re.M)
+    module = m.group(1).lower() if m else value.strip().lower()
+    return "Keycloak" if "keycloak" in module else "SQL" if module in ("sql", "sqlite") else ""
 
 
 def security_summary(root: Path) -> list:
@@ -1740,7 +2096,7 @@ _Status: ✅ every requirement is implemented and tested, all scenarios pass, an
 
 **What a requirement is**
 
-A **requirement** is a statement of business behavior, written in plain language as a Gherkin feature (Given / When / Then). It lives in the project at `docs/requirements/<name>/requirements.md`. The system is built from these requirements, and this report is organized around them.
+A **requirement** is a statement of business behavior, written in plain language: a block of the original prompt ("Requirement Check Credit:" and its numbered statements), or a Gherkin feature (Given / When / Then). It lives in the project at `docs/requirements/<name>/requirements.md`. The system is built from these requirements, and this report is organized around them. Requirements can be grouped into a **use case** (for example *Place Order*, with the requirements *Check Credit* and *App Integration*); the report reads the use case from the logic folder that implements the requirement, or from the prompt's context phrase, and shows none when none is specified.
 
 **How the system was built**
 
@@ -1776,7 +2132,8 @@ A **requirement** is a statement of business behavior, written in plain language
 
 | Term | Meaning |
 |---|---|
-| Requirement | A Gherkin feature describing business behavior; the unit this report traces. |
+| Use case | An optional group of related requirements (for example Place Order); read from the logic folder, or the prompt's context phrase. |
+| Requirement | A statement of business behavior, as a prompt block or a Gherkin feature; the unit this report traces. |
 | Rule | A declaration about data (sum, count, formula, copy, constraint) that the engine enforces at every commit. |
 | Event | Python code the engine calls when a row of a given class changes (for example, to publish a message). |
 | Handler | Code that serves an API endpoint or consumes a Kafka topic. |
@@ -1795,7 +2152,7 @@ A **requirement** is a statement of business behavior, written in plain language
 
 ## Requirements Coverage
 
-Traceability here is **forward** (requirement, to the rules, handlers and grants that implement it, to the tests that exercise it) and **backward** (implementation and tests, to the requirement they serve). Anything with no requirement is listed as untraced, and every requirement with no implementation or no test is listed as a gap. Links are made by the `Feature:` names and `§N` tags that requirements, code and tests carry.
+Traceability here is **forward** (requirement, to the rules, handlers and grants that implement it, to the tests that exercise it) and **backward** (implementation and tests, to the requirement they serve). Anything with no requirement is listed as untraced, and every requirement with no implementation or no test is listed as a gap. Links are made by the requirement names, `Feature:` names and `§N` tags that requirements, code and tests carry.
 
 ### Coverage summary
 
@@ -1874,7 +2231,7 @@ Each diagram is saved under `docs/requirements/<name>/logic_diagrams/`. Then reg
 > ⚙ generated: database diagram
 
 <!-- text: data-model-note -->
-_Generated from `docs/db.dbml` (parents above children; shaded rows are derived by rules). To use your own layout, save it as `docs/db_diagram.png`._
+_Generated from `docs/db.dbml` (parents above children; derived columns are in italics, with a "derived" tag; subtype groups are tinted). To use your own layout, save it as `docs/db_diagram.png`._
 
 ### Derived columns
 
@@ -2106,7 +2463,7 @@ def load_template(template_path: str) -> None:
     older = [path.with_name("Behave Logic Report Template.md"), path.with_name("Behave Logic Report Intro.md")]
     chosen = path if path.is_file() else next((p for p in older if p.is_file()), None)
     if chosen:
-        src = chosen.read_text()
+        src = chosen.read_text(encoding='utf-8')
         if re.search(r'^## \S', src, re.M) or re.search(r'^# (?!Behave Logic Report|Requirements Traceability Report)\S', src, re.M):
             mine, mine_titles = parse_template(src)
             result.update(mine)
@@ -2327,7 +2684,9 @@ def scorecard(root: Path, msg_rows: list, behave_log: str) -> list:
         lines.append(f"| Rules shown running in a test log | {f['seen'][0]} of {f['seen'][1]} |")
     parsed = _parse_security(root)
     if parsed:
-        lines.append(f"| Security | {'enabled' if _security_enabled(root) else 'not enabled'}; "
+        provider = _security_provider(root) if _security_enabled(root) else ""
+        lines.append(f"| Security | {'enabled' if _security_enabled(root) else 'not enabled'}"
+                     f"{f' ({provider} provider)' if provider else ''}; "
                      f"{len(parsed[0])} role(s), {len(parsed[1])} row-level grant(s) |")
     kafka_in = sum(1 for m in msg_rows if m["channel"] == "Kafka" and m["direction"] == "in")
     kafka_out = sum(1 for m in msg_rows if m["channel"] == "Kafka" and m["direction"] == "out")
@@ -2443,7 +2802,7 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str, proj
         out.extend(section_lines)
         out.append("")
 
-    wiki_path.write_text("\n".join(add_spacing(out)))
+    wiki_path.write_text("\n".join(add_spacing(out)), encoding='utf-8')
     print(f'Wiki Output: {wiki_path}\n\n')
 
 

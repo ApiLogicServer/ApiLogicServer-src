@@ -808,8 +808,21 @@ def _diagram_blocks(stems: list, root: Path, report_dir: Path) -> list:
     for stem in stems:
         svg = root / "docs" / "requirements" / stem / "logic_diagrams" / f"logic_diagram_{stem}.svg"
         if svg.is_file():
-            out += ["", "<details markdown>", f"<summary>Logic diagram: {stem}</summary>", "",
-                    f"![logic diagram: {stem}]({_link(svg, report_dir)})", "", "</details>"]
+            img = f"![logic diagram: {stem}]({_link(svg, report_dir)})"
+            # the numbers on the diagram's arrows are the numbered rules in logic_flow_<stem>.md:
+            # show that list beside the diagram (same numbering), so the reader can match them
+            flow = svg.parent.parent / f"logic_flow_{stem}.md"
+            numbered = []
+            if flow.is_file():
+                numbered = [ln.strip().removesuffix("<br>") for ln in flow.read_text(encoding="utf-8").splitlines()
+                            if re.match(r"\d+\. ", ln.strip())]
+            if numbered:
+                rules_html = "<br>\n".join(numbered)
+                body = ["", '<table><tr valign="top">', '<td width="65%">', "", img, "", "</td>",
+                        '<td width="35%">', "", "**Rules**", "", rules_html, "", "</td>", "</tr></table>"]
+            else:
+                body = ["", img]
+            out += ["", "<details markdown>", f"<summary>Logic diagram: {stem}</summary>"] + body + ["", "</details>"]
     return out
 
 

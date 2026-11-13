@@ -358,7 +358,24 @@ Feature: Check Credit
 <details markdown>
 <summary>Logic diagram: check_credit</summary>
 
+<table><tr valign="top">
+<td width="65%">
+
 ![logic diagram: check_credit](check_credit/logic_diagrams/logic_diagram_check_credit.svg)
+
+</td>
+<td width="35%">
+
+**Rules**
+
+1. `unit_price = copy(unit_price)`<br>
+2. `amount = quantity * unit_price`<br>
+3. `amount_total = sum(amount)`<br>
+4. `balance = sum(amount_total where date_shipped)`<br>
+5. constraint: `Customer`
+
+</td>
+</tr></table>
 
 </details>
 
@@ -407,7 +424,20 @@ Feature: Kafka Subscribe Order Integration
 <details markdown>
 <summary>Logic diagram: order_b2b_consume</summary>
 
+<table><tr valign="top">
+<td width="65%">
+
 ![logic diagram: order_b2b_consume](order_b2b_consume/logic_diagrams/logic_diagram_order_b2b_consume.svg)
+
+</td>
+<td width="35%">
+
+**Rules**
+
+1. `OrderB2bMessage` → `_publish_order_b2b` (after_flush) — OrderB2bMessage event: publishes the raw blob to topic order_b2b_processed after Tx 1 commits, so
+
+</td>
+</tr></table>
 
 </details>
 
@@ -434,7 +464,20 @@ Feature: Kafka Publish Shipping Notification
 <details markdown>
 <summary>Logic diagram: order_shipping_publish</summary>
 
+<table><tr valign="top">
+<td width="65%">
+
 ![logic diagram: order_shipping_publish](order_shipping_publish/logic_diagrams/logic_diagram_order_shipping_publish.svg)
+
+</td>
+<td width="35%">
+
+**Rules**
+
+1. `Order` → `_send_order_to_shipping` (after_flush) — Order event: publishes the Order to Kafka topic order_shipping (by-example, shape from
+
+</td>
+</tr></table>
 
 </details>
 
