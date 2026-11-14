@@ -16,7 +16,7 @@ same command with the full path already filled in.)
 
 ```bash
 cd <your ApiLogicServer-dev>/container-volumes/keycloak
-podman run -d --name keycloak -p 8080:8080 \
+podman run -d --restart always --name keycloak -p 8080:8080 \
   -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=password \
   -v "$PWD/import":/opt/keycloak/data/import \
   quay.io/keycloak/keycloak:23.0.6 \

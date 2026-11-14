@@ -1,5 +1,9 @@
 # Kafka Integration
 
+> **Need a live broker?** It is one container per machine, not per project: set it up once from the Manager
+> `README.md`, section *Containers: Podman or Docker*. You do not need it to develop: the debug endpoint and
+> fallback mode below work without Kafka.
+
 Full docs: [Integration-EAI](https://apilogicserver.github.io/Docs/Integration-EAI/)
 
 To see a Sample Integration, [click here](https://apilogicserver.github.io/Docs/Sample-Integration/).
@@ -142,38 +146,13 @@ for standard at-least-once delivery where offsets advance after each successful 
 
 ### 1. Start the broker
 
-`integration/kafka/dockercompose_start_kafka.yml` starts a single-broker Kafka
-(KRaft mode, no Zookeeper needed) as container `broker1`, listening on `9092`
-(client) and `9093` (controller).
+One `broker1` container serves every project on the machine; it is set up once, from the Manager.
+See the Manager `README.md`, section *Containers: Podman or Docker*, step 4 (Kafka). It uses plain
+`podman run` (or `docker run`), so Podman needs no compose provider.
 
-**Docker:**
-
-```bash
-docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d
-docker ps   # confirm broker1 is Up, ports 9092-9093
-```
-
-**Podman — same compose file, unchanged, plus one-time setup the first time you use
-it on a machine:**
-
-```bash
-# One-time, if not already set up:
-brew install podman
-podman machine init      # downloads ~800MB
-podman machine start     # do this again after every reboot, unless...
-brew install --cask podman-desktop   # ...you install this GUI app, which
-                                      # auto-starts the VM at login instead
-brew install docker-compose          # Podman uses this as its compose provider
-mkdir -p ~/.docker
-echo '{"cliPluginsExtraDirs":["/opt/homebrew/lib/docker/cli-plugins"]}' > ~/.docker/config.json
-
-# Then, same as Docker but with podman:
-podman compose -f integration/kafka/dockercompose_start_kafka.yml up -d
-podman ps   # confirm broker1 is Up, ports 9092-9093
-```
-
-Full walkthrough (disk layout, troubleshooting, stopping/starting the VM):
-[DevOps-Podman](https://apilogicserver.github.io/Docs/DevOps-Podman/).
+This project's `integration/kafka/dockercompose_start_kafka.yml` starts the same broker with Docker:
+`docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`. Do not run both: the
+container name `broker1` is taken by whichever started first.
 
 ### 2. Enable Kafka in the app
 
@@ -200,5 +179,4 @@ Runtime reminders:
 - Run exactly **one** server process during Kafka consume testing.
 - If topics were reset while the server was running, restart the server before publishing.
 - Keep the consumer group unique per cloned or renamed project.
-- Stop the broker when done: `docker compose -f integration/kafka/dockercompose_start_kafka.yml down`
-  (or `podman compose ... down`).
+- Stop the broker when done: `podman stop broker1` (or `docker stop broker1`).

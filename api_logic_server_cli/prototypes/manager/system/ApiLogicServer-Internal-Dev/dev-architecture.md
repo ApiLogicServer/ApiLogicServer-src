@@ -31,7 +31,7 @@ changelog:
     a stopped one is started, a missing or unstartable one makes BLT exit with the exact create command (BLT still
     never creates containers). Warns if a running container bind-mounts under `build_and_test/`. Settings:
     `Config.container_cli` ('podman'|'docker'|'none', default docker, set in env.py / env_val.py / env_val_podman.py; env.py is
-    gitignored; 'none' = VM install such as Parallels that uses the HOST's containers via `docker_database_ip`, preflight skipped) and `Config.container_preflight = False` to skip. Readme: Internal-Dev/readme.md (BLT pre-setup). Tested standalone against live podman containers
+    gitignored; 'none' = VM install such as Parallels that uses the HOST's containers via `docker_database_ip`, preflight skipped) and `Config.container_preflight = False` to skip. Readme: Internal-Dev/internals-readme.md (BLT pre-setup). Tested standalone against live podman containers
     (all running / keycloak stopped / keycloak missing); the 'cannot stat' branch and podman-machine-down branch are untested.
     **Staged BLT env:** `build_load_and_test.py` `load_config()` loads the platform file (`env_mac/win/linux.py`) as the base
     and layers a personal `env.py` (gitignored) on top; an `env.py` with a full `class Config` still works unlayered.

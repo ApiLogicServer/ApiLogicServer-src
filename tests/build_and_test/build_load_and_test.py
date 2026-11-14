@@ -1354,16 +1354,16 @@ def preflight_containers():
     kafka_env_flags = " ".join(f"-e {each}" for each in kafka_env.split())
     create_cmds = {
         'postgresql-container':
-            f"{cli} run -d --name postgresql-container -p 5432:5432 -e POSTGRES_PASSWORD=p "
+            f"{cli} run -d --restart always --name postgresql-container -p 5432:5432 -e POSTGRES_PASSWORD=p "
             f"docker.io/apilogicserver/postgres:latest",
         'keycloak':
             f"mkdir -p {volumes_dir} && [ -d {volumes_dir}/keycloak/import ] || cp -R {template_dir}/. {volumes_dir}/ ; "
-            f"{cli} run -d --name keycloak -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=password "
+            f"{cli} run -d --restart always --name keycloak -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=password "
             f"-v {volumes_dir}/keycloak/import:/opt/keycloak/data/import quay.io/keycloak/keycloak:23.0.6 "
             f"start-dev --import-realm --proxy=edge --hostname-strict=false --hostname-strict-https=false",
         'broker1':
             f"mkdir -p {volumes_dir}/kafka/data && "
-            f"{cli} run -d --name broker1 -p 9092:9092 -p 9093:9093 {kafka_env_flags} "
+            f"{cli} run -d --restart always --name broker1 -p 9092:9092 -p 9093:9093 {kafka_env_flags} "
             f"-v {volumes_dir}/kafka/data:/integration/kafka/volume docker.io/apache/kafka:3.7.0",
     }
 

@@ -1,9 +1,13 @@
-# ApiLogicServer-Internal-Dev
+# ApiLogicServer-Internal-Dev (internals)
 
 Internal developer tooling. This is ***not*** required to use API Logic Server.
 For the architecture, gold-source workflow and changelog, see [dev-architecture.md](dev-architecture.md).
 
-## Install the dev source
+## Stage 1: install and run BLT, SQLite only
+
+No containers, no Kafka, no Keycloak, no `env.py`.
+
+### 1. Install the dev source
 
 Run from the Manager root:
 
@@ -14,7 +18,7 @@ sh system/ApiLogicServer-Internal-Dev/install-ApiLogicServer-dev.sh [ vscode | c
 This creates `ApiLogicServer-dev/` with `servers/`, `build_and_test/`, `org_git/` (source clones) and `container-volumes/`,
 seeded from [container-volumes-template/](container-volumes-template/). It refuses to run if `ApiLogicServer-dev/` already exists.
 
-## Run BLT (Build, Load and Test)
+### 2. Run BLT (Build, Load and Test)
 
 BLT builds the product into a clean Manager (`build_and_test/genai-logic`) and runs the tests against it.
 From `ApiLogicServer-src`:
@@ -28,10 +32,44 @@ From `ApiLogicServer-src`:
   APILOGICSERVER_AUTO_OPEN="" python build_load_and_test.py confirm
   ```
 
-Which tests run is set by `tests/build_and_test/env.py`. That file is **personal and gitignored**: copy the
-`env_*.py` closest to your machine over it (for example `env_val_podman.py`, or `env_val.py` for Docker) and edit.
+You need no `env.py` and no configuration. With none, BLT uses your platform's defaults (`env_mac.py`, `env_win.py`
+or `env_linux.py`): the Postgres, Keycloak, Kafka, MySQL, SQL Server and image-build tests are off, so no container is
+needed, and everything else (SQLite-based) runs. It prints `BLT env: ... stage 1 defaults (no containers); no env.py`.
 
-## Pre-set up BLT: containers (Docker, Podman or the host's)
+Get this green first. Some devs stay here.
+
+## Stage 2: add containers, then configure `env.py`
+
+Do this only when stage 1 is green and you want the full suite (Postgres, Keycloak, Kafka). Add one container at a time.
+
+1. **Set up the runtime and the containers**, from the Manager `README.md`, section *Containers: Podman or Docker*
+   (install the runtime, then steps 2 to 4). Two changes for dev: use `V=<your ApiLogicServer-dev>/container-volumes`
+   instead of `$HOME/container-volumes`, and keep `--restart always` so they survive a reboot. Or skip ahead: BLT's
+   preflight prints the exact create command for any container a test needs and one is missing.
+2. **Configure `tests/build_and_test/env.py`** (personal, gitignored). Plain overrides of the platform defaults, no class.
+   Copy this, set `container_cli`, and uncomment a flag when its container is up:
+
+   ```python
+   container_cli = 'podman'                 # 'docker' | 'podman' | 'none'
+   do_run_nw_kafka = True                   # needs broker1
+   do_test_nw_kafka = True                  # needs broker1
+   # do_docker_postgres = True              # needs postgresql-container
+   # do_docker_postgres_auth = True         # needs postgresql-container and keycloak
+   ```
+
+   Run BLT. Add one flag at a time. If a container is missing, the preflight stops and prints the command to create it.
+
+| Flag | Needs | Order |
+|---|---|---|
+| `do_docker_postgres` | `postgresql-container` | first |
+| `do_docker_postgres_auth` | `postgresql-container` and `keycloak` | second |
+| `do_run_nw_kafka`, `do_test_nw_kafka` | `broker1` | any time |
+| `do_docker_mysql`, `do_docker_sqlserver`, `do_docker_creation_tests` | their own containers / an image build | not covered by the preflight |
+
+A name `env.py` sets that the platform file does not define gets a `WARNING ... (typo?)`. A full `class Config` in `env.py`
+(a copy of an `env_*.py`) still works but is used as is, not layered. The detail is in `internal_dev/dev_setup.md` (gold).
+
+### How BLT checks containers
 
 Some tests need three containers: `postgresql-container` (5432), `keycloak` (8080) and `broker1` (Kafka, 9092).
 **BLT never creates containers.** Before building, its container preflight checks the ones your enabled tests need.
@@ -58,7 +96,7 @@ project under `build_and_test/` fails after the next rebuild (`crun: cannot stat
 fails with a bare connection error. `container-volumes/` is a sibling of `build_and_test/`, so rebuilds do not touch it. Its
 `readme.md` and `keycloak/readme.md` hold the create commands, and the preflight prints the same ones.
 
-### Volumes: what lives where
+#### Volumes: what lives where
 
 | Container | Data | Where it lives |
 |---|---|---|

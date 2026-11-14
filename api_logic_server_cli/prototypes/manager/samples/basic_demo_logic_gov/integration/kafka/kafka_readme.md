@@ -1,5 +1,9 @@
 # Kafka Integration
 
+> **Need a live broker?** It is one container per machine, not per project: set it up once from the Manager
+> `README.md`, section *Containers: Podman or Docker*. You do not need it to develop: the debug endpoint
+> below works without Kafka.
+
 Full docs: [Integration-EAI](https://apilogicserver.github.io/Docs/Integration-EAI/)
 
 To see a Sample Integration, [click here](https://apilogicserver.github.io/Docs/Sample-Integration/).
@@ -95,7 +99,7 @@ KAFKA_CONSUMER_GROUP = <project>-group1   # keep unique per project clone
 Typical live test flow:
 
 ```bash
-docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d
+# broker1 running? Set it up once from the Manager README (Containers: Podman or Docker, step 4)
 # F5 to start the server
 python test/send_<topic>.py
 ```
