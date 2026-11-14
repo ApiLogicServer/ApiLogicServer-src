@@ -86,6 +86,7 @@ class Config:
     ''' for virtual machine access, set this to host IP '''
 
     container_cli = 'docker'
-    ''' 'podman' or 'docker': used by the container preflight (postgres, keycloak, kafka).
+    ''' 'podman' | 'docker' | 'none': used by the container preflight (postgres, keycloak, kafka).
+        'none' = no container CLI on this machine (VM install using the host's containers, reached at docker_database_ip): preflight skipped.
         Containers must mount from ApiLogicServer-dev/podman/, never from build_and_test/ (rebuilt) - see its readme.md '''
 

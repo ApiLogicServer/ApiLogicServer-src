@@ -1284,11 +1284,17 @@ def preflight_containers():
     Why: podman/docker record a bind mount's ABSOLUTE host path when the container is created.  A container
     created from a project under build_and_test/ breaks on the next rebuild ("crun: cannot stat ..."), and the
     keycloak test then fails with a bare connection error.  Mount from ApiLogicServer-dev/podman/ (see its readme.md).
-    Set Config.container_cli = 'podman' | 'docker' (default docker); Config.container_preflight = False to skip.
+    Set Config.container_cli = 'podman' | 'docker' (default docker) | 'none'; Config.container_preflight = False to skip.
+    'none': no container CLI on THIS machine (e.g. a Parallels/VM install that uses the HOST's containers, reached at
+    Config.docker_database_ip) - nothing can be checked or started from here, so the preflight is skipped.
     """
     if not getattr(Config, 'container_preflight', True):
         return
-    cli = getattr(Config, 'container_cli', 'docker')
+    cli = str(getattr(Config, 'container_cli', 'docker')).strip().lower()
+    if cli == 'none':
+        print(f"\nContainer preflight skipped (container_cli = 'none'): containers are expected on the host at "
+              f"{getattr(Config, 'docker_database_ip', 'localhost')} (postgres 5432, keycloak 8080); not checked.")
+        return
     use_postgres = getattr(Config, 'do_docker_postgres', False) or getattr(Config, 'do_docker_postgres_auth', False)
     use_keycloak = getattr(Config, 'do_docker_postgres_auth', False)
     use_kafka = getattr(Config, 'do_run_nw_kafka', False) or getattr(Config, 'do_test_nw_kafka', False)
