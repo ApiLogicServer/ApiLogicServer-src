@@ -1275,6 +1275,111 @@ with _pre_check_socket.socket(_pre_check_socket.AF_INET, _pre_check_socket.SOCK_
         print("   You can stop it at http://localhost:5656/admin-app or via: lsof -ti:5656 | xargs kill -9")
         exit(1)
 
+def preflight_containers():
+    """ Container preflight: fail fast, BEFORE the long build, if a container an enabled test needs is not usable.
+
+    BLT never creates or installs anything.  A stopped container is started; anything else prints the exact
+    command to run, then BLT exits.  All problems are reported together.
+
+    Why: podman/docker record a bind mount's ABSOLUTE host path when the container is created.  A container
+    created from a project under build_and_test/ breaks on the next rebuild ("crun: cannot stat ..."), and the
+    keycloak test then fails with a bare connection error.  Mount from ApiLogicServer-dev/podman/ (see its readme.md).
+    Set Config.container_cli = 'podman' | 'docker' (default docker); Config.container_preflight = False to skip.
+    """
+    if not getattr(Config, 'container_preflight', True):
+        return
+    cli = getattr(Config, 'container_cli', 'docker')
+    use_postgres = getattr(Config, 'do_docker_postgres', False) or getattr(Config, 'do_docker_postgres_auth', False)
+    use_keycloak = getattr(Config, 'do_docker_postgres_auth', False)
+    use_kafka = getattr(Config, 'do_run_nw_kafka', False) or getattr(Config, 'do_test_nw_kafka', False)
+    needed = []
+    if use_postgres:
+        needed.append('postgresql-container')
+    if use_keycloak:
+        needed.append('keycloak')
+    if use_kafka:
+        needed.append('broker1')
+    if not needed:
+        return
+
+    podman_dir = install_api_logic_server_path.parent.parent.joinpath("podman")
+    """ eg, ApiLogicServer-dev/podman - rebuild-safe: not under build_and_test/ """
+    template_dir = cli_path.joinpath("prototypes/manager/system/ApiLogicServer-Internal-Dev/podman-template")
+    kafka_env = ("KAFKA_NODE_ID=1 KAFKA_PROCESS_ROLES=broker,controller KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER "
+                 "KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT "
+                 "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT "
+                 "KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 KAFKA_CONTROLLER_QUORUM_VOTERS=1@localhost:9093 "
+                 "CLUSTER_ID=r4zt_wrqTRuT7W2NJsB_GA KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 "
+                 "KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1")
+    kafka_env_flags = " ".join(f"-e {each}" for each in kafka_env.split())
+    create_cmds = {
+        'postgresql-container':
+            f"{cli} run -d --name postgresql-container -p 5432:5432 -e POSTGRES_PASSWORD=p "
+            f"docker.io/apilogicserver/postgres:latest",
+        'keycloak':
+            f"mkdir -p {podman_dir} && [ -d {podman_dir}/keycloak/import ] || cp -R {template_dir}/. {podman_dir}/ ; "
+            f"{cli} run -d --name keycloak -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=password "
+            f"-v {podman_dir}/keycloak/import:/opt/keycloak/data/import quay.io/keycloak/keycloak:23.0.6 "
+            f"start-dev --import-realm --proxy=edge --hostname-strict=false --hostname-strict-https=false",
+        'broker1':
+            f"mkdir -p {podman_dir}/kafka/data && "
+            f"{cli} run -d --name broker1 -p 9092:9092 -p 9093:9093 {kafka_env_flags} "
+            f"-v {podman_dir}/kafka/data:/integration/kafka/volume docker.io/apache/kafka:3.7.0",
+    }
+
+    def cli_run(args: list):
+        """ run '<cli> <args>', return (returncode, combined output) - never raises """
+        try:
+            result = subprocess.run([cli] + args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=120)
+            return result.returncode, result.stdout.strip()
+        except FileNotFoundError:
+            return 127, f"'{cli}' not found on PATH"
+        except subprocess.TimeoutExpired:
+            return 124, f"'{cli}' timed out"
+
+    problems = []
+    print(f"\nContainer preflight ({cli}): {', '.join(needed)}")
+    rc, out = cli_run(['info'])
+    if rc != 0:
+        fix = "podman machine start" if cli == 'podman' else "start Docker Desktop (or the docker daemon)"
+        problems.append(f"{cli} is not reachable ({out.splitlines()[-1] if out else 'no output'}).\n"
+                        f"   Run this, then re-run BLT:\n\n      {fix}")
+    else:
+        for name in needed:
+            create = create_cmds[name]
+            rc, out = cli_run(['inspect', name, '--format', '{{.State.Running}}'])
+            if rc != 0:
+                problems.append(f"container '{name}' does not exist (BLT does not create containers).\n"
+                                f"   Run this, then re-run BLT:\n\n      {create}")
+                continue
+            if out != 'true':
+                rc, out = cli_run(['start', name])
+                if rc != 0:
+                    problems.append(f"container '{name}' exists but will not start: {out.splitlines()[-1] if out else ''}\n"
+                                    f"   A 'cannot stat' error means its bind mount points at a deleted directory.\n"
+                                    f"   Recreate it from the rebuild-safe {podman_dir}, then re-run BLT:\n\n"
+                                    f"      {cli} rm -f {name} ; {create}")
+                    continue
+                print(f"  {name}: was stopped - started")
+            else:
+                print(f"  {name}: running")
+            rc, out = cli_run(['inspect', name, '--format',
+                               '{{range .Mounts}}{{if eq .Type "bind"}}{{.Source}}{{"\\n"}}{{end}}{{end}}'])
+            for each_source in (out.splitlines() if rc == 0 else []):
+                if '/build_and_test/' in each_source.replace('\\', '/'):
+                    print(f"  ⚠️  {name} bind-mounts {each_source}, which a BLT / Manager rebuild deletes - "
+                          f"its next start will fail.\n"
+                          f"     Recreate it when convenient:\n\n        {cli} rm -f {name} ; {create}\n")
+    if problems:
+        print("\n❌ ERROR: container preflight failed - nothing was built.\n")
+        for each_problem in problems:
+            print(f"❌ {each_problem}\n")
+        print(f"(skip this check: container_preflight = False in env.py; see {podman_dir}/readme.md)")
+        exit(1)
+
+
+preflight_containers()
+
 debug_script = False
 if debug_script:
     import platform as platform

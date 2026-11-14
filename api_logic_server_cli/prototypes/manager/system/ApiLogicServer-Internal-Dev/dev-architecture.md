@@ -16,6 +16,13 @@ changelog:
     `install-ApiLogicServer-dev.sh`/`.ps1` copy it to `podman/` instead of embedding a heredoc readme. Named
     `podman-template`, NOT `podman`: it ships in the Manager, which BLT / `create-manager --clean` rebuild, and a container
     must never mount from it - only from the sibling. Edit the template in gold. Not yet run end to end (fresh dev install).
+    **BLT container preflight:** `tests/build_and_test/build_load_and_test.py` `preflight_containers()` runs before the
+    build (after the port-5656 check). For the enabled tests it needs `postgresql-container`, `keycloak`, `broker1`;
+    a stopped one is started, a missing or unstartable one makes BLT exit with the exact create command (BLT still
+    never creates containers). Warns if a running container bind-mounts under `build_and_test/`. Settings:
+    `Config.container_cli` ('podman'|'docker', default docker, set in env.py / env_val.py / env_val_podman.py; env.py is
+    gitignored) and `Config.container_preflight = False` to skip. Tested standalone against live podman containers
+    (all running / keycloak stopped / keycloak missing); the 'cannot stat' branch and podman-machine-down branch are untested.
   - 2.43 (Nov 10 2026) - CE files are now `.github/copilot-instructions.md` (no leading dot; GitHub Copilot's standard name) in prototypes/base and prototypes/manager. References to the old dotted name were updated across gold (CEs, training docs, cli-internals.md, GEMINI.md, SKILL.md, this file; samples/* snapshots left as-is), plus `org_git/Docs/sync_ce_to_docs.sh`, whose cp would have failed. That script's SOURCE_BASE also pointed at the retired `~/dev/ApiLogicServer/` tree; fixed to `~/dev/genai-logic/`. Older changelog entries in this file now show the new name too.
   - 2.42 (Nov 3 2026) - **Samples regrouped (gold: `prototypes/manager/samples/`).** Four group folders, each with a
     `readme_<group>.md`, listed in `readme_samples.md`: `data_modeling/` (`demo_emp_types`, `basic_demo_sales_by_month`),

@@ -98,3 +98,7 @@ class Config:
     docker_database_ip = 'localhost'
     ''' for virtual machine access, set this to host IP '''
 
+    container_cli = 'podman'
+    ''' 'podman' or 'docker': used by the container preflight (postgres, keycloak, kafka).
+        Containers must mount from ApiLogicServer-dev/podman/, never from build_and_test/ (rebuilt) - see its readme.md '''
+

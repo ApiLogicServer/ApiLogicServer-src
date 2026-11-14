@@ -30,8 +30,10 @@ with `crun: cannot stat ...: No such file or directory`. Put such mounts here.
 | `postgresql-container` | apilogicserver/postgres:latest | 5432 | podman named volume (no host mount) | - |
 
 BLT uses these via `tests/build_and_test/env.py` (`do_docker_postgres`,
-`do_docker_postgres_auth`, `docker_database_ip`). BLT does not create
-containers - start them first:
+`do_docker_postgres_auth`, `docker_database_ip`, `container_cli`). BLT never
+creates containers. Before building, its container preflight starts a stopped
+one, or stops and prints the exact command to run (set `container_preflight =
+False` in env.py to skip). You can also start them yourself:
 
 ```bash
 podman machine start          # if not running
