@@ -929,9 +929,9 @@ def validate_nw_with_kafka(api_logic_server_install_path, set_venv):
 
 def validate_opt_locking():
     """
-    Check web_genie for optimistic locking with checksum
+    Check opt_locking for optimistic locking with checksum
     
-    Verify optimistic locking with @jsonapi_attr: web_genie
+    Verify optimistic locking with @jsonapi_attr: opt_locking
 
     Some nw tests were considered here, *but* moved to behave:
 
@@ -942,7 +942,7 @@ def validate_opt_locking():
 
     NW version does not work, presumably due to see.  Tests moved to behave
     """
-    print(f'\nOptimistic Locking Test with @json_attr -- web_genie')
+    print(f'\nOptimistic Locking Test with @json_attr -- opt_locking')
     model_insert_jsonapi_attr = '''
 
     @jsonapi_attr
@@ -956,30 +956,30 @@ def validate_opt_locking():
 
     current_path = Path(os.path.abspath(__file__))
     install_api_logic_server_path = get_servers_build_and_test_path().joinpath("genai-logic")
-    api_logic_project_path = install_api_logic_server_path.joinpath('tests/web_genie')
+    api_logic_project_path = install_api_logic_server_path.joinpath('tests/opt_locking')
 
-    rel_path = 'tests/test_databases/sqlite-databases/web_genie/web_genie.sqlite'
-    wg_db_path = get_api_logic_server_src_path().joinpath(rel_path)
-    assert wg_db_path.exists(), f'Cannot find {wg_db_path}'
-    wg_arg = f'sqlite:///{wg_db_path}'
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/web_genie --{db_url}={wg_arg}',
+    rel_path = 'tests/test_databases/sqlite-databases/opt_locking/opt_locking.sqlite'
+    ol_db_path = get_api_logic_server_src_path().joinpath(rel_path)
+    assert ol_db_path.exists(), f'Cannot find {ol_db_path}'
+    ol_arg = f'sqlite:///{ol_db_path}'
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/opt_locking --{db_url}={ol_arg}',
         cwd=install_api_logic_server_path,
-        msg=f'\nCreate web_genie at: {str(install_api_logic_server_path)}')
+        msg=f'\nCreate opt_locking at: {str(install_api_logic_server_path)}')
     
     # add jsonapi_attr to model
     model_file = api_logic_project_path.joinpath('database/models.py')
     insert_at = 'user : Mapped["User"] = relationship(back_populates=("FileList"))'
     insert_lines_at(file_name=model_file, lines=model_insert_jsonapi_attr, at=insert_at, after=1)
     
-    start_api_logic_server(project_name='web_genie')  # , env='export SECURITY_ENABLED=true')
+    start_api_logic_server(project_name='opt_locking')  # , env='export SECURITY_ENABLED=true')
     # headers = login()
     get_uri = "http://localhost:5656/api/File/?include=project%2Cuser&fields%5BFile%5D=name%2CType%2Clocation%2Ccreated_at%2Cuser_id%2Cproject_id%2Cpath%2Cconnection_string%2C_check_sum_%2CS_CheckSum&page%5Boffset%5D=0&page%5Blimit%5D=10&sort=id"
     r = requests.get(url=get_uri)  #, headers=headers)
     response_text = r.text
     result_data = json.loads(response_text) 
-    assert len(result_data["data"]) > 0, "web_genie did not find any rows"
+    assert len(result_data["data"]) > 0, "opt_locking did not find any rows"
 
-    stop_server(msg="web_genie\n")
+    stop_server(msg="opt_locking\n")
 
 
     dup_behave_tests = False  # they don't really work, moved to behave...
@@ -1317,7 +1317,7 @@ def preflight_containers():
 
     Why: podman/docker record a bind mount's ABSOLUTE host path when the container is created.  A container
     created from a project under build_and_test/ breaks on the next rebuild ("crun: cannot stat ..."), and the
-    keycloak test then fails with a bare connection error.  Mount from ApiLogicServer-dev/podman/ (see its readme.md).
+    keycloak test then fails with a bare connection error.  Mount from ApiLogicServer-dev/container-volumes/ (see its readme.md).
     Set Config.container_cli = 'podman' | 'docker' (default docker) | 'none'; Config.container_preflight = False to skip.
     'none': no container CLI on THIS machine (e.g. a Parallels/VM install that uses the HOST's containers, reached at
     Config.docker_database_ip) - nothing can be checked or started from here, so the preflight is skipped.
@@ -1342,9 +1342,9 @@ def preflight_containers():
     if not needed:
         return
 
-    podman_dir = install_api_logic_server_path.parent.parent.joinpath("podman")
-    """ eg, ApiLogicServer-dev/podman - rebuild-safe: not under build_and_test/ """
-    template_dir = cli_path.joinpath("prototypes/manager/system/ApiLogicServer-Internal-Dev/podman-template")
+    volumes_dir = install_api_logic_server_path.parent.parent.joinpath("container-volumes")
+    """ eg, ApiLogicServer-dev/container-volumes - rebuild-safe: not under build_and_test/ """
+    template_dir = cli_path.joinpath("prototypes/manager/system/ApiLogicServer-Internal-Dev/container-volumes-template")
     kafka_env = ("KAFKA_NODE_ID=1 KAFKA_PROCESS_ROLES=broker,controller KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER "
                  "KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT "
                  "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT "
@@ -1357,14 +1357,14 @@ def preflight_containers():
             f"{cli} run -d --name postgresql-container -p 5432:5432 -e POSTGRES_PASSWORD=p "
             f"docker.io/apilogicserver/postgres:latest",
         'keycloak':
-            f"mkdir -p {podman_dir} && [ -d {podman_dir}/keycloak/import ] || cp -R {template_dir}/. {podman_dir}/ ; "
+            f"mkdir -p {volumes_dir} && [ -d {volumes_dir}/keycloak/import ] || cp -R {template_dir}/. {volumes_dir}/ ; "
             f"{cli} run -d --name keycloak -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=password "
-            f"-v {podman_dir}/keycloak/import:/opt/keycloak/data/import quay.io/keycloak/keycloak:23.0.6 "
+            f"-v {volumes_dir}/keycloak/import:/opt/keycloak/data/import quay.io/keycloak/keycloak:23.0.6 "
             f"start-dev --import-realm --proxy=edge --hostname-strict=false --hostname-strict-https=false",
         'broker1':
-            f"mkdir -p {podman_dir}/kafka/data && "
+            f"mkdir -p {volumes_dir}/kafka/data && "
             f"{cli} run -d --name broker1 -p 9092:9092 -p 9093:9093 {kafka_env_flags} "
-            f"-v {podman_dir}/kafka/data:/integration/kafka/volume docker.io/apache/kafka:3.7.0",
+            f"-v {volumes_dir}/kafka/data:/integration/kafka/volume docker.io/apache/kafka:3.7.0",
     }
 
     def cli_run(args: list):
@@ -1397,7 +1397,7 @@ def preflight_containers():
                 if rc != 0:
                     problems.append(f"container '{name}' exists but will not start: {out.splitlines()[-1] if out else ''}\n"
                                     f"   A 'cannot stat' error means its bind mount points at a deleted directory.\n"
-                                    f"   Recreate it from the rebuild-safe {podman_dir}, then re-run BLT:\n\n"
+                                    f"   Recreate it from the rebuild-safe {volumes_dir}, then re-run BLT:\n\n"
                                     f"      {cli} rm -f {name} ; {create}")
                     continue
                 print(f"  {name}: was stopped - started")
@@ -1414,7 +1414,7 @@ def preflight_containers():
         print("\n❌ ERROR: container preflight failed - nothing was built.\n")
         for each_problem in problems:
             print(f"❌ {each_problem}\n")
-        print(f"(skip this check: container_preflight = False in env.py; see {podman_dir}/readme.md)")
+        print(f"(skip this check: container_preflight = False in env.py; see {volumes_dir}/readme.md)")
         exit(1)
 
 

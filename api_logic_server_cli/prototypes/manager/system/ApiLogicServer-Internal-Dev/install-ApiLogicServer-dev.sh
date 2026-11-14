@@ -52,7 +52,7 @@ if [ $# -eq 0 ]
         echo "\nReally, ApiLogicServer-dev must not exist\n" 
         exit 1
     fi
-    mgr_root=$(pwd)   # Manager root: holds system/ApiLogicServer-Internal-Dev/podman-template
+    mgr_root=$(pwd)   # Manager root: holds system/ApiLogicServer-Internal-Dev/container-volumes-template
     set -x
     mkdir ApiLogicServer-dev
     cd ApiLogicServer-dev
@@ -63,13 +63,13 @@ if [ $# -eq 0 ]
     # persistent home for any docker/podman bind-mount volumes (Kafka data, etc.) that
     # must survive Manager workspace rebuilds - nothing under build_and_test/ is safe for
     # this, since a clean Manager rebuild (or a fresh BLT-created workspace) wipes it.
-    # copy the template (gold: system/ApiLogicServer-Internal-Dev/podman-template)
-    mkdir podman
-    if [ -d "$mgr_root/system/ApiLogicServer-Internal-Dev/podman-template" ]
+    # copy the template (gold: system/ApiLogicServer-Internal-Dev/container-volumes-template)
+    mkdir container-volumes
+    if [ -d "$mgr_root/system/ApiLogicServer-Internal-Dev/container-volumes-template" ]
     then
-        cp -R "$mgr_root/system/ApiLogicServer-Internal-Dev/podman-template/." podman/
+        cp -R "$mgr_root/system/ApiLogicServer-Internal-Dev/container-volumes-template/." container-volumes/
     else
-        echo "(podman-template not found under $mgr_root - podman/ left empty)"
+        echo "(container-volumes-template not found under $mgr_root - container-volumes/ left empty)"
     fi
 
     cd org_git
@@ -130,7 +130,7 @@ if [ $# -eq 0 ]
     echo ""
     echo "ApiLogicServer/react-admin contains shell burn-and-rebuild-react-admin"
     echo ""
-    echo "If a sample uses docker/podman (Kafka, Keycloak), see podman/readme.md - it's a"
+    echo "If a sample uses docker/podman (Kafka, Keycloak), see container-volumes/readme.md - it's a"
     echo "rebuild-safe place for volumes that must survive a Manager/BLT rebuild"
     echo ""
     exit 0

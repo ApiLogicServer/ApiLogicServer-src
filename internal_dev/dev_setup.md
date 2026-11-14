@@ -20,7 +20,7 @@ ApiLogicServer-dev/
   build_and_test/genai-logic/   the BLT Manager: rebuilt by every BLT, never edit it as if it were gold
   clean/genai-logic/            pristine second BLT output, for diffing
   servers/                      scratch projects
-  podman/                       rebuild-safe volumes for containers (see below)
+  container-volumes/                       rebuild-safe volumes for containers (see below)
 ```
 
 ## Install the dev source
@@ -31,7 +31,7 @@ From the Manager root:
 sh system/ApiLogicServer-Internal-Dev/install-ApiLogicServer-dev.sh [ vscode | charm | x ]
 ```
 
-It creates `ApiLogicServer-dev/` with the folders above, and seeds `podman/` from `podman-template/`. It refuses to run
+It creates `ApiLogicServer-dev/` with the folders above, and seeds `container-volumes/` from `container-volumes-template/`. It refuses to run
 if `ApiLogicServer-dev/` already exists. Gold:
 [installers and template](../api_logic_server_cli/prototypes/manager/system/ApiLogicServer-Internal-Dev/).
 
@@ -104,15 +104,15 @@ a flag that is off needs no container.
 **With `'none'`, nothing on the VM verifies the host.** Check it yourself before BLT, and confirm the Kafka tests can
 reach the broker from the VM (they were written for a broker on `localhost`).
 
-**One rule for every container: mount from `ApiLogicServer-dev/podman/`, never from `build_and_test/`.** Docker and
+**One rule for every container: mount from `ApiLogicServer-dev/container-volumes/`, never from `build_and_test/`.** Docker and
 Podman record a bind mount's absolute host path when the container is created. A container created from a project
 under `build_and_test/` fails after the next rebuild (`crun: cannot stat ...`), and the keycloak test then fails with a
-bare connection error. `podman/` is a sibling of `build_and_test/`, so rebuilds do not touch it. Its `readme.md` and
+bare connection error. `container-volumes/` is a sibling of `build_and_test/`, so rebuilds do not touch it. Its `readme.md` and
 `keycloak/readme.md` hold the create commands, and the preflight prints the same ones. The same rule applies to
-Docker; the `podman/` name is just the directory (only exercised so far with Podman).
+Docker and Podman alike (the Docker path is the one exercised most; the Podman branches are less tested).
 
-`podman-template/` (in `Internal-Dev/`) is the gold copy of that directory. It ships with the Manager, so BLT restores it
-on every rebuild; the installer copies it to the sibling `podman/`. Never mount a container from the template folder,
+`container-volumes-template/` (in `Internal-Dev/`) is the gold copy of that directory. It ships with the Manager, so BLT restores it
+on every rebuild; the installer copies it to the sibling `container-volumes/`. Never mount a container from the template folder,
 and edit the template in gold, not in a Manager copy.
 
 ## Not yet verified

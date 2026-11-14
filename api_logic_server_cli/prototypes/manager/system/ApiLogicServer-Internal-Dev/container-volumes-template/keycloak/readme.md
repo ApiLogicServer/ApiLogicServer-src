@@ -1,4 +1,4 @@
-# podman/keycloak/
+# container-volumes/keycloak/
 
 Keycloak for local dev and BLT (`docker_postgres_auth` test runs
 `add-auth --provider-type=keycloak` against `http://localhost:8080`).
@@ -9,13 +9,13 @@ them on first start (`--import-realm`, strategy IGNORE_EXISTING).
 
 ## Create the container
 
-Run once (or after `podman rm keycloak`), **from this directory** (`ApiLogicServer-dev/podman/keycloak`). Check
+Run once (or after `podman rm keycloak`), **from this directory** (`ApiLogicServer-dev/container-volumes/keycloak`). Check
 `pwd` first: the mount below uses `$PWD`, and podman records it as an absolute path, so running this from a project
 under `build_and_test/` brings back the `cannot stat` failure described below. (BLT's container preflight prints this
 same command with the full path already filled in.)
 
 ```bash
-cd <your ApiLogicServer-dev>/podman/keycloak
+cd <your ApiLogicServer-dev>/container-volumes/keycloak
 podman run -d --name keycloak -p 8080:8080 \
   -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=password \
   -v "$PWD/import":/opt/keycloak/data/import \

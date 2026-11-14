@@ -243,7 +243,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - web_genie (full path db_url)",
+            "name": "     - opt_locking (full path db_url)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -252,8 +252,8 @@
             "redirectOutput": true,
             "args": [
                 "create",
-                "--project-name=web_genie",
-                "--db-url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/sqlite-databases/web_genie/web_genie.sqlite"],
+                "--project-name=opt_locking",
+                "--db-url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/sqlite-databases/opt_locking/opt_locking.sqlite"],
             "console": "integratedTerminal"
         },
         {

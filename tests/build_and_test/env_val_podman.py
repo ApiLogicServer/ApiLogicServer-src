@@ -101,5 +101,5 @@ class Config:
     container_cli = 'podman'
     ''' 'podman' | 'docker' | 'none': used by the container preflight (postgres, keycloak, kafka).
         'none' = no container CLI on this machine (VM install using the host's containers, reached at docker_database_ip): preflight skipped.
-        Containers must mount from ApiLogicServer-dev/podman/, never from build_and_test/ (rebuilt) - see its readme.md '''
+        Containers must mount from ApiLogicServer-dev/container-volumes/, never from build_and_test/ (rebuilt) - see its readme.md '''
 

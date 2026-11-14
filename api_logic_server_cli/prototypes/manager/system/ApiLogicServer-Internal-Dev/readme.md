@@ -11,8 +11,8 @@ Run from the Manager root:
 sh system/ApiLogicServer-Internal-Dev/install-ApiLogicServer-dev.sh [ vscode | charm | x ]
 ```
 
-This creates `ApiLogicServer-dev/` with `servers/`, `build_and_test/`, `org_git/` (source clones) and `podman/`,
-seeded from [podman-template/](podman-template/). It refuses to run if `ApiLogicServer-dev/` already exists.
+This creates `ApiLogicServer-dev/` with `servers/`, `build_and_test/`, `org_git/` (source clones) and `container-volumes/`,
+seeded from [container-volumes-template/](container-volumes-template/). It refuses to run if `ApiLogicServer-dev/` already exists.
 
 ## Run BLT (Build, Load and Test)
 
@@ -52,13 +52,14 @@ entirely. Turn off the tests you cannot support (`do_docker_postgres`, `do_docke
 **With `'none'`, nothing on this machine verifies the host.** Check it yourself before BLT, and confirm the Kafka
 tests can reach the broker from the VM (they were written for a broker on `localhost`).
 
-**One rule for every container: mount from `ApiLogicServer-dev/podman/`, never from `build_and_test/`.**
+**One rule for every container: mount from `ApiLogicServer-dev/container-volumes/`, never from `build_and_test/`.**
 Docker and Podman record a bind mount's absolute host path when the container is created. A container created from a
 project under `build_and_test/` fails after the next rebuild (`crun: cannot stat ...`), and the keycloak test then
-fails with a bare connection error. `podman/` is a sibling of `build_and_test/`, so rebuilds do not touch it. Its
-`readme.md` and `keycloak/readme.md` hold the create commands, and the preflight prints the same ones. The same rule applies
-to Docker; the `podman/` name is just the directory (only exercised so far with Podman).
+fails with a bare connection error. `container-volumes/` is a sibling of `build_and_test/`, so rebuilds do not touch it. Its
+`readme.md` and `keycloak/readme.md` hold the create commands, and the preflight prints the same ones.
 
-[podman-template/](podman-template/) is the gold copy of that directory. It ships with the Manager, so BLT restores it
-on every rebuild. The installer copies it to the sibling `podman/`. Never mount a container from the template folder,
+`container-volumes/` serves Docker and Podman alike (the Docker path is the one exercised most); for Podman setup see [Podman setup](https://apilogicserver.github.io/Docs/DevOps-Podman/) and the `podman` commands in its `keycloak/readme.md`.
+
+[container-volumes-template/](container-volumes-template/) is the gold copy of that directory. It ships with the Manager, so BLT restores it
+on every rebuild. The installer copies it to the sibling `container-volumes/`. Never mount a container from the template folder,
 and edit the template in gold (`ApiLogicServer-src`), not in a Manager copy.

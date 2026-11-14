@@ -49,7 +49,7 @@ if (Test-Path -Path "ApiLogicServer-dev") {
     Exit 1
 }
 
-$mgrRoot = (Get-Location).Path   # Manager root: holds system/ApiLogicServer-Internal-Dev/podman-template
+$mgrRoot = (Get-Location).Path   # Manager root: holds system/ApiLogicServer-Internal-Dev/container-volumes-template
 mkdir ApiLogicServer-dev
 cd ApiLogicServer-dev
 mkdir servers    # good place to create ApiLogicProjects
@@ -59,13 +59,13 @@ mkdir org_git  # git clones from org ApiLogicServer here
 # persistent home for any docker/podman bind-mount volumes (Kafka data, etc.) that
 # must survive Manager workspace rebuilds - nothing under build_and_test/ is safe for
 # this, since a clean Manager rebuild (or a fresh BLT-created workspace) wipes it.
-# copy the template (gold: system/ApiLogicServer-Internal-Dev/podman-template)
-mkdir podman
-$podmanTemplate = Join-Path $mgrRoot "system/ApiLogicServer-Internal-Dev/podman-template"
-if (Test-Path -Path $podmanTemplate) {
-    Copy-Item -Path (Join-Path $podmanTemplate "*") -Destination podman -Recurse -Force
+# copy the template (gold: system/ApiLogicServer-Internal-Dev/container-volumes-template)
+mkdir container-volumes
+$volumesTemplate = Join-Path $mgrRoot "system/ApiLogicServer-Internal-Dev/container-volumes-template"
+if (Test-Path -Path $volumesTemplate) {
+    Copy-Item -Path (Join-Path $volumesTemplate "*") -Destination container-volumes -Recurse -Force
 } else {
-    Write-Output "(podman-template not found under $mgrRoot - podman/ left empty)"
+    Write-Output "(container-volumes-template not found under $mgrRoot - container-volumes/ left empty)"
 }
 
 cd org_git
@@ -115,7 +115,7 @@ if ($IDE -eq "vscode") {
 Write-Output ""
 Write-Output "IDEs are preconfigured with run/launch commands to create and run the sample"
 Write-Output ""
-Write-Output "If a sample uses docker/podman (Kafka, Keycloak), see podman/readme.md - it's a"
+Write-Output "If a sample uses docker/podman (Kafka, Keycloak), see container-volumes/readme.md - it's a"
 Write-Output "rebuild-safe place for volumes that must survive a Manager/BLT rebuild"
 Write-Output ""
 exit 0
