@@ -58,8 +58,20 @@ project under `build_and_test/` fails after the next rebuild (`crun: cannot stat
 fails with a bare connection error. `container-volumes/` is a sibling of `build_and_test/`, so rebuilds do not touch it. Its
 `readme.md` and `keycloak/readme.md` hold the create commands, and the preflight prints the same ones.
 
-`container-volumes/` serves Docker and Podman alike (the Docker path is the one exercised most); for Podman setup see [Podman setup](https://apilogicserver.github.io/Docs/DevOps-Podman/) and the `podman` commands in its `keycloak/readme.md`.
+### Volumes: what lives where
 
-[container-volumes-template/](container-volumes-template/) is the gold copy of that directory. It ships with the Manager, so BLT restores it
-on every rebuild. The installer copies it to the sibling `container-volumes/`. Never mount a container from the template folder,
-and edit the template in gold (`ApiLogicServer-src`), not in a Manager copy.
+| Container | Data | Where it lives |
+|---|---|---|
+| `postgresql-container`, `mysql-container` | database files | A Docker- or Podman-managed named volume. Nothing on disk to protect; a rebuild never touches it. |
+| `broker1` (Kafka) | `kafka/data` | Bind mount from `ApiLogicServer-dev/container-volumes/kafka/data` |
+| `keycloak` | realm and user JSON | Bind mount from `ApiLogicServer-dev/container-volumes/keycloak/import` |
+
+Docker and Podman behave the same here: **both** use `container-volumes/` for the Kafka and Keycloak bind mounts (the Docker
+path is the one exercised most). For Podman machine setup see [Podman setup](https://apilogicserver.github.io/Docs/DevOps-Podman/).
+
+How `container-volumes/` gets its content: [container-volumes-template/](container-volumes-template/) is the gold copy and
+ships with the Manager (so BLT restores it on every rebuild). The installer copies it to the sibling `container-volumes/`;
+if `container-volumes/keycloak/import` is missing, the preflight's printed Keycloak command copies it from the template
+first. The Keycloak realm and user files come from `container-volumes-template/keycloak/import` (identical to
+`prototypes/base/devops/keycloak/import`). Never mount a container from the template folder, and edit the template in gold
+(`ApiLogicServer-src`), not in a Manager copy.
