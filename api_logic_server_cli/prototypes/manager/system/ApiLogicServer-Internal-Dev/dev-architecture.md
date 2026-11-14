@@ -30,6 +30,11 @@ changelog:
     time (the preflight prints the create command). Walkthrough: `internal_dev/dev_setup.md`. Changes what BLT runs for
     anyone relying on the platform files' old defaults. Loader tested standalone (no env.py / overrides / typo warning /
     legacy full Config / win32 + linux); a full BLT in stage 1 is not yet run.
+    **Template readmes made path-neutral (Nov 14):** `podman-template/keycloak/readme.md` and `readme.md` hardcoded
+    `$HOME/dev/genai-logic/ApiLogicServer-dev/podman/...`, wrong for any other install root (found by installing into
+    `~/dev/genai-logic-test`). The Keycloak create command now runs from `podman/keycloak` with `$PWD/import`, with a
+    warning to check `pwd`. Staged-BLT test (stage 1 + stage 2, current tree and a clean install in a second root)
+    passed 10/10 and 14/14.
   - 2.43 (Nov 10 2026) - CE files are now `.github/copilot-instructions.md` (no leading dot; GitHub Copilot's standard name) in prototypes/base and prototypes/manager. References to the old dotted name were updated across gold (CEs, training docs, cli-internals.md, GEMINI.md, SKILL.md, this file; samples/* snapshots left as-is), plus `org_git/Docs/sync_ce_to_docs.sh`, whose cp would have failed. That script's SOURCE_BASE also pointed at the retired `~/dev/ApiLogicServer/` tree; fixed to `~/dev/genai-logic/`. Older changelog entries in this file now show the new name too.
   - 2.42 (Nov 3 2026) - **Samples regrouped (gold: `prototypes/manager/samples/`).** Four group folders, each with a
     `readme_<group>.md`, listed in `readme_samples.md`: `data_modeling/` (`demo_emp_types`, `basic_demo_sales_by_month`),

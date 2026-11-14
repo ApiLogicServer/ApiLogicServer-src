@@ -9,12 +9,16 @@ them on first start (`--import-realm`, strategy IGNORE_EXISTING).
 
 ## Create the container
 
-Run once (or after `podman rm keycloak`):
+Run once (or after `podman rm keycloak`), **from this directory** (`ApiLogicServer-dev/podman/keycloak`). Check
+`pwd` first: the mount below uses `$PWD`, and podman records it as an absolute path, so running this from a project
+under `build_and_test/` brings back the `cannot stat` failure described below. (BLT's container preflight prints this
+same command with the full path already filled in.)
 
 ```bash
+cd <your ApiLogicServer-dev>/podman/keycloak
 podman run -d --name keycloak -p 8080:8080 \
   -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=password \
-  -v $HOME/dev/genai-logic/ApiLogicServer-dev/podman/keycloak/import:/opt/keycloak/data/import \
+  -v "$PWD/import":/opt/keycloak/data/import \
   quay.io/keycloak/keycloak:23.0.6 \
   start-dev --import-realm --proxy=edge --hostname-strict=false --hostname-strict-https=false
 ```

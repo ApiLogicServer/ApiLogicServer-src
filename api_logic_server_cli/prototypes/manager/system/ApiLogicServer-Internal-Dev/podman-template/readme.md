@@ -47,7 +47,7 @@ Organize by service (`podman/<service>/...`). For a sample whose compose file
 uses a project-relative mount, point its `volumes:` entry here instead, e.g.:
 
   volumes:
-    - ${HOME}/dev/genai-logic/ApiLogicServer-dev/podman/kafka/data:/integration/kafka/volume
+    - <absolute path of your ApiLogicServer-dev>/podman/kafka/data:/integration/kafka/volume
 
 Add a row to the table above and a `<service>/readme.md` with the exact
 create command.
