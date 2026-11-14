@@ -1192,18 +1192,52 @@ assert cli_path.exists(), 'Sys Error - bad cli path: {str(cli_path)}'
 
 python = find_valid_python_name()  # geesh - allow for python vs python3
 
-personal_env_path = Path(current_path).joinpath("env.py")
-""" personal env (excluded in .gitignore)"""
-if os.path.exists(personal_env_path):
-    from env import Config  
-elif platform == "darwin":  # no personal path, use platform defaults
-    from env_mac import Config
-elif platform == "win32":
-    from env_win import Config
-elif platform.startswith("linux"):
-    from env_linux import Config
-else:
-    print("unknown platform")
+def load_config(current_path, platform):
+    """ Returns the test Config: the platform file (env_mac / env_win / env_linux) as the base, with the personal
+    env.py (gitignored) layered on top.  The platform defaults are STAGE 1: nothing needs a container.
+
+    env.py can be either:
+      - overrides only (preferred): plain module-level assignments, e.g.  do_docker_postgres = True
+        (override individual flags; default_setting itself cannot be overridden - flags are bound at class creation)
+      - a full  class Config  (the old way, e.g. a copy of env_val_podman.py): used as is, NOT layered
+    """
+    import importlib.util, types
+
+    def load_module(path, name):
+        spec = importlib.util.spec_from_file_location(name, str(path))
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    platform_file = {"darwin": "env_mac.py", "win32": "env_win.py"}.get(platform)
+    if platform_file is None and platform.startswith("linux"):
+        platform_file = "env_linux.py"
+    if platform_file is None:
+        print(f"unknown platform: {platform}")
+        exit(1)
+    personal_path = Path(current_path).joinpath("env.py")
+    personal = load_module(personal_path, "blt_personal_env") if personal_path.exists() else None
+    if personal is not None and hasattr(personal, "Config"):
+        print(f"BLT env: env.py (full Config, not layered on {platform_file})")
+        return personal.Config
+    base = load_module(Path(current_path).joinpath(platform_file), "blt_platform_env").Config
+    if personal is None:
+        print(f"BLT env: {platform_file} - stage 1 defaults (no containers); no env.py")
+        return base
+    applied = []
+    for each_name, each_value in vars(personal).items():
+        if each_name.startswith("_") or isinstance(each_value, (types.ModuleType, types.FunctionType, type)):
+            continue
+        if not hasattr(base, each_name):
+            print(f"  WARNING env.py: '{each_name}' is not a known setting in {platform_file} (typo?) - applied anyway")
+        setattr(base, each_name, each_value)
+        applied.append(f"{each_name}={each_value!r}")
+    print(f"BLT env: {platform_file} + env.py overrides: {', '.join(applied) if applied else '(none)'}")
+    return base
+
+
+Config = load_config(current_path, platform)
+"""personal env.py (gitignored) layered over the platform file (stage 1 defaults)"""
 
 install_api_logic_server_path = get_servers_build_and_test_path().joinpath("genai-logic") 
 """ eg, build_and_test/genai-logic """

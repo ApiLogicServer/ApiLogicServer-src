@@ -48,10 +48,38 @@ BLT builds the product into a clean Manager and runs the tests against it. From 
   APILOGICSERVER_AUTO_OPEN="" python build_load_and_test.py confirm
   ```
 
-Which tests run is set by `tests/build_and_test/env.py`. That file is **personal and gitignored**: copy the closest
-`env_*.py` over it (for example `env_val_podman.py`, or `env_val.py` for Docker) and edit.
+Which tests run comes from the **platform file** (`tests/build_and_test/env_mac.py`, `env_win.py` or `env_linux.py`,
+picked automatically), with your optional **`env.py`** (personal, gitignored) layered on top. BLT prints which it used
+(`BLT env: ...`). Details in "Stages" below.
 
 BLT builds from the working tree of this repo, committed or not. Details: dev-architecture.md, "BLT" section.
+
+## Stages: start with no containers
+
+1. **Stage 1: install and run BLT with no `env.py`.** The platform file's defaults need no containers: the Postgres,
+   Keycloak, Kafka, MySQL, SQL Server and image-build tests are off. Everything else (SQLite-based) runs.
+2. **Verify** BLT passes.
+3. **Stage 2: add containers one at a time, by adding overrides to `env.py`.** Plain assignments, no class:
+
+   ```python
+   do_docker_postgres = True       # needs postgresql-container
+   container_cli = 'podman'        # 'docker' | 'podman' | 'none' (see below)
+   ```
+
+   Run BLT. If the container is missing, the preflight stops and prints the exact command to create it; run it and
+   re-run BLT. Then add the next flag. Some devs stay at stage 1.
+
+| Flag | Needs | Order |
+|---|---|---|
+| `do_docker_postgres` | `postgresql-container` | first |
+| `do_docker_postgres_auth` | `postgresql-container` and `keycloak` | second (needs Postgres) |
+| `do_run_nw_kafka`, `do_test_nw_kafka` | `broker1` | any time |
+| `do_docker_mysql`, `do_docker_sqlserver`, `do_docker_creation_tests` | their own containers / an image build | not covered by the preflight |
+
+Rules for `env.py`: override individual flags (you cannot override `default_setting`: the flags are bound to it when
+the platform class is created). A name the platform file does not define gets a `WARNING ... (typo?)`. An `env.py`
+that defines a full `class Config` (the old way, for example a copy of `env_val_podman.py`) still works, but is used
+as is and is not layered, so it will not pick up later changes to the platform file.
 
 ## Pre-set up BLT: containers (Docker, Podman or the host's)
 

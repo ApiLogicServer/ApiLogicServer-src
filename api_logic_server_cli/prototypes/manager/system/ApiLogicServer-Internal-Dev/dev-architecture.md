@@ -23,6 +23,13 @@ changelog:
     `Config.container_cli` ('podman'|'docker'|'none', default docker, set in env.py / env_val.py / env_val_podman.py; env.py is
     gitignored; 'none' = VM install such as Parallels that uses the HOST's containers via `docker_database_ip`, preflight skipped) and `Config.container_preflight = False` to skip. Readme: Internal-Dev/readme.md (BLT pre-setup). Tested standalone against live podman containers
     (all running / keycloak stopped / keycloak missing); the 'cannot stat' branch and podman-machine-down branch are untested.
+    **Staged BLT env:** `build_load_and_test.py` `load_config()` loads the platform file (`env_mac/win/linux.py`) as the base
+    and layers a personal `env.py` (gitignored) on top; an `env.py` with a full `class Config` still works unlayered.
+    Platform defaults are now STAGE 1: the postgres / postgres_auth / nw_kafka / mysql / sqlserver / docker_creation flags
+    are False, so a fresh checkout needs no containers. Stage 2 = override single flags in `env.py`, one container at a
+    time (the preflight prints the create command). Walkthrough: `internal_dev/dev_setup.md`. Changes what BLT runs for
+    anyone relying on the platform files' old defaults. Loader tested standalone (no env.py / overrides / typo warning /
+    legacy full Config / win32 + linux); a full BLT in stage 1 is not yet run.
   - 2.43 (Nov 10 2026) - CE files are now `.github/copilot-instructions.md` (no leading dot; GitHub Copilot's standard name) in prototypes/base and prototypes/manager. References to the old dotted name were updated across gold (CEs, training docs, cli-internals.md, GEMINI.md, SKILL.md, this file; samples/* snapshots left as-is), plus `org_git/Docs/sync_ce_to_docs.sh`, whose cp would have failed. That script's SOURCE_BASE also pointed at the retired `~/dev/ApiLogicServer/` tree; fixed to `~/dev/genai-logic/`. Older changelog entries in this file now show the new name too.
   - 2.42 (Nov 3 2026) - **Samples regrouped (gold: `prototypes/manager/samples/`).** Four group folders, each with a
     `readme_<group>.md`, listed in `readme_samples.md`: `data_modeling/` (`demo_emp_types`, `basic_demo_sales_by_month`),

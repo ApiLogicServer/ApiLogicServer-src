@@ -9,6 +9,8 @@ class Config:
     #   what tests to run
     # ***********************
 
+    # STAGE 1 defaults: nothing here needs a container (no Postgres, Keycloak, Kafka, MySQL, SQL Server, image build).
+    # To add containers (stage 2), override single flags in your personal env.py - see internal_dev/dev_setup.md.
     default_setting = True  # simplify enable / disable most
 
     do_install_api_logic_server = True   # verify build wheel and local 
@@ -69,7 +71,7 @@ class Config:
 
     do_include_exclude = default_setting            # --db_url=table_filters_tests
 
-    do_docker_mysql = default_setting               # requires docker database be running
+    do_docker_mysql = False               # requires docker database be running
     do_docker_postgres = False            # requires docker database be running
     do_docker_postgres_auth = False       # requires docker database be running
     do_docker_sqlserver = False           # requires docker database be running
@@ -91,4 +93,10 @@ class Config:
     '''
     docker_database_ip = '10.0.0.154'
     ''' for virtual machine access, set this to host IP '''
+
+    container_cli = 'docker'
+    ''' 'podman' | 'docker' | 'none': used by the container preflight (postgres, keycloak, kafka); only matters once you
+        turn on a container test (stage 2).  'none' = no container CLI on this machine (VM install using the host's
+        containers, reached at docker_database_ip): preflight skipped.
+        Containers must mount from ApiLogicServer-dev/podman/, never from build_and_test/ (rebuilt) - see internal_dev/dev_setup.md '''
 
