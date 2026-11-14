@@ -4,8 +4,18 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.43
+version: 2.44
 changelog:
+  - 2.44 (Nov 13 2026) - **`podman/` is now seeded from a gold template.** Root cause of a BLT failure on a podman-only
+    machine: the Keycloak container had been created from a sample's `devops/keycloak/docker-compose.yml`
+    (`$PWD/import:/opt/keycloak/data/import`), podman stored that absolute path under `build_and_test/`, a BLT rebuild
+    deleted it, and `podman start keycloak` failed with `crun: cannot stat ...`, so the `docker_postgres_auth` test could
+    not reach Keycloak. Fix: container mounts from the rebuild-safe sibling `ApiLogicServer-dev/podman/keycloak/import`
+    (readme has the create command). Gold: new `prototypes/manager/system/ApiLogicServer-Internal-Dev/podman-template/`
+    (`readme.md`, `keycloak/readme.md`, `keycloak/import/*.json`, byte-identical to `prototypes/base/devops/keycloak/import`);
+    `install-ApiLogicServer-dev.sh`/`.ps1` copy it to `podman/` instead of embedding a heredoc readme. Named
+    `podman-template`, NOT `podman`: it ships in the Manager, which BLT / `create-manager --clean` rebuild, and a container
+    must never mount from it - only from the sibling. Edit the template in gold. Not yet run end to end (fresh dev install).
   - 2.43 (Nov 10 2026) - CE files are now `.github/copilot-instructions.md` (no leading dot; GitHub Copilot's standard name) in prototypes/base and prototypes/manager. References to the old dotted name were updated across gold (CEs, training docs, cli-internals.md, GEMINI.md, SKILL.md, this file; samples/* snapshots left as-is), plus `org_git/Docs/sync_ce_to_docs.sh`, whose cp would have failed. That script's SOURCE_BASE also pointed at the retired `~/dev/ApiLogicServer/` tree; fixed to `~/dev/genai-logic/`. Older changelog entries in this file now show the new name too.
   - 2.42 (Nov 3 2026) - **Samples regrouped (gold: `prototypes/manager/samples/`).** Four group folders, each with a
     `readme_<group>.md`, listed in `readme_samples.md`: `data_modeling/` (`demo_emp_types`, `basic_demo_sales_by_month`),

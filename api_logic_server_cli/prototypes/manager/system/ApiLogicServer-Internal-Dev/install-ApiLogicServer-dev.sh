@@ -52,6 +52,7 @@ if [ $# -eq 0 ]
         echo "\nReally, ApiLogicServer-dev must not exist\n" 
         exit 1
     fi
+    mgr_root=$(pwd)   # Manager root: holds system/ApiLogicServer-Internal-Dev/podman-template
     set -x
     mkdir ApiLogicServer-dev
     cd ApiLogicServer-dev
@@ -62,34 +63,14 @@ if [ $# -eq 0 ]
     # persistent home for any docker/podman bind-mount volumes (Kafka data, etc.) that
     # must survive Manager workspace rebuilds - nothing under build_and_test/ is safe for
     # this, since a clean Manager rebuild (or a fresh BLT-created workspace) wipes it.
+    # copy the template (gold: system/ApiLogicServer-Internal-Dev/podman-template)
     mkdir podman
-    cat > podman/readme.md << 'EOF'
-# podman/
-
-Persistent host directory for docker/podman bind-mount volumes that need to
-survive a Manager workspace rebuild (e.g. `genai-logic create-manager --clean`,
-or a fresh `build_and_test`/`clean` BLT output).
-
-Sibling of `org_git/`, `build_and_test/`, `servers/` - nothing here is touched
-by BLT or Manager rebuilds.
-
-Not tied to any one sample or technology - only use it when a sample's own
-compose file default (typically project-relative, e.g. `./.volumes/...`) would
-otherwise be wiped by a workspace rebuild. Point that compose file's
-`volumes:` entry here instead, e.g.:
-
-  volumes:
-    - ${HOME}/dev/genai-logic/ApiLogicServer-dev/podman/kafka/data:/integration/kafka/volume
-
-Organize by service as needed:
-
-  podman/kafka/data
-  podman/<other-service>/...
-
-This only matters for this internal dev checkout - general end-user Manager
-workspaces aren't repeatedly rebuilt, so their sample compose files keep the
-simpler, self-contained project-relative default.
-EOF
+    if [ -d "$mgr_root/system/ApiLogicServer-Internal-Dev/podman-template" ]
+    then
+        cp -R "$mgr_root/system/ApiLogicServer-Internal-Dev/podman-template/." podman/
+    else
+        echo "(podman-template not found under $mgr_root - podman/ left empty)"
+    fi
 
     cd org_git
 
@@ -149,7 +130,7 @@ EOF
     echo ""
     echo "ApiLogicServer/react-admin contains shell burn-and-rebuild-react-admin"
     echo ""
-    echo "If a sample uses docker/podman (e.g. Kafka), see podman/readme.md - it's a"
+    echo "If a sample uses docker/podman (Kafka, Keycloak), see podman/readme.md - it's a"
     echo "rebuild-safe place for volumes that must survive a Manager/BLT rebuild"
     echo ""
     exit 0
