@@ -46,7 +46,7 @@ if [ $# -eq 0 ]
   else
     ls
     echo " "
-    read -p "Verify ApiLogicServer-dev does not exist, and [Enter] install *dev* version of ApiLogicServer for $1> "
+    read -p "Verify $(pwd)/ApiLogicServer-dev does not exist, and [Enter] install *dev* version of ApiLogicServer for $1> "
     if [ -d "ApiLogicServer-dev" ] 
     then
         echo "\nReally, ApiLogicServer-dev must not exist\n" 
@@ -75,7 +75,7 @@ if [ $# -eq 0 ]
     # provenance: readme for the dev env, dated now (gold: system/ApiLogicServer-Internal-Dev/readme-ApiLogicServer-dev.md)
     if [ -f "$mgr_root/system/ApiLogicServer-Internal-Dev/readme-ApiLogicServer-dev.md" ]
     then
-        sed "s|{{CREATED_DATE}}|$(date +%m/%d/%Y)|" "$mgr_root/system/ApiLogicServer-Internal-Dev/readme-ApiLogicServer-dev.md" > readme.md
+        sed -e "s|{{CREATED_DATE}}|$(date +%m/%d/%Y)|" -e "s|{{INSTALL_SCRIPT}}|$mgr_root/system/ApiLogicServer-Internal-Dev/install-ApiLogicServer-dev.sh|" "$mgr_root/system/ApiLogicServer-Internal-Dev/readme-ApiLogicServer-dev.md" > readme-dev.md
     fi
 
     cd org_git
@@ -99,8 +99,8 @@ if [ $# -eq 0 ]
     git clone https://github.com/ApiLogicServer/ApiLogicServer-src.git
     git clone https://github.com/valhuber/LogicBank
 
-    # provenance: record what this dev env was built from (fills {{CLONE_SHAS}} in ../readme.md)
-    if [ -f ../readme.md ]
+    # provenance: record what this dev env was built from (fills {{CLONE_SHAS}} in ../readme-dev.md)
+    if [ -f ../readme-dev.md ]
     then
         mgr_ver=$(ls "$mgr_root/venv/lib/python3.13/site-packages" 2>/dev/null | grep -i '^apilogicserver-.*dist-info' | sed -e 's/^[Aa]pi[Ll]ogic[Ss]erver-//' -e 's/\.dist-info$//')
         {
@@ -110,8 +110,8 @@ if [ $# -eq 0 ]
             [ -d "$r" ] && echo "- $r: $(git -C $r rev-parse --short HEAD) ($(git -C $r branch --show-current))"
           done
         } > ../clone_shas.tmp
-        awk '/\{\{CLONE_SHAS\}\}/ { while ((getline line < "../clone_shas.tmp") > 0) print line; next } { print }' ../readme.md > ../readme.md.new
-        mv ../readme.md.new ../readme.md
+        awk '/\{\{CLONE_SHAS\}\}/ { while ((getline line < "../clone_shas.tmp") > 0) print line; next } { print }' ../readme-dev.md > ../readme-dev.md.new
+        mv ../readme-dev.md.new ../readme-dev.md
         rm ../clone_shas.tmp
     fi
     

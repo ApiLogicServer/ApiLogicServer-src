@@ -39,7 +39,7 @@ if($IDE -eq "") {
 }
 ls
 Write-Output " "
-$Ready= Read-Host -Prompt "Verify ApiLogicServer-dev does not exist, and [Enter] install *dev* version of ApiLogicServer for $1> "
+$Ready= Read-Host -Prompt "Verify $((Get-Location).Path)\ApiLogicServer-dev does not exist, and [Enter] install *dev* version of ApiLogicServer for $IDE> "
 Set-PSDebug -Trace 0
 
 if (Test-Path -Path "ApiLogicServer-dev") {
@@ -71,7 +71,7 @@ if (Test-Path -Path $volumesTemplate) {
 # provenance: readme for the dev env, dated now (gold: system/ApiLogicServer-Internal-Dev/readme-ApiLogicServer-dev.md)
 $readmeTemplate = Join-Path $mgrRoot "system/ApiLogicServer-Internal-Dev/readme-ApiLogicServer-dev.md"
 if (Test-Path -Path $readmeTemplate) {
-    (Get-Content -Raw $readmeTemplate).Replace("{{CREATED_DATE}}", (Get-Date -Format "MM/dd/yyyy")) | Set-Content -NoNewline readme.md
+    (Get-Content -Raw $readmeTemplate).Replace("{{CREATED_DATE}}", (Get-Date -Format "MM/dd/yyyy")).Replace("{{INSTALL_SCRIPT}}", (Join-Path $mgrRoot "system/ApiLogicServer-Internal-Dev/install-ApiLogicServer-dev.ps1")) | Set-Content -NoNewline readme-dev.md
 }
 
 cd org_git
@@ -92,15 +92,15 @@ if ($clonedocs -eq $true) {
 git clone https://github.com/ApiLogicServer/ApiLogicServer-src.git
 git clone https://github.com/valhuber/LogicBank
 
-# provenance: record what this dev env was built from (fills {{CLONE_SHAS}} in ..\readme.md)
-if (Test-Path -Path ..\readme.md) {
+# provenance: record what this dev env was built from (fills {{CLONE_SHAS}} in ..\readme-dev.md)
+if (Test-Path -Path ..\readme-dev.md) {
     $dist = Get-ChildItem (Join-Path $mgrRoot "venv\Lib\site-packages") -Directory -Filter "apilogicserver-*.dist-info" -ErrorAction SilentlyContinue | Select-Object -First 1
     $mgrVer = if ($dist) { $dist.Name -replace '^apilogicserver-','' -replace '\.dist-info$','' } else { "unknown" }
     $lines = @("- Manager ApiLogicServer: $mgrVer")
     foreach ($r in "Docs","ApiLogicServer-src","LogicBank") {
         if (Test-Path -Path $r) { $lines += "- ${r}: $(git -C $r rev-parse --short HEAD) ($(git -C $r branch --show-current))" }
     }
-    (Get-Content -Raw ..\readme.md).Replace("{{CLONE_SHAS}}", ($lines -join "`n")) | Set-Content -NoNewline ..\readme.md
+    (Get-Content -Raw ..\readme-dev.md).Replace("{{CLONE_SHAS}}", ($lines -join "`n")) | Set-Content -NoNewline ..\readme-dev.md
 }
 
 cd ApiLogicServer-src
