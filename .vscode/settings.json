@@ -5,7 +5,9 @@
     "python.linting.ignorePatterns": [
         "**/*.jinja"
     ],
-    "terminal.integrated.env.osx": 
+    // PYTHONPATH below is for testing an experimental safrs version: point it at a local safrs checkout
+    // (this path is deliberately left as-is; it does not exist unless you create it - Python ignores a missing entry).
+    "terminal.integrated.env.osx":
         {
             "PYTHONPATH": "/Users/val/dev/safrx"
         },

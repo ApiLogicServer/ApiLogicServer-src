@@ -5,6 +5,13 @@
 # docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:latest -o type=image --platform=linux/arm64,linux/amd64 .
 # docker pull apilogicserver/api_logic_server:latest
 
+# Note (Nov 2026): api_logic_server_cli/api_logic_server_info.yaml is gitignored, and is written only when
+#   `create` runs from this source tree (BLT's creates write it to the venv). A fresh clone (dev install) has none,
+#   so the chmod step below failed in BLT docker_creation_tests. Fix: the RUN step below now does
+#   `touch api_logic_server_cli/api_logic_server_info.yaml` before the chmod, so the file always exists; the chmod
+#   remains so the non-root container user can write it at runtime. Where the file does exist, the image also copies the
+#   developer's last-created project path.
+
 # Beta - test codespaces with tutorial, API_Fiddle (change .devcontainer.json -> apilogicserver/api_logic_server_x)
 # docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server_x:11.01.15 -o type=image --platform=linux/arm64,linux/amd64 .
 # docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server_x:latest -o type=image --platform=linux/arm64,linux/amd64 .
@@ -93,6 +100,7 @@ RUN chmod +x bin/ApiLogicServer \
     && chmod +x bin/gal \
     && chmod +x bin/gl \
     && chmod +x bin/als \
+    && touch api_logic_server_cli/api_logic_server_info.yaml \
     && chmod a+rwx -R api_logic_server_cli/api_logic_server_info.yaml \
     && chmod +x bin/py \
     && chmod -R a+rX api_logic_server_cli/prototypes/
