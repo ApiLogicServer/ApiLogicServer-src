@@ -72,6 +72,12 @@ if [ $# -eq 0 ]
         echo "(container-volumes-template not found under $mgr_root - container-volumes/ left empty)"
     fi
 
+    # provenance: readme for the dev env, dated now (gold: system/ApiLogicServer-Internal-Dev/readme-ApiLogicServer-dev.md)
+    if [ -f "$mgr_root/system/ApiLogicServer-Internal-Dev/readme-ApiLogicServer-dev.md" ]
+    then
+        sed "s|{{CREATED_DATE}}|$(date +%m/%d/%Y)|" "$mgr_root/system/ApiLogicServer-Internal-Dev/readme-ApiLogicServer-dev.md" > readme.md
+    fi
+
     cd org_git
 
     if [ "$clonedocs" = true ]
@@ -92,6 +98,22 @@ if [ $# -eq 0 ]
     
     git clone https://github.com/ApiLogicServer/ApiLogicServer-src.git
     git clone https://github.com/valhuber/LogicBank
+
+    # provenance: record what this dev env was built from (fills {{CLONE_SHAS}} in ../readme.md)
+    if [ -f ../readme.md ]
+    then
+        mgr_ver=$(ls "$mgr_root/venv/lib/python3.13/site-packages" 2>/dev/null | grep -i '^apilogicserver-.*dist-info' | sed -e 's/^[Aa]pi[Ll]ogic[Ss]erver-//' -e 's/\.dist-info$//')
+        {
+          echo "- Manager ApiLogicServer: ${mgr_ver:-unknown}"
+          for r in Docs ApiLogicServer-src LogicBank
+          do
+            [ -d "$r" ] && echo "- $r: $(git -C $r rev-parse --short HEAD) ($(git -C $r branch --show-current))"
+          done
+        } > ../clone_shas.tmp
+        awk '/\{\{CLONE_SHAS\}\}/ { while ((getline line < "../clone_shas.tmp") > 0) print line; next } { print }' ../readme.md > ../readme.md.new
+        mv ../readme.md.new ../readme.md
+        rm ../clone_shas.tmp
+    fi
     
     cd ApiLogicServer-src
     echo "\ncopying $sra --> ApiLogicServer"
