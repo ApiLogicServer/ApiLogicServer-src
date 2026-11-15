@@ -678,6 +678,12 @@ def delete_build_directories(install_api_logic_server_path):
         print(f"Unable to create directory {install_api_logic_server_path} -- Windows dir exists?  Excp:")
         print(f"{e}")
         exit(1)
+    # explain build_and_test to whoever opens it (like readme-dev.md, written by the dev install)
+    readme = install_api_logic_server_path.parent.joinpath('readme-build-and-test.md')
+    readme.write_text(
+        '`build_and_test` is the result of a "BLT" run, which creates the installer, installs it, and runs several tests.\n\n'
+        f'Last BLT run: {time.strftime("%m/%d/%Y %H:%M")}, '
+        f'by {get_api_logic_server_src_path().joinpath("tests/build_and_test/build_load_and_test.py")}\n')
 
 def docker_creation_tests(api_logic_server_tests_path):
     """
@@ -1339,7 +1345,13 @@ def preflight_containers():
         needed.append('keycloak')
     if use_kafka:
         needed.append('broker1')
-    if not needed:
+    use_dev_network = getattr(Config, 'do_docker_creation_tests', False)
+    """ docker_creation_tests run API Logic Server IN a container (--net dev-network), and docker-commands.sh
+        reaches the databases by container NAME (mysql-container, postgresql-container, sqlsvr-container) -
+        so those must be attached to dev-network.  Host-side tests reach them via published ports (localhost)
+        and do not need it, which is why the create commands below omit --net. """
+    dev_network_containers = ['postgresql-container', 'mysql-container', 'sqlsvr-container']
+    if not needed and not use_dev_network:
         return
 
     volumes_dir = install_api_logic_server_path.parent.parent.joinpath("container-volumes")
@@ -1378,7 +1390,7 @@ def preflight_containers():
             return 124, f"'{cli}' timed out"
 
     problems = []
-    print(f"\nContainer preflight ({cli}): {', '.join(needed)}")
+    print(f"\nContainer preflight ({cli}): {', '.join(needed) if needed else 'dev-network only'}")
     rc, out = cli_run(['info'])
     if rc != 0:
         fix = "podman machine start" if cli == 'podman' else "start Docker Desktop (or the docker daemon)"
@@ -1410,6 +1422,25 @@ def preflight_containers():
                     print(f"  ⚠️  {name} bind-mounts {each_source}, which a BLT / Manager rebuild deletes - "
                           f"its next start will fail.\n"
                           f"     Recreate it when convenient:\n\n        {cli} rm -f {name} ; {create}\n")
+        if use_dev_network:
+            print(f"  docker_creation_tests: checking dev-network for {', '.join(dev_network_containers)}")
+            rc, out = cli_run(['network', 'inspect', 'dev-network'])
+            if rc != 0:
+                problems.append(f"network 'dev-network' does not exist (docker_creation_tests runs API Logic Server in a "
+                                f"container on it).\n   Run this, then re-run BLT:\n\n      {cli} network create dev-network")
+            else:
+                for name in dev_network_containers:
+                    rc, out = cli_run(['inspect', name, '--format', '{{range $k, $v := .NetworkSettings.Networks}}{{$k}} {{end}}'])
+                    if rc != 0:
+                        problems.append(f"container '{name}' does not exist; docker_creation_tests connects to it by name.\n"
+                                        f"   Create it (see https://apilogicserver.github.io/Docs/Database-Docker/, "
+                                        f"with --net dev-network), then re-run BLT.")
+                    elif 'dev-network' not in out.split():
+                        problems.append(f"container '{name}' is not on dev-network; docker_creation_tests reaches it by "
+                                        f"container name.\n   Run this, then re-run BLT:\n\n"
+                                        f"      {cli} network connect dev-network {name}")
+                    else:
+                        print(f"  {name}: on dev-network")
     if problems:
         print("\n❌ ERROR: container preflight failed - nothing was built.\n")
         for each_problem in problems:
