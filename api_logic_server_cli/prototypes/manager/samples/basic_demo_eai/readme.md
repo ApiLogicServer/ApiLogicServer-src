@@ -439,7 +439,7 @@ the API) and watch the log — `publish_kafka_message: delivered to topic
 
 **6. (Optional) Live Kafka, end-to-end:**
 
-  1. Start Docker: `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
+  1. Start Kafka. If the `broker1` container already exists (`podman ps -a`, from the Manager README's *Containers* section), just make sure it is running and skip the compose file: it would fail on the name. Otherwise: `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
      (Podman instead of Docker? Use `podman compose` — same file, unchanged. See [DevOps-Podman](https://apilogicserver.github.io/Docs/DevOps-Podman).)
   2. Reset topics: `bash integration/kafka/order_b2b_reset.sh`
   3. Restart the server (after Docker/Podman is up, so it picks up Kafka env vars and subscribes to topics)
