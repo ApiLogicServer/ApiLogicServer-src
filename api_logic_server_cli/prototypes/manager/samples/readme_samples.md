@@ -58,25 +58,16 @@ genai-logic create --db_url=sqlite:///c:\genai-logic\nw.sqlite --project_name=nw
 genai-logic create --db_url=sqlite:///samples/dbs/todos.sqlite --project_name=todo
 genai-logic create --db_url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/samples/dbs/todos.sqlite --project_name=todo
 
-# from localhost to mysql container
-genai-logic create --db_url=mysql+pymysql://root:p@localhost:3306/Northwind --project_name=mysql-northwind
-genai-logic create --db_url=mysql+pymysql://root:p@localhost:3306/classicmodels --project_name=docker_classicmodels
-genai-logic create --db_url=mysql+pymysql://root:p@localhost:3306/Chinook --project_name=docker_chinook
-
-# from container to mysql container -- replace localhost with container name...
-genai-logic create --db_url=mysql+pymysql://root:p@mysql-container:3306/Chinook --project_name=/localhost/docker_chinook
+# postgres, from the Postgres container (start it per the Manager README, "Containers: Podman or Docker")
+genai-logic create --project_name=nw_pg --db_url=postgresql://postgres:p@localhost/northwind
+genai-logic create --project_name=my_schema --db_url=postgresql://postgres:p@localhost/my_schema
+genai-logic create --db_url=postgresql://postgres:password@localhost:5432/postgres?options=-csearch_path%3Dmy_db_schema
 
 # microsoft sql server (setup: https://apilogicserver.github.io/Docs/Install-pyodbc/)
 genai-logic create --db_url='mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no' --project-name=NORTHWND
 
 # oracle
 genai-logic create --project_name=oracle_hr --db_url='oracle+oracledb://hr:tiger@localhost:1521/?service_name=ORCL'
-
-# postgres
-genai-logic create --db_url=postgresql://postgres:p@localhost/northwind --project-name=nw-postgres
-genai-logic create --db_url=postgresql://postgres:p@10.0.0.234/postgres
-genai-logic create --project_name=my_schema --db_url=postgresql://postgres:p@localhost/my_schema
-genai-logic create --db_url=postgresql://postgres:password@localhost:5432/postgres?options=-csearch_path%3Dmy_db_schema
 
 # pythonanywhere
 genai-logic create --project_name=Chinook \
@@ -88,19 +79,17 @@ genai-logic create --project_name=Chinook \
 
 ## Docker Databases
 
-You probably don't need _all_ these, but here's how you start the docker databases:
+You probably don't need _all_ these. Use either Docker or Podman: `export CONTAINER_CLI=docker` (or `podman`) first - see the Manager README, "Containers: Podman or Docker".
 
 ```
-docker network create dev-network  # only required once
+$CONTAINER_CLI run -d --restart always --name postgresql-container -p 5432:5432 -e POSTGRES_PASSWORD=p docker.io/apilogicserver/postgres:latest
 
-docker run --name mysql-container --net dev-network -p 3306:3306 -d -e MYSQL_ROOT_PASSWORD=p apilogicserver/mysql8.0:latest
+$CONTAINER_CLI run --name sqlsvr-container -p 1433:1433 -d apilogicserver/sqlsvr:latest
 
-docker run -d --name postgresql-container --net dev-network -p 5432:5432 -e PGDATA=/pgdata -e POSTGRES_PASSWORD=p apilogicserver/postgres:latest
-
-docker run --name sqlsvr-container --net dev-network -p 1433:1433 -d apilogicserver/sqlsvr:latest
-
-docker run --name sqlsvr-container --net dev-network -p 1433:1433 -d apilogicserver/sqlsvr-m1:latest  # Mac M1
+$CONTAINER_CLI run --name sqlsvr-container -p 1433:1433 -d apilogicserver/sqlsvr-m1:latest  # Mac M1
 ```
+
+The Postgres image includes sample databases such as `northwind`.  A server on your machine reaches the container through its published port (`localhost:5432`).  Only when API Logic Server itself runs in a container, and connects by container name, do you need a shared network: `$CONTAINER_CLI network create dev-network`, then `--net dev-network`.
 
 <br>
 

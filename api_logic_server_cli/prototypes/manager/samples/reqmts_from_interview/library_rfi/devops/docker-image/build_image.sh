@@ -9,6 +9,7 @@
 #    $ cd <your project>
 #    $ sh devops/docker-image/build_image.sh .
 
+CONTAINER_CLI=${CONTAINER_CLI:-docker}   # docker or podman:  export CONTAINER_CLI=podman
 projectname="libraryrfi"  # lower case, only
 repositoryname="apilogicserver"
 version="1.0.0"
@@ -44,7 +45,7 @@ fi
 
 echo "Building ${repositoryname}/${projectname}\n"
 
-docker build -f devops/docker-image/build_image.dockerfile -t ${repositoryname}/${projectname} --rm .
+$CONTAINER_CLI build -f devops/docker-image/build_image.dockerfile -t ${repositoryname}/${projectname} --rm .
 
 status=$?
 if [ $status -eq 0 ]; then
@@ -52,15 +53,15 @@ if [ $status -eq 0 ]; then
   echo "  sh devops/docker-image/run_image.sh"
   echo " "
   echo "\nNext steps:"
-  echo "  docker tag ${repositoryname}/${projectname} ${repositoryname}/${projectname}:${version}"
-  echo "  docker push ${repositoryname}/${projectname}:${version}  # requires docker login"\"
+  echo "  $CONTAINER_CLI tag ${repositoryname}/${projectname} ${repositoryname}/${projectname}:${version}"
+  echo "  $CONTAINER_CLI push ${repositoryname}/${projectname}:${version}  # requires registry login"
   echo " "
-  echo "  docker tag ${repositoryname}/${projectname} ${repositoryname}/${projectname}:latest"
-  echo "  docker push ${repositoryname}/${projectname}:latest"
+  echo "  $CONTAINER_CLI tag ${repositoryname}/${projectname} ${repositoryname}/${projectname}:latest"
+  echo "  $CONTAINER_CLI push ${repositoryname}/${projectname}:latest"
   echo " "
   echo "Image ready to deploy; e.g. on Azure: https://apilogicserver.github.io/Docs/DevOps-Containers-Deploy"
 else
-  echo "docker build unsuccessful\n"
+  echo "$CONTAINER_CLI build unsuccessful\n"
   exit 1
 fi
 echo " "

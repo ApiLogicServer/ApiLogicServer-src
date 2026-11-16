@@ -9,15 +9,20 @@
 #    $ cd <your project>
 #    $ sh devops/docker-image/run_image.sh .
 
+# Container runtime: docker (default) or podman:  export CONTAINER_CLI=podman
+CONTAINER_CLI=${CONTAINER_CLI:-docker}
+
 # Start container, but with bash (does not run app)
 # Then, explore your container - e.g.
 #    env # see environment variables
 #    python api_logic_server_run.py  # run the app
-# docker run --env-file devops/docker/env.list -it --name api_logic_project --rm --net dev-network -p 5656:5656 -p 5002:5002 apilogicserver/basicdemogenailogic bash
+# $CONTAINER_CLI run --env-file devops/docker/env.list -it --name api_logic_project --rm -p 5656:5656 apilogicserver/basicdemogenailogic bash
 
 # Start container and run the app
-docker run --env-file devops/docker-image/env.list -it --name api_logic_project --rm --net dev-network -p 5656:5656 -p 5002:5002 apilogicserver/basicdemogenailogic
+#   (to reach other containers - e.g. a database - by name, create a network first:
+#    $CONTAINER_CLI network create dev-network; then add: --net dev-network)
+$CONTAINER_CLI run --env-file devops/docker-image/env.list -it --name api_logic_project --rm -p 5656:5656 apilogicserver/basicdemogenailogic
 
 # Or, start the container in bash
-# docker run --env-file devops/docker-image/env.list -it --name api_logic_project --rm --net dev-network -p 5656:5656 -p 5002:5002 apilogicserver/aicustomerorders /bin/bash
+# $CONTAINER_CLI run --env-file devops/docker-image/env.list -it --name api_logic_project --rm -p 5656:5656 apilogicserver/aicustomerorders /bin/bash
 

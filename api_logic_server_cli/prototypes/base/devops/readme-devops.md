@@ -1,3 +1,7 @@
+**New to the container setup?  Start with the [DevOps Quick Start](https://apilogicserver.github.io/Docs/DevOps-Quick-Start/):** install, run your project in the standard container, and validate it in about 15 minutes.
+
+&nbsp;
+
 ## Container options
 
 This project runs in the **standard image**, `apilogicserver/api_logic_server` (Python, the libraries, API Logic Server): no per-project build is required.  It is a plain Flask app; the container needs nothing but your project folder and environment variables.
@@ -26,7 +30,7 @@ This project runs in the **standard image**, `apilogicserver/api_logic_server` (
 
 Podman: type `podman` for `docker`, and `export CONTAINER_CLI=podman` so the scripts above use it.
 
-Configuration (database URI, security, ports) is by environment variable - see `env.list` in either directory.  For the full procedure, including a quick validation checklist, see the [DevOps Quick Start](https://apilogicserver.github.io/Docs/DevOps-Quick-Start/).
+Configuration (database URI, security, ports) is by environment variable - see `env.list` in either directory.
 
 &nbsp;
 
