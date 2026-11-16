@@ -132,7 +132,7 @@ api_logic_server_info_file_dict = {}  # last-run (debug, etc) info
 
 if Path(api_logic_server_info_file_name).is_file():
     api_logic_server_info_file = open(api_logic_server_info_file_name)
-    api_logic_server_info_file_dict = yaml.load(api_logic_server_info_file, Loader=yaml.FullLoader)
+    api_logic_server_info_file_dict = yaml.load(api_logic_server_info_file, Loader=yaml.FullLoader) or {}  # empty file -> None (docker image `touch`es it)
     api_logic_server_info_file.close()
 
 
