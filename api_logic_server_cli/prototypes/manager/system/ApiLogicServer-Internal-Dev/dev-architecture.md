@@ -1323,7 +1323,8 @@ This understanding should be reflected in two source files in `org_git/ApiLogicS
 - **`api_logic_server_info.yaml`** need not exist: the CLI reads it only if present (a fresh dev install has none)
 - **LogicBank** fixes are done in `org_git/LogicBank`, which has its own internals docs and tests; usually the
   Manager's AI can make them from there
-- **Windows** BLT has failed at times, and needs re-testing after the Nov 2026 changes
+- **Windows** BLT has failed at times. Verified Nov 15 2026 (17.05.34): the updated Windows installer works,
+  2 minor Windows bugs were fixed, and BLT runs on Windows. Re-test after large changes
 - **`codespaces_mgr`** is refreshed mainly when the Manager readme gains content that matters to evaluators (it is an
   eval program), not on every build
 

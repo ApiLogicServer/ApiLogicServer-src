@@ -52,7 +52,7 @@ dependencies = [
          "SQLAlchemy>=2.0.48,<2.1",
          "Werkzeug>=3.1.6", 
          # 2.3.3 caused Poetry to fail per safrs conflict (Werkzeug>=2.3.8), 2.3.8 fails to build
-        "safrs>=3.1.7",
+        "safrs==3.1.7",
         "Flask-Admin==1.5.7",
         "Flask-JWT-Extended>=4.7.1",
         "Flask-Login>=0.6.3",

@@ -10,7 +10,7 @@ inflect==5.0.2
 itsdangerous>=2.2.0
 Jinja2>=3.1.6
 MarkupSafe==2.1.1
-safrs>=3.0
+safrs==3.1.7
 Flask-Admin==1.5.7
 Flask-Cors>=6.0.0
 Flask>=3.1.3
