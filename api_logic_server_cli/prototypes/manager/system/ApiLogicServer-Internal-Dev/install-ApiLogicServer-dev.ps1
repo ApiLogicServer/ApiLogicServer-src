@@ -78,7 +78,7 @@ cd org_git
 
 if ($clonedocs -eq $true) {
     Write-Output "\n Docs setup (slow) "
-    git clone https://github.com/ApiLogicServer/Docs.git
+    git clone -c core.longpaths=true https://github.com/ApiLogicServer/Docs.git
     cd Docs
     python -m venv venv
     venv\Scripts\activate
@@ -89,8 +89,10 @@ if ($clonedocs -eq $true) {
 }
 
 
-git clone https://github.com/ApiLogicServer/ApiLogicServer-src.git
-git clone https://github.com/valhuber/LogicBank
+# core.longpaths: Windows MAX_PATH is 260; some -src sample paths exceed it in a deep Manager folder, and git
+# (unlike the OS's LongPathsEnabled) fails the checkout without it. No effect on mac/linux.
+git clone -c core.longpaths=true https://github.com/ApiLogicServer/ApiLogicServer-src.git
+git clone -c core.longpaths=true https://github.com/valhuber/LogicBank
 
 # provenance: record what this dev env was built from (fills {{CLONE_SHAS}} in ..\readme-dev.md)
 if (Test-Path -Path ..\readme-dev.md) {

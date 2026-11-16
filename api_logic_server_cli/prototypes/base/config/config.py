@@ -250,7 +250,7 @@ class Config:
     wh_endpoint = "webhook-test" # This comes from the WebHook node in n8n
     wh_path = "002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69" # This comes from the WebHook node in n8n
     wh_token = "YWRtaW46cA==" # This is the base64 encoded string of username:password (e.g. admin:password)
-    N8N_PRODUCER = {"authorization": f"Basic {wh_token}", "n8n_url": f'"{wh_scheme}://{wh_server}:{wh_port}/{wh_endpoint}/{wh_path}"'} 
+    N8N_PRODUCER = {"authorization": f"Basic {wh_token}", "n8n_url": f'{wh_scheme}://{wh_server}:{wh_port}/{wh_endpoint}/{wh_path}'}
     # Or enter the n8n_url directly:
     #N8N_PRODUCER = {"authorization": f"Basic {wh_token}","n8n_url":"http://localhost:5678/webhook-test/002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69"}  
     N8N_PRODUCER = None # comment out to enable N8N producer
