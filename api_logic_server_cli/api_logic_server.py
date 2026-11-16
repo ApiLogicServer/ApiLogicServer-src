@@ -12,7 +12,7 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "17.05.36"  # last public release: 17.05.27
+__version__ = "17.05.36"  # last public release: 17.05.35
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
     "\t11/16/2026 - 17.05.36  docker fix, podman installer/win, open llm for ai rules, remove genai-* \n"\
