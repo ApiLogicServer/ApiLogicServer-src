@@ -1,20 +1,18 @@
-// Iteration test for basic_demo_existing_db.prompt
-//
-// Step 1 - baseline:
-//   Create basic_demo_existing_db_iteration from samples/prompts/basic_demo_existing_db.prompt
-//   (same prompt, project name changed so it does not collide with the sample).
-//   Then: create tests from rules, run the tests, run the requirements traceability report.
-//   Keep a copy of the report as "before".
-//
-// Step 2 - iterate: edit docs/requirements/check_credit/requirements.md as below,
-//   then say: implement reqs check_credit
-//   Then: create tests for the change, run the tests, regenerate the report ("after").
-//
-// What to check each time: only the intended rule changed (diff the logic file), the other
-// rules and the Kafka event survived, earlier ad-libs were kept, old tests still pass.
+// Requirements iteration: change a requirement, its rule change.
 
-Iteration 1 - change in the middle of the chain (no schema change):
-    4. The Item amount is the quantity * unit_price, less 10% when the quantity is 10 or more
+// Example: copy/paste this into your AI assistant, from the Manager folder.
+// The system creates and runs the tests; the last step tells you what to compare.
 
-Iteration 2 - tighten the credit check:
-    1. The Customer's balance is strictly less than the credit limit
+// Same prompt as the basic_demo_existing_db sample, under a new name so the two do not collide.
+create basic_demo_iteration from samples/prompts/basic_demo_existing_db.prompt
+
+// Save initial logic for compare
+in basic_demo_iteration, copy logic/logic_discovery/place_order/check_credit.py to check_credit_original.txt in the same folder
+
+// alter the requirement, and implement it
+in basic_demo_iteration/docs/requirements/check_credit/requirements.md, change requirement 4 to: The Item amount is the quantity * unit_price, less 10% when the quantity is 10 or more
+implement reqs check_credit (in basic_demo_iteration)
+When done, print this verbatim: "Next: compare basic_demo_iteration/logic/logic_discovery/place_order/check_credit_original.txt with check_credit.py. Only the Item amount rule should differ; the other rules, and the Kafka event in app_integration.py, are unchanged. Then read docs/requirements/check_credit/ad-libs.md for the judgment calls the AI made (for example, where the 10% and the 10-unit threshold are kept)."
+
+// Try next: change requirement 1 to "The Customer's balance is strictly less than the credit limit", then: implement reqs check_credit
+// ("less than" alone is read as <=, so a balance equal to the limit is allowed; "strictly" asks for <.)
