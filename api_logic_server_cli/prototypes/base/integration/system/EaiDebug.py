@@ -163,7 +163,17 @@ def _simulate(topic: str, simulate, payload: str, file_path: str, note: str = ""
         return jsonify({**base, "success": True, **simulate(payload, safrs.DB.session)})
     except Exception as e:
         app_logger.error(f"consume_debug {topic}: {e}", exc_info=True)
+        if _is_business_rejection(e):   # the message was rejected (unknown customer, credit limit): say why
+            return jsonify({**base, "success": False, "error": str(e)}), 400
         return jsonify({**base, "success": False, "error": "simulation failed - see logs/als.log"}), 500
+
+
+def _is_business_rejection(e: Exception) -> bool:
+    """ A failed lookup (EaiSubscribeMapper.LookupNotFound) or a LogicBank constraint (ConstraintException): its
+    message is the business reason, safe to return.  Any other exception may carry internals, so it is not returned. """
+    from integration.system.EaiSubscribeMapper import LookupNotFound
+    from logic_bank.util import ConstraintException
+    return isinstance(e, (LookupNotFound, ConstraintException))
 
 
 def _purge(topics: list) -> dict:

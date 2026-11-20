@@ -208,5 +208,5 @@ Feature: Row-Level Security # features/row_level_security.feature:1
     And every listed Customer has credit_limit >= 3000 or balance > 0 # features/steps/row_level_security_steps.py:22
 
 &nbsp;&nbsp;
-/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py completed at November 19, 2026 17:41:45
-Behave run time: 3.448 s
+/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py completed at November 19, 2026 18:42:27
+Behave run time: 5.041 s

@@ -1,5 +1,5 @@
 ## Ad-Libs Report
-**9 items need your review. 8 FYIs — standard patterns, no action needed.**
+**8 items need your review. 9 FYIs — standard patterns, no action needed.**
 
 ---
 
@@ -92,7 +92,7 @@ Loop 1:
   Symptom:   initializing the sample orders' CreatedOnDay raised "Unable to Adjust Missing Adopting Parent: daily_flow"
   Diagnosis: LogicBank 1.34.04 honors insert_parent on INSERT only; an UPDATE that moves a row to a day with no
              DailyFlow row fails (aggregate.py adjust_from_updated_reparented_child)
-  Fix:       init_daily_flow.py creates the missing day rows first, then sets the keys
+  Fix:       LogicBank 1.34.05 (insert_parent on reparent); the interim workaround (create the day rows first) is removed
   Time:      ~2 min
   Root cause type: engine gap (see 🔴)
 ```
@@ -102,7 +102,6 @@ Loop 1:
 ### 🔴 Review Required
 | Location | Issue | Action |
 |---|---|---|
-| `logic/logic_discovery/order_flow_totals.py:30-41` | **Engine gap:** `insert_parent` creates a day row on insert only. Changing an existing row's `CreatedOnDay` to a day that has no `daily_flow` row fails ("Unable to Adjust Missing Adopting Parent"). Normal flow never does this (day keys are set on insert); a backfill or a date correction would. | LogicBank fix: honor insert_parent on reparent. Until then, create the day row first (as `database/test_data/init_daily_flow.py` does). |
 | `logic/logic_discovery/check_credit.py:30` | "unpaid order totals" implemented as `date_shipped is None`. | Confirm, or name the column that marks an order paid. |
 | `logic/logic_discovery/check_credit.py:29` | A customer with no credit limit passes the constraint. | Confirm, or reject orders for customers with no limit. |
 | `integration/row_dict_maps/OrderB2BMapper.py:18` | The B2B API requires `Notes` (RowDictMapper rejects a request without it); the rejection is now recorded and counted. | Confirm Notes is required, or make it optional. |
@@ -119,6 +118,7 @@ Loop 1:
 - `logic/logic_discovery/check_credit.py:33` — `Rule.copy` (snapshot) for `Item.unit_price`.
 - `api/api_discovery/order_b2b_service.py` — request row committed first (Tx 1); on failure, rollback, `error_text` on the governed session, HTTP 400 (project CE, "Opt-in: record each request").
 - `integration/kafka/kafka_subscribe_discovery/order_b2b.py` — 2-message design; failures recorded by `record_error_text` through the governed session, so `message_failed` is maintained.
+- `logic/logic_discovery/order_flow_totals.py:30-41` — engine gap found in this build (insert_parent did not create the parent when moving a row to a new day, or when several new rows of one new day were committed together) is fixed in LogicBank 1.34.05; the seed and backfill scripts no longer pre-create day rows.
 - `logic/logic_discovery/order_flow_totals.py:20` and `api/api_discovery/order_b2b_service.py:22` — retention TODOs: rows are never purged (a delete would lower the totals).
 - `api/api_discovery/dashboard_services.py` — reads `daily_flow`, fills 30 calendar days with zeros, rendered on every request (not cached).
 - `security/declare_security.py` — two Customer grants for `sales` (OR'd) + read-only permission; the dashboard routes have no login (production item).

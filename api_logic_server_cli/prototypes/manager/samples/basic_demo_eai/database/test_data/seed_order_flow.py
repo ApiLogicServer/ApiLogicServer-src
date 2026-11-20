@@ -77,14 +77,6 @@ with flask_app.app_context():
     session.commit()
     products = {p.name: p for p in session.query(models.Product).filter(models.Product.name.in_(PRODUCTS))}
 
-    # Create the day rows first.  LogicBank 1.34.04 insert_parent creates a parent per child when several new children
-    # of the same NEW parent are inserted in one transaction (UNIQUE constraint failed: daily_flow.day); with the day
-    # rows present, the rules just adjust them.
-    all_days = [(today - datetime.timedelta(days=back)).isoformat() for back in range(DAYS, 0, -1)]
-    existing = {d.day for d in session.query(models.DailyFlow).filter(models.DailyFlow.day.in_(all_days))}
-    session.add_all([models.DailyFlow(day=d) for d in all_days if d not in existing])
-    session.commit()
-
     counts = {"orders": 0, "messages": 0, "rejected": 0, "requests": 0, "rejected_requests": 0, "shipped": 0}
     for back in range(DAYS, 0, -1):
         day = today - datetime.timedelta(days=back)

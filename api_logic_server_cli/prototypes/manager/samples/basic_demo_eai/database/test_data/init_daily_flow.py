@@ -2,7 +2,7 @@
 """
 One-time initialization of the daily totals for rows that existed before the totals were added (the sample orders):
 sets each Order's CreatedOnDay from its CreatedOn, through the ORM inside the app, so the rules create and adjust the
-DailyFlow rows (see logic_bank_api.md, "initialize derived columns for pre-existing rows").
+DailyFlow rows (insert_parent, LogicBank >= 1.34.05; see logic_bank_api.md, "initialize derived columns for pre-existing rows").
 Run from the project root with the server stopped:   KAFKA_SERVER= python database/test_data/init_daily_flow.py
 """
 import os, sys, logging
@@ -23,12 +23,6 @@ from database import models
 with flask_app.app_context():
     session = safrs.DB.session
     todo = session.query(models.Order).filter(models.Order.CreatedOnDay.is_(None), models.Order.CreatedOn.is_not(None)).all()
-    # insert_parent creates a day row only on INSERT; on an UPDATE that moves a row to a new day, LogicBank 1.34.04
-    # raises "Unable to Adjust Missing Adopting Parent" - so create the missing day rows first (the rules fill them)
-    days = {order.CreatedOn.strftime('%Y-%m-%d') for order in todo}
-    existing = {d.day for d in session.query(models.DailyFlow).filter(models.DailyFlow.day.in_(days))}
-    session.add_all([models.DailyFlow(day=day) for day in days - existing])
-    session.commit()
     for order in todo:
         order.CreatedOnDay = order.CreatedOn.strftime('%Y-%m-%d')
     session.commit()

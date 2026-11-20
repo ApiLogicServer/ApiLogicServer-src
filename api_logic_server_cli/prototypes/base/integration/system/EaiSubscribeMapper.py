@@ -44,6 +44,11 @@ import logging
 logger = logging.getLogger('integration.eai')
 
 
+class LookupNotFound(ValueError):
+    """resolve_lookups: a message names a lookup value (a customer, a product) that matches no row, or several.
+    A business rejection, not an internal error: its message is safe to return to the caller (see EaiDebug)."""
+
+
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
@@ -295,12 +300,12 @@ def resolve_lookups(
 
         rows = query.all()
         if len(rows) == 0:
-            raise ValueError(
+            raise LookupNotFound(
                 f"resolve_lookups: no {lookup_model.__name__} found "
                 f"for fk_col={fk_col!r} from source fields"
             )
         if len(rows) > 1:
-            raise ValueError(
+            raise LookupNotFound(
                 f"resolve_lookups: multiple {lookup_model.__name__} found "
                 f"for fk_col={fk_col!r} — lookup must be unique"
             )

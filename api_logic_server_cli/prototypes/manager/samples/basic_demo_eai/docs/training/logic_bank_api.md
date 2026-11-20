@@ -1,9 +1,12 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.30
-# Last Updated: November 4, 2026
+# Version: 1.0.31
+# Last Updated: November 19, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 # Changelog:
+#   1.0.31 (Nov 19 2026) - insert_parent: LogicBank 1.34.05 fixes two more cases (several new children of the same
+#     new parent in one transaction; moving a row to a parent that does not exist yet). Projects no longer pre-create
+#     bucket rows to work around them.
 #   1.0.30 (Nov 4 2026) - Documented `when_condition` on Rule.after_flush_row_event. It existed only as a bare
 #     parameter in the signature, and the text said "use if_condition", so a scripted demo_ai_rules_supplier build
 #     implemented "publish the Order to Kafka if date_shipped is not None" with if_condition: the Order was
@@ -1681,6 +1684,12 @@ every composite-key component at construction time (not in a later event) or upg
 (`logic/logic_discovery/system/all_classes_stamping.py`) sets `Order.CreatedOnYearMonth`
 generically, cross-cutting — confirm your `pip show logicbank` is `>=1.34.0` before relying on
 a similarly late-set key component.
+
+**LogicBank 1.34.05 fixes two more `insert_parent` cases** — do not pre-create bucket rows to work around them:
+- several new children of the same new parent in ONE transaction (for example a seed or batch that commits a whole
+  day of orders at once): the first child creates the parent, the others reuse it (was: `UNIQUE constraint failed`)
+- an UPDATE that moves a child to a parent that does not exist yet (for example a backfill that sets a day key on
+  existing rows): the parent is created (was: `Unable to Adjust Missing Adopting Parent`)
 
 **`insert_parent` is rare — do not reach for it by default.** Per `Rule.sum`/`Rule.count`'s own
 parameter doc: "Do not use unless directly requested." The overwhelming majority of
