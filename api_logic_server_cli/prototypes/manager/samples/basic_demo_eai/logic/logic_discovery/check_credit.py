@@ -11,7 +11,7 @@ Feature: Check Credit
     And reject if balance exceeds the credit limit
 
 version: 1.0
-created: 2026-11-19T14:27:00
+created: 2026-11-19T18:55:00
 created_by: claude-opus-5-5 (valjhuber@gmail.com)
 """
 
@@ -25,9 +25,8 @@ def declare_logic():
     #   Rule.copy  = snapshot (value frozen at transaction time, no cascade on parent change) ← default
     #   Rule.formula referencing row.parent.attr = live (re-derives if parent changes)
     #   Change Rule.copy → Rule.formula where live propagation is required.
-
-    Rule.constraint(validate=models.Customer, as_condition=lambda row: row.credit_limit is None or row.balance is None or row.balance <= row.credit_limit, error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
-    Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None)
-    Rule.sum(derive=models.Order.amount_total, as_sum_of=models.Item.amount)
-    Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
     Rule.copy(derive=models.Item.unit_price, from_parent=models.Product.unit_price)
+    Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+    Rule.sum(derive=models.Order.amount_total, as_sum_of=models.Item.amount)
+    Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None)
+    Rule.constraint(validate=models.Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")

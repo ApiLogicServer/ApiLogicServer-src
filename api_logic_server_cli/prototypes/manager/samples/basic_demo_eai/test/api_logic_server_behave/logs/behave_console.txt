@@ -1,10 +1,10 @@
 
 behave_run 1.0 started at: /Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave
 7 features passed, 0 failed, 0 skipped
-31 scenarios passed, 0 failed, 0 skipped
-133 steps passed, 0 failed, 0 skipped, 0 undefined
-Took 0m4.834s
+36 scenarios passed, 0 failed, 0 skipped
+174 steps passed, 0 failed, 0 skipped, 0 undefined
+Took 0m7.184s
 
-Behave Run Exit -- /Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py at November 19, 2026 18:42:27, run time: 5.041 s, result: 0
+Behave Run Exit -- /Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py at November 19, 2026 19:46:08, run time: 7.398 s, result: 0
 
 

@@ -1,0 +1,216 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="931pt" height="400pt" viewBox="18.80 18.80 931.40 400.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 409.55)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-409.55 940.06,-409.55 940.06,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="287.63" y="-365.4" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — demo_eai  [order_flow_dashboard]</text>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="478.76,-14.5 478.76,-47.5 651.26,-47.5 651.26,-14.5 478.76,-14.5" />
+<text xml:space="preserve" text-anchor="start" x="487.76" y="-29.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ OrderB2bRequest inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="479.76,-15.5 479.76,-46.5 650.26,-46.5 650.26,-15.5 479.76,-15.5" />
+</g>
+
+<g id="node5" class="node">
+<title>OrderB2bRequest</title>
+<polygon fill="#4a6fa5" stroke="none" points="797.76,-41 797.76,-57 902.26,-57 902.26,-41 797.76,-41" />
+<text xml:space="preserve" text-anchor="start" x="799.76" y="-45.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> OrderB2bRequest </text>
+<polygon fill="#b8cce8" stroke="none" points="797.76,-23 797.76,-41 809.92,-41 809.92,-23 797.76,-23" />
+<text xml:space="preserve" text-anchor="start" x="802.34" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="809.92,-23 809.92,-41 890.09,-41 890.09,-23 809.92,-23" />
+<text xml:space="preserve" text-anchor="start" x="812.92" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> is_processed </text>
+<polygon fill="#b8cce8" stroke="none" points="890.09,-23 890.09,-41 902.26,-41 902.26,-23 890.09,-23" />
+<text xml:space="preserve" text-anchor="start" x="894.67" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="797.76,-5 797.76,-23 809.92,-23 809.92,-5 797.76,-5" />
+<text xml:space="preserve" text-anchor="start" x="802.34" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="809.92,-5 809.92,-23 890.09,-23 890.09,-5 809.92,-5" />
+<text xml:space="preserve" text-anchor="start" x="812.92" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> error_text </text>
+<polygon fill="#b8cce8" stroke="none" points="890.09,-5 890.09,-23 902.26,-23 902.26,-5 890.09,-5" />
+<text xml:space="preserve" text-anchor="start" x="894.67" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="796.76,-4 796.76,-58 903.26,-58 903.26,-4 796.76,-4" />
+</g>
+
+<g id="edge4" class="edge">
+<title>TRIGGER-&gt;OrderB2bRequest</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M659.08,-31C698.2,-31 737.31,-31 776.43,-31" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="786.41,-31 776.41,-35.5 783.85,-31.5 776.41,-31.5 776.41,-31 776.41,-30.5 783.85,-30.5 776.41,-26.5 786.41,-31" />
+</g>
+
+<g id="node2" class="node">
+<title>DailyFlow</title>
+<polygon fill="#4a6fa5" stroke="none" points="368.26,-338.25 368.26,-354.25 611.76,-354.25 611.76,-338.25 368.26,-338.25" />
+<text xml:space="preserve" text-anchor="start" x="461.51" y="-342.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> DailyFlow </text>
+<polygon fill="#b8cce8" stroke="none" points="368.26,-320.25 368.26,-338.25 375.26,-338.25 375.26,-320.25 368.26,-320.25" />
+<text xml:space="preserve" text-anchor="start" x="370.26" y="-326.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="375.26,-320.25 375.26,-338.25 604.76,-338.25 604.76,-320.25 375.26,-320.25" />
+<text xml:space="preserve" text-anchor="start" x="378.26" y="-326.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> order_amount </text>
+<polygon fill="#b8cce8" stroke="none" points="604.76,-320.25 604.76,-338.25 611.76,-338.25 611.76,-320.25 604.76,-320.25" />
+<text xml:space="preserve" text-anchor="start" x="606.76" y="-326.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="368.26,-302.25 368.26,-320.25 375.26,-320.25 375.26,-302.25 368.26,-302.25" />
+<text xml:space="preserve" text-anchor="start" x="370.26" y="-308.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="375.26,-302.25 375.26,-320.25 604.76,-320.25 604.76,-302.25 375.26,-302.25" />
+<text xml:space="preserve" text-anchor="start" x="378.26" y="-308.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> order_count </text>
+<polygon fill="#b8cce8" stroke="none" points="604.76,-302.25 604.76,-320.25 611.76,-320.25 611.76,-302.25 604.76,-302.25" />
+<text xml:space="preserve" text-anchor="start" x="606.76" y="-308.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="368.26,-284.25 368.26,-302.25 375.26,-302.25 375.26,-284.25 368.26,-284.25" />
+<text xml:space="preserve" text-anchor="start" x="370.26" y="-290.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="375.26,-284.25 375.26,-302.25 604.76,-302.25 604.76,-284.25 375.26,-284.25" />
+<text xml:space="preserve" text-anchor="start" x="378.26" y="-290.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> message_received </text>
+<polygon fill="#b8cce8" stroke="none" points="604.76,-284.25 604.76,-302.25 611.76,-302.25 611.76,-284.25 604.76,-284.25" />
+<text xml:space="preserve" text-anchor="start" x="606.76" y="-290.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="368.26,-266.25 368.26,-284.25 375.26,-284.25 375.26,-266.25 368.26,-266.25" />
+<text xml:space="preserve" text-anchor="start" x="370.26" y="-272.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="375.26,-266.25 375.26,-284.25 604.76,-284.25 604.76,-266.25 375.26,-266.25" />
+<text xml:space="preserve" text-anchor="start" x="378.26" y="-272.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> message_processed </text>
+<polygon fill="#b8cce8" stroke="none" points="604.76,-266.25 604.76,-284.25 611.76,-284.25 611.76,-266.25 604.76,-266.25" />
+<text xml:space="preserve" text-anchor="start" x="606.76" y="-272.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="368.26,-248.25 368.26,-266.25 375.26,-266.25 375.26,-248.25 368.26,-248.25" />
+<text xml:space="preserve" text-anchor="start" x="370.26" y="-254.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="375.26,-248.25 375.26,-266.25 604.76,-266.25 604.76,-248.25 375.26,-248.25" />
+<text xml:space="preserve" text-anchor="start" x="378.26" y="-254.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> message_rejected </text>
+<polygon fill="#b8cce8" stroke="none" points="604.76,-248.25 604.76,-266.25 611.76,-266.25 611.76,-248.25 604.76,-248.25" />
+<text xml:space="preserve" text-anchor="start" x="606.76" y="-254.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="368.26,-230.25 368.26,-248.25 375.26,-248.25 375.26,-230.25 368.26,-230.25" />
+<text xml:space="preserve" text-anchor="start" x="370.26" y="-236.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="375.26,-230.25 375.26,-248.25 604.76,-248.25 604.76,-230.25 375.26,-230.25" />
+<text xml:space="preserve" text-anchor="start" x="378.26" y="-236.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> request_received </text>
+<polygon fill="#b8cce8" stroke="none" points="604.76,-230.25 604.76,-248.25 611.76,-248.25 611.76,-230.25 604.76,-230.25" />
+<text xml:space="preserve" text-anchor="start" x="606.76" y="-236.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="368.26,-212.25 368.26,-230.25 375.26,-230.25 375.26,-212.25 368.26,-212.25" />
+<text xml:space="preserve" text-anchor="start" x="370.26" y="-218.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="375.26,-212.25 375.26,-230.25 604.76,-230.25 604.76,-212.25 375.26,-212.25" />
+<text xml:space="preserve" text-anchor="start" x="378.26" y="-218.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> request_processed </text>
+<polygon fill="#b8cce8" stroke="none" points="604.76,-212.25 604.76,-230.25 611.76,-230.25 611.76,-212.25 604.76,-212.25" />
+<text xml:space="preserve" text-anchor="start" x="606.76" y="-218.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="368.26,-194.25 368.26,-212.25 375.26,-212.25 375.26,-194.25 368.26,-194.25" />
+<text xml:space="preserve" text-anchor="start" x="370.26" y="-200.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="375.26,-194.25 375.26,-212.25 604.76,-212.25 604.76,-194.25 375.26,-194.25" />
+<text xml:space="preserve" text-anchor="start" x="378.26" y="-200.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> request_rejected </text>
+<polygon fill="#b8cce8" stroke="none" points="604.76,-194.25 604.76,-212.25 611.76,-212.25 611.76,-194.25 604.76,-194.25" />
+<text xml:space="preserve" text-anchor="start" x="606.76" y="-200.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="368.26,-176.25 368.26,-194.25 375.26,-194.25 375.26,-176.25 368.26,-176.25" />
+<text xml:space="preserve" text-anchor="start" x="370.26" y="-182.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="375.26,-176.25 375.26,-194.25 604.76,-194.25 604.76,-176.25 375.26,-176.25" />
+<text xml:space="preserve" text-anchor="start" x="378.26" y="-181.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> message_pending </text>
+<text xml:space="preserve" text-anchor="start" x="472.01" y="-181.8" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="475.01" y="-181.8" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= (message_received or 0) - (...</text>
+<polygon fill="#b8cce8" stroke="none" points="604.76,-176.25 604.76,-194.25 611.76,-194.25 611.76,-176.25 604.76,-176.25" />
+<text xml:space="preserve" text-anchor="start" x="606.76" y="-182.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="368.26,-158.25 368.26,-176.25 375.26,-176.25 375.26,-158.25 368.26,-158.25" />
+<text xml:space="preserve" text-anchor="start" x="370.26" y="-164.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="375.26,-158.25 375.26,-176.25 604.76,-176.25 604.76,-158.25 375.26,-158.25" />
+<text xml:space="preserve" text-anchor="start" x="378.26" y="-163.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> request_pending </text>
+<text xml:space="preserve" text-anchor="start" x="464.51" y="-163.8" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="467.51" y="-163.8" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= (request_received or 0) - (...</text>
+<polygon fill="#b8cce8" stroke="none" points="604.76,-158.25 604.76,-176.25 611.76,-176.25 611.76,-158.25 604.76,-158.25" />
+<text xml:space="preserve" text-anchor="start" x="606.76" y="-164.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="367.26,-157.25 367.26,-355.25 612.76,-355.25 612.76,-157.25 367.26,-157.25" />
+</g>
+
+<g id="node3" class="node">
+<title>Order</title>
+<polygon fill="#4a6fa5" stroke="none" points="105.88,-32 105.88,-48 194.13,-48 194.13,-32 105.88,-32" />
+<text xml:space="preserve" text-anchor="start" x="132.01" y="-36.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Order </text>
+<polygon fill="#b8cce8" stroke="none" points="105.88,-14 105.88,-32 112.88,-32 112.88,-14 105.88,-14" />
+<text xml:space="preserve" text-anchor="start" x="107.88" y="-20" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="112.88,-14 112.88,-32 187.13,-32 187.13,-14 112.88,-14" />
+<text xml:space="preserve" text-anchor="start" x="115.88" y="-20" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> amount_total </text>
+<polygon fill="#b8cce8" stroke="none" points="187.13,-14 187.13,-32 194.13,-32 194.13,-14 187.13,-14" />
+<text xml:space="preserve" text-anchor="start" x="189.13" y="-20" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="104.88,-13 104.88,-49 195.13,-49 195.13,-13 104.88,-13" />
+</g>
+
+<g id="edge1" class="edge">
+<title>Order-&gt;DailyFlow</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M87.2,-43.71C37.58,-55.86 -19.3,-78.1 7.01,-113.25 49.39,-169.89 231.29,-211.68 359.33,-234.75" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="87.04,-43.75 97.8,-45.85 92.14,-42.55 96.55,-41.52 96.55,-41.52 96.55,-41.52 92.14,-42.55 95.75,-37.08 87.04,-43.75" />
+</g>
+
+<g id="edge5" class="edge">
+<title>Order:Order_amount_total_w-&gt;DailyFlow:DailyFlow_order_amount_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M104.88,-23C19.03,-23 256.23,-304.07 355.09,-327.68" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="364.84,-328.94 354.35,-332.12 362.23,-329.1 354.86,-328.15 354.92,-327.65 354.99,-327.16 362.36,-328.11 355.5,-323.19 364.84,-328.94" />
+<text xml:space="preserve" text-anchor="middle" x="120.27" y="-103.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">3</text>
+</g>
+
+<g id="edge6" class="edge">
+<title>Order:w-&gt;DailyFlow:DailyFlow_order_count_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M95.93,-31C-73.37,-31 181.42,-298.27 354.91,-310.8" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="364.82,-311.16 354.66,-315.29 362.24,-311.57 354.81,-311.29 354.83,-310.79 354.85,-310.29 362.28,-310.57 354.99,-306.3 364.82,-311.16" />
+<text xml:space="preserve" text-anchor="middle" x="56.68" y="-103.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">4</text>
+</g>
+
+<g id="node4" class="node">
+<title>OrderB2bMessage</title>
+<polygon fill="#4a6fa5" stroke="none" points="289.63,-41 289.63,-57 396.38,-57 396.38,-41 289.63,-41" />
+<text xml:space="preserve" text-anchor="start" x="291.63" y="-45.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> OrderB2bMessage </text>
+<polygon fill="#b8cce8" stroke="none" points="289.63,-23 289.63,-41 302.55,-41 302.55,-23 289.63,-23" />
+<text xml:space="preserve" text-anchor="start" x="294.59" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="302.55,-23 302.55,-41 383.47,-41 383.47,-23 302.55,-23" />
+<text xml:space="preserve" text-anchor="start" x="305.55" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> is_processed </text>
+<polygon fill="#b8cce8" stroke="none" points="383.47,-23 383.47,-41 396.38,-41 396.38,-23 383.47,-23" />
+<text xml:space="preserve" text-anchor="start" x="388.42" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="289.63,-5 289.63,-23 302.55,-23 302.55,-5 289.63,-5" />
+<text xml:space="preserve" text-anchor="start" x="294.59" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="302.55,-5 302.55,-23 383.47,-23 383.47,-5 302.55,-5" />
+<text xml:space="preserve" text-anchor="start" x="305.55" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> error_text </text>
+<polygon fill="#b8cce8" stroke="none" points="383.47,-5 383.47,-23 396.38,-23 396.38,-5 383.47,-5" />
+<text xml:space="preserve" text-anchor="start" x="388.42" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="288.63,-4 288.63,-58 397.38,-58 397.38,-4 288.63,-4" />
+</g>
+
+<g id="edge2" class="edge">
+<title>OrderB2bMessage-&gt;DailyFlow</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M271.32,-53.38C239.49,-66.96 212.36,-86.96 228.01,-113.25 256.99,-161.93 309.11,-194.94 359.28,-216.79" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="271.35,-53.37 282.31,-53.81 276.2,-51.41 280.41,-49.72 280.41,-49.72 280.41,-49.72 276.2,-51.41 278.94,-45.46 271.35,-53.37" />
+</g>
+
+<g id="edge7" class="edge">
+<title>OrderB2bMessage:w-&gt;DailyFlow:DailyFlow_message_received_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M279.69,-31C222.09,-31 295.45,-261.49 355.47,-290.3" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="364.89,-292.66 354.1,-294.6 362.28,-292.52 355.07,-290.72 355.19,-290.23 355.31,-289.75 362.53,-291.55 356.28,-285.87 364.89,-292.66" />
+<text xml:space="preserve" text-anchor="middle" x="265.72" y="-103.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">5</text>
+</g>
+
+<g id="edge8" class="edge">
+<title>OrderB2bMessage:w-&gt;DailyFlow:DailyFlow_message_processed_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M279.69,-31C253.73,-31 322.14,-229.01 357.07,-268.46" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="365.23,-273.9 354.41,-272.1 362.82,-272.89 356.63,-268.77 356.91,-268.36 357.18,-267.94 363.37,-272.06 359.4,-264.61 365.23,-273.9" />
+<text xml:space="preserve" text-anchor="middle" x="290.26" y="-103.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">6</text>
+</g>
+
+<g id="edge9" class="edge">
+<title>OrderB2bMessage:w-&gt;DailyFlow:DailyFlow_message_rejected_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M279.69,-31C245.55,-31 293.02,-71.84 309.01,-102 341.44,-163.17 299.3,-246.43 355.18,-256.28" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="364.83,-257.06 354.5,-260.74 362.23,-257.35 354.82,-256.76 354.86,-256.26 354.9,-255.76 362.31,-256.35 355.22,-251.77 364.83,-257.06" />
+<text xml:space="preserve" text-anchor="middle" x="315.38" y="-103.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">7</text>
+</g>
+
+<g id="edge3" class="edge">
+<title>OrderB2bRequest-&gt;DailyFlow</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M778.76,-46.12C689.47,-64.08 546.94,-93.78 538.01,-102 523.03,-115.78 512.69,-134.17 505.57,-153.41" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="778.8,-46.11 789.49,-48.55 783.93,-45.08 788.38,-44.19 788.38,-44.19 788.38,-44.19 783.93,-45.08 787.72,-39.73 778.8,-46.11" />
+</g>
+
+<g id="edge10" class="edge">
+<title>OrderB2bRequest:w-&gt;DailyFlow:DailyFlow_request_received_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M787.81,-31C773.84,-31 563.46,-109.46 550.01,-113.25 470.4,-135.69 420.45,-89.09 368.26,-153.25 347.15,-179.2 332.95,-225.58 355.34,-236.77" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="364.87,-238.75 354.16,-241.12 362.26,-238.72 354.98,-237.21 355.08,-236.72 355.18,-236.23 362.46,-237.74 356,-232.31 364.87,-238.75" />
+<text xml:space="preserve" text-anchor="middle" x="581.19" y="-103.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">8</text>
+</g>
+
+<g id="edge11" class="edge">
+<title>OrderB2bRequest:w-&gt;DailyFlow:DailyFlow_request_processed_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M787.81,-31C696.69,-31 687.28,-87.03 600.01,-113.25 499.9,-143.32 436.17,-73.8 368.26,-153.25 351.84,-172.46 341.05,-207.07 355.61,-217.91" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="364.91,-220.58 354.06,-222.15 362.31,-220.35 355.16,-218.3 355.3,-217.82 355.44,-217.34 362.59,-219.39 356.54,-213.5 364.91,-220.58" />
+<text xml:space="preserve" text-anchor="middle" x="630.96" y="-103.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">9</text>
+</g>
+
+<g id="edge12" class="edge">
+<title>OrderB2bRequest:w-&gt;DailyFlow:DailyFlow_request_rejected_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M787.81,-31C716.49,-31 717.26,-89.49 650.01,-113.25 590.38,-134.31 410.19,-105.91 368.26,-153.25 357.09,-165.86 349.51,-188.07 356.17,-198.09" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="365.05,-202.22 354.08,-202.09 362.51,-201.59 355.77,-198.46 355.98,-198 356.19,-197.55 362.93,-200.69 357.88,-193.92 365.05,-202.22" />
+<text xml:space="preserve" text-anchor="middle" x="676.77" y="-103.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">10</text>
+</g>
+<path d="M612.76,-290.25 C634.76,-290.25 634.76,-181.8 612.76,-181.8" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="612.76,-181.8 616.76,-185.8 616.76,-177.8" stroke="#445544" fill="#445544" /><text x="637.8" y="-232.0" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">1</text><path d="M612.76,-236.25 C658.76,-236.25 658.76,-163.8 612.76,-163.8" stroke="#445544" stroke-width="1.2" fill="none" /><polygon points="612.76,-163.8 616.76,-167.8 616.76,-159.8" stroke="#445544" fill="#445544" /><text x="661.8" y="-196.0" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">2</text></g>
+</svg>

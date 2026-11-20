@@ -10,28 +10,25 @@ Feature: B2B Order Integration
     And record each request, with its outcome, for the order flow dashboard
 """
 import json
+import logging
+
+import safrs
 from flask import request
 from safrs import jsonapi_rpc
-import safrs
+
 from database import models
 from integration.row_dict_maps.OrderB2BMapper import OrderB2BMapper
-import logging
 
 app_logger = logging.getLogger("api_logic_server_app")
 
-# TODO (retention): request rows are never purged. The daily totals count them, so deleting rows would lower the
-# totals (a delete adjusts the counts). To purge, clear `payload` but keep the row, or freeze closed days - then
-# change this TODO to DONE.
 
-
-def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
-    """API service OrderB2B: exposes POST /api/OrderB2B/OrderB2B for partner orders."""
+def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators=[]):
+    """API service OrderB2B: exposes POST /api/OrderB2B/OrderB2B."""
     api.expose_object(OrderB2B)
 
 
 class OrderB2B(safrs.JABase):
-    """API service OrderB2B: records the request, creates the Order and its Items (the rules derive the rest), and
-    records the outcome on the request row."""
+    """API service OrderB2B: accepts a partner order, records the request with its outcome, and creates the Order."""
 
     @classmethod
     @jsonapi_rpc(http_methods=["POST"])
@@ -43,43 +40,47 @@ class OrderB2B(safrs.JABase):
                     Notes: "Rush order for Q4 promotion"
                     Items :
                     - Name: "Widget"
-                      QuantityOrdered: 1
+                      QuantityOrdered: 5
                     - Name: "Gadget"
-                      QuantityOrdered: 2
+                      QuantityOrdered: 3
             ---
 
-        Creates a B2B order from a partner system: Customer and Product looked up by name;
-        prices, amounts, the order total and the customer balance are derived by the rules,
-        and the credit limit is checked.  Each request is recorded with its outcome.
+        API service OrderB2B: creates an Order from a partner's B2B format - Account is looked up as Customer.name,
+        Items.Name as Product.name, Items.QuantityOrdered is Item.quantity; the Check Credit rules price the order
+        and reject it if the customer's balance would exceed the credit limit.  Each request is recorded first
+        (OrderB2bRequest), then marked processed, or given the error text when rejected.
         """
         session = safrs.DB.session
         request_dict_data = request.json["meta"]["args"]["data"]
 
-        # Tx 1: record the request first, so it is counted even if processing fails
-        request_row = models.OrderB2bRequest(payload=json.dumps(request_dict_data), is_processed=False)
-        session.add(request_row)
+        # Tx 1: record the request, so it is kept even if processing fails.
+        # TODO retention: never delete OrderB2bRequest rows - DailyFlow counts them (a delete changes history).
+        #      To limit size, clear old payloads but keep the rows.
+        b2b_request = models.OrderB2bRequest(payload=json.dumps(request_dict_data), is_processed=False)
+        session.add(b2b_request)
         session.commit()
-        request_id = request_row.id
+        request_id = b2b_request.id
 
-        try:   # Tx 2: process it
-            sql_alchemy_row = OrderB2BMapper().dict_to_row(row_dict=request_dict_data, session=session)
-            session.add(sql_alchemy_row)
-            request_row.is_processed = True
-            session.flush()  # assigns the order id, and runs the rules
+        # Tx 2: create the order (rules: price, totals, credit check), and mark the request processed.
+        try:
+            app_logger.info(f"OrderB2B: request {request_id}, account {request_dict_data.get('Account')}")
+            order = OrderB2BMapper().dict_to_row(row_dict=request_dict_data, session=session)
+            session.add(order)
+            b2b_request.is_processed = True
+            session.flush()  # assigns order.id; the request commits after the response (governed session)
             return {
                 "message": "B2B Order created successfully",
-                "order_id": sql_alchemy_row.id,
+                "order_id": order.id,
                 "request_id": request_id,
-                "customer": sql_alchemy_row.customer.name if sql_alchemy_row.customer else "Unknown",
-                "items_count": len(sql_alchemy_row.ItemList)
+                "customer": order.customer.name if order.customer else "Unknown",
+                "items_count": len(order.ItemList)
             }
         except Exception as e:
-            app_logger.error(f"OrderB2B: Error creating order: {str(e)}")
-            session.rollback()   # discard Tx 2; the request row (Tx 1) stays
+            app_logger.error(f"OrderB2B: request {request_id} rejected: {e}")
+            session.rollback()  # this service owns its transaction
             failed = session.get(models.OrderB2bRequest, request_id)
-            if failed:
-                failed.is_processed = False
+            if failed is not None:
                 failed.error_text = str(e)
-                session.commit()   # on the governed session: the daily totals count the failure
-            # raise (not return {...}, 400): under jsonapi_rpc a returned tuple is answered with HTTP 200
+                session.commit()  # governed session: the daily rejected count sees it
+            # raise, do NOT `return {...}, 400`: jsonapi_rpc wraps a returned tuple in an HTTP 200 response
             raise safrs.ValidationError(f"Failed to create B2B order: {e}")

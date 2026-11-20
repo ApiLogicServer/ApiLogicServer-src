@@ -44,6 +44,11 @@ add security (degrade to SQL if Keycloak is not available)
 // (the closing message points you at it).
 implement requirements samples/requirements/demo_eai/docs/requirements/demo_eai
 
+// C1 - Admin App
+// The build added tables (the daily totals, the messages, the requests); rebuild-from-database wrote them to
+// admin-merge.yaml and left admin.yaml alone, since it may hold your edits. This project has none, so replace it.
+update the Admin App to show the new tables: replace ui/admin/admin.yaml with admin-merge.yaml (keep a backup), and show the message and request payloads as text areas
+
 // C2 - Seed order history
 // The dashboard (requirement 6) needs history to show flow. The 30 days before today are seeded through the rules (a
 // script run inside the app, not SQL), so every amount, total and balance is derived and the credit limit checked. The

@@ -6,32 +6,38 @@
     <title>{{ result.title }}</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: sans-serif; }
-        .wrap { position: relative; height: 100%; width: 100%; box-sizing: border-box; padding: 4px; }
+        html, body { margin: 0; padding: 0; height: 100%; box-sizing: border-box; font-family: sans-serif; }
+        .wrap { position: relative; height: 100%; width: 100%; }
+        .err { color: #b00; padding: 8px; }
     </style>
 </head>
 <body>
-    <div class="wrap"><canvas id="chart"></canvas></div>
-    <script>
-        // result: {title, labels: [...], series: [{label, data: [...], type: "bar"|"line", axis: "y"|"y1", color}], y1_title}
-        const result = {{ result | tojson }};
-        const datasets = result.series.map(s => ({
-            label: s.label, data: s.data, type: s.type || "bar", yAxisID: s.axis || "y",
-            backgroundColor: s.color, borderColor: s.color, borderWidth: s.type === "line" ? 2 : 1, tension: 0.2
+<div class="wrap"><canvas id="chart"></canvas></div>
+<script>
+    // Multi-series chart: result = {title, labels: [...], datasets: [{label, data, type?, stack?, yAxisID?, color}], stacked, y2_title?}
+    const result = {{ result | tojson }};
+    if (result.error) {
+        document.body.innerHTML = '<div class="err">' + result.error + '</div>';
+    } else {
+        const datasets = result.datasets.map(d => ({
+            label: d.label, data: d.data, type: d.type || 'bar', stack: d.stack, yAxisID: d.yAxisID || 'y',
+            backgroundColor: d.color, borderColor: d.color, borderWidth: d.type === 'line' ? 2 : 1,
+            pointRadius: d.type === 'line' ? 2 : 0, tension: 0.2
         }));
-        const scales = { y: { beginAtZero: true, position: "left", ticks: { precision: 0 } } };
-        if (result.series.some(s => s.axis === "y1")) {
-            scales.y1 = { beginAtZero: true, position: "right", grid: { drawOnChartArea: false },
-                          title: { display: !!result.y1_title, text: result.y1_title } };
+        const scales = {
+            x: { stacked: !!result.stacked, ticks: { autoSkip: true, maxRotation: 60 } },
+            y: { stacked: !!result.stacked, beginAtZero: true, ticks: { precision: 0 }, title: { display: !!result.y_title, text: result.y_title } }
+        };
+        if (result.y2_title) {
+            scales.y2 = { position: 'right', beginAtZero: true, grid: { drawOnChartArea: false }, title: { display: true, text: result.y2_title } };
         }
-        new Chart(document.getElementById("chart"), {
+        new Chart(document.getElementById('chart').getContext('2d'), {
+            type: 'bar',
             data: { labels: result.labels, datasets: datasets },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { title: { display: true, text: result.title }, legend: { position: "bottom" } },
-                scales: scales
-            }
+            options: { responsive: true, maintainAspectRatio: false, scales: scales,
+                       plugins: { title: { display: true, text: result.title }, legend: { position: 'bottom' } } }
         });
-    </script>
+    }
+</script>
 </body>
 </html>

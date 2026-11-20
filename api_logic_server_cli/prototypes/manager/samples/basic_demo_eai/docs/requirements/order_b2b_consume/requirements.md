@@ -1,7 +1,8 @@
 ---
-created: 2026-11-19T14:30:00
+created: 2026-11-19T19:05:00
 created_by: claude-opus-5-5 (valjhuber@gmail.com)
 use_case: order_b2b_consume
+source: docs/requirements/demo_eai/requirements.md
 ---
 
 ## 3. Kafka Subscribe — Inbound orders from sales channel

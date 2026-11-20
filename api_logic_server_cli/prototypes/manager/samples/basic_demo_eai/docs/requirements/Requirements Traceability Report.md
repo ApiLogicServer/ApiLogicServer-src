@@ -9,9 +9,9 @@ A governable system is one you can **read**, **trust**, and **maintain**: each r
 It is generated from the project's own files, nothing written by hand, so it is as current as the last run and covers the whole project, not a sample. Open **Background** (below the summary) for what the terms mean, how to read the report, and what it can and can't tell you.
 
 
-**Project:** basic_demo_eai &nbsp;|&nbsp; **Generated:** November 19, 2026 18:42 &nbsp;|&nbsp; **Rules:** 18 &nbsp;|&nbsp; **Test scenarios:** 30 &nbsp;|&nbsp; **Generator:** requirements_traceability_report.py 2.15
+**Project:** basic_demo_eai &nbsp;|&nbsp; **Generated:** November 19, 2026 19:46 &nbsp;|&nbsp; **Rules:** 18 &nbsp;|&nbsp; **Test scenarios:** 35 &nbsp;|&nbsp; **Generator:** requirements_traceability_report.py 2.15
 
-**Last test run:** November 19, 2026 18:42, took 5.0 s (0m before this report; test results and logic logs below are from that run)
+**Last test run:** November 19, 2026 19:46, took 7.4 s (0m before this report; test results and logic logs below are from that run)
 
 
 &nbsp;
@@ -19,17 +19,17 @@ It is generated from the project's own files, nothing written by hand, so it is 
 
 ## At a Glance
 
-**✅ 6 requirement(s), all implemented; 6 tested; 30 of 30 scenarios passed; last run 0m ago.**
+**✅ 6 requirement(s), all implemented; 6 tested; 35 of 35 scenarios passed; last run 0m ago.**
 
 | | |
 |---|---|
 | Requirements | 6 (6 implemented) |
 | Tested | 6 of 6 |
-| Last test run | ✅ 30 passed, 0 failed (November 19, 2026 18:42, 0m ago); took 5.0 s |
+| Last test run | ✅ 35 passed, 0 failed (November 19, 2026 19:46, 0m ago); took 7.4 s |
 | Rules | 18 (15 declarative, 0 Python functions, 3 Python events) |
 | Rules shown running in a test log | 17 of 18 |
 | Security | enabled (Keycloak provider); 11 role(s), 2 row-level grant(s) |
-| Messages and APIs | 2 Kafka topic(s) in, 2 out; 6 HTTP endpoint(s) |
+| Messages and APIs | 2 Kafka topic(s) in, 2 out; 5 HTTP endpoint(s) |
 | Kafka | live (localhost:9092): subscribe tested through the broker; outbound messages checked in the log |
 
 _Status: ✅ every requirement is implemented and tested, all scenarios pass, and the results are current. ⚠ a requirement is untested or unimplemented, there is no test run, or files changed since the last run. ❌ a scenario failed. This reports what was traced and tested, not that the system is correct._
@@ -244,8 +244,8 @@ Every requirement should have rules that implement it, and tests that prove it. 
 | Tested (at least one scenario) | 6 of 6 |
 | Implementation not traced to a requirement | `logic/logic_discovery/system/all_classes_stamping.py` |
 | Tests not traced to a requirement | none |
-| Test results (last run) | ✅ 30 passed, 0 failed; took 5.0 s |
-| Scenarios with a logic log | 30 of 30 |
+| Test results (last run) | ✅ 35 passed, 0 failed; took 7.4 s |
+| Scenarios with a logic log | 33 of 35 |
 | Rules seen in at least one scenario's log | 17 of 18 (1 not counted: the engine's log does not name `all classes.early_row_event → handle_all()`, so it cannot be matched) |
 
 _Test results are as current as the last run (see the header). A gap is any requirement with no implementation or no test._
@@ -265,12 +265,12 @@ Test results are read from `logs/behave.log`, so they are only as current as tha
 
 | Requirement | Implemented by | Rules | Tests |
 |---|---|---|---|
-| §1 Business Logic — Check Credit | [logic/logic_discovery/check_credit.py](../../logic/logic_discovery/check_credit.py) | 5 | ✅ 11 scenario(s): 11 passed |
-| §2 B2B API — Accept orders from external partners | [api/api_discovery/order_b2b_service.py](../../api/api_discovery/order_b2b_service.py) | 0 | ✅ 4 scenario(s): 4 passed |
-| §3 Kafka Subscribe — Inbound orders from sales channel | [logic/logic_discovery/order_b2b_consume.py](../../logic/logic_discovery/order_b2b_consume.py)<br>[integration/kafka/kafka_subscribe_discovery/order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py)<br>[integration/OrderB2bMapper.py](../../integration/OrderB2bMapper.py)<br>[api/api_discovery/order_b2b_kafka_consume_debug.py](../../api/api_discovery/order_b2b_kafka_consume_debug.py) | 1 | ✅ 3 scenario(s): 3 passed |
-| §4 Kafka Publish — Notify shipping on dispatch | [logic/logic_discovery/order_shipping_publish.py](../../logic/logic_discovery/order_shipping_publish.py)<br>[integration/kafka/kafka_publish_discovery/order_shipping.py](../../integration/kafka/kafka_publish_discovery/order_shipping.py) | 1 | ✅ 2 scenario(s): 2 passed |
-| §5 Security | [security/declare_security.py](../../security/declare_security.py) | 0 | ✅ 1 scenario(s): 1 passed |
-| §6 Operations Dashboard — Order flow | [logic/logic_discovery/order_flow_totals.py](../../logic/logic_discovery/order_flow_totals.py)<br>[api/api_discovery/dashboard_services.py](../../api/api_discovery/dashboard_services.py) | 10 | ✅ 9 scenario(s): 9 passed |
+| §1 Business Logic — Check Credit | [logic/logic_discovery/check_credit.py](../../logic/logic_discovery/check_credit.py) | 5 | ✅ 12 scenario(s): 12 passed |
+| §2 B2B API — Accept orders from external partners | [api/api_discovery/order_b2b_service.py](../../api/api_discovery/order_b2b_service.py) | 0 | ✅ 3 scenario(s): 3 passed |
+| §3 Kafka Subscribe — Inbound orders from sales channel | [logic/logic_discovery/order_b2b_consume.py](../../logic/logic_discovery/order_b2b_consume.py)<br>[integration/kafka/kafka_subscribe_discovery/order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py)<br>[integration/OrderB2bKafkaMapper.py](../../integration/OrderB2bKafkaMapper.py)<br>[api/api_discovery/order_b2b_kafka_consume_debug.py](../../api/api_discovery/order_b2b_kafka_consume_debug.py) | 1 | ✅ 3 scenario(s): 3 passed |
+| §4 Kafka Publish — Notify shipping on dispatch | [logic/logic_discovery/shipping_notification.py](../../logic/logic_discovery/shipping_notification.py)<br>[integration/kafka/kafka_publish_discovery/order_shipping.py](../../integration/kafka/kafka_publish_discovery/order_shipping.py) | 1 | ✅ 3 scenario(s): 3 passed |
+| §5 Security | [security/declare_security.py](../../security/declare_security.py) | 0 | ✅ 3 scenario(s): 3 passed |
+| §6 Operations Dashboard — Order flow | [logic/logic_discovery/order_flow_dashboard.py](../../logic/logic_discovery/order_flow_dashboard.py)<br>[api/api_discovery/dashboard_services.py](../../api/api_discovery/dashboard_services.py) | 10 | ✅ 11 scenario(s): 11 passed |
 
 
 &nbsp;
@@ -279,23 +279,23 @@ Test results are read from `logs/behave.log`, so they are only as current as tha
 
 | Rule | Requirement | Seen in |
 |---|---|---|
-| `Customer: credit_limit is None or balance is None or balance <= credit_limit` | §1 Business Logic — Check Credit | 2: Rejected Request Is Recorded; Order Exceeding Credit Rejected |
-| `Customer.balance = sum(Order.amount_total) where date_shipped is None` | §1 Business Logic — Check Credit | 26: Partner Order Accepted; Accepted Request Is Recorded; Rejected Request Is Recorded; +23 more |
-| `Order.amount_total = sum(Item.amount)` | §1 Business Logic — Check Credit | 25: Partner Order Accepted; Accepted Request Is Recorded; Rejected Request Is Recorded; +22 more |
-| `Item.amount = quantity * unit_price` | §1 Business Logic — Check Credit | 25: Partner Order Accepted; Accepted Request Is Recorded; Rejected Request Is Recorded; +22 more |
-| `Item.unit_price = copy of Product.unit_price` | §1 Business Logic — Check Credit | 25: Partner Order Accepted; Accepted Request Is Recorded; Rejected Request Is Recorded; +22 more |
-| `OrderB2bMessage.after_flush_row_event → _publish_order_b2b()` | §3 Kafka Subscribe — Inbound orders from sales channel | 5: Order Message Delivered; Unknown Account Message Rejected; Rejected Message Keeps Its Error (live Kafka only); +2 more |
-| `DailyFlow.order_count = count(Order)` | §6 Operations Dashboard — Order flow | 26: Partner Order Accepted; Accepted Request Is Recorded; Rejected Request Is Recorded; +23 more |
-| `DailyFlow.order_amount = sum(Order.amount_total)` | §6 Operations Dashboard — Order flow | 26: Partner Order Accepted; Accepted Request Is Recorded; Rejected Request Is Recorded; +23 more |
-| `DailyFlow.message_received = count(OrderB2bMessage)` | §6 Operations Dashboard — Order flow | 5: Order Message Delivered; Unknown Account Message Rejected; Rejected Message Keeps Its Error (live Kafka only); +2 more |
-| `DailyFlow.message_processed = count(OrderB2bMessage) where is_processed == True` | §6 Operations Dashboard — Order flow | 5: Order Message Delivered; Unknown Account Message Rejected; Rejected Message Keeps Its Error (live Kafka only); +2 more |
-| `DailyFlow.message_failed = count(OrderB2bMessage) where error_text is not None` | §6 Operations Dashboard — Order flow | 5: Order Message Delivered; Unknown Account Message Rejected; Rejected Message Keeps Its Error (live Kafka only); +2 more |
-| `DailyFlow.message_stuck = (message_received or 0) - (message_processed or 0) - (message_failed or 0)` | §6 Operations Dashboard — Order flow | 5: Order Message Delivered; Unknown Account Message Rejected; Rejected Message Keeps Its Error (live Kafka only); +2 more |
-| `DailyFlow.request_received = count(OrderB2bRequest)` | §6 Operations Dashboard — Order flow | 24: Partner Order Accepted; Unknown Account Rejected; Accepted Request Is Recorded; +21 more |
-| `DailyFlow.request_processed = count(OrderB2bRequest) where is_processed == True` | §6 Operations Dashboard — Order flow | 24: Partner Order Accepted; Unknown Account Rejected; Accepted Request Is Recorded; +21 more |
-| `DailyFlow.request_failed = count(OrderB2bRequest) where error_text is not None` | §6 Operations Dashboard — Order flow | 24: Partner Order Accepted; Unknown Account Rejected; Accepted Request Is Recorded; +21 more |
-| `DailyFlow.request_stuck = (request_received or 0) - (request_processed or 0) - (request_failed or 0)` | §6 Operations Dashboard — Order flow | 24: Partner Order Accepted; Unknown Account Rejected; Accepted Request Is Recorded; +21 more |
-| `Order.after_flush_row_event → _send_order_to_shipping()` | §4 Kafka Publish — Notify shipping on dispatch | 24: Partner Order Accepted; Accepted Request Is Recorded; Good Order Placed; +21 more |
+| `Item.unit_price = copy of Product.unit_price` | §1 Business Logic — Check Credit | 25: Partner order is mapped and the request recorded as processed; Good order is priced and added to the balance; Changing an item quantity re-derives amount, total and balance; +22 more |
+| `Item.amount = quantity * unit_price` | §1 Business Logic — Check Credit | 25: Partner order is mapped and the request recorded as processed; Good order is priced and added to the balance; Changing an item quantity re-derives amount, total and balance; +22 more |
+| `Order.amount_total = sum(Item.amount)` | §1 Business Logic — Check Credit | 25: Partner order is mapped and the request recorded as processed; Good order is priced and added to the balance; Changing an item quantity re-derives amount, total and balance; +22 more |
+| `Customer.balance = sum(Order.amount_total) where date_shipped is None` | §1 Business Logic — Check Credit | 25: Partner order is mapped and the request recorded as processed; Good order is priced and added to the balance; Changing an item quantity re-derives amount, total and balance; +22 more |
+| `Customer: balance <= credit_limit` | §1 Business Logic — Check Credit | 2: Order over the credit limit is rejected; Raising a quantity over the credit limit is rejected |
+| `OrderB2bMessage.after_flush_row_event → _publish_order_b2b()` | §3 Kafka Subscribe — Inbound orders from sales channel | 6: Order message for a known customer creates the order; Order message with an unknown product is rejected; Rejected message stays on the blob with its error (live Kafka only); +3 more |
+| `DailyFlow.order_count = count(Order)` | §6 Operations Dashboard — Order flow | 25: Partner order is mapped and the request recorded as processed; Good order is priced and added to the balance; Changing an item quantity re-derives amount, total and balance; +22 more |
+| `DailyFlow.order_amount = sum(Order.amount_total)` | §6 Operations Dashboard — Order flow | 25: Partner order is mapped and the request recorded as processed; Good order is priced and added to the balance; Changing an item quantity re-derives amount, total and balance; +22 more |
+| `DailyFlow.message_received = count(OrderB2bMessage)` | §6 Operations Dashboard — Order flow | 6: Order message for a known customer creates the order; Order message with an unknown product is rejected; Rejected message stays on the blob with its error (live Kafka only); +3 more |
+| `DailyFlow.message_processed = count(OrderB2bMessage) where is_processed == True` | §6 Operations Dashboard — Order flow | 6: Order message for a known customer creates the order; Order message with an unknown product is rejected; Rejected message stays on the blob with its error (live Kafka only); +3 more |
+| `DailyFlow.message_rejected = count(OrderB2bMessage) where error_text is not None` | §6 Operations Dashboard — Order flow | 6: Order message for a known customer creates the order; Order message with an unknown product is rejected; Rejected message stays on the blob with its error (live Kafka only); +3 more |
+| `DailyFlow.message_pending = (message_received or 0) - (message_processed or 0) - (message_rejected or 0)` | §6 Operations Dashboard — Order flow | 6: Order message for a known customer creates the order; Order message with an unknown product is rejected; Rejected message stays on the blob with its error (live Kafka only); +3 more |
+| `DailyFlow.request_received = count(OrderB2bRequest)` | §6 Operations Dashboard — Order flow | 24: Partner order is mapped and the request recorded as processed; Partner order with an unknown product is rejected and the request recorded with its error; Partner order for an unknown account is rejected; +21 more |
+| `DailyFlow.request_processed = count(OrderB2bRequest) where is_processed == True` | §6 Operations Dashboard — Order flow | 24: Partner order is mapped and the request recorded as processed; Partner order with an unknown product is rejected and the request recorded with its error; Partner order for an unknown account is rejected; +21 more |
+| `DailyFlow.request_rejected = count(OrderB2bRequest) where error_text is not None` | §6 Operations Dashboard — Order flow | 24: Partner order is mapped and the request recorded as processed; Partner order with an unknown product is rejected and the request recorded with its error; Partner order for an unknown account is rejected; +21 more |
+| `DailyFlow.request_pending = (request_received or 0) - (request_processed or 0) - (request_rejected or 0)` | §6 Operations Dashboard — Order flow | 24: Partner order is mapped and the request recorded as processed; Partner order with an unknown product is rejected and the request recorded with its error; Partner order for an unknown account is rejected; +21 more |
+| `Order.after_flush_row_event → _send_order_to_shipping()` | §4 Kafka Publish — Notify shipping on dispatch | 24: Partner order is mapped and the request recorded as processed; Good order is priced and added to the balance; Changing an item quantity re-derives amount, total and balance; +21 more |
 | `all classes.early_row_event → handle_all()` | (none) | n/a - cannot be matched to the engine's log |
 
 _"Seen" means the engine's log shows the rule ran, not proof that it took effect._
@@ -343,7 +343,7 @@ Each diagram is saved under `docs/requirements/<name>/logic_diagrams/`. Then reg
 
 #### §1 Business Logic — Check Credit
 
-Tests: ✅ 11 scenario(s): 11 passed
+Tests: ✅ 12 scenario(s): 12 passed
 
 ```
 Feature: Check Credit
@@ -360,11 +360,11 @@ Feature: Check Credit
 
 | Rule / item | Type | Logic | Description | Where |
 |---|---|---|---|---|
-| `Customer: credit_limit is None or balance is None or balance <= credit_limit` | constraint | declarative | Error: Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit}) | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
-| `Customer.balance = sum(Order.amount_total) where date_shipped is None` | sum | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
-| `Order.amount_total = sum(Item.amount)` | sum | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
-| `Item.amount = quantity * unit_price` | formula | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
 | `Item.unit_price = copy of Product.unit_price` | copy | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
+| `Item.amount = quantity * unit_price` | formula | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
+| `Order.amount_total = sum(Item.amount)` | sum | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
+| `Customer.balance = sum(Order.amount_total) where date_shipped is None` | sum | declarative |  | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
+| `Customer: balance <= credit_limit` | constraint | declarative | Error: Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit}) | [check_credit.py](../../logic/logic_discovery/check_credit.py) |
 
 <details markdown>
 <summary>Logic diagram: check_credit</summary>
@@ -392,7 +392,7 @@ Feature: Check Credit
 
 #### §2 B2B API — Accept orders from external partners
 
-Tests: ✅ 4 scenario(s): 4 passed
+Tests: ✅ 3 scenario(s): 3 passed
 
 ```
 Feature: B2B Order Integration
@@ -408,7 +408,7 @@ Feature: B2B Order Integration
 
 | Rule / item | Type | Logic | Description | Where |
 |---|---|---|---|---|
-| `HTTP in: POST /api/OrderB2B/OrderB2B` | http | handler (Python) | API service OrderB2B: records the request, creates the Order and its Items (the rules derive the rest), and records the outcome on the request row. | [order_b2b_service.py](../../api/api_discovery/order_b2b_service.py) |
+| `HTTP in: POST /api/OrderB2B/OrderB2B` | http | handler (Python) | API service OrderB2B: accepts a partner order, records the request with its outcome, and creates the Order. | [order_b2b_service.py](../../api/api_discovery/order_b2b_service.py) |
 
 #### §3 Kafka Subscribe — Inbound orders from sales channel
 
@@ -427,10 +427,10 @@ Feature: Kafka Subscribe Order Integration
 
 | Rule / item | Type | Logic | Description | Where |
 |---|---|---|---|---|
-| `OrderB2bMessage.after_flush_row_event → _publish_order_b2b()` | after_flush_row_event | event (Python) | OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so Consumer 2 parses it in a clean Tx 2 (2-message pattern). | [order_b2b_consume.py](../../logic/logic_discovery/order_b2b_consume.py) |
-| `Kafka in: order_b2b` | kafka | handler (Python) | Kafka subscribe order_b2b: Consumer 1 - save the raw blob and commit (Tx 1); the row event publishes it on. | [order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py) |
-| `Kafka in: order_b2b_processed` | kafka | handler (Python) | Kafka subscribe order_b2b_processed: Consumer 2 - parse + persist the Order (Tx 2); a failure is recorded on the blob. | [order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py) |
-| `OrderB2bMapper.py` | module |  | Feature: Kafka Subscribe Order Integration | [OrderB2bMapper.py](../../integration/OrderB2bMapper.py) |
+| `OrderB2bMessage.after_flush_row_event → _publish_order_b2b()` | after_flush_row_event | event (Python) | OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so consumer 2 can parse it in a clean Tx 2 (2-message pattern). | [order_b2b_consume.py](../../logic/logic_discovery/order_b2b_consume.py) |
+| `Kafka in: order_b2b` | kafka | handler (Python) | Kafka subscribe order_b2b: consumer 1 saves the raw message as an OrderB2bMessage blob (Tx 1). | [order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py) |
+| `Kafka in: order_b2b_processed` | kafka | handler (Python) | Kafka subscribe order_b2b_processed: consumer 2 parses the blob into Order + Items (Tx 2). | [order_b2b.py](../../integration/kafka/kafka_subscribe_discovery/order_b2b.py) |
+| `OrderB2bKafkaMapper.py` | module |  | Feature: Kafka Subscribe Order Integration | [OrderB2bKafkaMapper.py](../../integration/OrderB2bKafkaMapper.py) |
 | `HTTP in: GET /consume_debug/order_b2b` | http | handler (Python) | EAI debug (development only, no authentication): sends the message in ?file= to the topic, live through Kafka or simulated | [order_b2b_kafka_consume_debug.py](../../api/api_discovery/order_b2b_kafka_consume_debug.py) |
 | `HTTP in: POST /consume_debug/order_b2b/reset` | http | handler (Python) | EAI debug (development only, destructive): purges the messages in the pipeline's topics | [order_b2b_kafka_consume_debug.py](../../api/api_discovery/order_b2b_kafka_consume_debug.py) |
 
@@ -447,7 +447,7 @@ Feature: Kafka Subscribe Order Integration
 
 **Rules**
 
-1. `OrderB2bMessage` → `_publish_order_b2b` (after_flush) — OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so Consumer 2
+1. `OrderB2bMessage` → `_publish_order_b2b` (after_flush) — OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so consumer 2
 
 </td>
 </tr></table>
@@ -456,7 +456,7 @@ Feature: Kafka Subscribe Order Integration
 
 #### §4 Kafka Publish — Notify shipping on dispatch
 
-Tests: ✅ 2 scenario(s): 2 passed
+Tests: ✅ 3 scenario(s): 3 passed
 
 ```
 Feature: Kafka Publish Shipping Notification
@@ -471,23 +471,23 @@ Feature: Kafka Publish Shipping Notification
 
 | Rule / item | Type | Logic | Description | Where |
 |---|---|---|---|---|
-| `Order.after_flush_row_event → _send_order_to_shipping()` | after_flush_row_event | event (Python) | Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set and differs from its prior value (old_row is None on insert), shaped by example as message_formats/order_shipping.json. | [order_shipping_publish.py](../../logic/logic_discovery/order_shipping_publish.py) |
+| `Order.after_flush_row_event → _send_order_to_shipping()` | after_flush_row_event | event (Python) | Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set (insert with a value, or an update that changes it), shaped by example from message_formats/order_shipping.json. | [shipping_notification.py](../../logic/logic_discovery/shipping_notification.py) |
 | `order_shipping.py` | module |  | Feature: Kafka Publish Shipping Notification | [order_shipping.py](../../integration/kafka/kafka_publish_discovery/order_shipping.py) |
 
 <details markdown>
-<summary>Logic diagram: order_shipping_publish</summary>
+<summary>Logic diagram: shipping_notification</summary>
 
 <table><tr valign="top">
 <td width="65%">
 
-![logic diagram: order_shipping_publish](order_shipping_publish/logic_diagrams/logic_diagram_order_shipping_publish.svg)
+![logic diagram: shipping_notification](shipping_notification/logic_diagrams/logic_diagram_shipping_notification.svg)
 
 </td>
 <td width="35%">
 
 **Rules**
 
-1. `Order` → `_send_order_to_shipping` (after_flush) — Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set and differs from its prior
+1. `Order` → `_send_order_to_shipping` (after_flush) — Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set (insert with a value,
 
 </td>
 </tr></table>
@@ -496,7 +496,7 @@ Feature: Kafka Publish Shipping Notification
 
 #### §5 Security
 
-Tests: ✅ 1 scenario(s): 1 passed
+Tests: ✅ 3 scenario(s): 3 passed
 
 ```
 Feature: Row-Level Security
@@ -513,7 +513,7 @@ Feature: Row-Level Security
 
 #### §6 Operations Dashboard — Order flow
 
-Tests: ✅ 9 scenario(s): 9 passed
+Tests: ✅ 11 scenario(s): 11 passed
 
 ```
 Feature: Order Flow Dashboard
@@ -530,43 +530,42 @@ Feature: Order Flow Dashboard
 
 | Rule / item | Type | Logic | Description | Where |
 |---|---|---|---|---|
-| `DailyFlow.order_count = count(Order)` | count | declarative |  | [order_flow_totals.py](../../logic/logic_discovery/order_flow_totals.py) |
-| `DailyFlow.order_amount = sum(Order.amount_total)` | sum | declarative |  | [order_flow_totals.py](../../logic/logic_discovery/order_flow_totals.py) |
-| `DailyFlow.message_received = count(OrderB2bMessage)` | count | declarative |  | [order_flow_totals.py](../../logic/logic_discovery/order_flow_totals.py) |
-| `DailyFlow.message_processed = count(OrderB2bMessage) where is_processed == True` | count | declarative |  | [order_flow_totals.py](../../logic/logic_discovery/order_flow_totals.py) |
-| `DailyFlow.message_failed = count(OrderB2bMessage) where error_text is not None` | count | declarative |  | [order_flow_totals.py](../../logic/logic_discovery/order_flow_totals.py) |
-| `DailyFlow.message_stuck = (message_received or 0) - (message_processed or 0) - (message_failed or 0)` | formula | declarative |  | [order_flow_totals.py](../../logic/logic_discovery/order_flow_totals.py) |
-| `DailyFlow.request_received = count(OrderB2bRequest)` | count | declarative |  | [order_flow_totals.py](../../logic/logic_discovery/order_flow_totals.py) |
-| `DailyFlow.request_processed = count(OrderB2bRequest) where is_processed == True` | count | declarative |  | [order_flow_totals.py](../../logic/logic_discovery/order_flow_totals.py) |
-| `DailyFlow.request_failed = count(OrderB2bRequest) where error_text is not None` | count | declarative |  | [order_flow_totals.py](../../logic/logic_discovery/order_flow_totals.py) |
-| `DailyFlow.request_stuck = (request_received or 0) - (request_processed or 0) - (request_failed or 0)` | formula | declarative |  | [order_flow_totals.py](../../logic/logic_discovery/order_flow_totals.py) |
-| `HTTP in: GET /order_flow/daily` | http | handler (Python) | API service order flow: the daily totals for the last 30 days, as JSON (dashboard, tests, custom UIs). | [dashboard_services.py](../../api/api_discovery/dashboard_services.py) |
-| `HTTP in: GET /dashboard` | http | handler (Python) | API service order flow: the dashboard iframes, embedded at the top of ui/admin/home.js. | [dashboard_services.py](../../api/api_discovery/dashboard_services.py) |
-| `HTTP in: GET /chart_graphics/<path:path>` | http | handler (Python) | API service order flow: one chart, rendered on every request (never cached) so it shows current data. | [dashboard_services.py](../../api/api_discovery/dashboard_services.py) |
+| `DailyFlow.order_count = count(Order)` | count | declarative |  | [order_flow_dashboard.py](../../logic/logic_discovery/order_flow_dashboard.py) |
+| `DailyFlow.order_amount = sum(Order.amount_total)` | sum | declarative |  | [order_flow_dashboard.py](../../logic/logic_discovery/order_flow_dashboard.py) |
+| `DailyFlow.message_received = count(OrderB2bMessage)` | count | declarative |  | [order_flow_dashboard.py](../../logic/logic_discovery/order_flow_dashboard.py) |
+| `DailyFlow.message_processed = count(OrderB2bMessage) where is_processed == True` | count | declarative |  | [order_flow_dashboard.py](../../logic/logic_discovery/order_flow_dashboard.py) |
+| `DailyFlow.message_rejected = count(OrderB2bMessage) where error_text is not None` | count | declarative |  | [order_flow_dashboard.py](../../logic/logic_discovery/order_flow_dashboard.py) |
+| `DailyFlow.message_pending = (message_received or 0) - (message_processed or 0) - (message_rejected or 0)` | formula | declarative |  | [order_flow_dashboard.py](../../logic/logic_discovery/order_flow_dashboard.py) |
+| `DailyFlow.request_received = count(OrderB2bRequest)` | count | declarative |  | [order_flow_dashboard.py](../../logic/logic_discovery/order_flow_dashboard.py) |
+| `DailyFlow.request_processed = count(OrderB2bRequest) where is_processed == True` | count | declarative |  | [order_flow_dashboard.py](../../logic/logic_discovery/order_flow_dashboard.py) |
+| `DailyFlow.request_rejected = count(OrderB2bRequest) where error_text is not None` | count | declarative |  | [order_flow_dashboard.py](../../logic/logic_discovery/order_flow_dashboard.py) |
+| `DailyFlow.request_pending = (request_received or 0) - (request_processed or 0) - (request_rejected or 0)` | formula | declarative |  | [order_flow_dashboard.py](../../logic/logic_discovery/order_flow_dashboard.py) |
+| `HTTP in: GET /dashboard` | http | handler (Python) | API service dashboard: two order-flow charts side by side, each in its own iframe. | [dashboard_services.py](../../api/api_discovery/dashboard_services.py) |
+| `HTTP in: GET /chart_graphics/<path:path>` | http | handler (Python) | API service dashboard: renders one chart as HTML - on EVERY request (never cached), so data is current. | [dashboard_services.py](../../api/api_discovery/dashboard_services.py) |
 
 <details markdown>
-<summary>Logic diagram: order_flow_totals</summary>
+<summary>Logic diagram: order_flow_dashboard</summary>
 
 <table><tr valign="top">
 <td width="65%">
 
-![logic diagram: order_flow_totals](order_flow_totals/logic_diagrams/logic_diagram_order_flow_totals.svg)
+![logic diagram: order_flow_dashboard](order_flow_dashboard/logic_diagrams/logic_diagram_order_flow_dashboard.svg)
 
 </td>
 <td width="35%">
 
 **Rules**
 
-1. `message_stuck = (message_received or 0) - (message_processed or 0) - (message_failed or 0)`<br>
-2. `request_stuck = (request_received or 0) - (request_processed or 0) - (request_failed or 0)`<br>
+1. `message_pending = (message_received or 0) - (message_processed or 0) - (message_rejected or 0)`<br>
+2. `request_pending = (request_received or 0) - (request_processed or 0) - (request_rejected or 0)`<br>
 3. `order_amount = sum(amount_total)`<br>
 4. `order_count = count(Order)`<br>
 5. `message_received = count(OrderB2bMessage)`<br>
 6. `message_processed = count(OrderB2bMessage where is_processed)`<br>
-7. `message_failed = count(OrderB2bMessage where error_text)`<br>
+7. `message_rejected = count(OrderB2bMessage where error_text)`<br>
 8. `request_received = count(OrderB2bRequest)`<br>
 9. `request_processed = count(OrderB2bRequest where is_processed)`<br>
-10. `request_failed = count(OrderB2bRequest where error_text)`
+10. `request_rejected = count(OrderB2bRequest where error_text)`
 
 </td>
 </tr></table>
@@ -599,20 +598,20 @@ _Generated from `docs/db.dbml` (parents above children; shaded rows are derived 
 
 | Table | Column | Rule | Definition |
 |---|---|---|---|
-| Customer | balance | sum | `Customer.balance = sum(Order.amount_total) where date_shipped is None` |
-| Order | amount_total | sum | `Order.amount_total = sum(Item.amount)` |
-| Item | amount | formula | `Item.amount = quantity * unit_price` |
 | Item | unit_price | copy | `Item.unit_price = copy of Product.unit_price` |
+| Item | amount | formula | `Item.amount = quantity * unit_price` |
+| Order | amount_total | sum | `Order.amount_total = sum(Item.amount)` |
+| Customer | balance | sum | `Customer.balance = sum(Order.amount_total) where date_shipped is None` |
 | DailyFlow | order_count | count | `DailyFlow.order_count = count(Order)` |
 | DailyFlow | order_amount | sum | `DailyFlow.order_amount = sum(Order.amount_total)` |
 | DailyFlow | message_received | count | `DailyFlow.message_received = count(OrderB2bMessage)` |
 | DailyFlow | message_processed | count | `DailyFlow.message_processed = count(OrderB2bMessage) where is_processed == True` |
-| DailyFlow | message_failed | count | `DailyFlow.message_failed = count(OrderB2bMessage) where error_text is not None` |
-| DailyFlow | message_stuck | formula | `DailyFlow.message_stuck = (message_received or 0) - (message_processed or 0) - (message_failed or 0)` |
+| DailyFlow | message_rejected | count | `DailyFlow.message_rejected = count(OrderB2bMessage) where error_text is not None` |
+| DailyFlow | message_pending | formula | `DailyFlow.message_pending = (message_received or 0) - (message_processed or 0) - (message_rejected or 0)` |
 | DailyFlow | request_received | count | `DailyFlow.request_received = count(OrderB2bRequest)` |
 | DailyFlow | request_processed | count | `DailyFlow.request_processed = count(OrderB2bRequest) where is_processed == True` |
-| DailyFlow | request_failed | count | `DailyFlow.request_failed = count(OrderB2bRequest) where error_text is not None` |
-| DailyFlow | request_stuck | formula | `DailyFlow.request_stuck = (request_received or 0) - (request_processed or 0) - (request_failed or 0)` |
+| DailyFlow | request_rejected | count | `DailyFlow.request_rejected = count(OrderB2bRequest) where error_text is not None` |
+| DailyFlow | request_pending | formula | `DailyFlow.request_pending = (request_received or 0) - (request_processed or 0) - (request_rejected or 0)` |
 
 
 &nbsp;
@@ -665,16 +664,15 @@ How data enters and leaves beyond the standard API: Kafka topics in and out, cus
 
 | Direction | Channel | Name | Tests mention it | Handler | Tables created | Message shape | Requirement |
 |---|---|---|---|---|---|---|---|
-| ➡ in | Kafka | `order_b2b` | ✅ live | `order_b2b()` - Kafka subscribe order_b2b: Consumer 1 - save the raw blob and commit (Tx 1); the row event publishes it on. | OrderB2bMessage | [order_b2b.json](../../integration/kafka/message_formats/order_b2b.json) | §3 Kafka Subscribe — Inbound orders from sales channel |
-| ➡ in | Kafka | `order_b2b_processed` | ✅ live | `order_b2b_processed()` - Kafka subscribe order_b2b_processed: Consumer 2 - parse + persist the Order (Tx 2); a failure is recorded on the blob. | Item, Order, OrderB2bMessage |  | §3 Kafka Subscribe — Inbound orders from sales channel |
-| ⬅ out | Kafka | `order_b2b_processed` | ✅ live | OrderB2bMessage.after_flush_row_event → _publish_order_b2b() - OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so Consumer 2 parses it in a clean Tx 2 (2-message pattern). |  |  | §3 Kafka Subscribe — Inbound orders from sales channel |
-| ⬅ out | Kafka | `order_shipping` | ⚠ message checked in the log, not on the topic | Order.after_flush_row_event → _send_order_to_shipping() - Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set and differs from its prior value (old_row is None on insert), shaped by example as message_formats/order_shipping.json. |  | [order_shipping.json](../../integration/kafka/message_formats/order_shipping.json) | §4 Kafka Publish — Notify shipping on dispatch |
-| ➡ in | HTTP | `GET /order_flow/daily` | ✅ | `order_flow_daily()` - API service order flow: the daily totals for the last 30 days, as JSON (dashboard, tests, custom UIs). |  |  | §6 Operations Dashboard — Order flow |
-| ➡ in | HTTP | `GET /dashboard` | ✅ | `dashboard()` - API service order flow: the dashboard iframes, embedded at the top of ui/admin/home.js. |  |  | §6 Operations Dashboard — Order flow |
-| ➡ in | HTTP | `GET /chart_graphics/<path:path>` | ⚠ no test mentions it | `chart_graphics()` - API service order flow: one chart, rendered on every request (never cached) so it shows current data. |  |  | §6 Operations Dashboard — Order flow |
+| ➡ in | Kafka | `order_b2b` | ✅ live | `order_b2b()` - Kafka subscribe order_b2b: consumer 1 saves the raw message as an OrderB2bMessage blob (Tx 1). | OrderB2bMessage | [order_b2b.json](../../integration/kafka/message_formats/order_b2b.json) | §3 Kafka Subscribe — Inbound orders from sales channel |
+| ➡ in | Kafka | `order_b2b_processed` | ✅ live | `order_b2b_processed()` - Kafka subscribe order_b2b_processed: consumer 2 parses the blob into Order + Items (Tx 2). | Item, Order, OrderB2bMessage |  | §3 Kafka Subscribe — Inbound orders from sales channel |
+| ⬅ out | Kafka | `order_b2b_processed` | ✅ live | OrderB2bMessage.after_flush_row_event → _publish_order_b2b() - OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so consumer 2 can parse it in a clean Tx 2 (2-message pattern). |  |  | §3 Kafka Subscribe — Inbound orders from sales channel |
+| ⬅ out | Kafka | `order_shipping` | ⚠ message checked in the log, not on the topic | Order.after_flush_row_event → _send_order_to_shipping() - Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set (insert with a value, or an update that changes it), shaped by example from message_formats/order_shipping.json. |  | [order_shipping.json](../../integration/kafka/message_formats/order_shipping.json) | §4 Kafka Publish — Notify shipping on dispatch |
+| ➡ in | HTTP | `GET /dashboard` | ⚠ no test mentions it | `dashboard()` - API service dashboard: two order-flow charts side by side, each in its own iframe. |  |  | §6 Operations Dashboard — Order flow |
+| ➡ in | HTTP | `GET /chart_graphics/<path:path>` | ⚠ no test mentions it | `chart_graphics()` - API service dashboard: renders one chart as HTML - on EVERY request (never cached), so data is current. |  |  | §6 Operations Dashboard — Order flow |
 | ➡ in | HTTP | `GET /consume_debug/order_b2b` | ✅ | `register_consume_debug()` - EAI debug (development only, no authentication): sends the message in ?file= to the topic, live through Kafka or simulated |  |  | §3 Kafka Subscribe — Inbound orders from sales channel |
 | ➡ in | HTTP | `POST /consume_debug/order_b2b/reset` | ⚠ no test mentions it | `register_queue_reset()` - EAI debug (development only, destructive): purges the messages in the pipeline's topics |  |  | §3 Kafka Subscribe — Inbound orders from sales channel |
-| ➡ in | HTTP | `POST /api/OrderB2B/OrderB2B` | ✅ | `OrderB2B()` - API service OrderB2B: records the request, creates the Order and its Items (the rules derive the rest), and records the outcome on the request row. |  |  | §2 B2B API — Accept orders from external partners |
+| ➡ in | HTTP | `POST /api/OrderB2B/OrderB2B` | ✅ | `OrderB2B()` - API service OrderB2B: accepts a partner order, records the request with its outcome, and creates the Order. |  |  | §2 B2B API — Accept orders from external partners |
 
 _"Tests mention it" checks the test sources, not delivery._
 
@@ -730,7 +728,7 @@ Topics and endpoints are read from the discovery folders. The condition that tri
 
 ## Tests and Results
 
-**✅ 30 scenario(s): 30 passed, 0 failed; took 5.0 s** (from the last run, `logs/behave.log`).
+**✅ 35 scenario(s): 35 passed, 0 failed; took 7.4 s** (from the last run, `logs/behave.log`).
 
 Each test drives the running system the way any client would — create an order, change a quantity, ship it — and checks the result.
 
@@ -812,13 +810,14 @@ python requirements_traceability_report.py run
 &nbsp;
 &nbsp;
 
-#### Scenario: Partner Order Accepted ✅ (0.06 s)
-&emsp;  Scenario: Partner Order Accepted  
-&emsp;&emsp;    Given Customer "Pat" with credit limit 5000  
-&emsp;&emsp;    When B2B order placed for "Pat" with 1 Widget and 2 Gadget  
-&emsp;&emsp;    Then the partner order is accepted with 2 items  
-&emsp;&emsp;    And Order amount_total should be 390  
-&emsp;&emsp;    And Customer balance should be 390  
+#### Scenario: Partner order is mapped and the request recorded as processed ✅ (0.06 s)
+&emsp;  Scenario: Partner order is mapped and the request recorded as processed  
+&emsp;&emsp;    Given a new customer "Partner Co" with credit limit 5000  
+&emsp;&emsp;    When a B2B order is placed for "Partner Co" with 3 Widget and 2 Gadget  
+&emsp;&emsp;    Then the order is accepted  
+&emsp;&emsp;    And the order belongs to "Partner Co"  
+&emsp;&emsp;    And the order items are 3 Widget and 2 Gadget  
+&emsp;&emsp;    And the B2B request is recorded as processed  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -828,12 +827,12 @@ python requirements_traceability_report.py run
 &nbsp;
 
 
-**Rules Used** in Scenario: Partner Order Accepted
+**Rules Used** in Scenario: Partner order is mapped and the request recorded as processed
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -846,49 +845,49 @@ python requirements_traceability_report.py run
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Partner Order Accepted (2 transactions)
+**Logic Log** in Scenario: Partner order is mapped and the request recorded as processed (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c3d3ed0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:22,994 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Pat 1795142542948", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c5cb1d0  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:22,994 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:22.994584, CreatedOnDay: 2026-11-19, payload: {"Account": "Pat 1795142542948", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c5cb1d0  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:22,994 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 22, order_amount: 4530.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [25-->] 26, request_processed: 22, request_failed: 3, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:22,995 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 22, order_amount: 4530.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [25-->] 26, request_processed: 22, request_failed: 3, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:22,995 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 22, order_amount: 4530.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [25-->] 26, request_processed: 22, request_failed: 3, request_stuck:  [0-->] 1  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:22,995 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c3d3ed0)   										 - 2026-11-19 18:42:22,995 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c3d3ed0)   										 - 2026-11-19 18:42:22,996 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e313610) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,657 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Partner Co 1795146361620", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 3}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10e3e6650  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,657 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:01.657140, CreatedOnDay: 2026-11-19, payload: {"Account": "Partner Co 1795146361620", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 3}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10e3e6650  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,657 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 27, order_amount: 8010.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [30-->] 31, request_processed: 24, request_rejected: 5, request_pending: 1  row: 0x10e2362b0  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,657 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 27, order_amount: 8010.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [30-->] 31, request_processed: 24, request_rejected: 5, request_pending: 1  row: 0x10e2362b0  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,657 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 27, order_amount: 8010.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [30-->] 31, request_processed: 24, request_rejected: 5, request_pending:  [1-->] 2  row: 0x10e2362b0  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,658 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e313610)   										 - 2026-11-19 19:46:01,658 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e313610)   										 - 2026-11-19 19:46:01,659 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c3d3ed0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,000 - logic_logger - INFO
-..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10c6a09f0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,000 - logic_logger - INFO
-..OrderB2bRequest[86] {Update - client} id: 86, CreatedOn: 2026-11-19 18:42:22.994584, CreatedOnDay: 2026-11-19, payload: {"Account": "Pat 1795142542948", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c5cb1d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,000 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 22, order_amount: 4530.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed:  [22-->] 23, request_failed: 3, request_stuck: 1  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,001 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 22, order_amount: 4530.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed:  [22-->] 23, request_failed: 3, request_stuck: 1  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,001 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 22, order_amount: 4530.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed:  [22-->] 23, request_failed: 3, request_stuck:  [1-->] 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,001 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 39, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c5e5d00  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,001 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 39, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c5e5d00  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,001 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 39, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c5e5d00  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,001 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [22-->] 23, order_amount: 4530.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed: 23, request_failed: 3, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,001 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [22-->] 23, order_amount: 4530.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed: 23, request_failed: 3, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,001 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [22-->] 23, order_amount: 4530.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed: 23, request_failed: 3, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,001 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x10c5a2bd0  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,001 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10c5a2bd0  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,002 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10c5a2bd0  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,002 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 39, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c5e5d00  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,002 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 23, order_amount:  [4530.00-->] 4620.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed: 23, request_failed: 3, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,002 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 23, order_amount:  [4530.00-->] 4620.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed: 23, request_failed: 3, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,002 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 23, order_amount:  [4530.00-->] 4620.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed: 23, request_failed: 3, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,002 - logic_logger - INFO
-......Customer[39] {Update - Adjusting customer: balance} id: 39, name: Pat 1795142542948, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c5de850  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,002 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10c5df6d0  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,002 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10c5df6d0  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,002 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10c5df6d0  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,002 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 39, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [90.0000000000-->] 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c5e5d00  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,002 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 23, order_amount:  [4620.0000000000-->] 4920.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed: 23, request_failed: 3, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,002 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 23, order_amount:  [4620.0000000000-->] 4920.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed: 23, request_failed: 3, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,003 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 23, order_amount:  [4620.0000000000-->] 4920.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 26, request_processed: 23, request_failed: 3, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,003 - logic_logger - INFO
-......Customer[39] {Update - Adjusting customer: balance} id: 39, name: Pat 1795142542948, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c5de850  session: 0x10c3d3ed0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,003 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c3d3ed0)   										 - 2026-11-19 18:42:23,003 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c3d3ed0)   										 - 2026-11-19 18:42:23,004 - logic_logger - INFO
-..Order[184] {AfterFlush Event} id: 184, notes: behave test, customer_id: 39, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c5e5d00  session: 0x10c3d3ed0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,004 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e313610) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,663 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10e5387c0  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,663 - logic_logger - INFO
+..OrderB2bRequest[137] {Update - client} id: 137, CreatedOn: 2026-11-19 19:46:01.657140, CreatedOnDay: 2026-11-19, payload: {"Account": "Partner Co 1795146361620", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 3}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e3e6650  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,663 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 27, order_amount: 8010.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed:  [24-->] 25, request_rejected: 5, request_pending: 2  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,664 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 27, order_amount: 8010.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed:  [24-->] 25, request_rejected: 5, request_pending: 2  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,664 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 27, order_amount: 8010.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed:  [24-->] 25, request_rejected: 5, request_pending:  [2-->] 1  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,664 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10e479e20  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,664 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 40, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10e479e20  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,664 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 40, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10e479e20  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,664 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [27-->] 28, order_amount: 8010.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed: 25, request_rejected: 5, request_pending: 1  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,665 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [27-->] 28, order_amount: 8010.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed: 25, request_rejected: 5, request_pending: 1  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,665 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [27-->] 28, order_amount: 8010.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed: 25, request_rejected: 5, request_pending: 1  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,665 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 3, amount: None, unit_price: None  row: 0x10e40d350  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,665 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 3, amount: None, unit_price: 90.0000000000  row: 0x10e40d350  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,665 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 3, amount: 270.0000000000, unit_price: 90.0000000000  row: 0x10e40d350  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,665 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 40, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 270.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e479e20  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,665 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 28, order_amount:  [8010.00-->] 8280.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed: 25, request_rejected: 5, request_pending: 1  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,665 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 28, order_amount:  [8010.00-->] 8280.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed: 25, request_rejected: 5, request_pending: 1  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,665 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 28, order_amount:  [8010.00-->] 8280.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed: 25, request_rejected: 5, request_pending: 1  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,665 - logic_logger - INFO
+......Customer[40] {Update - Adjusting customer: balance} id: 40, name: Partner Co 1795146361620, balance:  [0E-10-->] 270.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10e439550  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,665 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10e3a0a50  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,665 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10e3a0a50  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,665 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10e3a0a50  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,665 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 40, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [270.0000000000-->] 570.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e479e20  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,666 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 28, order_amount:  [8280.0000000000-->] 8580.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed: 25, request_rejected: 5, request_pending: 1  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,666 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 28, order_amount:  [8280.0000000000-->] 8580.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed: 25, request_rejected: 5, request_pending: 1  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,666 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 28, order_amount:  [8280.0000000000-->] 8580.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 31, request_processed: 25, request_rejected: 5, request_pending: 1  row: 0x10e236a40  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,666 - logic_logger - INFO
+......Customer[40] {Update - Adjusting customer: balance} id: 40, name: Partner Co 1795146361620, balance:  [270.0000000000-->] 570.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10e439550  session: 0x10e313610  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,666 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e313610)   										 - 2026-11-19 19:46:01,666 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e313610)   										 - 2026-11-19 19:46:01,667 - logic_logger - INFO
+..Order[216] {AfterFlush Event} id: 216, notes: behave test, customer_id: 40, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 570.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e479e20  session: 0x10e313610  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,667 - logic_logger - INFO
 
 ```
 </details>
@@ -896,10 +895,13 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c3d3ed0)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Unknown Account Rejected ✅ (0.01 s)
-&emsp;  Scenario: Unknown Account Rejected  
-&emsp;&emsp;    When B2B order placed for unknown account "Nobody"  
-&emsp;&emsp;    Then the order is rejected for an unknown customer  
+#### Scenario: Partner order with an unknown product is rejected and the request recorded with its error ✅ (0.02 s)
+&emsp;  Scenario: Partner order with an unknown product is rejected and the request recorded with its error  
+&emsp;&emsp;    Given a new customer "Partner Bad" with credit limit 5000  
+&emsp;&emsp;    When a B2B order is placed for "Partner Bad" with 1 Sprocket  
+&emsp;&emsp;    Then the order is rejected with "Lookup failed"  
+&emsp;&emsp;    And the B2B request is recorded with an error  
+&emsp;&emsp;    And "Partner Bad" has no orders  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -909,33 +911,33 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c3d3ed0)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Unknown Account Rejected
+**Rules Used** in Scenario: Partner order with an unknown product is rejected and the request recorded with its error
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
 ```
-**Logic Log** in Scenario: Unknown Account Rejected (2 transactions)
+**Logic Log** in Scenario: Partner order with an unknown product is rejected and the request recorded with its error (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c236330) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,013 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Nobody 1795142543012", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10c5dfe50  session: 0x10c236330  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,013 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.013178, CreatedOnDay: 2026-11-19, payload: {"Account": "Nobody 1795142543012", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10c5dfe50  session: 0x10c236330  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,013 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [26-->] 27, request_processed: 23, request_failed: 3, request_stuck: 0  row: 0x10c3ab1d0  session: 0x10c236330  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,013 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [26-->] 27, request_processed: 23, request_failed: 3, request_stuck: 0  row: 0x10c3ab1d0  session: 0x10c236330  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,013 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [26-->] 27, request_processed: 23, request_failed: 3, request_stuck:  [0-->] 1  row: 0x10c3ab1d0  session: 0x10c236330  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,013 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c236330)   										 - 2026-11-19 18:42:23,013 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c236330)   										 - 2026-11-19 18:42:23,014 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cde10) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,689 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Partner Bad 1795146361684", "Notes": "behave test", "Items": [{"Name": "Sprocket", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e3edf50  session: 0x10e4cde10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,689 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:01.689164, CreatedOnDay: 2026-11-19, payload: {"Account": "Partner Bad 1795146361684", "Notes": "behave test", "Items": [{"Name": "Sprocket", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e3edf50  session: 0x10e4cde10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,689 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [31-->] 32, request_processed: 25, request_rejected: 5, request_pending: 1  row: 0x10e235d30  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,689 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [31-->] 32, request_processed: 25, request_rejected: 5, request_pending: 1  row: 0x10e235d30  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,689 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [31-->] 32, request_processed: 25, request_rejected: 5, request_pending:  [1-->] 2  row: 0x10e235d30  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,689 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cde10)   										 - 2026-11-19 19:46:01,689 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cde10)   										 - 2026-11-19 19:46:01,690 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c236330) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,015 - logic_logger - INFO
-..OrderB2bRequest[87] {Update - client} id: 87, CreatedOn: 2026-11-19 18:42:23.013178, CreatedOnDay: 2026-11-19, payload: {"Account": "Nobody 1795142543012", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text:  [None-->] ('Lookup failed: missing parent', <Order (transient 4502483696)>, 'Customer', "{'Account': 'Nobody 1795142543012', 'Notes': 'behave test', 'Items': [{'Name': 'Widget', 'QuantityOrdered': 1}]}")  row: 0x10c5dfe50  session: 0x10c236330  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,015 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_failed} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 27, request_processed: 23, request_failed:  [3-->] 4, request_stuck: 1  row: 0x10c3ab1d0  session: 0x10c236330  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,015 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 27, request_processed: 23, request_failed:  [3-->] 4, request_stuck: 1  row: 0x10c3ab1d0  session: 0x10c236330  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,016 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 27, request_processed: 23, request_failed:  [3-->] 4, request_stuck:  [1-->] 0  row: 0x10c3ab1d0  session: 0x10c236330  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,016 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c236330)   										 - 2026-11-19 18:42:23,016 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c236330)   										 - 2026-11-19 18:42:23,016 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cde10) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,692 - logic_logger - INFO
+..OrderB2bRequest[138] {Update - client} id: 138, CreatedOn: 2026-11-19 19:46:01.689164, CreatedOnDay: 2026-11-19, payload: {"Account": "Partner Bad 1795146361684", "Notes": "behave test", "Items": [{"Name": "Sprocket", "QuantityOrdered": 1}]}, is_processed: False, error_text:  [None-->] ('Lookup failed: missing parent', <Item (transient 4534092112)>, 'Product', "{'Name': 'Sprocket', 'QuantityOrdered': 1}")  row: 0x10e3edf50  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,692 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_rejected} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 32, request_processed: 25, request_rejected:  [5-->] 6, request_pending: 2  row: 0x10e235d30  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,692 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 32, request_processed: 25, request_rejected:  [5-->] 6, request_pending: 2  row: 0x10e235d30  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,692 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 32, request_processed: 25, request_rejected:  [5-->] 6, request_pending:  [2-->] 1  row: 0x10e235d30  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,692 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cde10)   										 - 2026-11-19 19:46:01,692 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cde10)   										 - 2026-11-19 19:46:01,693 - logic_logger - INFO
 
 ```
 </details>
@@ -943,13 +945,10 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c236330)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Accepted Request Is Recorded ✅ (0.02 s)
-&emsp;  Scenario: Accepted Request Is Recorded  
-&emsp;&emsp;    Given Customer "Pia" with credit limit 5000  
-&emsp;&emsp;    And the daily totals are read  
-&emsp;&emsp;    When B2B order placed for "Pia" with 1 Widget  
-&emsp;&emsp;    Then the B2B request is recorded as processed  
-&emsp;&emsp;    And today's request_received and request_processed rise by 1  
+#### Scenario: Partner order for an unknown account is rejected ✅ (0.01 s)
+&emsp;  Scenario: Partner order for an unknown account is rejected  
+&emsp;&emsp;    When a B2B order is placed for an unknown account  
+&emsp;&emsp;    Then the order is rejected with "Lookup failed"  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -959,133 +958,33 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c236330)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Accepted Request Is Recorded
+**Rules Used** in Scenario: Partner order for an unknown account is rejected
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
-    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
-    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
-  Customer  
-    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    9. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    10. RowEvent Order._send_order_to_shipping()  
-    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Accepted Request Is Recorded (2 transactions)
+**Logic Log** in Scenario: Partner order for an unknown account is rejected (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c659d00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,026 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Pia 1795142543020", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10c6ebf50  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,026 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.026203, CreatedOnDay: 2026-11-19, payload: {"Account": "Pia 1795142543020", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10c6ebf50  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,026 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [27-->] 28, request_processed: 23, request_failed: 4, request_stuck: 0  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,026 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [27-->] 28, request_processed: 23, request_failed: 4, request_stuck: 0  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,026 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [27-->] 28, request_processed: 23, request_failed: 4, request_stuck:  [0-->] 1  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,026 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659d00)   										 - 2026-11-19 18:42:23,026 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659d00)   										 - 2026-11-19 18:42:23,027 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e433f00) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,708 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Nobody 1795146361706", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e40fb50  session: 0x10e433f00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,708 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:01.708519, CreatedOnDay: 2026-11-19, payload: {"Account": "Nobody 1795146361706", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e40fb50  session: 0x10e433f00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,708 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [32-->] 33, request_processed: 25, request_rejected: 6, request_pending: 1  row: 0x10e235d30  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,708 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [32-->] 33, request_processed: 25, request_rejected: 6, request_pending: 1  row: 0x10e235d30  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,708 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [32-->] 33, request_processed: 25, request_rejected: 6, request_pending:  [1-->] 2  row: 0x10e235d30  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,709 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433f00)   										 - 2026-11-19 19:46:01,709 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433f00)   										 - 2026-11-19 19:46:01,709 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c659d00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,028 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10c6f5fd0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,028 - logic_logger - INFO
-..OrderB2bRequest[88] {Update - client} id: 88, CreatedOn: 2026-11-19 18:42:23.026203, CreatedOnDay: 2026-11-19, payload: {"Account": "Pia 1795142543020", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c6ebf50  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,029 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 28, request_processed:  [23-->] 24, request_failed: 4, request_stuck: 1  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,029 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 28, request_processed:  [23-->] 24, request_failed: 4, request_stuck: 1  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,029 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 23, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 28, request_processed:  [23-->] 24, request_failed: 4, request_stuck:  [1-->] 0  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,029 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 40, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c6d99a0  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,029 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 40, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c6d99a0  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,029 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 40, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c6d99a0  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,029 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [23-->] 24, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 28, request_processed: 24, request_failed: 4, request_stuck: 0  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,029 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [23-->] 24, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 28, request_processed: 24, request_failed: 4, request_stuck: 0  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,029 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [23-->] 24, order_amount: 4920.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 28, request_processed: 24, request_failed: 4, request_stuck: 0  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,029 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10c6728d0  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,029 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10c6728d0  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,029 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10c6728d0  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,029 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 40, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c6d99a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,029 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 24, order_amount:  [4920.00-->] 5010.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 28, request_processed: 24, request_failed: 4, request_stuck: 0  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,030 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 24, order_amount:  [4920.00-->] 5010.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 28, request_processed: 24, request_failed: 4, request_stuck: 0  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,030 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 24, order_amount:  [4920.00-->] 5010.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 28, request_processed: 24, request_failed: 4, request_stuck: 0  row: 0x10c788100  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,030 - logic_logger - INFO
-......Customer[40] {Update - Adjusting customer: balance} id: 40, name: Pia 1795142543020, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c6eba50  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,030 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659d00)   										 - 2026-11-19 18:42:23,030 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659d00)   										 - 2026-11-19 18:42:23,030 - logic_logger - INFO
-..Order[185] {AfterFlush Event} id: 185, notes: behave test, customer_id: 40, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c6d99a0  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,031 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Rejected Request Is Recorded ✅ (0.02 s)
-&emsp;  Scenario: Rejected Request Is Recorded  
-&emsp;&emsp;    Given Customer "Rex" with credit limit 100  
-&emsp;&emsp;    And the daily totals are read  
-&emsp;&emsp;    When B2B order placed for "Rex" with 2 Widget  
-&emsp;&emsp;    Then the B2B request is recorded with the error "exceeds credit limit"  
-&emsp;&emsp;    And today's request_received and request_failed rise by 1  
-
-<details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Rejected Request Is Recorded
-```
-  DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
-    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
-    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
-  Customer  
-    7. Constraint Function: None  
-    8. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    9. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    10. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-```
-**Logic Log** in Scenario: Rejected Request Is Recorded (2 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c6596a0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,045 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Rex 1795142543040", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c5b52d0  session: 0x10c6596a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,045 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.045607, CreatedOnDay: 2026-11-19, payload: {"Account": "Rex 1795142543040", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c5b52d0  session: 0x10c6596a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,045 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [28-->] 29, request_processed: 24, request_failed: 4, request_stuck: 0  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,045 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [28-->] 29, request_processed: 24, request_failed: 4, request_stuck: 0  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,045 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [28-->] 29, request_processed: 24, request_failed: 4, request_stuck:  [0-->] 1  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,046 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6596a0)   										 - 2026-11-19 18:42:23,046 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6596a0)   										 - 2026-11-19 18:42:23,046 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c6596a0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,048 - logic_logger - INFO
-..OrderB2bRequest[89] {Update - client} id: 89, CreatedOn: 2026-11-19 18:42:23.045607, CreatedOnDay: 2026-11-19, payload: {"Account": "Rex 1795142543040", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c5b52d0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,048 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 29, request_processed:  [24-->] 25, request_failed: 4, request_stuck: 1  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,048 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 29, request_processed:  [24-->] 25, request_failed: 4, request_stuck: 1  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,048 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 29, request_processed:  [24-->] 25, request_failed: 4, request_stuck:  [1-->] 0  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,048 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10c6f69e0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,048 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 41, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c6d9880  session: 0x10c6596a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,048 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 41, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c6d9880  session: 0x10c6596a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,048 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 41, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c6d9880  session: 0x10c6596a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,048 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [24-->] 25, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 29, request_processed: 25, request_failed: 4, request_stuck: 0  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,049 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [24-->] 25, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 29, request_processed: 25, request_failed: 4, request_stuck: 0  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,049 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [24-->] 25, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 29, request_processed: 25, request_failed: 4, request_stuck: 0  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,049 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10c6c0950  session: 0x10c6596a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,049 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10c6c0950  session: 0x10c6596a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,049 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c6c0950  session: 0x10c6596a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,049 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 41, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c6d9880  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,049 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 25, order_amount:  [5010.00-->] 5190.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 29, request_processed: 25, request_failed: 4, request_stuck: 0  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,049 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 25, order_amount:  [5010.00-->] 5190.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 29, request_processed: 25, request_failed: 4, request_stuck: 0  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,049 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 25, order_amount:  [5010.00-->] 5190.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 29, request_processed: 25, request_failed: 4, request_stuck: 0  row: 0x10c7ac1b0  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,049 - logic_logger - INFO
-......Customer[41] {Update - Adjusting customer: balance} id: 41, name: Rex 1795142543040, balance:  [0E-10-->] 180.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10c707d50  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,049 - logic_logger - INFO
-......Customer[41] {Constraint Failure: Customer balance (180.0000000000) exceeds credit limit (100.0000000000)} id: 41, name: Rex 1795142543040, balance:  [0E-10-->] 180.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10c707d50  session: 0x10c6596a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,049 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e433f00) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,710 - logic_logger - INFO
+..OrderB2bRequest[139] {Update - client} id: 139, CreatedOn: 2026-11-19 19:46:01.708519, CreatedOnDay: 2026-11-19, payload: {"Account": "Nobody 1795146361706", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text:  [None-->] ('Lookup failed: missing parent', <Order (transient 4537674800)>, 'Customer', "{'Account': 'Nobody 1795146361706', 'Notes': 'behave test', 'Items': [{'Name': 'Widget', 'QuantityOrdered': 1}]}")  row: 0x10e40fb50  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,711 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_rejected} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 33, request_processed: 25, request_rejected:  [6-->] 7, request_pending: 2  row: 0x10e235d30  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,711 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 33, request_processed: 25, request_rejected:  [6-->] 7, request_pending: 2  row: 0x10e235d30  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,711 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 33, request_processed: 25, request_rejected:  [6-->] 7, request_pending:  [2-->] 1  row: 0x10e235d30  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,711 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433f00)   										 - 2026-11-19 19:46:01,711 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433f00)   										 - 2026-11-19 19:46:01,711 - logic_logger - INFO
 
 ```
 </details>
@@ -1098,12 +997,15 @@ Logic Phase:		ROW LOGIC		(session=0x10c6596a0) (sqlalchemy before_flush)			 - 20
 &nbsp;
 &nbsp;
 
-#### Scenario: Good Order Placed ✅ (0.01 s)
-&emsp;  Scenario: Good Order Placed  
-&emsp;&emsp;    Given Customer "Alice" with credit limit 5000  
-&emsp;&emsp;    When B2B order placed for "Alice" with 2 Widget  
-&emsp;&emsp;    Then Customer balance should be 180  
-&emsp;&emsp;    And Order amount_total should be 180  
+#### Scenario: Good order is priced and added to the balance ✅ (0.02 s)
+&emsp;  Scenario: Good order is priced and added to the balance  
+&emsp;&emsp;    Given a new customer "Pat" with credit limit 1000  
+&emsp;&emsp;    When a B2B order is placed for "Pat" with 2 Widget and 1 Gadget  
+&emsp;&emsp;    Then the order is accepted  
+&emsp;&emsp;    And the item prices are copied from the products  
+&emsp;&emsp;    And each item amount is quantity times unit price  
+&emsp;&emsp;    And the order total is 330  
+&emsp;&emsp;    And the balance of "Pat" is 330  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -1113,12 +1015,12 @@ Logic Phase:		ROW LOGIC		(session=0x10c6596a0) (sqlalchemy before_flush)			 - 20
 &nbsp;
 
 
-**Rules Used** in Scenario: Good Order Placed
+**Rules Used** in Scenario: Good order is priced and added to the balance
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -1131,41 +1033,49 @@ Logic Phase:		ROW LOGIC		(session=0x10c6596a0) (sqlalchemy before_flush)			 - 20
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Good Order Placed (2 transactions)
+**Logic Log** in Scenario: Good order is priced and added to the balance (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c65a250) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,063 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Alice 1795142543060", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c707450  session: 0x10c65a250  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,064 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.064042, CreatedOnDay: 2026-11-19, payload: {"Account": "Alice 1795142543060", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c707450  session: 0x10c65a250  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,064 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [29-->] 30, request_processed: 24, request_failed: 5, request_stuck: 0  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,064 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [29-->] 30, request_processed: 24, request_failed: 5, request_stuck: 0  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,064 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [29-->] 30, request_processed: 24, request_failed: 5, request_stuck:  [0-->] 1  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,064 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a250)   										 - 2026-11-19 18:42:23,064 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a250)   										 - 2026-11-19 18:42:23,064 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce030) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,721 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Pat 1795146361717", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e782fd0  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,721 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:01.721592, CreatedOnDay: 2026-11-19, payload: {"Account": "Pat 1795146361717", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e782fd0  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,721 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [33-->] 34, request_processed: 25, request_rejected: 7, request_pending: 1  row: 0x10e7c4050  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,721 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [33-->] 34, request_processed: 25, request_rejected: 7, request_pending: 1  row: 0x10e7c4050  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,721 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [33-->] 34, request_processed: 25, request_rejected: 7, request_pending:  [1-->] 2  row: 0x10e7c4050  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,722 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce030)   										 - 2026-11-19 19:46:01,722 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce030)   										 - 2026-11-19 19:46:01,722 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65a250) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,066 - logic_logger - INFO
-..OrderB2bRequest[90] {Update - client} id: 90, CreatedOn: 2026-11-19 18:42:23.064042, CreatedOnDay: 2026-11-19, payload: {"Account": "Alice 1795142543060", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c707450  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,066 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 30, request_processed:  [24-->] 25, request_failed: 5, request_stuck: 1  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,066 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 30, request_processed:  [24-->] 25, request_failed: 5, request_stuck: 1  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,067 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 24, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 30, request_processed:  [24-->] 25, request_failed: 5, request_stuck:  [1-->] 0  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,067 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10c85ff50  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,067 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 42, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c869520  session: 0x10c65a250  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,067 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 42, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c869520  session: 0x10c65a250  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,067 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 42, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c869520  session: 0x10c65a250  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,067 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [24-->] 25, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 30, request_processed: 25, request_failed: 5, request_stuck: 0  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,067 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [24-->] 25, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 30, request_processed: 25, request_failed: 5, request_stuck: 0  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,067 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [24-->] 25, order_amount: 5010.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 30, request_processed: 25, request_failed: 5, request_stuck: 0  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,067 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10c79c5d0  session: 0x10c65a250  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,067 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10c79c5d0  session: 0x10c65a250  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,067 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c79c5d0  session: 0x10c65a250  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,067 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 42, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869520  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,067 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 25, order_amount:  [5010.00-->] 5190.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 30, request_processed: 25, request_failed: 5, request_stuck: 0  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,067 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 25, order_amount:  [5010.00-->] 5190.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 30, request_processed: 25, request_failed: 5, request_stuck: 0  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,067 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 25, order_amount:  [5010.00-->] 5190.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 30, request_processed: 25, request_failed: 5, request_stuck: 0  row: 0x10c7ae6d0  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,067 - logic_logger - INFO
-......Customer[42] {Update - Adjusting customer: balance} id: 42, name: Alice 1795142543060, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c6eac50  session: 0x10c65a250  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,068 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a250)   										 - 2026-11-19 18:42:23,068 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a250)   										 - 2026-11-19 18:42:23,068 - logic_logger - INFO
-..Order[186] {AfterFlush Event} id: 186, notes: behave test, customer_id: 42, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869520  session: 0x10c65a250  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,068 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce030) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,725 - logic_logger - INFO
+..OrderB2bRequest[140] {Update - client} id: 140, CreatedOn: 2026-11-19 19:46:01.721592, CreatedOnDay: 2026-11-19, payload: {"Account": "Pat 1795146361717", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e782fd0  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,725 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed:  [25-->] 26, request_rejected: 7, request_pending: 2  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,725 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed:  [25-->] 26, request_rejected: 7, request_pending: 2  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,725 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 28, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed:  [25-->] 26, request_rejected: 7, request_pending:  [2-->] 1  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,725 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10e4c06e0  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,725 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 42, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10e776cc0  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,725 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 42, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10e776cc0  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,725 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 42, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10e776cc0  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,725 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [28-->] 29, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed: 26, request_rejected: 7, request_pending: 1  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,726 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [28-->] 29, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed: 26, request_rejected: 7, request_pending: 1  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,726 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [28-->] 29, order_amount: 8580.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed: 26, request_rejected: 7, request_pending: 1  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,726 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10e53d6d0  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,726 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10e53d6d0  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,726 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10e53d6d0  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,726 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 42, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e776cc0  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,726 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 29, order_amount:  [8580.00-->] 8760.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed: 26, request_rejected: 7, request_pending: 1  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,726 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 29, order_amount:  [8580.00-->] 8760.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed: 26, request_rejected: 7, request_pending: 1  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,726 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 29, order_amount:  [8580.00-->] 8760.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed: 26, request_rejected: 7, request_pending: 1  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,726 - logic_logger - INFO
+......Customer[42] {Update - Adjusting customer: balance} id: 42, name: Pat 1795146361717, balance:  [0E-10-->] 180.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10e574cd0  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,726 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e454950  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,726 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10e454950  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,726 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10e454950  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,726 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 42, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e776cc0  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,726 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 29, order_amount:  [8760.0000000000-->] 8910.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed: 26, request_rejected: 7, request_pending: 1  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,726 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 29, order_amount:  [8760.0000000000-->] 8910.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed: 26, request_rejected: 7, request_pending: 1  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,727 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 29, order_amount:  [8760.0000000000-->] 8910.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 34, request_processed: 26, request_rejected: 7, request_pending: 1  row: 0x10e237e30  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,727 - logic_logger - INFO
+......Customer[42] {Update - Adjusting customer: balance} id: 42, name: Pat 1795146361717, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10e574cd0  session: 0x10e4ce030  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,727 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce030)   										 - 2026-11-19 19:46:01,727 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce030)   										 - 2026-11-19 19:46:01,727 - logic_logger - INFO
+..Order[217] {AfterFlush Event} id: 217, notes: behave test, customer_id: 42, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e776cc0  session: 0x10e4ce030  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,728 - logic_logger - INFO
 
 ```
 </details>
@@ -1173,12 +1083,14 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a250)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Item Quantity Changed ✅ (0.02 s)
-&emsp;  Scenario: Item Quantity Changed  
-&emsp;&emsp;    Given Customer "Bob" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Bob" with 2 Widget  
-&emsp;&emsp;    When Item quantity changed to 3  
-&emsp;&emsp;    Then Customer balance should be 270  
+#### Scenario: Changing an item quantity re-derives amount, total and balance ✅ (0.03 s)
+&emsp;  Scenario: Changing an item quantity re-derives amount, total and balance  
+&emsp;&emsp;    Given a new customer "Quinn" with credit limit 2000  
+&emsp;&emsp;    And a B2B order is placed for "Quinn" with 2 Widget and 1 Gadget  
+&emsp;&emsp;    When the quantity of the first item is changed to 5  
+&emsp;&emsp;    Then the first item amount is 450  
+&emsp;&emsp;    And the order total is 600  
+&emsp;&emsp;    And the balance of "Quinn" is 600  
 
 <details markdown>
 <summary>Rules exercised and logic log (3 transactions)</summary>
@@ -1188,12 +1100,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a250)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Item Quantity Changed
+**Rules Used** in Scenario: Changing an item quantity re-derives amount, total and balance
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -1206,54 +1118,62 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a250)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Item Quantity Changed (3 transactions)
+**Logic Log** in Scenario: Changing an item quantity re-derives amount, total and balance (3 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c65a7a0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,078 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Bob 1795142543074", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c6e9550  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,078 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.078839, CreatedOnDay: 2026-11-19, payload: {"Account": "Bob 1795142543074", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c6e9550  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,078 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 25, order_amount: 5190.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [30-->] 31, request_processed: 25, request_failed: 5, request_stuck: 0  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,079 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 25, order_amount: 5190.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [30-->] 31, request_processed: 25, request_failed: 5, request_stuck: 0  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,079 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 25, order_amount: 5190.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [30-->] 31, request_processed: 25, request_failed: 5, request_stuck:  [0-->] 1  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,079 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a7a0)   										 - 2026-11-19 18:42:23,079 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a7a0)   										 - 2026-11-19 18:42:23,079 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cd480) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,746 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Quinn 1795146361742", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e43bb50  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,746 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:01.746133, CreatedOnDay: 2026-11-19, payload: {"Account": "Quinn 1795146361742", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e43bb50  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,746 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 29, order_amount: 8910.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [34-->] 35, request_processed: 26, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,746 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 29, order_amount: 8910.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [34-->] 35, request_processed: 26, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,746 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 29, order_amount: 8910.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [34-->] 35, request_processed: 26, request_rejected: 7, request_pending:  [1-->] 2  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,746 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cd480)   										 - 2026-11-19 19:46:01,746 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cd480)   										 - 2026-11-19 19:46:01,746 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65a7a0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,081 - logic_logger - INFO
-..OrderB2bRequest[91] {Update - client} id: 91, CreatedOn: 2026-11-19 18:42:23.078839, CreatedOnDay: 2026-11-19, payload: {"Account": "Bob 1795142543074", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c6e9550  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,081 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 25, order_amount: 5190.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed:  [25-->] 26, request_failed: 5, request_stuck: 1  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,082 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 25, order_amount: 5190.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed:  [25-->] 26, request_failed: 5, request_stuck: 1  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,082 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 25, order_amount: 5190.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed:  [25-->] 26, request_failed: 5, request_stuck:  [1-->] 0  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,082 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10c85ff50  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,082 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 43, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c869910  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,082 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c869910  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,082 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c869910  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,082 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [25-->] 26, order_amount: 5190.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed: 26, request_failed: 5, request_stuck: 0  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,082 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [25-->] 26, order_amount: 5190.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed: 26, request_failed: 5, request_stuck: 0  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,082 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [25-->] 26, order_amount: 5190.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed: 26, request_failed: 5, request_stuck: 0  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,082 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10c866f50  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,082 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10c866f50  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,082 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c866f50  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,082 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869910  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,082 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 26, order_amount:  [5190.00-->] 5370.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed: 26, request_failed: 5, request_stuck: 0  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,082 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 26, order_amount:  [5190.00-->] 5370.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed: 26, request_failed: 5, request_stuck: 0  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,083 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 26, order_amount:  [5190.00-->] 5370.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed: 26, request_failed: 5, request_stuck: 0  row: 0x10c7ae4c0  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,083 - logic_logger - INFO
-......Customer[43] {Update - Adjusting customer: balance} id: 43, name: Bob 1795142543074, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c867750  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,083 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a7a0)   										 - 2026-11-19 18:42:23,083 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a7a0)   										 - 2026-11-19 18:42:23,083 - logic_logger - INFO
-..Order[187] {AfterFlush Event} id: 187, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869910  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,083 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cd480) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,749 - logic_logger - INFO
+..OrderB2bRequest[141] {Update - client} id: 141, CreatedOn: 2026-11-19 19:46:01.746133, CreatedOnDay: 2026-11-19, payload: {"Account": "Quinn 1795146361742", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e43bb50  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,749 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 29, order_amount: 8910.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed:  [26-->] 27, request_rejected: 7, request_pending: 2  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,749 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 29, order_amount: 8910.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed:  [26-->] 27, request_rejected: 7, request_pending: 2  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,749 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 29, order_amount: 8910.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed:  [26-->] 27, request_rejected: 7, request_pending:  [2-->] 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,749 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10e7f41a0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,750 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 43, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10e7770b0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,750 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10e7770b0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,750 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10e7770b0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,750 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [29-->] 30, order_amount: 8910.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,750 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [29-->] 30, order_amount: 8910.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,750 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [29-->] 30, order_amount: 8910.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,750 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10dfdaed0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,750 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10dfdaed0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,750 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10dfdaed0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,750 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7770b0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,750 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 30, order_amount:  [8910.00-->] 9090.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,750 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 30, order_amount:  [8910.00-->] 9090.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,750 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 30, order_amount:  [8910.00-->] 9090.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,750 - logic_logger - INFO
+......Customer[43] {Update - Adjusting customer: balance} id: 43, name: Quinn 1795146361742, balance:  [0E-10-->] 180.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e783550  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,750 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e53e0d0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,751 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10e53e0d0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,751 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10e53e0d0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,751 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7770b0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,751 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 30, order_amount:  [9090.0000000000-->] 9240.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,751 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 30, order_amount:  [9090.0000000000-->] 9240.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,751 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 30, order_amount:  [9090.0000000000-->] 9240.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,751 - logic_logger - INFO
+......Customer[43] {Update - Adjusting customer: balance} id: 43, name: Quinn 1795146361742, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e783550  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,751 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cd480)   										 - 2026-11-19 19:46:01,751 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cd480)   										 - 2026-11-19 19:46:01,752 - logic_logger - INFO
+..Order[218] {AfterFlush Event} id: 218, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7770b0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,752 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65a580) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,089 - logic_logger - INFO
-..Item[337] {Update - client} id: 337, order_id: 187, product_id: 2, quantity:  [2-->] 3, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c8674d0  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,089 - logic_logger - INFO
-..Item[337] {Formula amount} id: 337, order_id: 187, product_id: 2, quantity:  [2-->] 3, amount:  [180.0000000000-->] 270.0000000000, unit_price: 90.0000000000  row: 0x10c8674d0  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,089 - logic_logger - INFO
-....Order[187] {Update - Adjusting order: amount_total} id: 187, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 270.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869250  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,090 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 26, order_amount:  [5370.00-->] 5460.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed: 26, request_failed: 5, request_stuck: 0  row: 0x10c7ac9f0  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,090 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 26, order_amount:  [5370.00-->] 5460.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed: 26, request_failed: 5, request_stuck: 0  row: 0x10c7ac9f0  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,090 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 26, order_amount:  [5370.00-->] 5460.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 31, request_processed: 26, request_failed: 5, request_stuck: 0  row: 0x10c7ac9f0  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,090 - logic_logger - INFO
-......Customer[43] {Update - Adjusting customer: balance} id: 43, name: Bob 1795142543074, balance:  [180.0000000000-->] 270.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c707bd0  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,090 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a580)   										 - 2026-11-19 18:42:23,090 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a580)   										 - 2026-11-19 18:42:23,091 - logic_logger - INFO
-....Order[187] {AfterFlush Event} id: 187, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 270.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869250  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,091 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cde10) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,757 - logic_logger - INFO
+..Item[323] {Update - client} id: 323, order_id: 218, product_id: 2, quantity:  [2-->] 5, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10e7a7450  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,757 - logic_logger - INFO
+..Item[323] {Formula amount} id: 323, order_id: 218, product_id: 2, quantity:  [2-->] 5, amount:  [180.0000000000-->] 450.0000000000, unit_price: 90.0000000000  row: 0x10e7a7450  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,757 - logic_logger - INFO
+....Order[218] {Update - Adjusting order: amount_total} id: 218, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [330.0000000000-->] 600.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777ad0  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,758 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 30, order_amount:  [9240.00-->] 9510.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,758 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 30, order_amount:  [9240.00-->] 9510.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,758 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 30, order_amount:  [9240.00-->] 9510.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 35, request_processed: 27, request_rejected: 7, request_pending: 1  row: 0x10e237cd0  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,758 - logic_logger - INFO
+......Customer[43] {Update - Adjusting customer: balance} id: 43, name: Quinn 1795146361742, balance:  [330.0000000000-->] 600.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e5740d0  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,759 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cde10)   										 - 2026-11-19 19:46:01,759 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cde10)   										 - 2026-11-19 19:46:01,759 - logic_logger - INFO
+....Order[218] {AfterFlush Event} id: 218, notes: behave test, customer_id: 43, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [330.0000000000-->] 600.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777ad0  session: 0x10e4cde10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,759 - logic_logger - INFO
 
 ```
 </details>
@@ -1261,12 +1181,28 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a580)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Shipped Order Leaves Balance ✅ (0.03 s)
-&emsp;  Scenario: Shipped Order Leaves Balance  
-&emsp;&emsp;    Given Customer "Carol" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Carol" with 2 Widget  
-&emsp;&emsp;    When Order is shipped  
-&emsp;&emsp;    Then Customer balance should be 0  
+#### Scenario: Changing an item's product re-copies the price ✅ (0.03 s)
+&emsp;  Scenario: Changing an item's product re-copies the price  
+&emsp;&emsp;    Given a new customer "Ravi" with credit limit 2000  
+&emsp;&emsp;    And a B2B order is placed for "Ravi" with 2 Widget  
+&emsp;&emsp;    When the product of the first item is changed to Doodad  
+&emsp;&emsp;    Then the first item unit price is 110  
+&emsp;&emsp;    And the first item amount is 220  
+&emsp;&emsp;    And the order total is 220  
+&emsp;&emsp;    And the balance of "Ravi" is 220  
+
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Deleting an item reduces the order total and balance ✅ (0.03 s)
+&emsp;  Scenario: Deleting an item reduces the order total and balance  
+&emsp;&emsp;    Given a new customer "Sam" with credit limit 2000  
+&emsp;&emsp;    And a B2B order is placed for "Sam" with 2 Widget and 1 Gadget  
+&emsp;&emsp;    When the first item is deleted  
+&emsp;&emsp;    Then the order total is 150  
+&emsp;&emsp;    And the balance of "Sam" is 150  
 
 <details markdown>
 <summary>Rules exercised and logic log (3 transactions)</summary>
@@ -1276,12 +1212,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a580)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Shipped Order Leaves Balance
+**Rules Used** in Scenario: Deleting an item reduces the order total and balance
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -1294,123 +1230,61 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a580)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Shipped Order Leaves Balance (3 transactions)
+**Logic Log** in Scenario: Deleting an item reduces the order total and balance (3 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c6597b0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,100 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Carol 1795142543097", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c5defd0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,100 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.100939, CreatedOnDay: 2026-11-19, payload: {"Account": "Carol 1795142543097", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c5defd0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,100 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 26, order_amount: 5460.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [31-->] 32, request_processed: 26, request_failed: 5, request_stuck: 0  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,101 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 26, order_amount: 5460.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [31-->] 32, request_processed: 26, request_failed: 5, request_stuck: 0  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,101 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 26, order_amount: 5460.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [31-->] 32, request_processed: 26, request_failed: 5, request_stuck:  [0-->] 1  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,101 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6597b0)   										 - 2026-11-19 18:42:23,101 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 18:42:23,101 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce360) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,807 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Sam 1795146361803", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e40fb50  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,807 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:01.807154, CreatedOnDay: 2026-11-19, payload: {"Account": "Sam 1795146361803", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e40fb50  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,807 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 31, order_amount: 9730.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [36-->] 37, request_processed: 28, request_rejected: 7, request_pending: 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,807 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 31, order_amount: 9730.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [36-->] 37, request_processed: 28, request_rejected: 7, request_pending: 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,807 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 31, order_amount: 9730.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [36-->] 37, request_processed: 28, request_rejected: 7, request_pending:  [1-->] 2  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,807 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce360)   										 - 2026-11-19 19:46:01,807 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce360)   										 - 2026-11-19 19:46:01,807 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c6597b0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,103 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10cc3c1a0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,103 - logic_logger - INFO
-..OrderB2bRequest[92] {Update - client} id: 92, CreatedOn: 2026-11-19 18:42:23.100939, CreatedOnDay: 2026-11-19, payload: {"Account": "Carol 1795142543097", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c5defd0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,103 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 26, order_amount: 5460.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 32, request_processed:  [26-->] 27, request_failed: 5, request_stuck: 1  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,103 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 26, order_amount: 5460.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 32, request_processed:  [26-->] 27, request_failed: 5, request_stuck: 1  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,104 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 26, order_amount: 5460.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 32, request_processed:  [26-->] 27, request_failed: 5, request_stuck:  [1-->] 0  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,104 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 44, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c869d00  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,104 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 44, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c869d00  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,104 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 44, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c869d00  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,104 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [26-->] 27, order_amount: 5460.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 32, request_processed: 27, request_failed: 5, request_stuck: 0  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,104 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [26-->] 27, order_amount: 5460.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 32, request_processed: 27, request_failed: 5, request_stuck: 0  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,104 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [26-->] 27, order_amount: 5460.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 32, request_processed: 27, request_failed: 5, request_stuck: 0  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,104 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10c5dda50  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,104 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10c5dda50  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,104 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c5dda50  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,104 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 44, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869d00  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,104 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 27, order_amount:  [5460.00-->] 5640.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 32, request_processed: 27, request_failed: 5, request_stuck: 0  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,104 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 27, order_amount:  [5460.00-->] 5640.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 32, request_processed: 27, request_failed: 5, request_stuck: 0  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,104 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 27, order_amount:  [5460.00-->] 5640.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 32, request_processed: 27, request_failed: 5, request_stuck: 0  row: 0x10c7acaa0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,104 - logic_logger - INFO
-......Customer[44] {Update - Adjusting customer: balance} id: 44, name: Carol 1795142543097, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c6e92d0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,104 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6597b0)   										 - 2026-11-19 18:42:23,105 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 18:42:23,105 - logic_logger - INFO
-..Order[188] {AfterFlush Event} id: 188, notes: behave test, customer_id: 44, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869d00  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,105 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce360) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,810 - logic_logger - INFO
+..OrderB2bRequest[143] {Update - client} id: 143, CreatedOn: 2026-11-19 19:46:01.807154, CreatedOnDay: 2026-11-19, payload: {"Account": "Sam 1795146361803", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e40fb50  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,810 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 31, order_amount: 9730.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed:  [28-->] 29, request_rejected: 7, request_pending: 2  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,810 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 31, order_amount: 9730.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed:  [28-->] 29, request_rejected: 7, request_pending: 2  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,810 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 31, order_amount: 9730.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed:  [28-->] 29, request_rejected: 7, request_pending:  [2-->] 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,810 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10e7f5320  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,810 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 45, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10e830320  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,811 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 45, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10e830320  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,811 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 45, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10e830320  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,811 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [31-->] 32, order_amount: 9730.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,811 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [31-->] 32, order_amount: 9730.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,811 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [31-->] 32, order_amount: 9730.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,811 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10e5748d0  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,811 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10e5748d0  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,811 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10e5748d0  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,811 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 45, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e830320  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,811 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 32, order_amount:  [9730.00-->] 9910.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,811 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 32, order_amount:  [9730.00-->] 9910.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,811 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 32, order_amount:  [9730.00-->] 9910.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,811 - logic_logger - INFO
+......Customer[45] {Update - Adjusting customer: balance} id: 45, name: Sam 1795146361803, balance:  [0E-10-->] 180.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e7a4fd0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,811 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e783150  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,812 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10e783150  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,812 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10e783150  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,812 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 45, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e830320  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,812 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 32, order_amount:  [9910.0000000000-->] 10060.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,812 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 32, order_amount:  [9910.0000000000-->] 10060.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,812 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 32, order_amount:  [9910.0000000000-->] 10060.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e236fc0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,812 - logic_logger - INFO
+......Customer[45] {Update - Adjusting customer: balance} id: 45, name: Sam 1795146361803, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e7a4fd0  session: 0x10e4ce360  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,812 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce360)   										 - 2026-11-19 19:46:01,812 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce360)   										 - 2026-11-19 19:46:01,813 - logic_logger - INFO
+..Order[220] {AfterFlush Event} id: 220, notes: behave test, customer_id: 45, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e830320  session: 0x10e4ce360  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,813 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c6585a0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,108 - logic_logger - INFO
-..Order[188] {Update - client} id: 188, notes: behave test, customer_id: 44, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-10-24 00:00:00, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869d90  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,109 - logic_logger - INFO
-....Customer[44] {Update - Adjusting customer: balance} id: 44, name: Carol 1795142543097, balance:  [180.0000000000-->] 0E-10, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc10850  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,109 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6585a0)   										 - 2026-11-19 18:42:23,109 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6585a0)   										 - 2026-11-19 18:42:23,109 - logic_logger - INFO
-..Order[188] {AfterFlush Event} id: 188, notes: behave test, customer_id: 44, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-10-24 00:00:00, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869d90  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,109 - logic_logger - INFO
-..Order[188] {publish_kafka_message: topic='order_shipping', key={'id': 188}} id: 188, notes: behave test, customer_id: 44, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-10-24 00:00:00, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869d90  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,119 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Order Exceeding Credit Rejected ✅ (0.01 s)
-&emsp;  Scenario: Order Exceeding Credit Rejected  
-&emsp;&emsp;    Given Customer "Dave" with credit limit 100  
-&emsp;&emsp;    When B2B order placed for "Dave" with 2 Widget  
-&emsp;&emsp;    Then Order is rejected with a credit limit message  
-&emsp;&emsp;    And Customer balance should be 0  
-
-<details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Order Exceeding Credit Rejected
-```
-  DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
-    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
-    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
-  Customer  
-    7. Constraint Function: None  
-    8. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    9. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    10. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-```
-**Logic Log** in Scenario: Order Exceeding Credit Rejected (2 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c65bbd0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,128 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Dave 1795142543124", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10cc11fd0  session: 0x10c65bbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,128 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.128768, CreatedOnDay: 2026-11-19, payload: {"Account": "Dave 1795142543124", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10cc11fd0  session: 0x10c65bbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,128 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [32-->] 33, request_processed: 27, request_failed: 5, request_stuck: 0  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,129 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [32-->] 33, request_processed: 27, request_failed: 5, request_stuck: 0  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,129 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [32-->] 33, request_processed: 27, request_failed: 5, request_stuck:  [0-->] 1  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,129 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65bbd0)   										 - 2026-11-19 18:42:23,129 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bbd0)   										 - 2026-11-19 18:42:23,129 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c65bbd0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,131 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10cc3e890  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,131 - logic_logger - INFO
-..OrderB2bRequest[93] {Update - client} id: 93, CreatedOn: 2026-11-19 18:42:23.128768, CreatedOnDay: 2026-11-19, payload: {"Account": "Dave 1795142543124", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10cc11fd0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,131 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 33, request_processed:  [27-->] 28, request_failed: 5, request_stuck: 1  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,131 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 33, request_processed:  [27-->] 28, request_failed: 5, request_stuck: 1  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,131 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 33, request_processed:  [27-->] 28, request_failed: 5, request_stuck:  [1-->] 0  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,131 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 45, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c86ac30  session: 0x10c65bbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,132 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 45, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c86ac30  session: 0x10c65bbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,132 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 45, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c86ac30  session: 0x10c65bbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,132 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [27-->] 28, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 33, request_processed: 28, request_failed: 5, request_stuck: 0  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,132 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [27-->] 28, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 33, request_processed: 28, request_failed: 5, request_stuck: 0  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,132 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [27-->] 28, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 33, request_processed: 28, request_failed: 5, request_stuck: 0  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,132 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10c8676d0  session: 0x10c65bbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,132 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10c8676d0  session: 0x10c65bbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,132 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c8676d0  session: 0x10c65bbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,132 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 45, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ac30  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,132 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 28, order_amount:  [5640.00-->] 5820.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 33, request_processed: 28, request_failed: 5, request_stuck: 0  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,132 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 28, order_amount:  [5640.00-->] 5820.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 33, request_processed: 28, request_failed: 5, request_stuck: 0  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,132 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 28, order_amount:  [5640.00-->] 5820.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 33, request_processed: 28, request_failed: 5, request_stuck: 0  row: 0x10c7adde0  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,132 - logic_logger - INFO
-......Customer[45] {Update - Adjusting customer: balance} id: 45, name: Dave 1795142543124, balance:  [0E-10-->] 180.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10c6e9950  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,132 - logic_logger - INFO
-......Customer[45] {Constraint Failure: Customer balance (180.0000000000) exceeds credit limit (100.0000000000)} id: 45, name: Dave 1795142543124, balance:  [0E-10-->] 180.0000000000, credit_limit: 100.0000000000, email: None, email_opt_out: None  row: 0x10c6e9950  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,132 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e433f00) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,818 - logic_logger - INFO
+..Item[326] {Delete - client} id: 326, order_id: 220, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10e809dd0  session: 0x10e433f00  ins_upd_dlt: dlt, initial: dlt - 2026-11-19 19:46:01,818 - logic_logger - INFO
+....Order[220] {Update - Adjusting order: amount_total} id: 220, notes: behave test, customer_id: 45, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [330.0000000000-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e776d50  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,818 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 32, order_amount:  [10060.00-->] 9880.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e235d30  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,818 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 32, order_amount:  [10060.00-->] 9880.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e235d30  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,819 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 32, order_amount:  [10060.00-->] 9880.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 37, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e235d30  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,819 - logic_logger - INFO
+......Customer[45] {Update - Adjusting customer: balance} id: 45, name: Sam 1795146361803, balance:  [330.0000000000-->] 150.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e7a6150  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,819 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433f00)   										 - 2026-11-19 19:46:01,819 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433f00)   										 - 2026-11-19 19:46:01,820 - logic_logger - INFO
+....Order[220] {AfterFlush Event} id: 220, notes: behave test, customer_id: 45, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [330.0000000000-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e776d50  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,820 - logic_logger - INFO
 
 ```
 </details>
@@ -1418,451 +1292,15 @@ Logic Phase:		ROW LOGIC		(session=0x10c65bbd0) (sqlalchemy before_flush)			 - 20
 &nbsp;
 &nbsp;
 
-#### Scenario: Order At Credit Limit Accepted ✅ (0.01 s)
-&emsp;  Scenario: Order At Credit Limit Accepted  
-&emsp;&emsp;    Given Customer "Erin" with credit limit 180  
-&emsp;&emsp;    When B2B order placed for "Erin" with 2 Widget  
-&emsp;&emsp;    Then Order is accepted  
-&emsp;&emsp;    And Customer balance should be 180  
-
-<details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Order At Credit Limit Accepted
-```
-  DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
-    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
-    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
-  Customer  
-    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    9. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    10. RowEvent Order._send_order_to_shipping()  
-    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-```
-**Logic Log** in Scenario: Order At Credit Limit Accepted (2 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c65bf00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,143 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Erin 1795142543139", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10cc114d0  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,143 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.143371, CreatedOnDay: 2026-11-19, payload: {"Account": "Erin 1795142543139", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10cc114d0  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,143 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [33-->] 34, request_processed: 27, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,143 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [33-->] 34, request_processed: 27, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,143 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [33-->] 34, request_processed: 27, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,143 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65bf00)   										 - 2026-11-19 18:42:23,143 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bf00)   										 - 2026-11-19 18:42:23,144 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c65bf00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,145 - logic_logger - INFO
-..OrderB2bRequest[94] {Update - client} id: 94, CreatedOn: 2026-11-19 18:42:23.143371, CreatedOnDay: 2026-11-19, payload: {"Account": "Erin 1795142543139", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10cc114d0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,145 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 34, request_processed:  [27-->] 28, request_failed: 6, request_stuck: 1  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,146 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 34, request_processed:  [27-->] 28, request_failed: 6, request_stuck: 1  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,146 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 27, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 34, request_processed:  [27-->] 28, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,146 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10cc3ef20  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,146 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 46, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c86af90  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,146 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c86af90  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,146 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c86af90  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,146 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [27-->] 28, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 34, request_processed: 28, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,146 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [27-->] 28, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 34, request_processed: 28, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,146 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [27-->] 28, order_amount: 5640.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 34, request_processed: 28, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,146 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10cc11450  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,146 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10cc11450  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,146 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10cc11450  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,146 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86af90  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,147 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 28, order_amount:  [5640.00-->] 5820.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 34, request_processed: 28, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,147 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 28, order_amount:  [5640.00-->] 5820.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 34, request_processed: 28, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,147 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 28, order_amount:  [5640.00-->] 5820.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 34, request_processed: 28, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,147 - logic_logger - INFO
-......Customer[46] {Update - Adjusting customer: balance} id: 46, name: Erin 1795142543139, balance:  [0E-10-->] 180.0000000000, credit_limit: 180.0000000000, email: None, email_opt_out: None  row: 0x10c866650  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,147 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65bf00)   										 - 2026-11-19 18:42:23,147 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bf00)   										 - 2026-11-19 18:42:23,147 - logic_logger - INFO
-..Order[189] {AfterFlush Event} id: 189, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86af90  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,148 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Unshipped Order Enters Balance ✅ (0.02 s)
-&emsp;  Scenario: Unshipped Order Enters Balance  
-&emsp;&emsp;    Given Customer "Fay" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Fay" with 2 Widget  
-&emsp;&emsp;    And Order has been shipped  
-&emsp;&emsp;    When Order is unshipped  
-&emsp;&emsp;    Then Customer balance should be 180  
-
-<details markdown>
-<summary>Rules exercised and logic log (4 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Unshipped Order Enters Balance
-```
-  DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
-    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
-    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
-  Customer  
-    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    9. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    10. RowEvent Order._send_order_to_shipping()  
-    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-```
-**Logic Log** in Scenario: Unshipped Order Enters Balance (4 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c65bf00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,156 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Fay 1795142543152", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c670250  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,156 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.156445, CreatedOnDay: 2026-11-19, payload: {"Account": "Fay 1795142543152", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c670250  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,156 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 28, order_amount: 5820.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [34-->] 35, request_processed: 28, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,156 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 28, order_amount: 5820.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [34-->] 35, request_processed: 28, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,156 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 28, order_amount: 5820.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [34-->] 35, request_processed: 28, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,156 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65bf00)   										 - 2026-11-19 18:42:23,156 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bf00)   										 - 2026-11-19 18:42:23,157 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c65bf00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,158 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10cc3c130  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,158 - logic_logger - INFO
-..OrderB2bRequest[95] {Update - client} id: 95, CreatedOn: 2026-11-19 18:42:23.156445, CreatedOnDay: 2026-11-19, payload: {"Account": "Fay 1795142543152", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c670250  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,159 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 28, order_amount: 5820.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 35, request_processed:  [28-->] 29, request_failed: 6, request_stuck: 1  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,159 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 28, order_amount: 5820.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 35, request_processed:  [28-->] 29, request_failed: 6, request_stuck: 1  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,159 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 28, order_amount: 5820.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 35, request_processed:  [28-->] 29, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,159 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 47, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c86b0b0  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,159 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 47, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c86b0b0  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,159 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 47, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c86b0b0  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,159 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [28-->] 29, order_amount: 5820.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 35, request_processed: 29, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,159 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [28-->] 29, order_amount: 5820.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 35, request_processed: 29, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,159 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [28-->] 29, order_amount: 5820.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 35, request_processed: 29, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,159 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10c673550  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,159 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10c673550  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,159 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c673550  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,159 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 47, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b0b0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,160 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 29, order_amount:  [5820.00-->] 6000.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 35, request_processed: 29, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,160 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 29, order_amount:  [5820.00-->] 6000.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 35, request_processed: 29, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,160 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 29, order_amount:  [5820.00-->] 6000.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 35, request_processed: 29, request_failed: 6, request_stuck: 0  row: 0x10c7ad9c0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,160 - logic_logger - INFO
-......Customer[47] {Update - Adjusting customer: balance} id: 47, name: Fay 1795142543152, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc12cd0  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,160 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65bf00)   										 - 2026-11-19 18:42:23,160 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bf00)   										 - 2026-11-19 18:42:23,160 - logic_logger - INFO
-..Order[190] {AfterFlush Event} id: 190, notes: behave test, customer_id: 47, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b0b0  session: 0x10c65bf00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,161 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c659f20) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,163 - logic_logger - INFO
-..Order[190] {Update - client} id: 190, notes: behave test, customer_id: 47, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-10-24 00:00:00, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ae70  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,163 - logic_logger - INFO
-....Customer[47] {Update - Adjusting customer: balance} id: 47, name: Fay 1795142543152, balance:  [180.0000000000-->] 0E-10, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc66750  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,163 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659f20)   										 - 2026-11-19 18:42:23,163 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659f20)   										 - 2026-11-19 18:42:23,164 - logic_logger - INFO
-..Order[190] {AfterFlush Event} id: 190, notes: behave test, customer_id: 47, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-10-24 00:00:00, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ae70  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,164 - logic_logger - INFO
-..Order[190] {publish_kafka_message: topic='order_shipping', key={'id': 190}} id: 190, notes: behave test, customer_id: 47, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-10-24 00:00:00, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ae70  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,166 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c65a360) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,169 - logic_logger - INFO
-..Order[190] {Update - client} id: 190, notes: behave test, customer_id: 47, CreatedOn: 2026-11-19, date_shipped:  [2026-10-24-->] None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ac30  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,169 - logic_logger - INFO
-....Customer[47] {Update - Adjusting customer: balance} id: 47, name: Fay 1795142543152, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc94cd0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,169 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a360)   										 - 2026-11-19 18:42:23,169 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a360)   										 - 2026-11-19 18:42:23,170 - logic_logger - INFO
-..Order[190] {AfterFlush Event} id: 190, notes: behave test, customer_id: 47, CreatedOn: 2026-11-19, date_shipped:  [2026-10-24-->] None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ac30  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,170 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Item Deleted Reduces Order ✅ (0.03 s)
-&emsp;  Scenario: Item Deleted Reduces Order  
-&emsp;&emsp;    Given Customer "Gus" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Gus" with 2 Widget and 1 Gadget  
-&emsp;&emsp;    When the Gadget Item is deleted  
-&emsp;&emsp;    Then Order amount_total should be 180  
-&emsp;&emsp;    And Customer balance should be 180  
-
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Item Deleted Reduces Order
-```
-  DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
-    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
-    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
-  Customer  
-    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    9. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    10. RowEvent Order._send_order_to_shipping()  
-    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-```
-**Logic Log** in Scenario: Item Deleted Reduces Order (3 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c65a140) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,179 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Gus 1795142543175", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10c79c750  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,179 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.179239, CreatedOnDay: 2026-11-19, payload: {"Account": "Gus 1795142543175", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10c79c750  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,179 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 29, order_amount: 6000.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [35-->] 36, request_processed: 29, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,179 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 29, order_amount: 6000.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [35-->] 36, request_processed: 29, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,179 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 29, order_amount: 6000.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [35-->] 36, request_processed: 29, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,179 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a140)   										 - 2026-11-19 18:42:23,179 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a140)   										 - 2026-11-19 18:42:23,180 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c65a140) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,182 - logic_logger - INFO
-..OrderB2bRequest[96] {Update - client} id: 96, CreatedOn: 2026-11-19 18:42:23.179239, CreatedOnDay: 2026-11-19, payload: {"Account": "Gus 1795142543175", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c79c750  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,182 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 29, order_amount: 6000.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed:  [29-->] 30, request_failed: 6, request_stuck: 1  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,182 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 29, order_amount: 6000.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed:  [29-->] 30, request_failed: 6, request_stuck: 1  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,182 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 29, order_amount: 6000.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed:  [29-->] 30, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,182 - logic_logger - INFO
-..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10cc3f460  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,182 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 48, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c869ac0  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,182 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 48, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c869ac0  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,182 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 48, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c869ac0  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,182 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [29-->] 30, order_amount: 6000.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,183 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [29-->] 30, order_amount: 6000.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,183 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [29-->] 30, order_amount: 6000.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,183 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10cc67ed0  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,183 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10cc67ed0  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,183 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10cc67ed0  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,183 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 48, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869ac0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,183 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 30, order_amount:  [6000.00-->] 6180.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,183 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 30, order_amount:  [6000.00-->] 6180.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,183 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 30, order_amount:  [6000.00-->] 6180.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,183 - logic_logger - INFO
-......Customer[48] {Update - Adjusting customer: balance} id: 48, name: Gus 1795142543175, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c6ebe50  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,183 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10cc67350  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,183 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10cc67350  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,183 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10cc67350  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,183 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 48, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869ac0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,183 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 30, order_amount:  [6180.0000000000-->] 6330.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,184 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 30, order_amount:  [6180.0000000000-->] 6330.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,184 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 30, order_amount:  [6180.0000000000-->] 6330.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,184 - logic_logger - INFO
-......Customer[48] {Update - Adjusting customer: balance} id: 48, name: Gus 1795142543175, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c6ebe50  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,184 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a140)   										 - 2026-11-19 18:42:23,184 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a140)   										 - 2026-11-19 18:42:23,184 - logic_logger - INFO
-..Order[191] {AfterFlush Event} id: 191, notes: behave test, customer_id: 48, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869ac0  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,185 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c65a140) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,192 - logic_logger - INFO
-..Item[342] {Delete - client} id: 342, order_id: 191, product_id: 1, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10cc65ad0  session: 0x10c65a140  ins_upd_dlt: dlt, initial: dlt - 2026-11-19 18:42:23,192 - logic_logger - INFO
-....Order[191] {Update - Adjusting order: amount_total} id: 191, notes: behave test, customer_id: 48, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [330.0000000000-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ac30  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,193 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 30, order_amount:  [6330.00-->] 6180.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,193 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 30, order_amount:  [6330.00-->] 6180.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,193 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 30, order_amount:  [6330.00-->] 6180.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 36, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adbd0  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,193 - logic_logger - INFO
-......Customer[48] {Update - Adjusting customer: balance} id: 48, name: Gus 1795142543175, balance:  [330.0000000000-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c867f50  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,193 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a140)   										 - 2026-11-19 18:42:23,193 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a140)   										 - 2026-11-19 18:42:23,194 - logic_logger - INFO
-....Order[191] {AfterFlush Event} id: 191, notes: behave test, customer_id: 48, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [330.0000000000-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ac30  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,194 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Order Deleted Leaves Balance ✅ (0.02 s)
-&emsp;  Scenario: Order Deleted Leaves Balance  
-&emsp;&emsp;    Given Customer "Hank" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Hank" with 2 Widget  
-&emsp;&emsp;    When Order is deleted  
-&emsp;&emsp;    Then Customer balance should be 0  
-
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Order Deleted Leaves Balance
-```
-  DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
-    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
-    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
-  Customer  
-    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    9. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    10. RowEvent Order._send_order_to_shipping()  
-    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-```
-**Logic Log** in Scenario: Order Deleted Leaves Balance (3 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c659f20) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,204 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Hank 1795142543200", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c79c050  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,204 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.204123, CreatedOnDay: 2026-11-19, payload: {"Account": "Hank 1795142543200", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c79c050  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,204 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [36-->] 37, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,204 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [36-->] 37, request_processed: 30, request_failed: 6, request_stuck: 0  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,204 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [36-->] 37, request_processed: 30, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,204 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659f20)   										 - 2026-11-19 18:42:23,204 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659f20)   										 - 2026-11-19 18:42:23,204 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c659f20) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,206 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10cc3e9e0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,206 - logic_logger - INFO
-..OrderB2bRequest[97] {Update - client} id: 97, CreatedOn: 2026-11-19 18:42:23.204123, CreatedOnDay: 2026-11-19, payload: {"Account": "Hank 1795142543200", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c79c050  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,206 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed:  [30-->] 31, request_failed: 6, request_stuck: 1  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,207 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed:  [30-->] 31, request_failed: 6, request_stuck: 1  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,207 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed:  [30-->] 31, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,207 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 49, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c86b0b0  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,207 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c86b0b0  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,207 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c86b0b0  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,207 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [30-->] 31, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed: 31, request_failed: 6, request_stuck: 0  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,207 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [30-->] 31, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed: 31, request_failed: 6, request_stuck: 0  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,207 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [30-->] 31, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed: 31, request_failed: 6, request_stuck: 0  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,207 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10c79d050  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,207 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10c79d050  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,207 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c79d050  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,207 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b0b0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,207 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 31, order_amount:  [6180.00-->] 6360.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed: 31, request_failed: 6, request_stuck: 0  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,207 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 31, order_amount:  [6180.00-->] 6360.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed: 31, request_failed: 6, request_stuck: 0  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,208 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 31, order_amount:  [6180.00-->] 6360.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed: 31, request_failed: 6, request_stuck: 0  row: 0x10c7adde0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,208 - logic_logger - INFO
-......Customer[49] {Update - Adjusting customer: balance} id: 49, name: Hank 1795142543200, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c865450  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,208 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659f20)   										 - 2026-11-19 18:42:23,208 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659f20)   										 - 2026-11-19 18:42:23,208 - logic_logger - INFO
-..Order[192] {AfterFlush Event} id: 192, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b0b0  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,208 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c65bf00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,211 - logic_logger - INFO
-..Order[192] {Delete - client} id: 192, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b6e0  session: 0x10c65bf00  ins_upd_dlt: dlt, initial: dlt - 2026-11-19 18:42:23,211 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count, order_amount} day: 2026-11-19, order_count:  [31-->] 30, order_amount:  [6360.00-->] 6180.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed: 31, request_failed: 6, request_stuck: 0  row: 0x10c7adc80  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,212 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [31-->] 30, order_amount:  [6360.00-->] 6180.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed: 31, request_failed: 6, request_stuck: 0  row: 0x10c7adc80  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,212 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [31-->] 30, order_amount:  [6360.00-->] 6180.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 37, request_processed: 31, request_failed: 6, request_stuck: 0  row: 0x10c7adc80  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,212 - logic_logger - INFO
-....Customer[49] {Update - Adjusting customer: balance} id: 49, name: Hank 1795142543200, balance:  [180.0000000000-->] 0E-10, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc96850  session: 0x10c65bf00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,212 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65bf00)   										 - 2026-11-19 18:42:23,212 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bf00)   										 - 2026-11-19 18:42:23,213 - logic_logger - INFO
-..Order[192] {AfterFlush Event} id: 192, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b6e0  session: 0x10c65bf00  ins_upd_dlt: dlt, initial: dlt - 2026-11-19 18:42:23,213 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Order Moved To Another Customer ✅ (0.02 s)
-&emsp;  Scenario: Order Moved To Another Customer  
-&emsp;&emsp;    Given Customer "Ivy" with credit limit 5000  
-&emsp;&emsp;    And Customer "Jack" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Ivy" with 2 Widget  
-&emsp;&emsp;    When Order is moved to Customer "Jack"  
-&emsp;&emsp;    Then Customer "Ivy" balance should be 0  
-&emsp;&emsp;    And Customer "Jack" balance should be 180  
-
-<details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Order Moved To Another Customer
-```
-  DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
-    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
-    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
-  Customer  
-    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    9. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    10. RowEvent Order._send_order_to_shipping()  
-    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-```
-**Logic Log** in Scenario: Order Moved To Another Customer (3 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10cc985a0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,224 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Ivy 1795142543217", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c6eb2d0  session: 0x10cc985a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,224 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.224447, CreatedOnDay: 2026-11-19, payload: {"Account": "Ivy 1795142543217", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c6eb2d0  session: 0x10cc985a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,224 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [37-->] 38, request_processed: 31, request_failed: 6, request_stuck: 0  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,224 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [37-->] 38, request_processed: 31, request_failed: 6, request_stuck: 0  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,224 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [37-->] 38, request_processed: 31, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,224 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10cc985a0)   										 - 2026-11-19 18:42:23,224 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10cc985a0)   										 - 2026-11-19 18:42:23,225 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10cc985a0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,227 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10cc3ef90  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,227 - logic_logger - INFO
-..OrderB2bRequest[98] {Update - client} id: 98, CreatedOn: 2026-11-19 18:42:23.224447, CreatedOnDay: 2026-11-19, payload: {"Account": "Ivy 1795142543217", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c6eb2d0  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,227 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 38, request_processed:  [31-->] 32, request_failed: 6, request_stuck: 1  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,227 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 38, request_processed:  [31-->] 32, request_failed: 6, request_stuck: 1  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,227 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 30, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 38, request_processed:  [31-->] 32, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,227 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 50, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c86b920  session: 0x10cc985a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,227 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c86b920  session: 0x10cc985a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,227 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c86b920  session: 0x10cc985a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,227 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [30-->] 31, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 38, request_processed: 32, request_failed: 6, request_stuck: 0  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,227 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [30-->] 31, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 38, request_processed: 32, request_failed: 6, request_stuck: 0  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,227 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [30-->] 31, order_amount: 6180.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 38, request_processed: 32, request_failed: 6, request_stuck: 0  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,227 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10c6ebf50  session: 0x10cc985a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,227 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10c6ebf50  session: 0x10cc985a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,227 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c6ebf50  session: 0x10cc985a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,228 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b920  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,228 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 31, order_amount:  [6180.00-->] 6360.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 38, request_processed: 32, request_failed: 6, request_stuck: 0  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,228 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 31, order_amount:  [6180.00-->] 6360.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 38, request_processed: 32, request_failed: 6, request_stuck: 0  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,228 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 31, order_amount:  [6180.00-->] 6360.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 38, request_processed: 32, request_failed: 6, request_stuck: 0  row: 0x10c7ada70  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,228 - logic_logger - INFO
-......Customer[50] {Update - Adjusting customer: balance} id: 50, name: Ivy 1795142543217, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc66050  session: 0x10cc985a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,228 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10cc985a0)   										 - 2026-11-19 18:42:23,228 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10cc985a0)   										 - 2026-11-19 18:42:23,228 - logic_logger - INFO
-..Order[193] {AfterFlush Event} id: 193, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b920  session: 0x10cc985a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,229 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10cc988d0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,231 - logic_logger - INFO
-..Order[193] {Update - client} id: 193, notes: behave test, customer_id:  [50-->] 51, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b9b0  session: 0x10cc988d0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,231 - logic_logger - INFO
-....Customer[51] {Update - Adjusting customer: balance, balance} id: 51, name: Jack 1795142543220, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ccbb4d0  session: 0x10cc988d0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,232 - logic_logger - INFO
-....Customer[50] {Update - Adjusting Old customer} id: 50, name: Ivy 1795142543217, balance:  [180.0000000000-->] 0E-10, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ccb98d0  session: 0x10cc988d0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,232 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10cc988d0)   										 - 2026-11-19 18:42:23,232 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10cc988d0)   										 - 2026-11-19 18:42:23,232 - logic_logger - INFO
-..Order[193] {AfterFlush Event} id: 193, notes: behave test, customer_id:  [50-->] 51, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b9b0  session: 0x10cc988d0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,232 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Item Moved To Another Order ✅ (0.03 s)
-&emsp;  Scenario: Item Moved To Another Order  
-&emsp;&emsp;    Given Customer "Kim" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Kim" with 2 Widget  
-&emsp;&emsp;    And a second Order is created for "Kim" with 1 Gadget  
-&emsp;&emsp;    When the Widget Item is moved to the second Order  
-&emsp;&emsp;    Then Order amount_total should be 0  
-&emsp;&emsp;    And second Order amount_total should be 330  
-&emsp;&emsp;    And Customer balance should be 330  
+#### Scenario: Moving an item to another order adjusts both orders ✅ (0.04 s)
+&emsp;  Scenario: Moving an item to another order adjusts both orders  
+&emsp;&emsp;    Given a new customer "Tara" with credit limit 5000  
+&emsp;&emsp;    And a B2B order is placed for "Tara" with 2 Widget and 1 Gadget  
+&emsp;&emsp;    And a second B2B order is placed for "Tara" with 1 Doodad  
+&emsp;&emsp;    When the first item of the first order is moved to the second order  
+&emsp;&emsp;    Then the first order total is 150  
+&emsp;&emsp;    And the second order total is 290  
+&emsp;&emsp;    And the balance of "Tara" is 440  
 
 <details markdown>
 <summary>Rules exercised and logic log (5 transactions)</summary>
@@ -1872,12 +1310,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10cc988d0)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Item Moved To Another Order
+**Rules Used** in Scenario: Moving an item to another order adjusts both orders
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -1890,95 +1328,103 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10cc988d0)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Item Moved To Another Order (5 transactions)
+**Logic Log** in Scenario: Moving an item to another order adjusts both orders (5 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c659f20) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,244 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Kim 1795142543241", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10ccbbb50  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,244 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.244973, CreatedOnDay: 2026-11-19, payload: {"Account": "Kim 1795142543241", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10ccbbb50  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,244 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 31, order_amount: 6360.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [38-->] 39, request_processed: 32, request_failed: 6, request_stuck: 0  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,245 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 31, order_amount: 6360.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [38-->] 39, request_processed: 32, request_failed: 6, request_stuck: 0  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,245 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 31, order_amount: 6360.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [38-->] 39, request_processed: 32, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,245 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659f20)   										 - 2026-11-19 18:42:23,245 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659f20)   										 - 2026-11-19 18:42:23,245 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ccd10) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,835 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Tara 1795146361828", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e454050  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,835 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:01.835344, CreatedOnDay: 2026-11-19, payload: {"Account": "Tara 1795146361828", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e454050  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,835 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 32, order_amount: 9880.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [37-->] 38, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,835 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 32, order_amount: 9880.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [37-->] 38, request_processed: 29, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,836 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 32, order_amount: 9880.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [37-->] 38, request_processed: 29, request_rejected: 7, request_pending:  [1-->] 2  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,836 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ccd10)   										 - 2026-11-19 19:46:01,836 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ccd10)   										 - 2026-11-19 19:46:01,836 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c659f20) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,247 - logic_logger - INFO
-..OrderB2bRequest[99] {Update - client} id: 99, CreatedOn: 2026-11-19 18:42:23.244973, CreatedOnDay: 2026-11-19, payload: {"Account": "Kim 1795142543241", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10ccbbb50  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,247 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 31, order_amount: 6360.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 39, request_processed:  [32-->] 33, request_failed: 6, request_stuck: 1  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,247 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 31, order_amount: 6360.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 39, request_processed:  [32-->] 33, request_failed: 6, request_stuck: 1  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,247 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 31, order_amount: 6360.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 39, request_processed:  [32-->] 33, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,247 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10cc3c0c0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,247 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 52, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c5e5d00  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,248 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c5e5d00  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,248 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c5e5d00  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,248 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [31-->] 32, order_amount: 6360.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 39, request_processed: 33, request_failed: 6, request_stuck: 0  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,248 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [31-->] 32, order_amount: 6360.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 39, request_processed: 33, request_failed: 6, request_stuck: 0  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,248 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [31-->] 32, order_amount: 6360.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 39, request_processed: 33, request_failed: 6, request_stuck: 0  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,248 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10ccb9ed0  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,248 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10ccb9ed0  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,248 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10ccb9ed0  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,248 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c5e5d00  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,248 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 32, order_amount:  [6360.00-->] 6540.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 39, request_processed: 33, request_failed: 6, request_stuck: 0  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,248 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 32, order_amount:  [6360.00-->] 6540.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 39, request_processed: 33, request_failed: 6, request_stuck: 0  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,248 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 32, order_amount:  [6360.00-->] 6540.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 39, request_processed: 33, request_failed: 6, request_stuck: 0  row: 0x10c3ab280  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,248 - logic_logger - INFO
-......Customer[52] {Update - Adjusting customer: balance} id: 52, name: Kim 1795142543241, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ccb90d0  session: 0x10c659f20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,248 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659f20)   										 - 2026-11-19 18:42:23,248 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659f20)   										 - 2026-11-19 18:42:23,249 - logic_logger - INFO
-..Order[194] {AfterFlush Event} id: 194, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c5e5d00  session: 0x10c659f20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,249 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ccd10) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,839 - logic_logger - INFO
+..OrderB2bRequest[144] {Update - client} id: 144, CreatedOn: 2026-11-19 19:46:01.835344, CreatedOnDay: 2026-11-19, payload: {"Account": "Tara 1795146361828", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e454050  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,839 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 32, order_amount: 9880.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed:  [29-->] 30, request_rejected: 7, request_pending: 2  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,839 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 32, order_amount: 9880.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed:  [29-->] 30, request_rejected: 7, request_pending: 2  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,839 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 32, order_amount: 9880.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed:  [29-->] 30, request_rejected: 7, request_pending:  [2-->] 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,839 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10e7f5160  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,839 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 46, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10e777650  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,840 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10e777650  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,840 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10e777650  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,840 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [32-->] 33, order_amount: 9880.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed: 30, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,840 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [32-->] 33, order_amount: 9880.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed: 30, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,840 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [32-->] 33, order_amount: 9880.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed: 30, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,840 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10e808dd0  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,840 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10e808dd0  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,840 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10e808dd0  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,840 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777650  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,840 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 33, order_amount:  [9880.00-->] 10060.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed: 30, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,840 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 33, order_amount:  [9880.00-->] 10060.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed: 30, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,840 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 33, order_amount:  [9880.00-->] 10060.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed: 30, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,840 - logic_logger - INFO
+......Customer[46] {Update - Adjusting customer: balance} id: 46, name: Tara 1795146361828, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10e8094d0  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,840 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e2dd350  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,840 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10e2dd350  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,841 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10e2dd350  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,841 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777650  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,841 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 33, order_amount:  [10060.0000000000-->] 10210.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed: 30, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,841 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 33, order_amount:  [10060.0000000000-->] 10210.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed: 30, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,841 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 33, order_amount:  [10060.0000000000-->] 10210.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 38, request_processed: 30, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,841 - logic_logger - INFO
+......Customer[46] {Update - Adjusting customer: balance} id: 46, name: Tara 1795146361828, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10e8094d0  session: 0x10e4ccd10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,841 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ccd10)   										 - 2026-11-19 19:46:01,841 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ccd10)   										 - 2026-11-19 19:46:01,842 - logic_logger - INFO
+..Order[221] {AfterFlush Event} id: 221, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777650  session: 0x10e4ccd10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,842 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65a360) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,251 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Kim 1795142543241", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10ccbad50  session: 0x10c65a360  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,251 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.251633, CreatedOnDay: 2026-11-19, payload: {"Account": "Kim 1795142543241", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10ccbad50  session: 0x10c65a360  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,251 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 32, order_amount: 6540.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [39-->] 40, request_processed: 33, request_failed: 6, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,251 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 32, order_amount: 6540.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [39-->] 40, request_processed: 33, request_failed: 6, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,252 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 32, order_amount: 6540.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [39-->] 40, request_processed: 33, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,252 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a360)   										 - 2026-11-19 18:42:23,252 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a360)   										 - 2026-11-19 18:42:23,252 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce690) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,844 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Tara 1795146361828", "Notes": "behave test", "Items": [{"Name": "Doodad", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e8083d0  session: 0x10e4ce690  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,844 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:01.844916, CreatedOnDay: 2026-11-19, payload: {"Account": "Tara 1795146361828", "Notes": "behave test", "Items": [{"Name": "Doodad", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e8083d0  session: 0x10e4ce690  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,844 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 33, order_amount: 10210.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [38-->] 39, request_processed: 30, request_rejected: 7, request_pending: 1  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,845 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 33, order_amount: 10210.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [38-->] 39, request_processed: 30, request_rejected: 7, request_pending: 1  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,845 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 33, order_amount: 10210.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [38-->] 39, request_processed: 30, request_rejected: 7, request_pending:  [1-->] 2  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,845 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce690)   										 - 2026-11-19 19:46:01,845 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce690)   										 - 2026-11-19 19:46:01,845 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65a360) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,254 - logic_logger - INFO
-..OrderB2bRequest[100] {Update - client} id: 100, CreatedOn: 2026-11-19 18:42:23.251633, CreatedOnDay: 2026-11-19, payload: {"Account": "Kim 1795142543241", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10ccbad50  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,254 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 32, order_amount: 6540.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed:  [33-->] 34, request_failed: 6, request_stuck: 1  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,254 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 32, order_amount: 6540.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed:  [33-->] 34, request_failed: 6, request_stuck: 1  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,254 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 32, order_amount: 6540.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed:  [33-->] 34, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,254 - logic_logger - INFO
-..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10cc3cb40  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,254 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 52, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c86b9b0  session: 0x10c65a360  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,254 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c86b9b0  session: 0x10c65a360  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,254 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c86b9b0  session: 0x10c65a360  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,254 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [32-->] 33, order_amount: 6540.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,254 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [32-->] 33, order_amount: 6540.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,254 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [32-->] 33, order_amount: 6540.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,254 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10ccba0d0  session: 0x10c65a360  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,255 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10ccba0d0  session: 0x10c65a360  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,255 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10ccba0d0  session: 0x10c65a360  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,255 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b9b0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,255 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 33, order_amount:  [6540.00-->] 6690.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,255 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 33, order_amount:  [6540.00-->] 6690.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,255 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 33, order_amount:  [6540.00-->] 6690.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3aa6d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,255 - logic_logger - INFO
-......Customer[52] {Update - Adjusting customer: balance} id: 52, name: Kim 1795142543241, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ccbb9d0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,255 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a360)   										 - 2026-11-19 18:42:23,255 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a360)   										 - 2026-11-19 18:42:23,256 - logic_logger - INFO
-..Order[195] {AfterFlush Event} id: 195, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b9b0  session: 0x10c65a360  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,256 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce690) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,847 - logic_logger - INFO
+..OrderB2bRequest[145] {Update - client} id: 145, CreatedOn: 2026-11-19 19:46:01.844916, CreatedOnDay: 2026-11-19, payload: {"Account": "Tara 1795146361828", "Notes": "behave test", "Items": [{"Name": "Doodad", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e8083d0  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,848 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 33, order_amount: 10210.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed:  [30-->] 31, request_rejected: 7, request_pending: 2  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,848 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 33, order_amount: 10210.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed:  [30-->] 31, request_rejected: 7, request_pending: 2  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,848 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 33, order_amount: 10210.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed:  [30-->] 31, request_rejected: 7, request_pending:  [2-->] 1  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,848 - logic_logger - INFO
+..Product[4] {Update - client} id: 4, name: Doodad, count_suppliers: 0, unit_price: 110.0000000000  row: 0x10e7f5860  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,848 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 46, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10e777530  session: 0x10e4ce690  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,848 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10e777530  session: 0x10e4ce690  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,848 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10e777530  session: 0x10e4ce690  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,848 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [33-->] 34, order_amount: 10210.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,848 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [33-->] 34, order_amount: 10210.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,848 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [33-->] 34, order_amount: 10210.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,848 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e53e750  session: 0x10e4ce690  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,848 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 110.0000000000  row: 0x10e53e750  session: 0x10e4ce690  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,848 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 110.0000000000, unit_price: 110.0000000000  row: 0x10e53e750  session: 0x10e4ce690  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,848 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 110.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777530  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,849 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 34, order_amount:  [10210.00-->] 10320.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,849 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 34, order_amount:  [10210.00-->] 10320.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,849 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 34, order_amount:  [10210.00-->] 10320.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e237c20  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,849 - logic_logger - INFO
+......Customer[46] {Update - Adjusting customer: balance} id: 46, name: Tara 1795146361828, balance:  [330.0000000000-->] 440.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10e7a64d0  session: 0x10e4ce690  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,849 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce690)   										 - 2026-11-19 19:46:01,849 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce690)   										 - 2026-11-19 19:46:01,849 - logic_logger - INFO
+..Order[222] {AfterFlush Event} id: 222, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 110.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777530  session: 0x10e4ce690  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,850 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65bce0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,263 - logic_logger - INFO
-..Item[345] {Update - client} id: 345, order_id:  [194-->] 195, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10ccb8550  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,263 - logic_logger - INFO
-..Item[345] {Prune Formula: amount [['quantity', 'unit_price']]} id: 345, order_id:  [194-->] 195, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10ccb8550  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,263 - logic_logger - INFO
-....Order[195] {Update - Adjusting order: amount_total, amount_total} id: 195, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [150.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ac30  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,263 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 33, order_amount:  [6690.00-->] 6870.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3ab1d0  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,264 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 33, order_amount:  [6690.00-->] 6870.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3ab1d0  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,264 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 33, order_amount:  [6690.00-->] 6870.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3ab1d0  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,264 - logic_logger - INFO
-......Customer[52] {Update - Adjusting customer: balance} id: 52, name: Kim 1795142543241, balance:  [330.0000000000-->] 510.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc94ed0  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,264 - logic_logger - INFO
-....Order[194] {Update - Adjusting Old order} id: 194, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 0E-10, CreatedOnDay: 2026-11-19  row: 0x10c86b1d0  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,264 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 33, order_amount:  [6870.0000000000-->] 6690.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3ab1d0  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,264 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 33, order_amount:  [6870.0000000000-->] 6690.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3ab1d0  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,264 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 33, order_amount:  [6870.0000000000-->] 6690.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 40, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c3ab1d0  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,264 - logic_logger - INFO
-......Customer[52] {Update - Adjusting customer: balance} id: 52, name: Kim 1795142543241, balance:  [510.0000000000-->] 330.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc94ed0  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,264 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65bce0)   										 - 2026-11-19 18:42:23,264 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bce0)   										 - 2026-11-19 18:42:23,265 - logic_logger - INFO
-....Order[195] {AfterFlush Event} id: 195, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [150.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ac30  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,265 - logic_logger - INFO
-....Order[194] {AfterFlush Event} id: 194, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 0E-10, CreatedOnDay: 2026-11-19  row: 0x10c86b1d0  session: 0x10c65bce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,265 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce8b0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,855 - logic_logger - INFO
+..Item[328] {Update - client} id: 328, order_id:  [221-->] 222, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10e783350  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,855 - logic_logger - INFO
+..Item[328] {Prune Formula: amount [['quantity', 'unit_price']]} id: 328, order_id:  [221-->] 222, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10e783350  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,855 - logic_logger - INFO
+....Order[222] {Update - Adjusting order: amount_total, amount_total} id: 222, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [110.0000000000-->] 290.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7776e0  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,856 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 34, order_amount:  [10320.00-->] 10500.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,856 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 34, order_amount:  [10320.00-->] 10500.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,856 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 34, order_amount:  [10320.00-->] 10500.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,856 - logic_logger - INFO
+......Customer[46] {Update - Adjusting customer: balance} id: 46, name: Tara 1795146361828, balance:  [440.0000000000-->] 620.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10e7a54d0  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,857 - logic_logger - INFO
+....Order[221] {Update - Adjusting Old order} id: 221, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [330.0000000000-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7770b0  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,857 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 34, order_amount:  [10500.0000000000-->] 10320.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,857 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 34, order_amount:  [10500.0000000000-->] 10320.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,857 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 34, order_amount:  [10500.0000000000-->] 10320.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 39, request_processed: 31, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,857 - logic_logger - INFO
+......Customer[46] {Update - Adjusting customer: balance} id: 46, name: Tara 1795146361828, balance:  [620.0000000000-->] 440.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10e7a54d0  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,857 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce8b0)   										 - 2026-11-19 19:46:01,857 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce8b0)   										 - 2026-11-19 19:46:01,858 - logic_logger - INFO
+....Order[222] {AfterFlush Event} id: 222, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [110.0000000000-->] 290.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7776e0  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,858 - logic_logger - INFO
+....Order[221] {AfterFlush Event} id: 221, notes: behave test, customer_id: 46, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [330.0000000000-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7770b0  session: 0x10e4ce8b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,858 - logic_logger - INFO
 
 ```
 </details>
@@ -1986,14 +1432,14 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bce0)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Item Product Changed ✅ (0.03 s)
-&emsp;  Scenario: Item Product Changed  
-&emsp;&emsp;    Given Customer "Lee" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Lee" with 2 Widget  
-&emsp;&emsp;    When the Item product is changed to Gadget  
-&emsp;&emsp;    Then Item unit_price should be 150  
-&emsp;&emsp;    And Order amount_total should be 300  
-&emsp;&emsp;    And Customer balance should be 300  
+#### Scenario: Moving an order to another customer adjusts both balances ✅ (0.03 s)
+&emsp;  Scenario: Moving an order to another customer adjusts both balances  
+&emsp;&emsp;    Given a new customer "Uma" with credit limit 2000  
+&emsp;&emsp;    And a new customer "Vic" with credit limit 2000  
+&emsp;&emsp;    And a B2B order is placed for "Uma" with 2 Widget and 1 Gadget  
+&emsp;&emsp;    When the order is moved to customer "Vic"  
+&emsp;&emsp;    Then the balance of "Uma" is 0  
+&emsp;&emsp;    And the balance of "Vic" is 330  
 
 <details markdown>
 <summary>Rules exercised and logic log (3 transactions)</summary>
@@ -2003,12 +1449,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bce0)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Item Product Changed
+**Rules Used** in Scenario: Moving an order to another customer adjusts both balances
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -2021,55 +1467,578 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bce0)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Item Product Changed (3 transactions)
+**Logic Log** in Scenario: Moving an order to another customer adjusts both balances (3 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c6598c0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,278 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Lee 1795142543274", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10cc96c50  session: 0x10c6598c0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,278 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.278504, CreatedOnDay: 2026-11-19, payload: {"Account": "Lee 1795142543274", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10cc96c50  session: 0x10c6598c0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,278 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 33, order_amount: 6690.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [40-->] 41, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,278 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 33, order_amount: 6690.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [40-->] 41, request_processed: 34, request_failed: 6, request_stuck: 0  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,278 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 33, order_amount: 6690.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [40-->] 41, request_processed: 34, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,278 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6598c0)   										 - 2026-11-19 18:42:23,279 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6598c0)   										 - 2026-11-19 18:42:23,279 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10f2fc490) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,984 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Flow Move 1795146366980", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f2c9dd0  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,985 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:06.985060, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Move 1795146366980", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f2c9dd0  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,985 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [52-->] 53, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,985 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [52-->] 53, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,985 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [52-->] 53, request_processed: 43, request_rejected: 8, request_pending:  [1-->] 2  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,985 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10f2fc490)   										 - 2026-11-19 19:46:06,985 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10f2fc490)   										 - 2026-11-19 19:46:06,985 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c6598c0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,281 - logic_logger - INFO
-..OrderB2bRequest[101] {Update - client} id: 101, CreatedOn: 2026-11-19 18:42:23.278504, CreatedOnDay: 2026-11-19, payload: {"Account": "Lee 1795142543274", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10cc96c50  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,281 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 33, order_amount: 6690.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed:  [34-->] 35, request_failed: 6, request_stuck: 1  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,281 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 33, order_amount: 6690.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed:  [34-->] 35, request_failed: 6, request_stuck: 1  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,281 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 33, order_amount: 6690.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed:  [34-->] 35, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,281 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10cc3ecf0  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,281 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 53, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c5e72f0  session: 0x10c6598c0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,281 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 53, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c5e72f0  session: 0x10c6598c0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,281 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 53, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c5e72f0  session: 0x10c6598c0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,281 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [33-->] 34, order_amount: 6690.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed: 35, request_failed: 6, request_stuck: 0  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,281 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [33-->] 34, order_amount: 6690.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed: 35, request_failed: 6, request_stuck: 0  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,281 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [33-->] 34, order_amount: 6690.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed: 35, request_failed: 6, request_stuck: 0  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,281 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10cc95c50  session: 0x10c6598c0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,281 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10cc95c50  session: 0x10c6598c0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,282 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10cc95c50  session: 0x10c6598c0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,282 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 53, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c5e72f0  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,282 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 34, order_amount:  [6690.00-->] 6870.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed: 35, request_failed: 6, request_stuck: 0  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,282 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 34, order_amount:  [6690.00-->] 6870.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed: 35, request_failed: 6, request_stuck: 0  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,282 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 34, order_amount:  [6690.00-->] 6870.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed: 35, request_failed: 6, request_stuck: 0  row: 0x10c7add30  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,282 - logic_logger - INFO
-......Customer[53] {Update - Adjusting customer: balance} id: 53, name: Lee 1795142543274, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc965d0  session: 0x10c6598c0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,282 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6598c0)   										 - 2026-11-19 18:42:23,282 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6598c0)   										 - 2026-11-19 18:42:23,283 - logic_logger - INFO
-..Order[196] {AfterFlush Event} id: 196, notes: behave test, customer_id: 53, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c5e72f0  session: 0x10c6598c0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,283 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10f2fc490) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,987 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10f35c6e0  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,987 - logic_logger - INFO
+..OrderB2bRequest[159] {Update - client} id: 159, CreatedOn: 2026-11-19 19:46:06.985060, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Move 1795146366980", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10f2c9dd0  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,987 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed:  [43-->] 44, request_rejected: 8, request_pending: 2  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed:  [43-->] 44, request_rejected: 8, request_pending: 2  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed:  [43-->] 44, request_rejected: 8, request_pending:  [2-->] 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 64, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2da720  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2da720  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2da720  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10f2c81d0  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10f2c81d0  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10f2c81d0  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2da720  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13860.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13860.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13860.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,989 - logic_logger - INFO
+......Customer[64] {Update - Adjusting customer: balance} id: 64, name: Flow Move 1795146366980, balance:  [0E-10-->] 150.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f2b8850  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,989 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10f2fc490)   										 - 2026-11-19 19:46:06,989 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10f2fc490)   										 - 2026-11-19 19:46:06,990 - logic_logger - INFO
+..Order[236] {AfterFlush Event} id: 236, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2da720  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,990 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c6585a0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,289 - logic_logger - INFO
-..Item[347] {Update - client} id: 347, order_id: 196, product_id:  [2-->] 1, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10cc67f50  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,290 - logic_logger - INFO
-..Item[347] {copy_rules for role: product - unit_price} id: 347, order_id: 196, product_id:  [2-->] 1, quantity: 2, amount: 180.0000000000, unit_price:  [90.0000000000-->] 150.0000000000  row: 0x10cc67f50  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,290 - logic_logger - INFO
-..Item[347] {Formula amount} id: 347, order_id: 196, product_id:  [2-->] 1, quantity: 2, amount:  [180.0000000000-->] 300.0000000000, unit_price:  [90.0000000000-->] 150.0000000000  row: 0x10cc67f50  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,290 - logic_logger - INFO
-....Order[196] {Update - Adjusting order: amount_total} id: 196, notes: behave test, customer_id: 53, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 300.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ae70  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,290 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 34, order_amount:  [6870.00-->] 6990.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed: 35, request_failed: 6, request_stuck: 0  row: 0x10c7adde0  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,290 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 34, order_amount:  [6870.00-->] 6990.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed: 35, request_failed: 6, request_stuck: 0  row: 0x10c7adde0  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,290 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 34, order_amount:  [6870.00-->] 6990.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 41, request_processed: 35, request_failed: 6, request_stuck: 0  row: 0x10c7adde0  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,290 - logic_logger - INFO
-......Customer[53] {Update - Adjusting customer: balance} id: 53, name: Lee 1795142543274, balance:  [180.0000000000-->] 300.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ccb90d0  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,290 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6585a0)   										 - 2026-11-19 18:42:23,291 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6585a0)   										 - 2026-11-19 18:42:23,291 - logic_logger - INFO
-....Order[196] {AfterFlush Event} id: 196, notes: behave test, customer_id: 53, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 300.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86ae70  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,291 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce250) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,996 - logic_logger - INFO
+..Order[236] {Update - client} id: 236, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay:  [2026-11-19-->] 2000-01-01  row: 0x10f2db6e0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2000-01-01] {Update - Adjusting daily_flow: order_count, order_count, order_amount, order_amount} day: 2000-01-01, order_count:  [1-->] 2, order_amount:  [150.00-->] 300.0000000000, message_received: 0, message_processed: 0, message_rejected: 0, message_pending: 0, request_received: 0, request_processed: 0, request_rejected: 0, request_pending: 0  row: 0x10e861910  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2000-01-01] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2000-01-01, order_count:  [1-->] 2, order_amount:  [150.00-->] 300.0000000000, message_received: 0, message_processed: 0, message_rejected: 0, message_pending: 0, request_received: 0, request_processed: 0, request_rejected: 0, request_pending: 0  row: 0x10e861910  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2000-01-01] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2000-01-01, order_count:  [1-->] 2, order_amount:  [150.00-->] 300.0000000000, message_received: 0, message_processed: 0, message_rejected: 0, message_pending: 0, request_received: 0, request_processed: 0, request_rejected: 0, request_pending: 0  row: 0x10e861910  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting Old daily_flow} day: 2026-11-19, order_count:  [46-->] 45, order_amount:  [13860.00-->] 13710.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [46-->] 45, order_amount:  [13860.00-->] 13710.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [46-->] 45, order_amount:  [13860.00-->] 13710.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,996 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,997 - logic_logger - INFO
+..Order[236] {AfterFlush Event} id: 236, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay:  [2026-11-19-->] 2000-01-01  row: 0x10f2db6e0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,997 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Deleting an order reduces the balance ✅ (0.02 s)
+&emsp;  Scenario: Deleting an order reduces the balance  
+&emsp;&emsp;    Given a new customer "Wen" with credit limit 2000  
+&emsp;&emsp;    And a B2B order is placed for "Wen" with 1 Gadget  
+&emsp;&emsp;    When the order is deleted  
+&emsp;&emsp;    Then the balance of "Wen" is 0  
+
+<details markdown>
+<summary>Rules exercised and logic log (3 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Deleting an order reduces the balance
+```
+  DailyFlow  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
+    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
+    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
+    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
+  Customer  
+    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+  Item  
+    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+    9. Derive Item.unit_price as Copy(product.unit_price)  
+  Order  
+    10. RowEvent Order._send_order_to_shipping()  
+    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: Deleting an order reduces the balance (3 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x10e4cef10) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,901 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Wen 1795146361898", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e3ee9d0  session: 0x10e4cef10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,902 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:01.902079, CreatedOnDay: 2026-11-19, payload: {"Account": "Wen 1795146361898", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e3ee9d0  session: 0x10e4cef10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,902 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [40-->] 41, request_processed: 32, request_rejected: 7, request_pending: 1  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,902 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [40-->] 41, request_processed: 32, request_rejected: 7, request_pending: 1  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,902 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [40-->] 41, request_processed: 32, request_rejected: 7, request_pending:  [1-->] 2  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,902 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cef10)   										 - 2026-11-19 19:46:01,902 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cef10)   										 - 2026-11-19 19:46:01,902 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cef10) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,906 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10e78bb60  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,906 - logic_logger - INFO
+..OrderB2bRequest[147] {Update - client} id: 147, CreatedOn: 2026-11-19 19:46:01.902079, CreatedOnDay: 2026-11-19, payload: {"Account": "Wen 1795146361898", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e3ee9d0  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,906 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed:  [32-->] 33, request_rejected: 7, request_pending: 2  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,906 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed:  [32-->] 33, request_rejected: 7, request_pending: 2  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,906 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed:  [32-->] 33, request_rejected: 7, request_pending:  [2-->] 1  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,906 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 49, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10e777da0  session: 0x10e4cef10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,906 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10e777da0  session: 0x10e4cef10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,906 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10e777da0  session: 0x10e4cef10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,906 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [35-->] 36, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed: 33, request_rejected: 7, request_pending: 1  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,906 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [35-->] 36, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed: 33, request_rejected: 7, request_pending: 1  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,906 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [35-->] 36, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed: 33, request_rejected: 7, request_pending: 1  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,906 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e7a5f50  session: 0x10e4cef10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,906 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10e7a5f50  session: 0x10e4cef10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,907 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10e7a5f50  session: 0x10e4cef10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,907 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777da0  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,907 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 36, order_amount:  [10650.00-->] 10800.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed: 33, request_rejected: 7, request_pending: 1  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,907 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 36, order_amount:  [10650.00-->] 10800.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed: 33, request_rejected: 7, request_pending: 1  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,907 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 36, order_amount:  [10650.00-->] 10800.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed: 33, request_rejected: 7, request_pending: 1  row: 0x10e237d80  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,907 - logic_logger - INFO
+......Customer[49] {Update - Adjusting customer: balance} id: 49, name: Wen 1795146361898, balance:  [0E-10-->] 150.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e7a5950  session: 0x10e4cef10  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,907 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cef10)   										 - 2026-11-19 19:46:01,907 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cef10)   										 - 2026-11-19 19:46:01,907 - logic_logger - INFO
+..Order[224] {AfterFlush Event} id: 224, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777da0  session: 0x10e4cef10  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,908 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e433df0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,910 - logic_logger - INFO
+..Order[224] {Delete - client} id: 224, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e47bc80  session: 0x10e433df0  ins_upd_dlt: dlt, initial: dlt - 2026-11-19 19:46:01,910 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count, order_amount} day: 2026-11-19, order_count:  [36-->] 35, order_amount:  [10800.00-->] 10650.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed: 33, request_rejected: 7, request_pending: 1  row: 0x10e237c20  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,910 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [36-->] 35, order_amount:  [10800.00-->] 10650.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed: 33, request_rejected: 7, request_pending: 1  row: 0x10e237c20  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,910 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [36-->] 35, order_amount:  [10800.00-->] 10650.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 41, request_processed: 33, request_rejected: 7, request_pending: 1  row: 0x10e237c20  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,910 - logic_logger - INFO
+....Customer[49] {Update - Adjusting customer: balance} id: 49, name: Wen 1795146361898, balance:  [150.0000000000-->] 0E-10, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e5747d0  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,911 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433df0)   										 - 2026-11-19 19:46:01,911 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433df0)   										 - 2026-11-19 19:46:01,912 - logic_logger - INFO
+..Order[224] {AfterFlush Event} id: 224, notes: behave test, customer_id: 49, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e47bc80  session: 0x10e433df0  ins_upd_dlt: dlt, initial: dlt - 2026-11-19 19:46:01,912 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Shipping an order removes it from the balance ✅ (0.54 s)
+&emsp;  Scenario: Shipping an order removes it from the balance  
+&emsp;&emsp;    Given a new customer "Xia" with credit limit 2000  
+&emsp;&emsp;    And a B2B order is placed for "Xia" with 2 Widget and 1 Gadget  
+&emsp;&emsp;    When the order is shipped  
+&emsp;&emsp;    Then the balance of "Xia" is 0  
+
+<details markdown>
+<summary>Rules exercised and logic log (3 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Shipping an order removes it from the balance
+```
+  DailyFlow  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
+    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
+    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
+    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
+  Customer  
+    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+  Item  
+    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+    9. Derive Item.unit_price as Copy(product.unit_price)  
+  Order  
+    10. RowEvent Order._send_order_to_shipping()  
+    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: Shipping an order removes it from the balance (3 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x10e4cd480) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,922 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Xia 1795146361918", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e7829d0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,922 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:01.922631, CreatedOnDay: 2026-11-19, payload: {"Account": "Xia 1795146361918", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e7829d0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,922 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [41-->] 42, request_processed: 33, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,922 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [41-->] 42, request_processed: 33, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,923 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [41-->] 42, request_processed: 33, request_rejected: 7, request_pending:  [1-->] 2  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,923 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cd480)   										 - 2026-11-19 19:46:01,923 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cd480)   										 - 2026-11-19 19:46:01,923 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cd480) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,925 - logic_logger - INFO
+..OrderB2bRequest[148] {Update - client} id: 148, CreatedOn: 2026-11-19 19:46:01.922631, CreatedOnDay: 2026-11-19, payload: {"Account": "Xia 1795146361918", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e7829d0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,925 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed:  [33-->] 34, request_rejected: 7, request_pending: 2  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,926 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed:  [33-->] 34, request_rejected: 7, request_pending: 2  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,926 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 35, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed:  [33-->] 34, request_rejected: 7, request_pending:  [2-->] 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,926 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10e4c1b70  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,926 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 50, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10e777890  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,926 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10e777890  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,926 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10e777890  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,926 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [35-->] 36, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed: 34, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,926 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [35-->] 36, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed: 34, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,926 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [35-->] 36, order_amount: 10650.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed: 34, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,926 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10e782950  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,926 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10e782950  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,926 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10e782950  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,926 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777890  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,927 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 36, order_amount:  [10650.00-->] 10830.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed: 34, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,927 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 36, order_amount:  [10650.00-->] 10830.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed: 34, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,927 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 36, order_amount:  [10650.00-->] 10830.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed: 34, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,927 - logic_logger - INFO
+......Customer[50] {Update - Adjusting customer: balance} id: 50, name: Xia 1795146361918, balance:  [0E-10-->] 180.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e49eed0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,927 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e783ed0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,927 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10e783ed0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,927 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10e783ed0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,927 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777890  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,927 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 36, order_amount:  [10830.0000000000-->] 10980.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed: 34, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,927 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 36, order_amount:  [10830.0000000000-->] 10980.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed: 34, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,927 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 36, order_amount:  [10830.0000000000-->] 10980.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 42, request_processed: 34, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,927 - logic_logger - INFO
+......Customer[50] {Update - Adjusting customer: balance} id: 50, name: Xia 1795146361918, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e49eed0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,927 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cd480)   										 - 2026-11-19 19:46:01,927 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cd480)   										 - 2026-11-19 19:46:01,928 - logic_logger - INFO
+..Order[225] {AfterFlush Event} id: 225, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777890  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:01,928 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4ce580) (sqlalchemy before_flush)			 - 2026-11-19 19:46:01,932 - logic_logger - INFO
+..Order[225] {Update - client} id: 225, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e776d50  session: 0x10e4ce580  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,932 - logic_logger - INFO
+....Customer[50] {Update - Adjusting customer: balance} id: 50, name: Xia 1795146361918, balance:  [330.0000000000-->] 0E-10, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e808350  session: 0x10e4ce580  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,932 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce580)   										 - 2026-11-19 19:46:01,932 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce580)   										 - 2026-11-19 19:46:01,933 - logic_logger - INFO
+..Order[225] {AfterFlush Event} id: 225, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e776d50  session: 0x10e4ce580  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,933 - logic_logger - INFO
+..Order[225] {publish_kafka_message: topic='order_shipping', key={'id': 225}} id: 225, notes: behave test, customer_id: 50, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e776d50  session: 0x10e4ce580  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:01,941 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Unshipping an order adds it back to the balance ✅ (0.56 s)
+&emsp;  Scenario: Unshipping an order adds it back to the balance  
+&emsp;&emsp;    Given a new customer "Yan" with credit limit 2000  
+&emsp;&emsp;    And a B2B order is placed for "Yan" with 2 Widget and 1 Gadget  
+&emsp;&emsp;    And the order is shipped  
+&emsp;&emsp;    When the order is unshipped  
+&emsp;&emsp;    Then the balance of "Yan" is 330  
+
+<details markdown>
+<summary>Rules exercised and logic log (4 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Unshipping an order adds it back to the balance
+```
+  DailyFlow  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
+    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
+    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
+    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
+  Customer  
+    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+  Item  
+    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+    9. Derive Item.unit_price as Copy(product.unit_price)  
+  Order  
+    10. RowEvent Order._send_order_to_shipping()  
+    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: Unshipping an order adds it back to the balance (4 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x10e4cd480) (sqlalchemy before_flush)			 - 2026-11-19 19:46:02,474 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Yan 1795146362465", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e456a50  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,474 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:02.474866, CreatedOnDay: 2026-11-19, payload: {"Account": "Yan 1795146362465", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e456a50  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,474 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 36, order_amount: 10980.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [42-->] 43, request_processed: 34, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,475 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 36, order_amount: 10980.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [42-->] 43, request_processed: 34, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,475 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 36, order_amount: 10980.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [42-->] 43, request_processed: 34, request_rejected: 7, request_pending:  [1-->] 2  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,475 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cd480)   										 - 2026-11-19 19:46:02,475 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cd480)   										 - 2026-11-19 19:46:02,476 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cd480) (sqlalchemy before_flush)			 - 2026-11-19 19:46:02,481 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10e4c06e0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,481 - logic_logger - INFO
+..OrderB2bRequest[149] {Update - client} id: 149, CreatedOn: 2026-11-19 19:46:02.474866, CreatedOnDay: 2026-11-19, payload: {"Account": "Yan 1795146362465", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e456a50  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,481 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 36, order_amount: 10980.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed:  [34-->] 35, request_rejected: 7, request_pending: 2  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,482 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 36, order_amount: 10980.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed:  [34-->] 35, request_rejected: 7, request_pending: 2  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,482 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 36, order_amount: 10980.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed:  [34-->] 35, request_rejected: 7, request_pending:  [2-->] 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,482 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 51, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10e776f00  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,482 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 51, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10e776f00  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,482 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 51, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10e776f00  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,482 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [36-->] 37, order_amount: 10980.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed: 35, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,482 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [36-->] 37, order_amount: 10980.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed: 35, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,482 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [36-->] 37, order_amount: 10980.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed: 35, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,483 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10e53fed0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,483 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10e53fed0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,483 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10e53fed0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,483 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 51, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e776f00  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,483 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 37, order_amount:  [10980.00-->] 11160.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed: 35, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,483 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 37, order_amount:  [10980.00-->] 11160.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed: 35, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,483 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 37, order_amount:  [10980.00-->] 11160.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed: 35, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,483 - logic_logger - INFO
+......Customer[51] {Update - Adjusting customer: balance} id: 51, name: Yan 1795146362465, balance:  [0E-10-->] 180.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e7a6ed0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,483 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e80b1d0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,484 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10e80b1d0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,484 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10e80b1d0  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,484 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 51, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e776f00  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,484 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 37, order_amount:  [11160.0000000000-->] 11310.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed: 35, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,484 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 37, order_amount:  [11160.0000000000-->] 11310.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed: 35, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,484 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 37, order_amount:  [11160.0000000000-->] 11310.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 43, request_processed: 35, request_rejected: 7, request_pending: 1  row: 0x10e236780  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,484 - logic_logger - INFO
+......Customer[51] {Update - Adjusting customer: balance} id: 51, name: Yan 1795146362465, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e7a6ed0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,484 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cd480)   										 - 2026-11-19 19:46:02,484 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cd480)   										 - 2026-11-19 19:46:02,485 - logic_logger - INFO
+..Order[226] {AfterFlush Event} id: 226, notes: behave test, customer_id: 51, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e776f00  session: 0x10e4cd480  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:02,486 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cee00) (sqlalchemy before_flush)			 - 2026-11-19 19:46:02,490 - logic_logger - INFO
+..Order[226] {Update - client} id: 226, notes: behave test, customer_id: 51, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777890  session: 0x10e4cee00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,490 - logic_logger - INFO
+....Customer[51] {Update - Adjusting customer: balance} id: 51, name: Yan 1795146362465, balance:  [330.0000000000-->] 0E-10, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10f1fc0d0  session: 0x10e4cee00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,491 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cee00)   										 - 2026-11-19 19:46:02,491 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cee00)   										 - 2026-11-19 19:46:02,491 - logic_logger - INFO
+..Order[226] {AfterFlush Event} id: 226, notes: behave test, customer_id: 51, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777890  session: 0x10e4cee00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,491 - logic_logger - INFO
+..Order[226] {publish_kafka_message: topic='order_shipping', key={'id': 226}} id: 226, notes: behave test, customer_id: 51, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e777890  session: 0x10e4cee00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:02,494 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cf570) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,010 - logic_logger - INFO
+..Order[226] {Update - client} id: 226, notes: behave test, customer_id: 51, CreatedOn: 2026-11-19, date_shipped:  [2026-11-19-->] None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7d04d0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,011 - logic_logger - INFO
+....Customer[51] {Update - Adjusting customer: balance} id: 51, name: Yan 1795146362465, balance:  [0E-10-->] 330.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10f1fd650  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,012 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cf570)   										 - 2026-11-19 19:46:03,012 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cf570)   										 - 2026-11-19 19:46:03,013 - logic_logger - INFO
+..Order[226] {AfterFlush Event} id: 226, notes: behave test, customer_id: 51, CreatedOn: 2026-11-19, date_shipped:  [2026-11-19-->] None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7d04d0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,014 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Order exactly at the credit limit is accepted ✅ (0.03 s)
+&emsp;  Scenario: Order exactly at the credit limit is accepted  
+&emsp;&emsp;    Given a new customer "Zed" with credit limit 300  
+&emsp;&emsp;    When a B2B order is placed for "Zed" with 2 Gadget  
+&emsp;&emsp;    Then the order is accepted  
+&emsp;&emsp;    And the balance of "Zed" is 300  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Order exactly at the credit limit is accepted
+```
+  DailyFlow  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
+    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
+    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
+    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
+  Customer  
+    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+  Item  
+    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+    9. Derive Item.unit_price as Copy(product.unit_price)  
+  Order  
+    10. RowEvent Order._send_order_to_shipping()  
+    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: Order exactly at the credit limit is accepted (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x10e4cf790) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,038 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Zed 1795146363029", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10e49ddd0  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,038 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:03.038935, CreatedOnDay: 2026-11-19, payload: {"Account": "Zed 1795146363029", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10e49ddd0  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,038 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 37, order_amount: 11310.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [43-->] 44, request_processed: 35, request_rejected: 7, request_pending: 1  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,039 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 37, order_amount: 11310.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [43-->] 44, request_processed: 35, request_rejected: 7, request_pending: 1  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,039 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 37, order_amount: 11310.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [43-->] 44, request_processed: 35, request_rejected: 7, request_pending:  [1-->] 2  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,039 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cf790)   										 - 2026-11-19 19:46:03,039 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cf790)   										 - 2026-11-19 19:46:03,040 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cf790) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,043 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10e7f72a0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,043 - logic_logger - INFO
+..OrderB2bRequest[150] {Update - client} id: 150, CreatedOn: 2026-11-19 19:46:03.038935, CreatedOnDay: 2026-11-19, payload: {"Account": "Zed 1795146363029", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e49ddd0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,044 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 37, order_amount: 11310.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 44, request_processed:  [35-->] 36, request_rejected: 7, request_pending: 2  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,044 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 37, order_amount: 11310.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 44, request_processed:  [35-->] 36, request_rejected: 7, request_pending: 2  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,044 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 37, order_amount: 11310.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 44, request_processed:  [35-->] 36, request_rejected: 7, request_pending:  [2-->] 1  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,044 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 52, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10e7d08c0  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,044 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10e7d08c0  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,044 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10e7d08c0  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,044 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [37-->] 38, order_amount: 11310.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 44, request_processed: 36, request_rejected: 7, request_pending: 1  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,045 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [37-->] 38, order_amount: 11310.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 44, request_processed: 36, request_rejected: 7, request_pending: 1  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,045 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [37-->] 38, order_amount: 11310.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 44, request_processed: 36, request_rejected: 7, request_pending: 1  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,045 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10e3a2650  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,045 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10e3a2650  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,045 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10e3a2650  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,045 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 300.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7d08c0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,045 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 38, order_amount:  [11310.00-->] 11610.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 44, request_processed: 36, request_rejected: 7, request_pending: 1  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,045 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 38, order_amount:  [11310.00-->] 11610.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 44, request_processed: 36, request_rejected: 7, request_pending: 1  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,045 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 38, order_amount:  [11310.00-->] 11610.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 44, request_processed: 36, request_rejected: 7, request_pending: 1  row: 0x10e8609f0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,045 - logic_logger - INFO
+......Customer[52] {Update - Adjusting customer: balance} id: 52, name: Zed 1795146363029, balance:  [0E-10-->] 300.0000000000, credit_limit: 300.0000000000, email: None, email_opt_out: None  row: 0x10e7a6950  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,045 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cf790)   										 - 2026-11-19 19:46:03,046 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cf790)   										 - 2026-11-19 19:46:03,046 - logic_logger - INFO
+..Order[227] {AfterFlush Event} id: 227, notes: behave test, customer_id: 52, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 300.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7d08c0  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,047 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Order over the credit limit is rejected ✅ (0.02 s)
+&emsp;  Scenario: Order over the credit limit is rejected  
+&emsp;&emsp;    Given a new customer "Abe" with credit limit 299  
+&emsp;&emsp;    When a B2B order is placed for "Abe" with 2 Gadget  
+&emsp;&emsp;    Then the order is rejected with "exceeds credit limit"  
+&emsp;&emsp;    And the balance of "Abe" is 0  
+
+<details markdown>
+<summary>Rules exercised and logic log (2 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Order over the credit limit is rejected
+```
+  DailyFlow  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
+    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
+    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
+    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
+  Customer  
+    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+    8. Constraint Function: None  
+  Item  
+    9. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+    10. Derive Item.unit_price as Copy(product.unit_price)  
+  Order  
+    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: Order over the credit limit is rejected (2 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x10e4cff00) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,060 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Abe 1795146363055", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10e4540d0  session: 0x10e4cff00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,060 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:03.061009, CreatedOnDay: 2026-11-19, payload: {"Account": "Abe 1795146363055", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10e4540d0  session: 0x10e4cff00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,061 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [44-->] 45, request_processed: 36, request_rejected: 7, request_pending: 1  row: 0x10e860940  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,061 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [44-->] 45, request_processed: 36, request_rejected: 7, request_pending: 1  row: 0x10e860940  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,061 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [44-->] 45, request_processed: 36, request_rejected: 7, request_pending:  [1-->] 2  row: 0x10e860940  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,061 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cff00)   										 - 2026-11-19 19:46:03,061 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cff00)   										 - 2026-11-19 19:46:03,062 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cff00) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,064 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10e4c06e0  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,064 - logic_logger - INFO
+..OrderB2bRequest[151] {Update - client} id: 151, CreatedOn: 2026-11-19 19:46:03.061009, CreatedOnDay: 2026-11-19, payload: {"Account": "Abe 1795146363055", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e4540d0  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,064 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 45, request_processed:  [36-->] 37, request_rejected: 7, request_pending: 2  row: 0x10e235d30  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,065 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 45, request_processed:  [36-->] 37, request_rejected: 7, request_pending: 2  row: 0x10e235d30  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,065 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 45, request_processed:  [36-->] 37, request_rejected: 7, request_pending:  [2-->] 1  row: 0x10e235d30  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,065 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 53, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10e7d0b00  session: 0x10e4cff00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,065 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 53, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10e7d0b00  session: 0x10e4cff00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,065 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 53, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10e7d0b00  session: 0x10e4cff00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,065 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [38-->] 39, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 45, request_processed: 37, request_rejected: 7, request_pending: 1  row: 0x10e235d30  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,065 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [38-->] 39, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 45, request_processed: 37, request_rejected: 7, request_pending: 1  row: 0x10e235d30  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,065 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [38-->] 39, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 45, request_processed: 37, request_rejected: 7, request_pending: 1  row: 0x10e235d30  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,065 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10e809850  session: 0x10e4cff00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,065 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10e809850  session: 0x10e4cff00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,066 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10e809850  session: 0x10e4cff00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,066 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 53, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 300.0000000000, CreatedOnDay: 2026-11-19  row: 0x10e7d0b00  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,066 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 39, order_amount:  [11610.00-->] 11910.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 45, request_processed: 37, request_rejected: 7, request_pending: 1  row: 0x10e235d30  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,066 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 39, order_amount:  [11610.00-->] 11910.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 45, request_processed: 37, request_rejected: 7, request_pending: 1  row: 0x10e235d30  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,066 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 39, order_amount:  [11610.00-->] 11910.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 45, request_processed: 37, request_rejected: 7, request_pending: 1  row: 0x10e235d30  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,066 - logic_logger - INFO
+......Customer[53] {Update - Adjusting customer: balance} id: 53, name: Abe 1795146363055, balance:  [0E-10-->] 300.0000000000, credit_limit: 299.0000000000, email: None, email_opt_out: None  row: 0x10e7a4ad0  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,066 - logic_logger - INFO
+......Customer[53] {Constraint Failure: Customer balance (300.0000000000) exceeds credit limit (299.0000000000)} id: 53, name: Abe 1795146363055, balance:  [0E-10-->] 300.0000000000, credit_limit: 299.0000000000, email: None, email_opt_out: None  row: 0x10e7a4ad0  session: 0x10e4cff00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,066 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Raising a quantity over the credit limit is rejected ✅ (0.03 s)
+&emsp;  Scenario: Raising a quantity over the credit limit is rejected  
+&emsp;&emsp;    Given a new customer "Bea" with credit limit 500  
+&emsp;&emsp;    And a B2B order is placed for "Bea" with 2 Widget and 1 Gadget  
+&emsp;&emsp;    When the quantity of the first item is changed to 10  
+&emsp;&emsp;    Then the change is rejected with "exceeds credit limit"  
+&emsp;&emsp;    And the first item amount is 180  
+&emsp;&emsp;    And the balance of "Bea" is 330  
+
+<details markdown>
+<summary>Rules exercised and logic log (3 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Raising a quantity over the credit limit is rejected
+```
+  DailyFlow  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
+    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
+    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
+    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
+  Customer  
+    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+    8. Constraint Function: None  
+  Item  
+    9. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+    10. Derive Item.unit_price as Copy(product.unit_price)  
+  Order  
+    11. RowEvent Order._send_order_to_shipping()  
+    12. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: Raising a quantity over the credit limit is rejected (3 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x10e4cf570) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,084 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Bea 1795146363079", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f20c950  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,084 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:03.084109, CreatedOnDay: 2026-11-19, payload: {"Account": "Bea 1795146363079", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f20c950  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,084 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [45-->] 46, request_processed: 36, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,084 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [45-->] 46, request_processed: 36, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,084 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [45-->] 46, request_processed: 36, request_rejected: 8, request_pending:  [1-->] 2  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,084 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cf570)   										 - 2026-11-19 19:46:03,084 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cf570)   										 - 2026-11-19 19:46:03,085 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cf570) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,087 - logic_logger - INFO
+..OrderB2bRequest[152] {Update - client} id: 152, CreatedOn: 2026-11-19 19:46:03.084109, CreatedOnDay: 2026-11-19, payload: {"Account": "Bea 1795146363079", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10f20c950  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,087 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed:  [36-->] 37, request_rejected: 8, request_pending: 2  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,088 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed:  [36-->] 37, request_rejected: 8, request_pending: 2  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,088 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 38, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed:  [36-->] 37, request_rejected: 8, request_pending:  [2-->] 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,088 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10f2ab690  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,088 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 54, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2a7890  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,088 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2a7890  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,088 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2a7890  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,088 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [38-->] 39, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,088 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [38-->] 39, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,088 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [38-->] 39, order_amount: 11610.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,088 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10e82c450  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,088 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10e82c450  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,088 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10e82c450  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,088 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7890  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,089 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 39, order_amount:  [11610.00-->] 11790.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,089 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 39, order_amount:  [11610.00-->] 11790.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,089 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 39, order_amount:  [11610.00-->] 11790.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,089 - logic_logger - INFO
+......Customer[54] {Update - Adjusting customer: balance} id: 54, name: Bea 1795146363079, balance:  [0E-10-->] 180.0000000000, credit_limit: 500.0000000000, email: None, email_opt_out: None  row: 0x10f1ff6d0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,089 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e82d650  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,089 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10e82d650  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,089 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10e82d650  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,089 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7890  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,089 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 39, order_amount:  [11790.0000000000-->] 11940.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,089 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 39, order_amount:  [11790.0000000000-->] 11940.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,089 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 39, order_amount:  [11790.0000000000-->] 11940.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,089 - logic_logger - INFO
+......Customer[54] {Update - Adjusting customer: balance} id: 54, name: Bea 1795146363079, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 500.0000000000, email: None, email_opt_out: None  row: 0x10f1ff6d0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,089 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cf570)   										 - 2026-11-19 19:46:03,089 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cf570)   										 - 2026-11-19 19:46:03,090 - logic_logger - INFO
+..Order[228] {AfterFlush Event} id: 228, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7890  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,090 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cf680) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,096 - logic_logger - INFO
+..Item[339] {Update - client} id: 339, order_id: 228, product_id: 2, quantity:  [2-->] 10, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10f2b9550  session: 0x10e4cf680  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,096 - logic_logger - INFO
+..Item[339] {Formula amount} id: 339, order_id: 228, product_id: 2, quantity:  [2-->] 10, amount:  [180.0000000000-->] 900.0000000000, unit_price: 90.0000000000  row: 0x10f2b9550  session: 0x10e4cf680  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,096 - logic_logger - INFO
+....Order[228] {Update - Adjusting order: amount_total} id: 228, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [330.0000000000-->] 1050.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7c80  session: 0x10e4cf680  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,097 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 39, order_amount:  [11940.00-->] 12660.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861860  session: 0x10e4cf680  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,097 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 39, order_amount:  [11940.00-->] 12660.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861860  session: 0x10e4cf680  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,097 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 39, order_amount:  [11940.00-->] 12660.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 46, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e861860  session: 0x10e4cf680  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,097 - logic_logger - INFO
+......Customer[54] {Update - Adjusting customer: balance} id: 54, name: Bea 1795146363079, balance:  [330.0000000000-->] 1050.0000000000, credit_limit: 500.0000000000, email: None, email_opt_out: None  row: 0x10f2ca850  session: 0x10e4cf680  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,097 - logic_logger - INFO
+......Customer[54] {Constraint Failure: Customer balance (1050.0000000000) exceeds credit limit (500.0000000000)} id: 54, name: Bea 1795146363079, balance:  [330.0000000000-->] 1050.0000000000, credit_limit: 500.0000000000, email: None, email_opt_out: None  row: 0x10f2ca850  session: 0x10e4cf680  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,097 - logic_logger - INFO
 
 ```
 </details>
@@ -2082,12 +2051,13 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6585a0)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Shipping Notification Published ✅ (0.02 s)
-&emsp;  Scenario: Shipping Notification Published  
-&emsp;&emsp;    Given Customer "Gina" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Gina" with 1 Widget  
-&emsp;&emsp;    When Order is shipped  
-&emsp;&emsp;    Then the order_shipping message is published with the order id and total  
+#### Scenario: Shipping an order publishes the shipping message ✅ (0.53 s)
+&emsp;  Scenario: Shipping an order publishes the shipping message  
+&emsp;&emsp;    Given a new customer "Ship Cust" with credit limit 2000  
+&emsp;&emsp;    And a B2B order is placed for "Ship Cust" with 2 Widget and 1 Gadget  
+&emsp;&emsp;    When the order is shipped  
+&emsp;&emsp;    Then an order_shipping message is published for the order  
+&emsp;&emsp;    And the message has the order_shipping shape with total 330 and 2 items  
 
 <details markdown>
 <summary>Rules exercised and logic log (3 transactions)</summary>
@@ -2097,12 +2067,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6585a0)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Shipping Notification Published
+**Rules Used** in Scenario: Shipping an order publishes the shipping message
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -2115,50 +2085,58 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6585a0)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Shipping Notification Published (3 transactions)
+**Logic Log** in Scenario: Shipping an order publishes the shipping message (3 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c659d00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,305 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Gina 1795142543301", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10ccba150  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,305 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.305508, CreatedOnDay: 2026-11-19, payload: {"Account": "Gina 1795142543301", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10ccba150  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,305 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 34, order_amount: 6990.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [41-->] 42, request_processed: 35, request_failed: 6, request_stuck: 0  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,305 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 34, order_amount: 6990.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [41-->] 42, request_processed: 35, request_failed: 6, request_stuck: 0  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,305 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 34, order_amount: 6990.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [41-->] 42, request_processed: 35, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,305 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659d00)   										 - 2026-11-19 18:42:23,306 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659d00)   										 - 2026-11-19 18:42:23,306 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cebe0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,114 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Ship Cust 1795146363109", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e49ddd0  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,114 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:03.114171, CreatedOnDay: 2026-11-19, payload: {"Account": "Ship Cust 1795146363109", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e49ddd0  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,114 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 39, order_amount: 11940.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [46-->] 47, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,114 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 39, order_amount: 11940.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [46-->] 47, request_processed: 37, request_rejected: 8, request_pending: 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,114 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 39, order_amount: 11940.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [46-->] 47, request_processed: 37, request_rejected: 8, request_pending:  [1-->] 2  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,114 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cebe0)   										 - 2026-11-19 19:46:03,114 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cebe0)   										 - 2026-11-19 19:46:03,115 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c659d00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,308 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10cc3f7e0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,308 - logic_logger - INFO
-..OrderB2bRequest[102] {Update - client} id: 102, CreatedOn: 2026-11-19 18:42:23.305508, CreatedOnDay: 2026-11-19, payload: {"Account": "Gina 1795142543301", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10ccba150  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,308 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 34, order_amount: 6990.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 42, request_processed:  [35-->] 36, request_failed: 6, request_stuck: 1  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,308 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 34, order_amount: 6990.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 42, request_processed:  [35-->] 36, request_failed: 6, request_stuck: 1  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,308 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 34, order_amount: 6990.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 42, request_processed:  [35-->] 36, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,308 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 54, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c86b410  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,308 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c86b410  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,308 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c86b410  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,308 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [34-->] 35, order_amount: 6990.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 42, request_processed: 36, request_failed: 6, request_stuck: 0  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,308 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [34-->] 35, order_amount: 6990.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 42, request_processed: 36, request_failed: 6, request_stuck: 0  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,308 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [34-->] 35, order_amount: 6990.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 42, request_processed: 36, request_failed: 6, request_stuck: 0  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,308 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10ccb8550  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,308 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10ccb8550  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,309 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10ccb8550  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,309 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b410  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,309 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 35, order_amount:  [6990.00-->] 7080.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 42, request_processed: 36, request_failed: 6, request_stuck: 0  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,309 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 35, order_amount:  [6990.00-->] 7080.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 42, request_processed: 36, request_failed: 6, request_stuck: 0  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,309 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 35, order_amount:  [6990.00-->] 7080.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 42, request_processed: 36, request_failed: 6, request_stuck: 0  row: 0x10c3abee0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,309 - logic_logger - INFO
-......Customer[54] {Update - Adjusting customer: balance} id: 54, name: Gina 1795142543301, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ccbb450  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,309 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659d00)   										 - 2026-11-19 18:42:23,309 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659d00)   										 - 2026-11-19 18:42:23,310 - logic_logger - INFO
-..Order[197] {AfterFlush Event} id: 197, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b410  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,310 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cebe0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,117 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10f2ab4d0  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,117 - logic_logger - INFO
+..OrderB2bRequest[153] {Update - client} id: 153, CreatedOn: 2026-11-19 19:46:03.114171, CreatedOnDay: 2026-11-19, payload: {"Account": "Ship Cust 1795146363109", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e49ddd0  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,117 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 39, order_amount: 11940.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed:  [37-->] 38, request_rejected: 8, request_pending: 2  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,117 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 39, order_amount: 11940.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed:  [37-->] 38, request_rejected: 8, request_pending: 2  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,118 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 39, order_amount: 11940.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed:  [37-->] 38, request_rejected: 8, request_pending:  [2-->] 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,118 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 55, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2a7a40  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,118 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2a7a40  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,118 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2a7a40  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,118 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [39-->] 40, order_amount: 11940.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed: 38, request_rejected: 8, request_pending: 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,118 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [39-->] 40, order_amount: 11940.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed: 38, request_rejected: 8, request_pending: 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,118 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [39-->] 40, order_amount: 11940.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed: 38, request_rejected: 8, request_pending: 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,118 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10f2afed0  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,118 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10f2afed0  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,118 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10f2afed0  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,118 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7a40  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,118 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 40, order_amount:  [11940.00-->] 12120.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed: 38, request_rejected: 8, request_pending: 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,118 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 40, order_amount:  [11940.00-->] 12120.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed: 38, request_rejected: 8, request_pending: 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,118 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 40, order_amount:  [11940.00-->] 12120.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed: 38, request_rejected: 8, request_pending: 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,118 - logic_logger - INFO
+......Customer[55] {Update - Adjusting customer: balance} id: 55, name: Ship Cust 1795146363109, balance:  [0E-10-->] 180.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10f1ff650  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,119 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10f2c8dd0  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,119 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10f2c8dd0  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,119 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10f2c8dd0  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,119 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7a40  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,119 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 40, order_amount:  [12120.0000000000-->] 12270.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed: 38, request_rejected: 8, request_pending: 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,119 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 40, order_amount:  [12120.0000000000-->] 12270.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed: 38, request_rejected: 8, request_pending: 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,119 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 40, order_amount:  [12120.0000000000-->] 12270.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 47, request_processed: 38, request_rejected: 8, request_pending: 1  row: 0x10e237b70  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,119 - logic_logger - INFO
+......Customer[55] {Update - Adjusting customer: balance} id: 55, name: Ship Cust 1795146363109, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10f1ff650  session: 0x10e4cebe0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,119 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cebe0)   										 - 2026-11-19 19:46:03,119 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cebe0)   										 - 2026-11-19 19:46:03,120 - logic_logger - INFO
+..Order[229] {AfterFlush Event} id: 229, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7a40  session: 0x10e4cebe0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,120 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65a360) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,312 - logic_logger - INFO
-..Order[197] {Update - client} id: 197, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-10-24 00:00:00, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b4a0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,312 - logic_logger - INFO
-....Customer[54] {Update - Adjusting customer: balance} id: 54, name: Gina 1795142543301, balance:  [90.0000000000-->] 0E-10, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc66b50  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,313 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a360)   										 - 2026-11-19 18:42:23,313 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a360)   										 - 2026-11-19 18:42:23,313 - logic_logger - INFO
-..Order[197] {AfterFlush Event} id: 197, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-10-24 00:00:00, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b4a0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,313 - logic_logger - INFO
-..Order[197] {publish_kafka_message: topic='order_shipping', key={'id': 197}} id: 197, notes: behave test, customer_id: 54, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-10-24 00:00:00, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b4a0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,316 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cee00) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,123 - logic_logger - INFO
+..Order[229] {Update - client} id: 229, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7920  session: 0x10e4cee00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,123 - logic_logger - INFO
+....Customer[55] {Update - Adjusting customer: balance} id: 55, name: Ship Cust 1795146363109, balance:  [330.0000000000-->] 0E-10, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10f2bad50  session: 0x10e4cee00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,123 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cee00)   										 - 2026-11-19 19:46:03,123 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cee00)   										 - 2026-11-19 19:46:03,123 - logic_logger - INFO
+..Order[229] {AfterFlush Event} id: 229, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7920  session: 0x10e4cee00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,123 - logic_logger - INFO
+..Order[229] {publish_kafka_message: topic='order_shipping', key={'id': 229}} id: 229, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7920  session: 0x10e4cee00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,126 - logic_logger - INFO
 
 ```
 </details>
@@ -2166,26 +2144,27 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a360)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Unshipped Order Not Published ✅ (0.01 s)
-&emsp;  Scenario: Unshipped Order Not Published  
-&emsp;&emsp;    Given Customer "Hal" with credit limit 5000  
-&emsp;&emsp;    When B2B order placed for "Hal" with 1 Widget  
-&emsp;&emsp;    Then no order_shipping message is published  
+#### Scenario: Changing an order without shipping it publishes nothing ✅ (0.54 s)
+&emsp;  Scenario: Changing an order without shipping it publishes nothing  
+&emsp;&emsp;    Given a new customer "Noship Cust" with credit limit 2000  
+&emsp;&emsp;    And a B2B order is placed for "Noship Cust" with 1 Gadget  
+&emsp;&emsp;    When the order notes are changed  
+&emsp;&emsp;    Then no order_shipping message is published for the order  
 
 <details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
+<summary>Rules exercised and logic log (3 transactions)</summary>
 
 
 &nbsp;
 &nbsp;
 
 
-**Rules Used** in Scenario: Unshipped Order Not Published
+**Rules Used** in Scenario: Changing an order without shipping it publishes nothing
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -2198,41 +2177,140 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a360)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Unshipped Order Not Published (2 transactions)
+**Logic Log** in Scenario: Changing an order without shipping it publishes nothing (3 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c65a470) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,325 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Hal 1795142543321", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10ccba7d0  session: 0x10c65a470  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,325 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:23.325672, CreatedOnDay: 2026-11-19, payload: {"Account": "Hal 1795142543321", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10ccba7d0  session: 0x10c65a470  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,325 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 35, order_amount: 7080.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [42-->] 43, request_processed: 36, request_failed: 6, request_stuck: 0  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,326 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 35, order_amount: 7080.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [42-->] 43, request_processed: 36, request_failed: 6, request_stuck: 0  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,326 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 35, order_amount: 7080.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received:  [42-->] 43, request_processed: 36, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,326 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a470)   										 - 2026-11-19 18:42:23,326 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a470)   										 - 2026-11-19 18:42:23,326 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cfac0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,651 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Noship Cust 1795146363641", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e33d550  session: 0x10e4cfac0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,651 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:03.651481, CreatedOnDay: 2026-11-19, payload: {"Account": "Noship Cust 1795146363641", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e33d550  session: 0x10e4cfac0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,651 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 40, order_amount: 12270.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [47-->] 48, request_processed: 38, request_rejected: 8, request_pending: 1  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,652 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 40, order_amount: 12270.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [47-->] 48, request_processed: 38, request_rejected: 8, request_pending: 1  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,652 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 40, order_amount: 12270.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [47-->] 48, request_processed: 38, request_rejected: 8, request_pending:  [1-->] 2  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,652 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cfac0)   										 - 2026-11-19 19:46:03,652 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cfac0)   										 - 2026-11-19 19:46:03,653 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65a470) (sqlalchemy before_flush)			 - 2026-11-19 18:42:23,328 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10cc3f2a0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,328 - logic_logger - INFO
-..OrderB2bRequest[103] {Update - client} id: 103, CreatedOn: 2026-11-19 18:42:23.325672, CreatedOnDay: 2026-11-19, payload: {"Account": "Hal 1795142543321", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10ccba7d0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,328 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 35, order_amount: 7080.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 43, request_processed:  [36-->] 37, request_failed: 6, request_stuck: 1  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,328 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 35, order_amount: 7080.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 43, request_processed:  [36-->] 37, request_failed: 6, request_stuck: 1  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,328 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 35, order_amount: 7080.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 43, request_processed:  [36-->] 37, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,328 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 55, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c86b530  session: 0x10c65a470  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,328 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c86b530  session: 0x10c65a470  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,329 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c86b530  session: 0x10c65a470  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,329 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [35-->] 36, order_amount: 7080.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,329 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [35-->] 36, order_amount: 7080.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,329 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [35-->] 36, order_amount: 7080.00, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,329 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10ccba850  session: 0x10c65a470  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,329 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10ccba850  session: 0x10c65a470  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,329 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10ccba850  session: 0x10c65a470  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,329 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b530  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,329 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 36, order_amount:  [7080.00-->] 7170.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,329 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 36, order_amount:  [7080.00-->] 7170.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,329 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 36, order_amount:  [7080.00-->] 7170.0000000000, message_received: 6, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae2b0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,329 - logic_logger - INFO
-......Customer[55] {Update - Adjusting customer: balance} id: 55, name: Hal 1795142543321, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ccbaad0  session: 0x10c65a470  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:23,329 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a470)   										 - 2026-11-19 18:42:23,329 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a470)   										 - 2026-11-19 18:42:23,330 - logic_logger - INFO
-..Order[198] {AfterFlush Event} id: 198, notes: behave test, customer_id: 55, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b530  session: 0x10c65a470  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:23,330 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cfac0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,656 - logic_logger - INFO
+..OrderB2bRequest[154] {Update - client} id: 154, CreatedOn: 2026-11-19 19:46:03.651481, CreatedOnDay: 2026-11-19, payload: {"Account": "Noship Cust 1795146363641", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e33d550  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,656 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 40, order_amount: 12270.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 48, request_processed:  [38-->] 39, request_rejected: 8, request_pending: 2  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,656 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 40, order_amount: 12270.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 48, request_processed:  [38-->] 39, request_rejected: 8, request_pending: 2  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,657 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 40, order_amount: 12270.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 48, request_processed:  [38-->] 39, request_rejected: 8, request_pending:  [2-->] 1  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,657 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10e78bf50  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,657 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 56, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2a79b0  session: 0x10e4cfac0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,657 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 56, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2a79b0  session: 0x10e4cfac0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,657 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 56, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2a79b0  session: 0x10e4cfac0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,657 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 12270.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 48, request_processed: 39, request_rejected: 8, request_pending: 1  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,657 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 12270.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 48, request_processed: 39, request_rejected: 8, request_pending: 1  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,657 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 12270.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 48, request_processed: 39, request_rejected: 8, request_pending: 1  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,657 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e3b3250  session: 0x10e4cfac0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,658 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10e3b3250  session: 0x10e4cfac0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,658 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10e3b3250  session: 0x10e4cfac0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,658 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 56, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a79b0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,658 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 41, order_amount:  [12270.00-->] 12420.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 48, request_processed: 39, request_rejected: 8, request_pending: 1  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,658 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 41, order_amount:  [12270.00-->] 12420.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 48, request_processed: 39, request_rejected: 8, request_pending: 1  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,658 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 41, order_amount:  [12270.00-->] 12420.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 48, request_processed: 39, request_rejected: 8, request_pending: 1  row: 0x10e8620a0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,658 - logic_logger - INFO
+......Customer[56] {Update - Adjusting customer: balance} id: 56, name: Noship Cust 1795146363641, balance:  [0E-10-->] 150.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10e82c9d0  session: 0x10e4cfac0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,658 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cfac0)   										 - 2026-11-19 19:46:03,658 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cfac0)   										 - 2026-11-19 19:46:03,659 - logic_logger - INFO
+..Order[230] {AfterFlush Event} id: 230, notes: behave test, customer_id: 56, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a79b0  session: 0x10e4cfac0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:03,660 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cfce0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:03,667 - logic_logger - INFO
+..Order[230] {Update - client} id: 230, notes:  [behave test-->] edited 1795146363664, customer_id: 56, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a76e0  session: 0x10e4cfce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,667 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cfce0)   										 - 2026-11-19 19:46:03,667 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cfce0)   										 - 2026-11-19 19:46:03,668 - logic_logger - INFO
+..Order[230] {AfterFlush Event} id: 230, notes:  [behave test-->] edited 1795146363664, customer_id: 56, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a76e0  session: 0x10e4cfce0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:03,668 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Changing an already shipped order does not publish again ✅ (1.1 s)
+&emsp;  Scenario: Changing an already shipped order does not publish again  
+&emsp;&emsp;    Given a new customer "Reship Cust" with credit limit 2000  
+&emsp;&emsp;    And a B2B order is placed for "Reship Cust" with 1 Gadget  
+&emsp;&emsp;    And the order is shipped  
+&emsp;&emsp;    When the order notes are changed  
+&emsp;&emsp;    Then exactly one order_shipping message is published for the order  
+
+<details markdown>
+<summary>Rules exercised and logic log (4 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Changing an already shipped order does not publish again
+```
+  DailyFlow  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
+    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
+    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
+    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
+  Customer  
+    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+  Item  
+    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+    9. Derive Item.unit_price as Copy(product.unit_price)  
+  Order  
+    10. RowEvent Order._send_order_to_shipping()  
+    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: Changing an already shipped order does not publish again (4 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x10f2fc6b0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:04,190 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Reship Cust 1795146364181", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f20c4d0  session: 0x10f2fc6b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:04,191 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:04.191146, CreatedOnDay: 2026-11-19, payload: {"Account": "Reship Cust 1795146364181", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f20c4d0  session: 0x10f2fc6b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:04,191 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 41, order_amount: 12420.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [48-->] 49, request_processed: 39, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,191 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 41, order_amount: 12420.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [48-->] 49, request_processed: 39, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,192 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 41, order_amount: 12420.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received:  [48-->] 49, request_processed: 39, request_rejected: 8, request_pending:  [1-->] 2  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,192 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10f2fc6b0)   										 - 2026-11-19 19:46:04,192 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10f2fc6b0)   										 - 2026-11-19 19:46:04,192 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10f2fc6b0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:04,196 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10f2d42f0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,196 - logic_logger - INFO
+..OrderB2bRequest[155] {Update - client} id: 155, CreatedOn: 2026-11-19 19:46:04.191146, CreatedOnDay: 2026-11-19, payload: {"Account": "Reship Cust 1795146364181", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10f20c4d0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,196 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 41, order_amount: 12420.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 49, request_processed:  [39-->] 40, request_rejected: 8, request_pending: 2  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,196 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 41, order_amount: 12420.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 49, request_processed:  [39-->] 40, request_rejected: 8, request_pending: 2  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,197 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 41, order_amount: 12420.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 49, request_processed:  [39-->] 40, request_rejected: 8, request_pending:  [2-->] 1  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,197 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 57, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2a7800  session: 0x10f2fc6b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:04,197 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 57, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2a7800  session: 0x10f2fc6b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:04,197 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 57, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2a7800  session: 0x10f2fc6b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:04,197 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [41-->] 42, order_amount: 12420.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,197 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [41-->] 42, order_amount: 12420.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,197 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [41-->] 42, order_amount: 12420.00, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,197 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e783d50  session: 0x10f2fc6b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:04,197 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10e783d50  session: 0x10f2fc6b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:04,198 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10e783d50  session: 0x10f2fc6b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:04,198 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 57, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7800  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,198 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 42, order_amount:  [12420.00-->] 12570.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,198 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 42, order_amount:  [12420.00-->] 12570.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,198 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 42, order_amount:  [12420.00-->] 12570.0000000000, message_received: 8, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,198 - logic_logger - INFO
+......Customer[57] {Update - Adjusting customer: balance} id: 57, name: Reship Cust 1795146364181, balance:  [0E-10-->] 150.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10f2c8bd0  session: 0x10f2fc6b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,198 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10f2fc6b0)   										 - 2026-11-19 19:46:04,198 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10f2fc6b0)   										 - 2026-11-19 19:46:04,199 - logic_logger - INFO
+..Order[231] {AfterFlush Event} id: 231, notes: behave test, customer_id: 57, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7800  session: 0x10f2fc6b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:04,200 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10f2fc380) (sqlalchemy before_flush)			 - 2026-11-19 19:46:04,204 - logic_logger - INFO
+..Order[231] {Update - client} id: 231, notes: behave test, customer_id: 57, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7530  session: 0x10f2fc380  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,205 - logic_logger - INFO
+....Customer[57] {Update - Adjusting customer: balance} id: 57, name: Reship Cust 1795146364181, balance:  [150.0000000000-->] 0E-10, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10f30ecd0  session: 0x10f2fc380  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,205 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10f2fc380)   										 - 2026-11-19 19:46:04,205 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10f2fc380)   										 - 2026-11-19 19:46:04,206 - logic_logger - INFO
+..Order[231] {AfterFlush Event} id: 231, notes: behave test, customer_id: 57, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7530  session: 0x10f2fc380  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,206 - logic_logger - INFO
+..Order[231] {publish_kafka_message: topic='order_shipping', key={'id': 231}} id: 231, notes: behave test, customer_id: 57, CreatedOn: 2026-11-19, date_shipped:  [None-->] 2026-11-19 00:00:00, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7530  session: 0x10f2fc380  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,209 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e433df0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:04,720 - logic_logger - INFO
+..Order[231] {Update - client} id: 231, notes:  [behave test-->] edited 1795146364717, customer_id: 57, CreatedOn: 2026-11-19, date_shipped: 2026-11-19, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7800  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,720 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433df0)   										 - 2026-11-19 19:46:04,720 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433df0)   										 - 2026-11-19 19:46:04,721 - logic_logger - INFO
+..Order[231] {AfterFlush Event} id: 231, notes:  [behave test-->] edited 1795146364717, customer_id: 57, CreatedOn: 2026-11-19, date_shipped: 2026-11-19, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a7800  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:04,721 - logic_logger - INFO
 
 ```
 </details>
@@ -2245,13 +2323,13 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a470)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Order Message Delivered ✅ (2.1 s)
-&emsp;  Scenario: Order Message Delivered  
-&emsp;&emsp;    Given Customer "Quinn" with credit limit 5000  
-&emsp;&emsp;    When an inbound order message for "Quinn" with 1 Widget and 2 Gadget is delivered to topic order_b2b  
+#### Scenario: Order message for a known customer creates the order ✅ (0.56 s)
+&emsp;  Scenario: Order message for a known customer creates the order  
+&emsp;&emsp;    Given a new customer "Kafka Cust" with credit limit 5000  
+&emsp;&emsp;    When an order message for "Kafka Cust" with 1 Widget and 2 Gadget is delivered to topic order_b2b  
 &emsp;&emsp;    Then the message is processed  
-&emsp;&emsp;    And the Customer's newest order has 2 items totaling 390  
-&emsp;&emsp;    And Customer balance should be 390  
+&emsp;&emsp;    And "Kafka Cust" has one order with total 390  
+&emsp;&emsp;    And the order items are 1 Widget and 2 Gadget  
 
 <details markdown>
 <summary>Rules exercised and logic log (3 transactions)</summary>
@@ -2261,12 +2339,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a470)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Order Message Delivered
+**Rules Used** in Scenario: Order message for a known customer creates the order
 ```
   DailyFlow  
-    1. Derive DailyFlow.message_failed as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_failed, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.message_stuck as Formula (1): Rule.formula(derive=models.DailyFlow.message_stuc [...]  
-    3. Derive DailyFlow.message_received as Count(OrderB2bMessage Where  - None, insert_parent)  
+    1. Derive DailyFlow.message_rejected as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_rejected, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.message_received as Count(OrderB2bMessage Where  - None, insert_parent)  
+    3. Derive DailyFlow.message_pending as Formula (1): Rule.formula(derive=models.DailyFlow.message_pend [...]  
     4. Derive DailyFlow.message_processed as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_processed, as_count_of=models.OrderB2bMessage, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -2281,55 +2359,55 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a470)   										 - 2026-11-19 
     11. RowEvent Order._send_order_to_shipping()  
     12. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Order Message Delivered (3 transactions)
+**Logic Log** in Scenario: Order message for a known customer creates the order (3 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c65a7a0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:24,874 - logic_logger - INFO
-..OrderB2bMessage[None] {Insert - client} id: None, received_at: 2026-11-19 18:42:24.874449, payload: {"Account": "Quinn 1795142543333", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None, CreatedOn: None, CreatedOnDay: None  row: 0x10c86bb60  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,875 - logic_logger - INFO
-..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, received_at: 2026-11-19 18:42:24.874449, payload: {"Account": "Quinn 1795142543333", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None, CreatedOn: 2026-11-19 18:42:24.875320, CreatedOnDay: 2026-11-19  row: 0x10c86bb60  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,875 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_received} day: 2026-11-19, order_count: 36, order_amount: 7170.00, message_received:  [6-->] 7, message_processed: 3, message_failed: 3, message_stuck: 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c3aac50  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,876 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula message_stuck} day: 2026-11-19, order_count: 36, order_amount: 7170.00, message_received:  [6-->] 7, message_processed: 3, message_failed: 3, message_stuck:  [0-->] 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c3aac50  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,876 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 36, order_amount: 7170.00, message_received:  [6-->] 7, message_processed: 3, message_failed: 3, message_stuck:  [0-->] 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c3aac50  session: 0x10c65a7a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,876 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a7a0)   										 - 2026-11-19 18:42:24,877 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a7a0)   										 - 2026-11-19 18:42:24,878 - logic_logger - INFO
-..OrderB2bMessage[115] {AfterFlush Event} id: 115, received_at: 2026-11-19 18:42:24.874449, payload: {"Account": "Quinn 1795142543333", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None, CreatedOn: 2026-11-19 18:42:24.875320, CreatedOnDay: 2026-11-19  row: 0x10c86bb60  session: 0x10c65a7a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,878 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cee00) (sqlalchemy before_flush)			 - 2026-11-19 19:46:05,251 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {..., is_processed: False, error_text: None  row: 0x10e53f2d0  session: 0x10e4cee00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,252 - logic_logger - INFO
+..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:05.254975, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10e53f2d0  session: 0x10e4cee00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,255 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_received} day: 2026-11-19, order_count: 42, order_amount: 12570.00, message_received:  [8-->] 9, message_processed: 4, message_rejected: 3, message_pending: 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10e4cee00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,256 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 42, order_amount: 12570.00, message_received:  [8-->] 9, message_processed: 4, message_rejected: 3, message_pending:  [1-->] 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10e4cee00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,259 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 42, order_amount: 12570.00, message_received:  [8-->] 9, message_processed: 4, message_rejected: 3, message_pending:  [1-->] 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10e4cee00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,259 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cee00)   										 - 2026-11-19 19:46:05,259 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cee00)   										 - 2026-11-19 19:46:05,261 - logic_logger - INFO
+..OrderB2bMessage[93] {AfterFlush Event} id: 93, CreatedOn: 2026-11-19 19:46:05.254975, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10e53f2d0  session: 0x10e4cee00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,261 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c659e10) (sqlalchemy before_flush)			 - 2026-11-19 18:42:24,887 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave kafka test, customer_id: 56, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c869250  session: 0x10c659e10  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,887 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave kafka test, customer_id: 56, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c869250  session: 0x10c659e10  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,887 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave kafka test, customer_id: 56, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c869250  session: 0x10c659e10  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,887 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [36-->] 37, order_amount: 7170.00, message_received: 7, message_processed: 3, message_failed: 3, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,888 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [36-->] 37, order_amount: 7170.00, message_received: 7, message_processed: 3, message_failed: 3, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,888 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [36-->] 37, order_amount: 7170.00, message_received: 7, message_processed: 3, message_failed: 3, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,888 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x10cc67b50  session: 0x10c659e10  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,888 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10cc67b50  session: 0x10c659e10  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,889 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10cc67b50  session: 0x10c659e10  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,889 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka test, customer_id: 56, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869250  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,889 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 37, order_amount:  [7170.00-->] 7260.0000000000, message_received: 7, message_processed: 3, message_failed: 3, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,889 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 37, order_amount:  [7170.00-->] 7260.0000000000, message_received: 7, message_processed: 3, message_failed: 3, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,889 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 37, order_amount:  [7170.00-->] 7260.0000000000, message_received: 7, message_processed: 3, message_failed: 3, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,890 - logic_logger - INFO
-......Customer[56] {Update - Adjusting customer: balance} id: 56, name: Quinn 1795142543333, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ccb9c50  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,890 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x10cc660d0  session: 0x10c659e10  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,890 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10cc660d0  session: 0x10c659e10  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,890 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10cc660d0  session: 0x10c659e10  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,890 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka test, customer_id: 56, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [90.0000000000-->] 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869250  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,890 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 37, order_amount:  [7260.0000000000-->] 7560.0000000000, message_received: 7, message_processed: 3, message_failed: 3, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,891 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 37, order_amount:  [7260.0000000000-->] 7560.0000000000, message_received: 7, message_processed: 3, message_failed: 3, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,891 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 37, order_amount:  [7260.0000000000-->] 7560.0000000000, message_received: 7, message_processed: 3, message_failed: 3, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,891 - logic_logger - INFO
-......Customer[56] {Update - Adjusting customer: balance} id: 56, name: Quinn 1795142543333, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ccb9c50  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,891 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659e10)   										 - 2026-11-19 18:42:24,894 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659e10)   										 - 2026-11-19 18:42:24,899 - logic_logger - INFO
-..Order[199] {AfterFlush Event} id: 199, notes: behave kafka test, customer_id: 56, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c869250  session: 0x10c659e10  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:24,899 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce470) (sqlalchemy before_flush)			 - 2026-11-19 19:46:05,268 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave kafka message, customer_id: 58, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2d9c70  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,268 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave kafka message, customer_id: 58, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,269 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave kafka message, customer_id: 58, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,269 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [42-->] 43, order_amount: 12570.00, message_received: 9, message_processed: 4, message_rejected: 3, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,269 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [42-->] 43, order_amount: 12570.00, message_received: 9, message_processed: 4, message_rejected: 3, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,269 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [42-->] 43, order_amount: 12570.00, message_received: 9, message_processed: 4, message_rejected: 3, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,269 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x10e2def50  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,270 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10e2def50  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,270 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10e2def50  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,270 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka message, customer_id: 58, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,270 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 43, order_amount:  [12570.00-->] 12660.0000000000, message_received: 9, message_processed: 4, message_rejected: 3, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,270 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 43, order_amount:  [12570.00-->] 12660.0000000000, message_received: 9, message_processed: 4, message_rejected: 3, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,271 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 43, order_amount:  [12570.00-->] 12660.0000000000, message_received: 9, message_processed: 4, message_rejected: 3, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,271 - logic_logger - INFO
+......Customer[58] {Update - Adjusting customer: balance} id: 58, name: Kafka Cust 1795146365236, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f1fd250  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,271 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x10f20c2d0  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,271 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10f20c2d0  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,271 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10f20c2d0  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,271 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka message, customer_id: 58, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [90.0000000000-->] 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,271 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 43, order_amount:  [12660.0000000000-->] 12960.0000000000, message_received: 9, message_processed: 4, message_rejected: 3, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,272 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 43, order_amount:  [12660.0000000000-->] 12960.0000000000, message_received: 9, message_processed: 4, message_rejected: 3, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,272 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 43, order_amount:  [12660.0000000000-->] 12960.0000000000, message_received: 9, message_processed: 4, message_rejected: 3, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,272 - logic_logger - INFO
+......Customer[58] {Update - Adjusting customer: balance} id: 58, name: Kafka Cust 1795146365236, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f1fd250  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,272 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce470)   										 - 2026-11-19 19:46:05,272 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce470)   										 - 2026-11-19 19:46:05,273 - logic_logger - INFO
+..Order[232] {AfterFlush Event} id: 232, notes: behave kafka message, customer_id: 58, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,273 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c659e10) (sqlalchemy before_flush)			 - 2026-11-19 18:42:24,900 - logic_logger - INFO
-..OrderB2bMessage[115] {Update - client} id: 115, received_at: 2026-11-19 18:42:24.874449, payload: {"Account": "Quinn 1795142543333", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None, CreatedOn: 2026-11-19 18:42:24.875320, CreatedOnDay: 2026-11-19  row: 0x10c86af90  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,900 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_processed} day: 2026-11-19, order_count: 37, order_amount: 7560.0000000000, message_received: 7, message_processed:  [3-->] 4, message_failed: 3, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,900 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula message_stuck} day: 2026-11-19, order_count: 37, order_amount: 7560.0000000000, message_received: 7, message_processed:  [3-->] 4, message_failed: 3, message_stuck:  [1-->] 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,900 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 37, order_amount: 7560.0000000000, message_received: 7, message_processed:  [3-->] 4, message_failed: 3, message_stuck:  [1-->] 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae620  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,900 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659e10)   										 - 2026-11-19 18:42:24,900 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659e10)   										 - 2026-11-19 18:42:24,901 - logic_logger - INFO
-..OrderB2bMessage[115] {AfterFlush Event} id: 115, received_at: 2026-11-19 18:42:24.874449, payload: {"Account": "Quinn 1795142543333", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None, CreatedOn: 2026-11-19 18:42:24.875320, CreatedOnDay: 2026-11-19  row: 0x10c86af90  session: 0x10c659e10  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:24,901 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce470) (sqlalchemy before_flush)			 - 2026-11-19 19:46:05,274 - logic_logger - INFO
+..OrderB2bMessage[93] {Update - client} id: 93, CreatedOn: 2026-11-19 19:46:05.254975, CreatedOnDay: 2026-11-19, payload: {..., is_processed:  [False-->] True, error_text: None  row: 0x10f2b9350  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,274 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_processed} day: 2026-11-19, order_count: 43, order_amount: 12960.0000000000, message_received: 9, message_processed:  [4-->] 5, message_rejected: 3, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,274 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 43, order_amount: 12960.0000000000, message_received: 9, message_processed:  [4-->] 5, message_rejected: 3, message_pending:  [2-->] 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,274 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 43, order_amount: 12960.0000000000, message_received: 9, message_processed:  [4-->] 5, message_rejected: 3, message_pending:  [2-->] 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8615a0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,274 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce470)   										 - 2026-11-19 19:46:05,274 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce470)   										 - 2026-11-19 19:46:05,275 - logic_logger - INFO
+..OrderB2bMessage[93] {AfterFlush Event} id: 93, CreatedOn: 2026-11-19 19:46:05.254975, CreatedOnDay: 2026-11-19, payload: {..., is_processed:  [False-->] True, error_text: None  row: 0x10f2b9350  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,275 - logic_logger - INFO
 
 ```
 </details>
@@ -2337,10 +2415,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659e10)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Unknown Account Message Rejected ✅ (0.53 s)
-&emsp;  Scenario: Unknown Account Message Rejected  
-&emsp;&emsp;    When an inbound order message for an unknown account is delivered to topic order_b2b  
-&emsp;&emsp;    Then the message is rejected with "no Customer found"  
+#### Scenario: Order message with an unknown product is rejected ✅ (0.55 s)
+&emsp;  Scenario: Order message with an unknown product is rejected  
+&emsp;&emsp;    Given a new customer "Kafka Bad" with credit limit 5000  
+&emsp;&emsp;    When an order message for "Kafka Bad" with 1 Sprocket is delivered to topic order_b2b  
+&emsp;&emsp;    Then the message is rejected with "Product"  
+&emsp;&emsp;    And "Kafka Bad" has no orders  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -2350,37 +2430,37 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659e10)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Unknown Account Message Rejected
+**Rules Used** in Scenario: Order message with an unknown product is rejected
 ```
   DailyFlow  
-    1. Derive DailyFlow.message_failed as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_failed, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.message_stuck as Formula (1): Rule.formula(derive=models.DailyFlow.message_stuc [...]  
-    3. Derive DailyFlow.message_received as Count(OrderB2bMessage Where  - None, insert_parent)  
+    1. Derive DailyFlow.message_rejected as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_rejected, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.message_received as Count(OrderB2bMessage Where  - None, insert_parent)  
+    3. Derive DailyFlow.message_pending as Formula (1): Rule.formula(derive=models.DailyFlow.message_pend [...]  
     4. Derive DailyFlow.message_processed as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_processed, as_count_of=models.OrderB2bMessage, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
   OrderB2bMessage  
     5. RowEvent OrderB2bMessage._publish_order_b2b()  
 ```
-**Logic Log** in Scenario: Unknown Account Message Rejected (2 transactions)
+**Logic Log** in Scenario: Order message with an unknown product is rejected (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c65bbd0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:25,441 - logic_logger - INFO
-..OrderB2bMessage[None] {Insert - client} id: None, received_at: 2026-11-19 18:42:25.441132, payload: {"Account": "Nobody 1795142545436", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None, CreatedOn: None, CreatedOnDay: None  row: 0x10c86b260  session: 0x10c65bbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:25,441 - logic_logger - INFO
-..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, received_at: 2026-11-19 18:42:25.441132, payload: {"Account": "Nobody 1795142545436", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None, CreatedOn: 2026-11-19 18:42:25.441692, CreatedOnDay: 2026-11-19  row: 0x10c86b260  session: 0x10c65bbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:25,441 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_received} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received:  [7-->] 8, message_processed: 4, message_failed: 3, message_stuck: 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae570  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,445 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula message_stuck} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received:  [7-->] 8, message_processed: 4, message_failed: 3, message_stuck:  [0-->] 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae570  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,445 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received:  [7-->] 8, message_processed: 4, message_failed: 3, message_stuck:  [0-->] 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ae570  session: 0x10c65bbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,445 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65bbd0)   										 - 2026-11-19 18:42:25,448 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bbd0)   										 - 2026-11-19 18:42:25,448 - logic_logger - INFO
-..OrderB2bMessage[116] {AfterFlush Event} id: 116, received_at: 2026-11-19 18:42:25.441132, payload: {"Account": "Nobody 1795142545436", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None, CreatedOn: 2026-11-19 18:42:25.441692, CreatedOnDay: 2026-11-19  row: 0x10c86b260  session: 0x10c65bbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:25,448 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cf8a0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:05,810 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {..., is_processed: False, error_text: None  row: 0x10e3b3250  session: 0x10e4cf8a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,810 - logic_logger - INFO
+..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:05.810435, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10e3b3250  session: 0x10e4cf8a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,810 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_received} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received:  [9-->] 10, message_processed: 5, message_rejected: 3, message_pending: 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10df795a0  session: 0x10e4cf8a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,811 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received:  [9-->] 10, message_processed: 5, message_rejected: 3, message_pending:  [1-->] 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10df795a0  session: 0x10e4cf8a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,811 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received:  [9-->] 10, message_processed: 5, message_rejected: 3, message_pending:  [1-->] 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10df795a0  session: 0x10e4cf8a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,811 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cf8a0)   										 - 2026-11-19 19:46:05,812 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cf8a0)   										 - 2026-11-19 19:46:05,816 - logic_logger - INFO
+..OrderB2bMessage[94] {AfterFlush Event} id: 94, CreatedOn: 2026-11-19 19:46:05.810435, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10e3b3250  session: 0x10e4cf8a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:05,816 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65a690) (sqlalchemy before_flush)			 - 2026-11-19 18:42:25,453 - logic_logger - INFO
-..OrderB2bMessage[116] {Update - client} id: 116, received_at: 2026-11-19 18:42:25.441132, payload: {"Account": "Nobody 1795142545436", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text:  [None-->] resolve_lookups: no Customer found for fk_col='customer_id' from source fields, CreatedOn: 2026-11-19 18:42:25.441692, CreatedOnDay: 2026-11-19  row: 0x10cd00cb0  session: 0x10c65a690  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,453 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_failed} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 8, message_processed: 4, message_failed:  [3-->] 4, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ad860  session: 0x10c65a690  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,454 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula message_stuck} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 8, message_processed: 4, message_failed:  [3-->] 4, message_stuck:  [1-->] 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ad860  session: 0x10c65a690  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,454 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 8, message_processed: 4, message_failed:  [3-->] 4, message_stuck:  [1-->] 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ad860  session: 0x10c65a690  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,454 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a690)   										 - 2026-11-19 18:42:25,454 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a690)   										 - 2026-11-19 18:42:25,455 - logic_logger - INFO
-..OrderB2bMessage[116] {AfterFlush Event} id: 116, received_at: 2026-11-19 18:42:25.441132, payload: {"Account": "Nobody 1795142545436", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text:  [None-->] resolve_lookups: no Customer found for fk_col='customer_id' from source fields, CreatedOn: 2026-11-19 18:42:25.441692, CreatedOnDay: 2026-11-19  row: 0x10cd00cb0  session: 0x10c65a690  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,455 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e433df0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:05,822 - logic_logger - INFO
+..OrderB2bMessage[94] {Update - client} id: 94, CreatedOn: 2026-11-19 19:46:05.810435, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text:  [None-->] resolve_lookups: no Product found for fk_col='product_id' from source fields  row: 0x10f2c9150  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,822 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_rejected} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 10, message_processed: 5, message_rejected:  [3-->] 4, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,822 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 10, message_processed: 5, message_rejected:  [3-->] 4, message_pending:  [2-->] 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,823 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 10, message_processed: 5, message_rejected:  [3-->] 4, message_pending:  [2-->] 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,823 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433df0)   										 - 2026-11-19 19:46:05,823 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433df0)   										 - 2026-11-19 19:46:05,823 - logic_logger - INFO
+..OrderB2bMessage[94] {AfterFlush Event} id: 94, CreatedOn: 2026-11-19 19:46:05.810435, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text:  [None-->] resolve_lookups: no Product found for fk_col='product_id' from source fields  row: 0x10f2c9150  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:05,823 - logic_logger - INFO
 
 ```
 </details>
@@ -2388,10 +2468,11 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a690)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Rejected Message Keeps Its Error (live Kafka only) ✅ (0.54 s)
-&emsp;  Scenario: Rejected Message Keeps Its Error (live Kafka only)  
-&emsp;&emsp;    When an inbound order message for an unknown account is delivered live to topic order_b2b  
-&emsp;&emsp;    Then the message row keeps is_processed false and its error_text  
+#### Scenario: Rejected message stays on the blob with its error (live Kafka only) ✅ (0.55 s)
+&emsp;  Scenario: Rejected message stays on the blob with its error (live Kafka only)  
+&emsp;&emsp;    Given a new customer "Kafka Live Bad" with credit limit 5000  
+&emsp;&emsp;    When an order message for "Kafka Live Bad" with 1 Sprocket is delivered live to topic order_b2b  
+&emsp;&emsp;    Then the message blob is not processed and has error text  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -2401,37 +2482,37 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a690)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Rejected Message Keeps Its Error (live Kafka only)
+**Rules Used** in Scenario: Rejected message stays on the blob with its error (live Kafka only)
 ```
   DailyFlow  
-    1. Derive DailyFlow.message_failed as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_failed, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.message_stuck as Formula (1): Rule.formula(derive=models.DailyFlow.message_stuc [...]  
-    3. Derive DailyFlow.message_received as Count(OrderB2bMessage Where  - None, insert_parent)  
+    1. Derive DailyFlow.message_rejected as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_rejected, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.message_received as Count(OrderB2bMessage Where  - None, insert_parent)  
+    3. Derive DailyFlow.message_pending as Formula (1): Rule.formula(derive=models.DailyFlow.message_pend [...]  
     4. Derive DailyFlow.message_processed as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_processed, as_count_of=models.OrderB2bMessage, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
   OrderB2bMessage  
     5. RowEvent OrderB2bMessage._publish_order_b2b()  
 ```
-**Logic Log** in Scenario: Rejected Message Keeps Its Error (live Kafka only) (2 transactions)
+**Logic Log** in Scenario: Rejected message stays on the blob with its error (live Kafka only) (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c65a140) (sqlalchemy before_flush)			 - 2026-11-19 18:42:25,975 - logic_logger - INFO
-..OrderB2bMessage[None] {Insert - client} id: None, received_at: 2026-11-19 18:42:25.975172, payload: {"Account": "Nobody 1795142545970", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None, CreatedOn: None, CreatedOnDay: None  row: 0x10cd017f0  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:25,975 - logic_logger - INFO
-..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, received_at: 2026-11-19 18:42:25.975172, payload: {"Account": "Nobody 1795142545970", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None, CreatedOn: 2026-11-19 18:42:25.975922, CreatedOnDay: 2026-11-19  row: 0x10cd017f0  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:25,975 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_received} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received:  [8-->] 9, message_processed: 4, message_failed: 4, message_stuck: 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7adb20  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,977 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula message_stuck} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received:  [8-->] 9, message_processed: 4, message_failed: 4, message_stuck:  [0-->] 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7adb20  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,977 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received:  [8-->] 9, message_processed: 4, message_failed: 4, message_stuck:  [0-->] 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7adb20  session: 0x10c65a140  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,978 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a140)   										 - 2026-11-19 18:42:25,978 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a140)   										 - 2026-11-19 18:42:25,984 - logic_logger - INFO
-..OrderB2bMessage[117] {AfterFlush Event} id: 117, received_at: 2026-11-19 18:42:25.975172, payload: {"Account": "Nobody 1795142545970", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None, CreatedOn: 2026-11-19 18:42:25.975922, CreatedOnDay: 2026-11-19  row: 0x10cd017f0  session: 0x10c65a140  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:25,984 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cdf20) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,358 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {..., is_processed: False, error_text: None  row: 0x10e2c6c50  session: 0x10e4cdf20  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,358 - logic_logger - INFO
+..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:06.358772, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10e2c6c50  session: 0x10e4cdf20  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,358 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_received} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received:  [10-->] 11, message_processed: 5, message_rejected: 4, message_pending: 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e862360  session: 0x10e4cdf20  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,359 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received:  [10-->] 11, message_processed: 5, message_rejected: 4, message_pending:  [1-->] 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e862360  session: 0x10e4cdf20  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,360 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received:  [10-->] 11, message_processed: 5, message_rejected: 4, message_pending:  [1-->] 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e862360  session: 0x10e4cdf20  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,362 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cdf20)   										 - 2026-11-19 19:46:06,362 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cdf20)   										 - 2026-11-19 19:46:06,365 - logic_logger - INFO
+..OrderB2bMessage[95] {AfterFlush Event} id: 95, CreatedOn: 2026-11-19 19:46:06.358772, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10e2c6c50  session: 0x10e4cdf20  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,365 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c659d00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:25,989 - logic_logger - INFO
-..OrderB2bMessage[117] {Update - client} id: 117, received_at: 2026-11-19 18:42:25.975172, payload: {"Account": "Nobody 1795142545970", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text:  [None-->] resolve_lookups: no Customer found for fk_col='customer_id' from source fields, CreatedOn: 2026-11-19 18:42:25.975922, CreatedOnDay: 2026-11-19  row: 0x10cd01e20  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,989 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_failed} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed:  [4-->] 5, message_stuck: 1, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ac680  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,990 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula message_stuck} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed:  [4-->] 5, message_stuck:  [1-->] 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ac680  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,990 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed:  [4-->] 5, message_stuck:  [1-->] 0, request_received: 43, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ac680  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,990 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659d00)   										 - 2026-11-19 18:42:25,990 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659d00)   										 - 2026-11-19 18:42:25,990 - logic_logger - INFO
-..OrderB2bMessage[117] {AfterFlush Event} id: 117, received_at: 2026-11-19 18:42:25.975172, payload: {"Account": "Nobody 1795142545970", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text:  [None-->] resolve_lookups: no Customer found for fk_col='customer_id' from source fields, CreatedOn: 2026-11-19 18:42:25.975922, CreatedOnDay: 2026-11-19  row: 0x10cd01e20  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:25,990 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e433df0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,371 - logic_logger - INFO
+..OrderB2bMessage[95] {Update - client} id: 95, CreatedOn: 2026-11-19 19:46:06.358772, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text:  [None-->] resolve_lookups: no Product found for fk_col='product_id' from source fields  row: 0x10f2e3b50  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,371 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_rejected} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected:  [4-->] 5, message_pending: 2, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,371 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected:  [4-->] 5, message_pending:  [2-->] 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,371 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected:  [4-->] 5, message_pending:  [2-->] 1, request_received: 49, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,371 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433df0)   										 - 2026-11-19 19:46:06,372 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433df0)   										 - 2026-11-19 19:46:06,372 - logic_logger - INFO
+..OrderB2bMessage[95] {AfterFlush Event} id: 95, CreatedOn: 2026-11-19 19:46:06.358772, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text:  [None-->] resolve_lookups: no Product found for fk_col='product_id' from source fields  row: 0x10f2e3b50  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,372 - logic_logger - INFO
 
 ```
 </details>
@@ -2444,11 +2525,13 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659d00)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Order Placed Is Dated Today ✅ (0.02 s)
-&emsp;  Scenario: Order Placed Is Dated Today  
-&emsp;&emsp;    Given Customer "Dana" with credit limit 5000  
-&emsp;&emsp;    When B2B order placed for "Dana" with 1 Widget  
-&emsp;&emsp;    Then the Order is dated today  
+#### Scenario: A new order is dated today and counted in today's totals ✅ (0.03 s)
+&emsp;  Scenario: A new order is dated today and counted in today's totals  
+&emsp;&emsp;    Given a new customer "Flow Cust" with credit limit 5000  
+&emsp;&emsp;    And today's totals are noted  
+&emsp;&emsp;    When a B2B order is placed for "Flow Cust" with 2 Widget and 1 Gadget  
+&emsp;&emsp;    Then the order is dated today  
+&emsp;&emsp;    And today's order count rose by 1 and order amount by 330  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -2458,12 +2541,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659d00)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Order Placed Is Dated Today
+**Rules Used** in Scenario: A new order is dated today and counted in today's totals
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -2476,84 +2559,49 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659d00)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Order Placed Is Dated Today (2 transactions)
+**Logic Log** in Scenario: A new order is dated today and counted in today's totals (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c6597b0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,519 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Dana 1795142546512", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10cc66250  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,519 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:26.519890, CreatedOnDay: 2026-11-19, payload: {"Account": "Dana 1795142546512", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10cc66250  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,519 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [43-->] 44, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,520 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [43-->] 44, request_processed: 37, request_failed: 6, request_stuck: 0  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,520 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [43-->] 44, request_processed: 37, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,520 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6597b0)   										 - 2026-11-19 18:42:26,520 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 18:42:26,521 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce250) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,906 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Flow Cust 1795146366894", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f20c250  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,906 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:06.906554, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Cust 1795146366894", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f20c250  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,906 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [49-->] 50, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,907 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [49-->] 50, request_processed: 40, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,907 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [49-->] 50, request_processed: 40, request_rejected: 8, request_pending:  [1-->] 2  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,907 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,907 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,907 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c6597b0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,524 - logic_logger - INFO
-..OrderB2bRequest[104] {Update - client} id: 104, CreatedOn: 2026-11-19 18:42:26.519890, CreatedOnDay: 2026-11-19, payload: {"Account": "Dana 1795142546512", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10cc66250  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,524 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 44, request_processed:  [37-->] 38, request_failed: 6, request_stuck: 1  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,525 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 44, request_processed:  [37-->] 38, request_failed: 6, request_stuck: 1  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,525 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 37, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 44, request_processed:  [37-->] 38, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,525 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10ccdda90  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,525 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 57, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10cd01b50  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,525 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 57, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10cd01b50  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,525 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 57, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10cd01b50  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,525 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [37-->] 38, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 44, request_processed: 38, request_failed: 6, request_stuck: 0  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,525 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [37-->] 38, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 44, request_processed: 38, request_failed: 6, request_stuck: 0  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,526 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [37-->] 38, order_amount: 7560.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 44, request_processed: 38, request_failed: 6, request_stuck: 0  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,526 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10cc663d0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,526 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10cc663d0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,526 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10cc663d0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,526 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 57, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01b50  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,526 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 38, order_amount:  [7560.00-->] 7650.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 44, request_processed: 38, request_failed: 6, request_stuck: 0  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,526 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 38, order_amount:  [7560.00-->] 7650.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 44, request_processed: 38, request_failed: 6, request_stuck: 0  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,526 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 38, order_amount:  [7560.00-->] 7650.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 44, request_processed: 38, request_failed: 6, request_stuck: 0  row: 0x10c7ad860  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,526 - logic_logger - INFO
-......Customer[57] {Update - Adjusting customer: balance} id: 57, name: Dana 1795142546512, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c705a50  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,526 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6597b0)   										 - 2026-11-19 18:42:26,526 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 18:42:26,527 - logic_logger - INFO
-..Order[200] {AfterFlush Event} id: 200, notes: behave test, customer_id: 57, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01b50  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,527 - logic_logger - INFO
-
-```
-</details>
-
-&nbsp;
-&nbsp;
-
-#### Scenario: Order With Its Own Date Keeps It ✅ (0.01 s)
-&emsp;  Scenario: Order With Its Own Date Keeps It  
-&emsp;&emsp;    Given Customer "Eli" with credit limit 5000  
-&emsp;&emsp;    When an Order dated 2026-01-15 is created for "Eli" through the API  
-&emsp;&emsp;    Then the Order keeps its date 2026-01-15  
-
-<details markdown>
-<summary>Rules exercised and logic log (1 transaction)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Order With Its Own Date Keeps It
-```
-  Customer  
-    1. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  DailyFlow  
-    2. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
-    3. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
-  Order  
-    4. RowEvent Order._send_order_to_shipping()  
-```
-**Logic Log** in Scenario: Order With Its Own Date Keeps It (1 transaction)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c658e20) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,540 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave dated, customer_id: 58, CreatedOn: 2026-01-15 00:00:00, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10cd02330  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,540 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave dated, customer_id: 58, CreatedOn: 2026-01-15 00:00:00, date_shipped: None, amount_total: None, CreatedOnDay: 2026-01-15  row: 0x10cd02330  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,540 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave dated, customer_id: 58, CreatedOn: 2026-01-15 00:00:00, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-01-15  row: 0x10cd02330  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,540 - logic_logger - INFO
-....DailyFlow[2026-01-15] {Update - Adjusting daily_flow: order_count} day: 2026-01-15, order_count:  [1-->] 2, order_amount: 0.00, message_received: 0, message_processed: 0, message_failed: 0, message_stuck: 0, request_received: 0, request_processed: 0, request_failed: 0, request_stuck: 0  row: 0x10c7ac470  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,540 - logic_logger - INFO
-....DailyFlow[2026-01-15] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-01-15, order_count:  [1-->] 2, order_amount: 0.00, message_received: 0, message_processed: 0, message_failed: 0, message_stuck: 0, request_received: 0, request_processed: 0, request_failed: 0, request_stuck: 0  row: 0x10c7ac470  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,541 - logic_logger - INFO
-....DailyFlow[2026-01-15] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-01-15, order_count:  [1-->] 2, order_amount: 0.00, message_received: 0, message_processed: 0, message_failed: 0, message_stuck: 0, request_received: 0, request_processed: 0, request_failed: 0, request_stuck: 0  row: 0x10c7ac470  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,541 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c658e20)   										 - 2026-11-19 18:42:26,541 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c658e20)   										 - 2026-11-19 18:42:26,541 - logic_logger - INFO
-..Order[201] {AfterFlush Event} id: 201, notes: behave dated, customer_id: 58, CreatedOn: 2026-01-15 00:00:00, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-01-15  row: 0x10cd02330  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,541 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce250) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,911 - logic_logger - INFO
+..OrderB2bRequest[156] {Update - client} id: 156, CreatedOn: 2026-11-19 19:46:06.906554, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Cust 1795146366894", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}, {"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10f20c250  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,911 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed:  [40-->] 41, request_rejected: 8, request_pending: 2  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,912 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed:  [40-->] 41, request_rejected: 8, request_pending: 2  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,912 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 43, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed:  [40-->] 41, request_rejected: 8, request_pending:  [2-->] 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,912 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10f2f73f0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,912 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 61, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2da4e0  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,912 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 61, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2da4e0  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,912 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 61, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2da4e0  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,912 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [43-->] 44, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed: 41, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,912 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [43-->] 44, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed: 41, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,912 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [43-->] 44, order_amount: 12960.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed: 41, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,912 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: None  row: 0x10f2ba050  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,912 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10f2ba050  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,913 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10f2ba050  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,913 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 61, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2da4e0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,913 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 44, order_amount:  [12960.00-->] 13140.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed: 41, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,913 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 44, order_amount:  [12960.00-->] 13140.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed: 41, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,913 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 44, order_amount:  [12960.00-->] 13140.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed: 41, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,913 - logic_logger - INFO
+......Customer[61] {Update - Adjusting customer: balance} id: 61, name: Flow Cust 1795146366894, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f2e29d0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,913 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10f2bb350  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,913 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10f2bb350  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,913 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10f2bb350  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,913 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 61, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2da4e0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,913 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 44, order_amount:  [13140.0000000000-->] 13290.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed: 41, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,914 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 44, order_amount:  [13140.0000000000-->] 13290.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed: 41, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,914 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 44, order_amount:  [13140.0000000000-->] 13290.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 50, request_processed: 41, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,914 - logic_logger - INFO
+......Customer[61] {Update - Adjusting customer: balance} id: 61, name: Flow Cust 1795146366894, balance:  [180.0000000000-->] 330.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f2e29d0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,914 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,914 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,915 - logic_logger - INFO
+..Order[233] {AfterFlush Event} id: 233, notes: behave test, customer_id: 61, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 330.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2da4e0  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,915 - logic_logger - INFO
 
 ```
 </details>
@@ -2561,88 +2609,26 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c658e20)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: New Order Counts In Daily Totals ✅ (0.02 s)
-&emsp;  Scenario: New Order Counts In Daily Totals  
-&emsp;&emsp;    Given Customer "Fran" with credit limit 5000  
-&emsp;&emsp;    And the daily totals are read  
-&emsp;&emsp;    When B2B order placed for "Fran" with 2 Widget  
-&emsp;&emsp;    Then today's order_count rises by 1 and order_amount by 180  
+#### Scenario: Changing an order's value adjusts today's order amount ✅ (0.03 s)
+&emsp;  Scenario: Changing an order's value adjusts today's order amount  
+&emsp;&emsp;    Given a new customer "Flow Change" with credit limit 5000  
+&emsp;&emsp;    And a B2B order is placed for "Flow Change" with 2 Widget and 1 Gadget  
+&emsp;&emsp;    And today's totals are noted  
+&emsp;&emsp;    When the quantity of the first item is changed to 3  
+&emsp;&emsp;    Then today's order count rose by 0 and order amount by 90  
 
-<details markdown>
-<summary>Rules exercised and logic log (2 transactions)</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: New Order Counts In Daily Totals
-```
-  DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
-    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
-    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
-  Customer  
-    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
-  Item  
-    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
-    9. Derive Item.unit_price as Copy(product.unit_price)  
-  Order  
-    10. RowEvent Order._send_order_to_shipping()  
-    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
-```
-**Logic Log** in Scenario: New Order Counts In Daily Totals (2 transactions)
-```
-Logic Phase:		ROW LOGIC		(session=0x10c659150) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,554 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Fran 1795142546548", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c5a2bd0  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,554 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:26.554852, CreatedOnDay: 2026-11-19, payload: {"Account": "Fran 1795142546548", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c5a2bd0  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,554 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 38, order_amount: 7650.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [44-->] 45, request_processed: 38, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,555 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 38, order_amount: 7650.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [44-->] 45, request_processed: 38, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,555 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 38, order_amount: 7650.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [44-->] 45, request_processed: 38, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,555 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659150)   										 - 2026-11-19 18:42:26,555 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659150)   										 - 2026-11-19 18:42:26,555 - logic_logger - INFO
-
-
-Logic Phase:		ROW LOGIC		(session=0x10c659150) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,558 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10c85fa80  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,558 - logic_logger - INFO
-..OrderB2bRequest[105] {Update - client} id: 105, CreatedOn: 2026-11-19 18:42:26.554852, CreatedOnDay: 2026-11-19, payload: {"Account": "Fran 1795142546548", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c5a2bd0  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,558 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 38, order_amount: 7650.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 45, request_processed:  [38-->] 39, request_failed: 6, request_stuck: 1  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,558 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 38, order_amount: 7650.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 45, request_processed:  [38-->] 39, request_failed: 6, request_stuck: 1  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,558 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 38, order_amount: 7650.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 45, request_processed:  [38-->] 39, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,558 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 59, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10c86b140  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,558 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 59, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10c86b140  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,558 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 59, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10c86b140  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,558 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [38-->] 39, order_amount: 7650.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 45, request_processed: 39, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,559 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [38-->] 39, order_amount: 7650.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 45, request_processed: 39, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,559 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [38-->] 39, order_amount: 7650.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 45, request_processed: 39, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,559 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10c6c1850  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,559 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10c6c1850  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,559 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c6c1850  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,559 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 59, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b140  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,559 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 39, order_amount:  [7650.00-->] 7830.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 45, request_processed: 39, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,559 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 39, order_amount:  [7650.00-->] 7830.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 45, request_processed: 39, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,559 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 39, order_amount:  [7650.00-->] 7830.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 45, request_processed: 39, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,559 - logic_logger - INFO
-......Customer[59] {Update - Adjusting customer: balance} id: 59, name: Fran 1795142546548, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c670e50  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,559 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659150)   										 - 2026-11-19 18:42:26,559 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659150)   										 - 2026-11-19 18:42:26,560 - logic_logger - INFO
-..Order[202] {AfterFlush Event} id: 202, notes: behave test, customer_id: 59, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b140  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,560 - logic_logger - INFO
-
-```
-</details>
+_No logic log for this scenario: the test does not open one, so no rules are shown for it (see "How to add more tests")._
 
 &nbsp;
 &nbsp;
 
-#### Scenario: Changed Item Adjusts Daily Amount ✅ (0.02 s)
-&emsp;  Scenario: Changed Item Adjusts Daily Amount  
-&emsp;&emsp;    Given Customer "Gale" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Gale" with 2 Widget  
-&emsp;&emsp;    And the daily totals are read  
-&emsp;&emsp;    When Item quantity changed to 3  
-&emsp;&emsp;    Then today's order_count rises by 0 and order_amount by 90  
+#### Scenario: Deleting an order removes it from today's totals ✅ (0.02 s)
+&emsp;  Scenario: Deleting an order removes it from today's totals  
+&emsp;&emsp;    Given a new customer "Flow Delete" with credit limit 5000  
+&emsp;&emsp;    And a B2B order is placed for "Flow Delete" with 1 Gadget  
+&emsp;&emsp;    And today's totals are noted  
+&emsp;&emsp;    When the order is deleted  
+&emsp;&emsp;    Then today's order count rose by -1 and order amount by -150  
 
 <details markdown>
 <summary>Rules exercised and logic log (3 transactions)</summary>
@@ -2652,12 +2638,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659150)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Changed Item Adjusts Daily Amount
+**Rules Used** in Scenario: Deleting an order removes it from today's totals
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -2670,54 +2656,52 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659150)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Changed Item Adjusts Daily Amount (3 transactions)
+**Logic Log** in Scenario: Deleting an order removes it from today's totals (3 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c65bdf0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,569 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Gale 1795142546565", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c6c0950  session: 0x10c65bdf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,569 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:26.569552, CreatedOnDay: 2026-11-19, payload: {"Account": "Gale 1795142546565", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10c6c0950  session: 0x10c65bdf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,569 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 39, order_amount: 7830.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [45-->] 46, request_processed: 39, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,569 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 39, order_amount: 7830.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [45-->] 46, request_processed: 39, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,570 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 39, order_amount: 7830.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [45-->] 46, request_processed: 39, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,570 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65bdf0)   										 - 2026-11-19 18:42:26,570 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bdf0)   										 - 2026-11-19 18:42:26,570 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce250) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,961 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Flow Delete 1795146366957", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f20c2d0  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,961 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:06.962030, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Delete 1795146366957", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f20c2d0  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,962 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [51-->] 52, request_processed: 42, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,962 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [51-->] 52, request_processed: 42, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,962 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [51-->] 52, request_processed: 42, request_rejected: 8, request_pending:  [1-->] 2  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,962 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,962 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,963 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65bdf0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,572 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10ccdd2b0  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,572 - logic_logger - INFO
-..OrderB2bRequest[106] {Update - client} id: 106, CreatedOn: 2026-11-19 18:42:26.569552, CreatedOnDay: 2026-11-19, payload: {"Account": "Gale 1795142546565", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c6c0950  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,572 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 39, order_amount: 7830.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed:  [39-->] 40, request_failed: 6, request_stuck: 1  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,572 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 39, order_amount: 7830.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed:  [39-->] 40, request_failed: 6, request_stuck: 1  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,572 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 39, order_amount: 7830.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed:  [39-->] 40, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,573 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 60, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10cd012e0  session: 0x10c65bdf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,573 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 60, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10cd012e0  session: 0x10c65bdf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,573 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 60, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10cd012e0  session: 0x10c65bdf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,573 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [39-->] 40, order_amount: 7830.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed: 40, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,573 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [39-->] 40, order_amount: 7830.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed: 40, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,573 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [39-->] 40, order_amount: 7830.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed: 40, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,573 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10cc11a50  session: 0x10c65bdf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,573 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10cc11a50  session: 0x10c65bdf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,573 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10cc11a50  session: 0x10c65bdf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,573 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 60, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd012e0  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,573 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 40, order_amount:  [7830.00-->] 8010.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed: 40, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,573 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 40, order_amount:  [7830.00-->] 8010.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed: 40, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,573 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 40, order_amount:  [7830.00-->] 8010.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed: 40, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,573 - logic_logger - INFO
-......Customer[60] {Update - Adjusting customer: balance} id: 60, name: Gale 1795142546565, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c8651d0  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,573 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65bdf0)   										 - 2026-11-19 18:42:26,574 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bdf0)   										 - 2026-11-19 18:42:26,574 - logic_logger - INFO
-..Order[203] {AfterFlush Event} id: 203, notes: behave test, customer_id: 60, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd012e0  session: 0x10c65bdf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,574 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce250) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,964 - logic_logger - INFO
+..OrderB2bRequest[158] {Update - client} id: 158, CreatedOn: 2026-11-19 19:46:06.962030, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Delete 1795146366957", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10f20c2d0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,965 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed:  [42-->] 43, request_rejected: 8, request_pending: 2  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,965 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed:  [42-->] 43, request_rejected: 8, request_pending: 2  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,965 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed:  [42-->] 43, request_rejected: 8, request_pending:  [2-->] 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,965 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10f2ab4d0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,965 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 63, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2db770  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,965 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 63, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2db770  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,965 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 63, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2db770  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,965 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,965 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,965 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,965 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10f30f7d0  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,966 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10f30f7d0  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,966 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10f30f7d0  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,966 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 63, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2db770  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,966 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13860.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,966 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13860.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,966 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13860.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,966 - logic_logger - INFO
+......Customer[63] {Update - Adjusting customer: balance} id: 63, name: Flow Delete 1795146366957, balance:  [0E-10-->] 150.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f2e3b50  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,966 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,966 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,967 - logic_logger - INFO
+..Order[235] {AfterFlush Event} id: 235, notes: behave test, customer_id: 63, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2db770  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,967 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c6597b0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,581 - logic_logger - INFO
-..Item[354] {Update - client} id: 354, order_id: 203, product_id: 2, quantity:  [2-->] 3, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10cc94450  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,582 - logic_logger - INFO
-..Item[354] {Formula amount} id: 354, order_id: 203, product_id: 2, quantity:  [2-->] 3, amount:  [180.0000000000-->] 270.0000000000, unit_price: 90.0000000000  row: 0x10cc94450  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,582 - logic_logger - INFO
-....Order[203] {Update - Adjusting order: amount_total} id: 203, notes: behave test, customer_id: 60, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 270.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01ac0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,582 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 40, order_amount:  [8010.00-->] 8100.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed: 40, request_failed: 6, request_stuck: 0  row: 0x10c7af5f0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,582 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 40, order_amount:  [8010.00-->] 8100.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed: 40, request_failed: 6, request_stuck: 0  row: 0x10c7af5f0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,582 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 40, order_amount:  [8010.00-->] 8100.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 46, request_processed: 40, request_failed: 6, request_stuck: 0  row: 0x10c7af5f0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,582 - logic_logger - INFO
-......Customer[60] {Update - Adjusting customer: balance} id: 60, name: Gale 1795142546565, balance:  [180.0000000000-->] 270.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c5b7650  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,582 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6597b0)   										 - 2026-11-19 18:42:26,583 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 18:42:26,583 - logic_logger - INFO
-....Order[203] {AfterFlush Event} id: 203, notes: behave test, customer_id: 60, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [180.0000000000-->] 270.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01ac0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,583 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cd480) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,972 - logic_logger - INFO
+..Order[235] {Delete - client} id: 235, notes: behave test, customer_id: 63, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2db6e0  session: 0x10e4cd480  ins_upd_dlt: dlt, initial: dlt - 2026-11-19 19:46:06,972 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count, order_amount} day: 2026-11-19, order_count:  [46-->] 45, order_amount:  [13860.00-->] 13710.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e861910  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,972 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [46-->] 45, order_amount:  [13860.00-->] 13710.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e861910  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,972 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [46-->] 45, order_amount:  [13860.00-->] 13710.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 52, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e861910  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,972 - logic_logger - INFO
+....Customer[63] {Update - Adjusting customer: balance} id: 63, name: Flow Delete 1795146366957, balance:  [150.0000000000-->] 0E-10, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f357ad0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,972 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cd480)   										 - 2026-11-19 19:46:06,972 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cd480)   										 - 2026-11-19 19:46:06,973 - logic_logger - INFO
+..Order[235] {AfterFlush Event} id: 235, notes: behave test, customer_id: 63, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2db6e0  session: 0x10e4cd480  ins_upd_dlt: dlt, initial: dlt - 2026-11-19 19:46:06,973 - logic_logger - INFO
 
 ```
 </details>
@@ -2725,13 +2709,15 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Deleted Order Leaves Daily Totals ✅ (0.02 s)
-&emsp;  Scenario: Deleted Order Leaves Daily Totals  
-&emsp;&emsp;    Given Customer "Hank" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Hank" with 2 Widget  
-&emsp;&emsp;    And the daily totals are read  
-&emsp;&emsp;    When Order is deleted  
-&emsp;&emsp;    Then today's order_count rises by -1 and order_amount by -180  
+#### Scenario: Moving an order to another day adjusts both days ✅ (0.03 s)
+&emsp;  Scenario: Moving an order to another day adjusts both days  
+&emsp;&emsp;    Given a new customer "Flow Move" with credit limit 5000  
+&emsp;&emsp;    And a B2B order is placed for "Flow Move" with 1 Gadget  
+&emsp;&emsp;    And today's totals are noted  
+&emsp;&emsp;    And the totals of day "2000-01-01" are noted  
+&emsp;&emsp;    When the order is moved to day "2000-01-01"  
+&emsp;&emsp;    Then today's order count rose by -1 and order amount by -150  
+&emsp;&emsp;    And day "2000-01-01" order count rose by 1 and order amount by 150  
 
 <details markdown>
 <summary>Rules exercised and logic log (3 transactions)</summary>
@@ -2741,12 +2727,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Deleted Order Leaves Daily Totals
+**Rules Used** in Scenario: Moving an order to another day adjusts both days
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -2759,52 +2745,54 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Deleted Order Leaves Daily Totals (3 transactions)
+**Logic Log** in Scenario: Moving an order to another day adjusts both days (3 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c659d00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,592 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Hank 1795142546588", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10cc10850  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,592 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:26.592204, CreatedOnDay: 2026-11-19, payload: {"Account": "Hank 1795142546588", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None  row: 0x10cc10850  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,592 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [46-->] 47, request_processed: 40, request_failed: 6, request_stuck: 0  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,592 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [46-->] 47, request_processed: 40, request_failed: 6, request_stuck: 0  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,592 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [46-->] 47, request_processed: 40, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,592 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659d00)   										 - 2026-11-19 18:42:26,592 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659d00)   										 - 2026-11-19 18:42:26,592 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10f2fc490) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,984 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Flow Move 1795146366980", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f2c9dd0  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,985 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:06.985060, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Move 1795146366980", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f2c9dd0  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,985 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [52-->] 53, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,985 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [52-->] 53, request_processed: 43, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,985 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [52-->] 53, request_processed: 43, request_rejected: 8, request_pending:  [1-->] 2  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,985 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10f2fc490)   										 - 2026-11-19 19:46:06,985 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10f2fc490)   										 - 2026-11-19 19:46:06,985 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c659d00) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,594 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10ccdc0c0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,594 - logic_logger - INFO
-..OrderB2bRequest[107] {Update - client} id: 107, CreatedOn: 2026-11-19 18:42:26.592204, CreatedOnDay: 2026-11-19, payload: {"Account": "Hank 1795142546588", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None  row: 0x10cc10850  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,594 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed:  [40-->] 41, request_failed: 6, request_stuck: 1  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,595 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed:  [40-->] 41, request_failed: 6, request_stuck: 1  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,595 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed:  [40-->] 41, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,595 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 61, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10cd01fd0  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,595 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 61, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10cd01fd0  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,595 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 61, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10cd01fd0  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,595 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed: 41, request_failed: 6, request_stuck: 0  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,595 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed: 41, request_failed: 6, request_stuck: 0  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,595 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed: 41, request_failed: 6, request_stuck: 0  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,595 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: None  row: 0x10c6ebf50  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,595 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 2, amount: None, unit_price: 90.0000000000  row: 0x10c6ebf50  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,595 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10c6ebf50  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,595 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 61, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01fd0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,595 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 41, order_amount:  [8100.00-->] 8280.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed: 41, request_failed: 6, request_stuck: 0  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,595 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 41, order_amount:  [8100.00-->] 8280.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed: 41, request_failed: 6, request_stuck: 0  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,596 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 41, order_amount:  [8100.00-->] 8280.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed: 41, request_failed: 6, request_stuck: 0  row: 0x10c7af6a0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,596 - logic_logger - INFO
-......Customer[61] {Update - Adjusting customer: balance} id: 61, name: Hank 1795142546588, balance:  [0E-10-->] 180.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c5b6cd0  session: 0x10c659d00  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,596 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659d00)   										 - 2026-11-19 18:42:26,596 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659d00)   										 - 2026-11-19 18:42:26,596 - logic_logger - INFO
-..Order[204] {AfterFlush Event} id: 204, notes: behave test, customer_id: 61, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01fd0  session: 0x10c659d00  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,596 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10f2fc490) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,987 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10f35c6e0  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,987 - logic_logger - INFO
+..OrderB2bRequest[159] {Update - client} id: 159, CreatedOn: 2026-11-19 19:46:06.985060, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Move 1795146366980", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10f2c9dd0  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,987 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed:  [43-->] 44, request_rejected: 8, request_pending: 2  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed:  [43-->] 44, request_rejected: 8, request_pending: 2  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed:  [43-->] 44, request_rejected: 8, request_pending:  [2-->] 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 64, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2da720  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2da720  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2da720  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10f2c81d0  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10f2c81d0  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10f2c81d0  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,988 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2da720  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13860.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13860.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,988 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13860.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861650  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,989 - logic_logger - INFO
+......Customer[64] {Update - Adjusting customer: balance} id: 64, name: Flow Move 1795146366980, balance:  [0E-10-->] 150.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f2b8850  session: 0x10f2fc490  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,989 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10f2fc490)   										 - 2026-11-19 19:46:06,989 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10f2fc490)   										 - 2026-11-19 19:46:06,990 - logic_logger - INFO
+..Order[236] {AfterFlush Event} id: 236, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2da720  session: 0x10f2fc490  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:06,990 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65a360) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,601 - logic_logger - INFO
-..Order[204] {Delete - client} id: 204, notes: behave test, customer_id: 61, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b140  session: 0x10c65a360  ins_upd_dlt: dlt, initial: dlt - 2026-11-19 18:42:26,601 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count, order_amount} day: 2026-11-19, order_count:  [41-->] 40, order_amount:  [8280.00-->] 8100.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed: 41, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,601 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [41-->] 40, order_amount:  [8280.00-->] 8100.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed: 41, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,601 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [41-->] 40, order_amount:  [8280.00-->] 8100.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 47, request_processed: 41, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,601 - logic_logger - INFO
-....Customer[61] {Update - Adjusting customer: balance} id: 61, name: Hank 1795142546588, balance:  [180.0000000000-->] 0E-10, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc12cd0  session: 0x10c65a360  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,601 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a360)   										 - 2026-11-19 18:42:26,601 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a360)   										 - 2026-11-19 18:42:26,602 - logic_logger - INFO
-..Order[204] {AfterFlush Event} id: 204, notes: behave test, customer_id: 61, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 180.0000000000, CreatedOnDay: 2026-11-19  row: 0x10c86b140  session: 0x10c65a360  ins_upd_dlt: dlt, initial: dlt - 2026-11-19 18:42:26,602 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce250) (sqlalchemy before_flush)			 - 2026-11-19 19:46:06,996 - logic_logger - INFO
+..Order[236] {Update - client} id: 236, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay:  [2026-11-19-->] 2000-01-01  row: 0x10f2db6e0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2000-01-01] {Update - Adjusting daily_flow: order_count, order_count, order_amount, order_amount} day: 2000-01-01, order_count:  [1-->] 2, order_amount:  [150.00-->] 300.0000000000, message_received: 0, message_processed: 0, message_rejected: 0, message_pending: 0, request_received: 0, request_processed: 0, request_rejected: 0, request_pending: 0  row: 0x10e861910  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2000-01-01] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2000-01-01, order_count:  [1-->] 2, order_amount:  [150.00-->] 300.0000000000, message_received: 0, message_processed: 0, message_rejected: 0, message_pending: 0, request_received: 0, request_processed: 0, request_rejected: 0, request_pending: 0  row: 0x10e861910  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2000-01-01] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2000-01-01, order_count:  [1-->] 2, order_amount:  [150.00-->] 300.0000000000, message_received: 0, message_processed: 0, message_rejected: 0, message_pending: 0, request_received: 0, request_processed: 0, request_rejected: 0, request_pending: 0  row: 0x10e861910  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting Old daily_flow} day: 2026-11-19, order_count:  [46-->] 45, order_amount:  [13860.00-->] 13710.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [46-->] 45, order_amount:  [13860.00-->] 13710.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [46-->] 45, order_amount:  [13860.00-->] 13710.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 53, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e8617b0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,996 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,996 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce250)   										 - 2026-11-19 19:46:06,997 - logic_logger - INFO
+..Order[236] {AfterFlush Event} id: 236, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay:  [2026-11-19-->] 2000-01-01  row: 0x10f2db6e0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:06,997 - logic_logger - INFO
 
 ```
 </details>
@@ -2812,29 +2800,29 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a360)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Order Moved To Another Day ✅ (0.02 s)
-&emsp;  Scenario: Order Moved To Another Day  
-&emsp;&emsp;    Given Customer "Ivo" with credit limit 5000  
-&emsp;&emsp;    And Order is created for "Ivo" with 1 Widget  
-&emsp;&emsp;    And the daily totals are read  
-&emsp;&emsp;    When the Order is moved to yesterday  
-&emsp;&emsp;    Then today's order_count rises by -1 and order_amount by -90  
-&emsp;&emsp;    And yesterday's order_count rises by 1  
+#### Scenario: Accepted and rejected B2B requests are counted ✅ (0.03 s)
+&emsp;  Scenario: Accepted and rejected B2B requests are counted  
+&emsp;&emsp;    Given a new customer "Flow Req" with credit limit 5000  
+&emsp;&emsp;    And today's totals are noted  
+&emsp;&emsp;    When a B2B order is placed for "Flow Req" with 1 Widget  
+&emsp;&emsp;    And a B2B order is placed for "Flow Req" with 1 Sprocket  
+&emsp;&emsp;    Then today's requests rose by 2 received, 1 processed, 1 rejected and 0 not yet done  
+&emsp;&emsp;    And the B2B request is dated today  
 
 <details markdown>
-<summary>Rules exercised and logic log (3 transactions)</summary>
+<summary>Rules exercised and logic log (4 transactions)</summary>
 
 
 &nbsp;
 &nbsp;
 
 
-**Rules Used** in Scenario: Order Moved To Another Day
+**Rules Used** in Scenario: Accepted and rejected B2B requests are counted
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -2847,54 +2835,60 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a360)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Order Moved To Another Day (3 transactions)
+**Logic Log** in Scenario: Accepted and rejected B2B requests are counted (4 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c6597b0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,610 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Ivo 1795142546606", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10cc65050  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,610 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:26.610841, CreatedOnDay: 2026-11-19, payload: {"Account": "Ivo 1795142546606", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10cc65050  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,610 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [47-->] 48, request_processed: 41, request_failed: 6, request_stuck: 0  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,611 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [47-->] 48, request_processed: 41, request_failed: 6, request_stuck: 0  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,611 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received:  [47-->] 48, request_processed: 41, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,611 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6597b0)   										 - 2026-11-19 18:42:26,611 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 18:42:26,611 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce470) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,012 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Flow Req 1795146367006", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f2ca1d0  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,012 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:07.012886, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Req 1795146367006", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f2ca1d0  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,012 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [53-->] 54, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,013 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [53-->] 54, request_processed: 44, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,013 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [53-->] 54, request_processed: 44, request_rejected: 8, request_pending:  [1-->] 2  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,013 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce470)   										 - 2026-11-19 19:46:07,013 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce470)   										 - 2026-11-19 19:46:07,013 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c6597b0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,613 - logic_logger - INFO
-..OrderB2bRequest[108] {Update - client} id: 108, CreatedOn: 2026-11-19 18:42:26.610841, CreatedOnDay: 2026-11-19, payload: {"Account": "Ivo 1795142546606", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10cc65050  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,613 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed:  [41-->] 42, request_failed: 6, request_stuck: 1  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,614 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed:  [41-->] 42, request_failed: 6, request_stuck: 1  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,614 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed:  [41-->] 42, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,614 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10ccdd160  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,614 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 62, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10cd01ac0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,614 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 62, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10cd01ac0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,614 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 62, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10cd01ac0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,614 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,614 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,614 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 8100.00, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,614 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10c6eaad0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,614 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10c6eaad0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,614 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10c6eaad0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,614 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 62, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01ac0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,614 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 41, order_amount:  [8100.00-->] 8190.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,614 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 41, order_amount:  [8100.00-->] 8190.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,615 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 41, order_amount:  [8100.00-->] 8190.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af800  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,615 - logic_logger - INFO
-......Customer[62] {Update - Adjusting customer: balance} id: 62, name: Ivo 1795142546606, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10cc652d0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,615 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6597b0)   										 - 2026-11-19 18:42:26,615 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 18:42:26,615 - logic_logger - INFO
-..Order[205] {AfterFlush Event} id: 205, notes: behave test, customer_id: 62, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01ac0  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,615 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce470) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,015 - logic_logger - INFO
+..OrderB2bRequest[160] {Update - client} id: 160, CreatedOn: 2026-11-19 19:46:07.012886, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Req 1795146367006", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10f2ca1d0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,015 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 54, request_processed:  [44-->] 45, request_rejected: 8, request_pending: 2  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,015 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 54, request_processed:  [44-->] 45, request_rejected: 8, request_pending: 2  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,015 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 45, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 54, request_processed:  [44-->] 45, request_rejected: 8, request_pending:  [2-->] 1  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,015 - logic_logger - INFO
+..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10f2f7ee0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,015 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 65, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2da7b0  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,016 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 65, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2da7b0  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,016 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 65, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2da7b0  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,016 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 54, request_processed: 45, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,016 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 54, request_processed: 45, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,016 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [45-->] 46, order_amount: 13710.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 54, request_processed: 45, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,016 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10f2baf50  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,016 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10f2baf50  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,016 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10f2baf50  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,016 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 65, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2da7b0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,016 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13800.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 54, request_processed: 45, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,016 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13800.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 54, request_processed: 45, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,016 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 46, order_amount:  [13710.00-->] 13800.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 54, request_processed: 45, request_rejected: 8, request_pending: 1  row: 0x10e861ff0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,016 - logic_logger - INFO
+......Customer[65] {Update - Adjusting customer: balance} id: 65, name: Flow Req 1795146367006, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f2e2dd0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,016 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce470)   										 - 2026-11-19 19:46:07,016 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce470)   										 - 2026-11-19 19:46:07,017 - logic_logger - INFO
+..Order[237] {AfterFlush Event} id: 237, notes: behave test, customer_id: 65, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2da7b0  session: 0x10e4ce470  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,017 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65bdf0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,620 - logic_logger - INFO
-..Order[205] {Update - client} id: 205, notes: behave test, customer_id: 62, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay:  [2026-11-19-->] 2026-11-18  row: 0x10cd01e20  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,620 - logic_logger - INFO
-....DailyFlow[2026-11-18] {Update - Adjusting daily_flow: order_count, order_count, order_amount, order_amount} day: 2026-11-18, order_count:  [10-->] 11, order_amount:  [6158.00-->] 6248.0000000000, message_received: 6, message_processed: 6, message_failed: 0, message_stuck: 0, request_received: 3, request_processed: 3, request_failed: 0, request_stuck: 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,620 - logic_logger - INFO
-....DailyFlow[2026-11-18] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-18, order_count:  [10-->] 11, order_amount:  [6158.00-->] 6248.0000000000, message_received: 6, message_processed: 6, message_failed: 0, message_stuck: 0, request_received: 3, request_processed: 3, request_failed: 0, request_stuck: 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,620 - logic_logger - INFO
-....DailyFlow[2026-11-18] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-18, order_count:  [10-->] 11, order_amount:  [6158.00-->] 6248.0000000000, message_received: 6, message_processed: 6, message_failed: 0, message_stuck: 0, request_received: 3, request_processed: 3, request_failed: 0, request_stuck: 0  row: 0x10c7ac520  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,620 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting Old daily_flow} day: 2026-11-19, order_count:  [41-->] 40, order_amount:  [8190.00-->] 8100.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af330  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,620 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [41-->] 40, order_amount:  [8190.00-->] 8100.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af330  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,620 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [41-->] 40, order_amount:  [8190.00-->] 8100.0000000000, message_received: 9, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af330  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,620 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65bdf0)   										 - 2026-11-19 18:42:26,621 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bdf0)   										 - 2026-11-19 18:42:26,621 - logic_logger - INFO
-..Order[205] {AfterFlush Event} id: 205, notes: behave test, customer_id: 62, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay:  [2026-11-19-->] 2026-11-18  row: 0x10cd01e20  session: 0x10c65bdf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,621 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e433f00) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,019 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Flow Req 1795146367006", "Notes": "behave test", "Items": [{"Name": "Sprocket", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f30d8d0  session: 0x10e433f00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,019 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:07.019728, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Req 1795146367006", "Notes": "behave test", "Items": [{"Name": "Sprocket", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f30d8d0  session: 0x10e433f00  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,019 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [54-->] 55, request_processed: 45, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,020 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [54-->] 55, request_processed: 45, request_rejected: 8, request_pending: 1  row: 0x10e861700  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,020 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [54-->] 55, request_processed: 45, request_rejected: 8, request_pending:  [1-->] 2  row: 0x10e861700  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,020 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433f00)   										 - 2026-11-19 19:46:07,020 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433f00)   										 - 2026-11-19 19:46:07,020 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e433f00) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,022 - logic_logger - INFO
+..OrderB2bRequest[161] {Update - client} id: 161, CreatedOn: 2026-11-19 19:46:07.019728, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Req 1795146367006", "Notes": "behave test", "Items": [{"Name": "Sprocket", "QuantityOrdered": 1}]}, is_processed: False, error_text:  [None-->] ('Lookup failed: missing parent', <Item (transient 4548776272)>, 'Product', "{'Name': 'Sprocket', 'QuantityOrdered': 1}")  row: 0x10f30d8d0  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,022 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_rejected} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 55, request_processed: 45, request_rejected:  [8-->] 9, request_pending: 2  row: 0x10e861700  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,022 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 55, request_processed: 45, request_rejected:  [8-->] 9, request_pending: 2  row: 0x10e861700  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,022 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 55, request_processed: 45, request_rejected:  [8-->] 9, request_pending:  [2-->] 1  row: 0x10e861700  session: 0x10e433f00  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,022 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433f00)   										 - 2026-11-19 19:46:07,022 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433f00)   										 - 2026-11-19 19:46:07,023 - logic_logger - INFO
 
 ```
 </details>
@@ -2902,13 +2896,13 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bdf0)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Delivered Message Counts In Daily Totals ✅ (0.54 s)
-&emsp;  Scenario: Delivered Message Counts In Daily Totals  
-&emsp;&emsp;    Given Customer "Gil" with credit limit 5000  
-&emsp;&emsp;    And the daily totals are read  
-&emsp;&emsp;    When an inbound order message for "Gil" with 1 Widget and 2 Gadget is delivered to topic order_b2b  
-&emsp;&emsp;    Then today's message_received and message_processed rise by 1  
-&emsp;&emsp;    And today's message_stuck is unchanged  
+#### Scenario: A request set back to not processed counts as not yet done ✅ (0.02 s)
+&emsp;  Scenario: A request set back to not processed counts as not yet done  
+&emsp;&emsp;    Given a new customer "Flow Req Undo" with credit limit 5000  
+&emsp;&emsp;    And a B2B order is placed for "Flow Req Undo" with 1 Widget  
+&emsp;&emsp;    And today's totals are noted  
+&emsp;&emsp;    When the B2B request is set back to not processed  
+&emsp;&emsp;    Then today's requests rose by 0 received, -1 processed, 0 rejected and 1 not yet done  
 
 <details markdown>
 <summary>Rules exercised and logic log (3 transactions)</summary>
@@ -2918,12 +2912,98 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bdf0)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Delivered Message Counts In Daily Totals
+**Rules Used** in Scenario: A request set back to not processed counts as not yet done
 ```
   DailyFlow  
-    1. Derive DailyFlow.message_failed as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_failed, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.message_stuck as Formula (1): Rule.formula(derive=models.DailyFlow.message_stuc [...]  
-    3. Derive DailyFlow.message_received as Count(OrderB2bMessage Where  - None, insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
+    4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
+    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
+    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
+  Customer  
+    7. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+  Item  
+    8. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+    9. Derive Item.unit_price as Copy(product.unit_price)  
+  Order  
+    10. RowEvent Order._send_order_to_shipping()  
+    11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: A request set back to not processed counts as not yet done (3 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x10e4cfbd0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,039 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Flow Req Undo 1795146367035", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e2c68d0  session: 0x10e4cfbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,039 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:07.039655, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Req Undo 1795146367035", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e2c68d0  session: 0x10e4cfbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,039 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [55-->] 56, request_processed: 45, request_rejected: 9, request_pending: 1  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,040 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [55-->] 56, request_processed: 45, request_rejected: 9, request_pending: 1  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,040 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received:  [55-->] 56, request_processed: 45, request_rejected: 9, request_pending:  [1-->] 2  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,040 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cfbd0)   										 - 2026-11-19 19:46:07,040 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cfbd0)   										 - 2026-11-19 19:46:07,040 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cfbd0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,042 - logic_logger - INFO
+..OrderB2bRequest[162] {Update - client} id: 162, CreatedOn: 2026-11-19 19:46:07.039655, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Req Undo 1795146367035", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e2c68d0  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,042 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed:  [45-->] 46, request_rejected: 9, request_pending: 2  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,042 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed:  [45-->] 46, request_rejected: 9, request_pending: 2  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,042 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 46, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed:  [45-->] 46, request_rejected: 9, request_pending:  [2-->] 1  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,042 - logic_logger - INFO
+..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10f2f6820  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,042 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 66, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2da450  session: 0x10e4cfbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,042 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 66, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2da450  session: 0x10e4cfbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,042 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 66, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2da450  session: 0x10e4cfbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,042 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [46-->] 47, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed: 46, request_rejected: 9, request_pending: 1  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,042 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [46-->] 47, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed: 46, request_rejected: 9, request_pending: 1  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,042 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [46-->] 47, order_amount: 13800.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed: 46, request_rejected: 9, request_pending: 1  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,042 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10f2e2a50  session: 0x10e4cfbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,043 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10f2e2a50  session: 0x10e4cfbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,043 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10f2e2a50  session: 0x10e4cfbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,043 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 66, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2da450  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,043 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 47, order_amount:  [13800.00-->] 13890.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed: 46, request_rejected: 9, request_pending: 1  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,043 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 47, order_amount:  [13800.00-->] 13890.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed: 46, request_rejected: 9, request_pending: 1  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,043 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 47, order_amount:  [13800.00-->] 13890.0000000000, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed: 46, request_rejected: 9, request_pending: 1  row: 0x10e861700  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,043 - logic_logger - INFO
+......Customer[66] {Update - Adjusting customer: balance} id: 66, name: Flow Req Undo 1795146367035, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f2c86d0  session: 0x10e4cfbd0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,043 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cfbd0)   										 - 2026-11-19 19:46:07,043 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cfbd0)   										 - 2026-11-19 19:46:07,044 - logic_logger - INFO
+..Order[238] {AfterFlush Event} id: 238, notes: behave test, customer_id: 66, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2da450  session: 0x10e4cfbd0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,044 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4ce470) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,048 - logic_logger - INFO
+..OrderB2bRequest[162] {Update - client} id: 162, CreatedOn: 2026-11-19 19:46:07.039655, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Req Undo 1795146367035", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed:  [True-->] False, error_text: None  row: 0x10f30cc50  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,048 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 47, order_amount: 13890.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed:  [46-->] 45, request_rejected: 9, request_pending: 1  row: 0x10e8622b0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,049 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 47, order_amount: 13890.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed:  [46-->] 45, request_rejected: 9, request_pending: 1  row: 0x10e8622b0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,049 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 47, order_amount: 13890.00, message_received: 11, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed:  [46-->] 45, request_rejected: 9, request_pending:  [1-->] 2  row: 0x10e8622b0  session: 0x10e4ce470  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,049 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce470)   										 - 2026-11-19 19:46:07,049 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce470)   										 - 2026-11-19 19:46:07,049 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: An accepted message is counted ✅ (0.55 s)
+&emsp;  Scenario: An accepted message is counted  
+&emsp;&emsp;    Given a new customer "Flow Msg" with credit limit 5000  
+&emsp;&emsp;    And today's totals are noted  
+&emsp;&emsp;    When an order message for "Flow Msg" with 1 Widget and 2 Gadget is delivered to topic order_b2b  
+&emsp;&emsp;    Then the message is processed  
+&emsp;&emsp;    And today's messages rose by 1 received, 1 processed, 0 rejected and 0 not yet done  
+&emsp;&emsp;    And the message is dated today  
+
+<details markdown>
+<summary>Rules exercised and logic log (3 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: An accepted message is counted
+```
+  DailyFlow  
+    1. Derive DailyFlow.message_rejected as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_rejected, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.message_received as Count(OrderB2bMessage Where  - None, insert_parent)  
+    3. Derive DailyFlow.message_pending as Formula (1): Rule.formula(derive=models.DailyFlow.message_pend [...]  
     4. Derive DailyFlow.message_processed as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_processed, as_count_of=models.OrderB2bMessage, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -2938,55 +3018,55 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65bdf0)   										 - 2026-11-19 
     11. RowEvent Order._send_order_to_shipping()  
     12. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Delivered Message Counts In Daily Totals (3 transactions)
+**Logic Log** in Scenario: An accepted message is counted (3 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c659150) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,634 - logic_logger - INFO
-..OrderB2bMessage[None] {Insert - client} id: None, received_at: 2026-11-19 18:42:26.634671, payload: {"Account": "Gil 1795142546627", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None, CreatedOn: None, CreatedOnDay: None  row: 0x10c86af00  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,634 - logic_logger - INFO
-..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, received_at: 2026-11-19 18:42:26.634671, payload: {"Account": "Gil 1795142546627", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None, CreatedOn: 2026-11-19 18:42:26.634888, CreatedOnDay: 2026-11-19  row: 0x10c86af00  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,634 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_received} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received:  [9-->] 10, message_processed: 4, message_failed: 5, message_stuck: 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ac730  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,635 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula message_stuck} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received:  [9-->] 10, message_processed: 4, message_failed: 5, message_stuck:  [0-->] 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ac730  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,635 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 40, order_amount: 8100.00, message_received:  [9-->] 10, message_processed: 4, message_failed: 5, message_stuck:  [0-->] 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ac730  session: 0x10c659150  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,635 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c659150)   										 - 2026-11-19 18:42:26,635 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c659150)   										 - 2026-11-19 18:42:26,636 - logic_logger - INFO
-..OrderB2bMessage[118] {AfterFlush Event} id: 118, received_at: 2026-11-19 18:42:26.634671, payload: {"Account": "Gil 1795142546627", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed: False, error_text: None, CreatedOn: 2026-11-19 18:42:26.634888, CreatedOnDay: 2026-11-19  row: 0x10c86af00  session: 0x10c659150  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,636 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cf790) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,065 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {..., is_processed: False, error_text: None  row: 0x10f1fec50  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,065 - logic_logger - INFO
+..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:07.065839, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10f1fec50  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,065 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_received} day: 2026-11-19, order_count: 47, order_amount: 13890.00, message_received:  [11-->] 12, message_processed: 5, message_rejected: 5, message_pending: 1, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8620a0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,066 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 47, order_amount: 13890.00, message_received:  [11-->] 12, message_processed: 5, message_rejected: 5, message_pending:  [1-->] 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8620a0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,066 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 47, order_amount: 13890.00, message_received:  [11-->] 12, message_processed: 5, message_rejected: 5, message_pending:  [1-->] 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8620a0  session: 0x10e4cf790  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,066 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cf790)   										 - 2026-11-19 19:46:07,066 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cf790)   										 - 2026-11-19 19:46:07,067 - logic_logger - INFO
+..OrderB2bMessage[96] {AfterFlush Event} id: 96, CreatedOn: 2026-11-19 19:46:07.065839, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10f1fec50  session: 0x10e4cf790  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,067 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c658e20) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,642 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave kafka test, customer_id: 63, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10cd01d90  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,642 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave kafka test, customer_id: 63, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10cd01d90  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,642 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave kafka test, customer_id: 63, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10cd01d90  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,642 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 8100.00, message_received: 10, message_processed: 4, message_failed: 5, message_stuck: 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,642 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 8100.00, message_received: 10, message_processed: 4, message_failed: 5, message_stuck: 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,643 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [40-->] 41, order_amount: 8100.00, message_received: 10, message_processed: 4, message_failed: 5, message_stuck: 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,643 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x10c670e50  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,643 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10c670e50  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,643 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10c670e50  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,643 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka test, customer_id: 63, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01d90  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,643 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 41, order_amount:  [8100.00-->] 8190.0000000000, message_received: 10, message_processed: 4, message_failed: 5, message_stuck: 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,643 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 41, order_amount:  [8100.00-->] 8190.0000000000, message_received: 10, message_processed: 4, message_failed: 5, message_stuck: 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,643 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 41, order_amount:  [8100.00-->] 8190.0000000000, message_received: 10, message_processed: 4, message_failed: 5, message_stuck: 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,643 - logic_logger - INFO
-......Customer[63] {Update - Adjusting customer: balance} id: 63, name: Gil 1795142546627, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ccb8cd0  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,643 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x10c6738d0  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,643 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10c6738d0  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,644 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10c6738d0  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,644 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka test, customer_id: 63, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [90.0000000000-->] 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01d90  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,644 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 41, order_amount:  [8190.0000000000-->] 8490.0000000000, message_received: 10, message_processed: 4, message_failed: 5, message_stuck: 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,644 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 41, order_amount:  [8190.0000000000-->] 8490.0000000000, message_received: 10, message_processed: 4, message_failed: 5, message_stuck: 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,644 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 41, order_amount:  [8190.0000000000-->] 8490.0000000000, message_received: 10, message_processed: 4, message_failed: 5, message_stuck: 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,644 - logic_logger - INFO
-......Customer[63] {Update - Adjusting customer: balance} id: 63, name: Gil 1795142546627, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10ccb8cd0  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,644 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c658e20)   										 - 2026-11-19 18:42:26,644 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c658e20)   										 - 2026-11-19 18:42:26,645 - logic_logger - INFO
-..Order[206] {AfterFlush Event} id: 206, notes: behave kafka test, customer_id: 63, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01d90  session: 0x10c658e20  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:26,645 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10f2fc050) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,072 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave kafka message, customer_id: 67, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2a76e0  session: 0x10f2fc050  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,072 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave kafka message, customer_id: 67, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2a76e0  session: 0x10f2fc050  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,072 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave kafka message, customer_id: 67, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2a76e0  session: 0x10f2fc050  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,072 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [47-->] 48, order_amount: 13890.00, message_received: 12, message_processed: 5, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,073 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [47-->] 48, order_amount: 13890.00, message_received: 12, message_processed: 5, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,073 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [47-->] 48, order_amount: 13890.00, message_received: 12, message_processed: 5, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,073 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x10f20c8d0  session: 0x10f2fc050  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,073 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10f20c8d0  session: 0x10f2fc050  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,073 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10f20c8d0  session: 0x10f2fc050  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,073 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka message, customer_id: 67, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a76e0  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,073 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 48, order_amount:  [13890.00-->] 13980.0000000000, message_received: 12, message_processed: 5, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,073 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 48, order_amount:  [13890.00-->] 13980.0000000000, message_received: 12, message_processed: 5, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,073 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 48, order_amount:  [13890.00-->] 13980.0000000000, message_received: 12, message_processed: 5, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,073 - logic_logger - INFO
+......Customer[67] {Update - Adjusting customer: balance} id: 67, name: Flow Msg 1795146367057, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f3579d0  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,074 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x10f2e2dd0  session: 0x10f2fc050  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,074 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10f2e2dd0  session: 0x10f2fc050  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,074 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10f2e2dd0  session: 0x10f2fc050  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,074 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka message, customer_id: 67, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [90.0000000000-->] 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a76e0  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,074 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 48, order_amount:  [13980.0000000000-->] 14280.0000000000, message_received: 12, message_processed: 5, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,074 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 48, order_amount:  [13980.0000000000-->] 14280.0000000000, message_received: 12, message_processed: 5, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,074 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 48, order_amount:  [13980.0000000000-->] 14280.0000000000, message_received: 12, message_processed: 5, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,074 - logic_logger - INFO
+......Customer[67] {Update - Adjusting customer: balance} id: 67, name: Flow Msg 1795146367057, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f3579d0  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,074 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10f2fc050)   										 - 2026-11-19 19:46:07,074 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10f2fc050)   										 - 2026-11-19 19:46:07,075 - logic_logger - INFO
+..Order[239] {AfterFlush Event} id: 239, notes: behave kafka message, customer_id: 67, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2a76e0  session: 0x10f2fc050  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,075 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c658e20) (sqlalchemy before_flush)			 - 2026-11-19 18:42:26,645 - logic_logger - INFO
-..OrderB2bMessage[118] {Update - client} id: 118, received_at: 2026-11-19 18:42:26.634671, payload: {"Account": "Gil 1795142546627", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None, CreatedOn: 2026-11-19 18:42:26.634888, CreatedOnDay: 2026-11-19  row: 0x10cd01e20  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,645 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_processed} day: 2026-11-19, order_count: 41, order_amount: 8490.0000000000, message_received: 10, message_processed:  [4-->] 5, message_failed: 5, message_stuck: 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,645 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula message_stuck} day: 2026-11-19, order_count: 41, order_amount: 8490.0000000000, message_received: 10, message_processed:  [4-->] 5, message_failed: 5, message_stuck:  [1-->] 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,646 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 41, order_amount: 8490.0000000000, message_received: 10, message_processed:  [4-->] 5, message_failed: 5, message_stuck:  [1-->] 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ad910  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,646 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c658e20)   										 - 2026-11-19 18:42:26,646 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c658e20)   										 - 2026-11-19 18:42:26,646 - logic_logger - INFO
-..OrderB2bMessage[118] {AfterFlush Event} id: 118, received_at: 2026-11-19 18:42:26.634671, payload: {"Account": "Gil 1795142546627", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}, {"Name": "Gadget", "QuantityOrdered": 2}]}, is_processed:  [False-->] True, error_text: None, CreatedOn: 2026-11-19 18:42:26.634888, CreatedOnDay: 2026-11-19  row: 0x10cd01e20  session: 0x10c658e20  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:26,646 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10f2fc050) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,075 - logic_logger - INFO
+..OrderB2bMessage[96] {Update - client} id: 96, CreatedOn: 2026-11-19 19:46:07.065839, CreatedOnDay: 2026-11-19, payload: {..., is_processed:  [False-->] True, error_text: None  row: 0x10f2e2e50  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,075 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_processed} day: 2026-11-19, order_count: 48, order_amount: 14280.0000000000, message_received: 12, message_processed:  [5-->] 6, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,075 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 48, order_amount: 14280.0000000000, message_received: 12, message_processed:  [5-->] 6, message_rejected: 5, message_pending:  [2-->] 1, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,076 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 48, order_amount: 14280.0000000000, message_received: 12, message_processed:  [5-->] 6, message_rejected: 5, message_pending:  [2-->] 1, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862200  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,076 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10f2fc050)   										 - 2026-11-19 19:46:07,076 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10f2fc050)   										 - 2026-11-19 19:46:07,076 - logic_logger - INFO
+..OrderB2bMessage[96] {AfterFlush Event} id: 96, CreatedOn: 2026-11-19 19:46:07.065839, CreatedOnDay: 2026-11-19, payload: {..., is_processed:  [False-->] True, error_text: None  row: 0x10f2e2e50  session: 0x10f2fc050  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,076 - logic_logger - INFO
 
 ```
 </details>
@@ -2994,11 +3074,114 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c658e20)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Rejected Message Counts In Daily Totals (live Kafka only) ✅ (0.54 s)
-&emsp;  Scenario: Rejected Message Counts In Daily Totals (live Kafka only)  
-&emsp;&emsp;    Given the daily totals are read  
-&emsp;&emsp;    When an inbound order message for an unknown account is delivered live to topic order_b2b  
-&emsp;&emsp;    Then today's message_received and message_failed rise by 1  
+#### Scenario: A message set back to not processed counts as not yet done ✅ (0.56 s)
+&emsp;  Scenario: A message set back to not processed counts as not yet done  
+&emsp;&emsp;    Given a new customer "Flow Msg Undo" with credit limit 5000  
+&emsp;&emsp;    And an order message for "Flow Msg Undo" with 1 Widget and 2 Gadget is delivered to topic order_b2b  
+&emsp;&emsp;    And today's totals are noted  
+&emsp;&emsp;    When the message is set back to not processed  
+&emsp;&emsp;    Then today's messages rose by 0 received, -1 processed, 0 rejected and 1 not yet done  
+
+<details markdown>
+<summary>Rules exercised and logic log (4 transactions)</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: A message set back to not processed counts as not yet done
+```
+  DailyFlow  
+    1. Derive DailyFlow.message_rejected as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_rejected, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.message_received as Count(OrderB2bMessage Where  - None, insert_parent)  
+    3. Derive DailyFlow.message_pending as Formula (1): Rule.formula(derive=models.DailyFlow.message_pend [...]  
+    4. Derive DailyFlow.message_processed as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_processed, as_count_of=models.OrderB2bMessage, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
+    5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
+    6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
+  OrderB2bMessage  
+    7. RowEvent OrderB2bMessage._publish_order_b2b()  
+  Customer  
+    8. Derive Customer.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None))  
+  Item  
+    9. Derive Item.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]  
+    10. Derive Item.unit_price as Copy(product.unit_price)  
+  Order  
+    11. RowEvent Order._send_order_to_shipping()  
+    12. Derive Order.amount_total as Sum(Item.amount Where  - None)  
+```
+**Logic Log** in Scenario: A message set back to not processed counts as not yet done (4 transactions)
+```
+Logic Phase:		ROW LOGIC		(session=0x10e4cecf0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,615 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {..., is_processed: False, error_text: None  row: 0x10e3a2ed0  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,616 - logic_logger - INFO
+..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:07.616210, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10e3a2ed0  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,616 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_received} day: 2026-11-19, order_count: 48, order_amount: 14280.00, message_received:  [12-->] 13, message_processed: 6, message_rejected: 5, message_pending: 1, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862410  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,617 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 48, order_amount: 14280.00, message_received:  [12-->] 13, message_processed: 6, message_rejected: 5, message_pending:  [1-->] 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862410  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,619 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 48, order_amount: 14280.00, message_received:  [12-->] 13, message_processed: 6, message_rejected: 5, message_pending:  [1-->] 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e862410  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,619 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cecf0)   										 - 2026-11-19 19:46:07,620 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cecf0)   										 - 2026-11-19 19:46:07,622 - logic_logger - INFO
+..OrderB2bMessage[97] {AfterFlush Event} id: 97, CreatedOn: 2026-11-19 19:46:07.616210, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10e3a2ed0  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,622 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cf570) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,628 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave kafka message, customer_id: 68, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2d9c70  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,628 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave kafka message, customer_id: 68, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,628 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave kafka message, customer_id: 68, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,628 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [48-->] 49, order_amount: 14280.00, message_received: 13, message_processed: 6, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,629 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [48-->] 49, order_amount: 14280.00, message_received: 13, message_processed: 6, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,629 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [48-->] 49, order_amount: 14280.00, message_received: 13, message_processed: 6, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,629 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: None  row: 0x10f2c96d0  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,629 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10f2c96d0  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,629 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10f2c96d0  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,630 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka message, customer_id: 68, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,630 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 49, order_amount:  [14280.00-->] 14370.0000000000, message_received: 13, message_processed: 6, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,630 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 49, order_amount:  [14280.00-->] 14370.0000000000, message_received: 13, message_processed: 6, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,630 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 49, order_amount:  [14280.00-->] 14370.0000000000, message_received: 13, message_processed: 6, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,630 - logic_logger - INFO
+......Customer[68] {Update - Adjusting customer: balance} id: 68, name: Flow Msg Undo 1795146367604, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f30f250  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,630 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x10f2c86d0  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,630 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x10f2c86d0  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,631 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x10f2c86d0  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,631 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave kafka message, customer_id: 68, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [90.0000000000-->] 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,631 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 49, order_amount:  [14370.0000000000-->] 14670.0000000000, message_received: 13, message_processed: 6, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,631 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 49, order_amount:  [14370.0000000000-->] 14670.0000000000, message_received: 13, message_processed: 6, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,631 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 49, order_amount:  [14370.0000000000-->] 14670.0000000000, message_received: 13, message_processed: 6, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,631 - logic_logger - INFO
+......Customer[68] {Update - Adjusting customer: balance} id: 68, name: Flow Msg Undo 1795146367604, balance:  [90.0000000000-->] 390.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f30f250  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,631 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cf570)   										 - 2026-11-19 19:46:07,631 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cf570)   										 - 2026-11-19 19:46:07,632 - logic_logger - INFO
+..Order[240] {AfterFlush Event} id: 240, notes: behave kafka message, customer_id: 68, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 390.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e4cf570  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:07,632 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cf570) (sqlalchemy before_flush)			 - 2026-11-19 19:46:07,633 - logic_logger - INFO
+..OrderB2bMessage[97] {Update - client} id: 97, CreatedOn: 2026-11-19 19:46:07.616210, CreatedOnDay: 2026-11-19, payload: {..., is_processed:  [False-->] True, error_text: None  row: 0x10f30e450  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,633 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_processed} day: 2026-11-19, order_count: 49, order_amount: 14670.0000000000, message_received: 13, message_processed:  [6-->] 7, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,633 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 49, order_amount: 14670.0000000000, message_received: 13, message_processed:  [6-->] 7, message_rejected: 5, message_pending:  [2-->] 1, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,633 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 49, order_amount: 14670.0000000000, message_received: 13, message_processed:  [6-->] 7, message_rejected: 5, message_pending:  [2-->] 1, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8619c0  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,633 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cf570)   										 - 2026-11-19 19:46:07,633 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cf570)   										 - 2026-11-19 19:46:07,633 - logic_logger - INFO
+..OrderB2bMessage[97] {AfterFlush Event} id: 97, CreatedOn: 2026-11-19 19:46:07.616210, CreatedOnDay: 2026-11-19, payload: {..., is_processed:  [False-->] True, error_text: None  row: 0x10f30e450  session: 0x10e4cf570  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:07,634 - logic_logger - INFO
+
+
+Logic Phase:		ROW LOGIC		(session=0x10e4cd480) (sqlalchemy before_flush)			 - 2026-11-19 19:46:08,148 - logic_logger - INFO
+..OrderB2bMessage[97] {Update - client} id: 97, CreatedOn: 2026-11-19 19:46:07.616210, CreatedOnDay: 2026-11-19, payload: {..., is_processed:  [True-->] False, error_text: None  row: 0x10f30db50  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,148 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_processed} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 13, message_processed:  [7-->] 6, message_rejected: 5, message_pending: 1, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8622b0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,149 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 13, message_processed:  [7-->] 6, message_rejected: 5, message_pending:  [1-->] 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8622b0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,149 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 13, message_processed:  [7-->] 6, message_rejected: 5, message_pending:  [1-->] 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8622b0  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,149 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cd480)   										 - 2026-11-19 19:46:08,149 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cd480)   										 - 2026-11-19 19:46:08,150 - logic_logger - INFO
+..OrderB2bMessage[97] {AfterFlush Event} id: 97, CreatedOn: 2026-11-19 19:46:07.616210, CreatedOnDay: 2026-11-19, payload: {..., is_processed:  [True-->] False, error_text: None  row: 0x10f30db50  session: 0x10e4cd480  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,150 - logic_logger - INFO
+
+```
+</details>
+
+&nbsp;
+&nbsp;
+
+#### Scenario: A rejected message is counted (live Kafka only) ✅ (0.55 s)
+&emsp;  Scenario: A rejected message is counted (live Kafka only)  
+&emsp;&emsp;    Given a new customer "Flow Msg Bad" with credit limit 5000  
+&emsp;&emsp;    And today's totals are noted  
+&emsp;&emsp;    When an order message for "Flow Msg Bad" with 1 Sprocket is delivered live to topic order_b2b  
+&emsp;&emsp;    Then today's messages rose by 1 received, 0 processed, 1 rejected and 0 not yet done  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -3008,37 +3191,37 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c658e20)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Rejected Message Counts In Daily Totals (live Kafka only)
+**Rules Used** in Scenario: A rejected message is counted (live Kafka only)
 ```
   DailyFlow  
-    1. Derive DailyFlow.message_failed as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_failed, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.message_stuck as Formula (1): Rule.formula(derive=models.DailyFlow.message_stuc [...]  
-    3. Derive DailyFlow.message_received as Count(OrderB2bMessage Where  - None, insert_parent)  
+    1. Derive DailyFlow.message_rejected as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_rejected, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.message_received as Count(OrderB2bMessage Where  - None, insert_parent)  
+    3. Derive DailyFlow.message_pending as Formula (1): Rule.formula(derive=models.DailyFlow.message_pend [...]  
     4. Derive DailyFlow.message_processed as Count(OrderB2bMessage Where Rule.count(derive=models.DailyFlow.message_processed, as_count_of=models.OrderB2bMessage, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
   OrderB2bMessage  
     5. RowEvent OrderB2bMessage._publish_order_b2b()  
 ```
-**Logic Log** in Scenario: Rejected Message Counts In Daily Totals (live Kafka only) (2 transactions)
+**Logic Log** in Scenario: A rejected message is counted (live Kafka only) (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c6585a0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:27,174 - logic_logger - INFO
-..OrderB2bMessage[None] {Insert - client} id: None, received_at: 2026-11-19 18:42:27.173874, payload: {"Account": "Nobody 1795142547169", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None, CreatedOn: None, CreatedOnDay: None  row: 0x10cd01fd0  session: 0x10c6585a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,174 - logic_logger - INFO
-..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, received_at: 2026-11-19 18:42:27.173874, payload: {"Account": "Nobody 1795142547169", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None, CreatedOn: 2026-11-19 18:42:27.174486, CreatedOnDay: 2026-11-19  row: 0x10cd01fd0  session: 0x10c6585a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,174 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_received} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received:  [10-->] 11, message_processed: 5, message_failed: 5, message_stuck: 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ac3c0  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,175 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula message_stuck} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received:  [10-->] 11, message_processed: 5, message_failed: 5, message_stuck:  [0-->] 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ac3c0  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,176 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received:  [10-->] 11, message_processed: 5, message_failed: 5, message_stuck:  [0-->] 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7ac3c0  session: 0x10c6585a0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,177 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6585a0)   										 - 2026-11-19 18:42:27,177 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6585a0)   										 - 2026-11-19 18:42:27,178 - logic_logger - INFO
-..OrderB2bMessage[119] {AfterFlush Event} id: 119, received_at: 2026-11-19 18:42:27.173874, payload: {"Account": "Nobody 1795142547169", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None, CreatedOn: 2026-11-19 18:42:27.174486, CreatedOnDay: 2026-11-19  row: 0x10cd01fd0  session: 0x10c6585a0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,178 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e433df0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:08,177 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {..., is_processed: False, error_text: None  row: 0x10e3a2ed0  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,177 - logic_logger - INFO
+..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:08.177713, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10e3a2ed0  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,177 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_received} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received:  [13-->] 14, message_processed: 6, message_rejected: 5, message_pending: 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e235d30  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,178 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received:  [13-->] 14, message_processed: 6, message_rejected: 5, message_pending:  [2-->] 3, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e235d30  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,178 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received:  [13-->] 14, message_processed: 6, message_rejected: 5, message_pending:  [2-->] 3, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e235d30  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,180 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433df0)   										 - 2026-11-19 19:46:08,180 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433df0)   										 - 2026-11-19 19:46:08,181 - logic_logger - INFO
+..OrderB2bMessage[98] {AfterFlush Event} id: 98, CreatedOn: 2026-11-19 19:46:08.177713, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text: None  row: 0x10e3a2ed0  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,181 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c65a580) (sqlalchemy before_flush)			 - 2026-11-19 18:42:27,184 - logic_logger - INFO
-..OrderB2bMessage[119] {Update - client} id: 119, received_at: 2026-11-19 18:42:27.173874, payload: {"Account": "Nobody 1795142547169", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text:  [None-->] resolve_lookups: no Customer found for fk_col='customer_id' from source fields, CreatedOn: 2026-11-19 18:42:27.174486, CreatedOnDay: 2026-11-19  row: 0x10cd02c30  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,185 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_failed} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed:  [5-->] 6, message_stuck: 1, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af280  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,185 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula message_stuck} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed:  [5-->] 6, message_stuck:  [1-->] 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af280  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,185 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed:  [5-->] 6, message_stuck:  [1-->] 0, request_received: 48, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af280  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,185 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c65a580)   										 - 2026-11-19 18:42:27,185 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a580)   										 - 2026-11-19 18:42:27,186 - logic_logger - INFO
-..OrderB2bMessage[119] {AfterFlush Event} id: 119, received_at: 2026-11-19 18:42:27.173874, payload: {"Account": "Nobody 1795142547169", "Notes": "behave kafka test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text:  [None-->] resolve_lookups: no Customer found for fk_col='customer_id' from source fields, CreatedOn: 2026-11-19 18:42:27.174486, CreatedOnDay: 2026-11-19  row: 0x10cd02c30  session: 0x10c65a580  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,186 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4ce250) (sqlalchemy before_flush)			 - 2026-11-19 19:46:08,186 - logic_logger - INFO
+..OrderB2bMessage[98] {Update - client} id: 98, CreatedOn: 2026-11-19 19:46:08.177713, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text:  [None-->] resolve_lookups: no Product found for fk_col='product_id' from source fields  row: 0x10f2ca450  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,186 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: message_rejected} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected:  [5-->] 6, message_pending: 3, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8620a0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,187 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula message_pending} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected:  [5-->] 6, message_pending:  [3-->] 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8620a0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,187 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected:  [5-->] 6, message_pending:  [3-->] 2, request_received: 56, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e8620a0  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,187 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce250)   										 - 2026-11-19 19:46:08,187 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce250)   										 - 2026-11-19 19:46:08,187 - logic_logger - INFO
+..OrderB2bMessage[98] {AfterFlush Event} id: 98, CreatedOn: 2026-11-19 19:46:08.177713, CreatedOnDay: 2026-11-19, payload: {..., is_processed: False, error_text:  [None-->] resolve_lookups: no Product found for fk_col='product_id' from source fields  row: 0x10f2ca450  session: 0x10e4ce250  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,187 - logic_logger - INFO
 
 ```
 </details>
@@ -3046,11 +3229,24 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a580)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Dashboard Shows Current Data ✅ (0.03 s)
-&emsp;  Scenario: Dashboard Shows Current Data  
-&emsp;&emsp;    Given Customer "Hugo" with credit limit 5000  
-&emsp;&emsp;    When B2B order placed for "Hugo" with 1 Widget  
-&emsp;&emsp;    Then the dashboard shows the three charts with today  
+#### Scenario: The chart shows the last 30 days with quiet days as zero ✅ (0.02 s)
+&emsp;  Scenario: The chart shows the last 30 days with quiet days as zero  
+&emsp;&emsp;    When the order volume chart is opened  
+&emsp;&emsp;    Then the chart shows 31 days ending today  
+&emsp;&emsp;    And every day with no totals shows zero  
+
+_No rules fired in this scenario's logic log._
+
+&nbsp;
+&nbsp;
+
+#### Scenario: The chart shows current data each time it is opened ✅ (0.03 s)
+&emsp;  Scenario: The chart shows current data each time it is opened  
+&emsp;&emsp;    Given a new customer "Flow Chart" with credit limit 5000  
+&emsp;&emsp;    And the order volume chart is opened  
+&emsp;&emsp;    When a B2B order is placed for "Flow Chart" with 1 Gadget  
+&emsp;&emsp;    And the order volume chart is opened again  
+&emsp;&emsp;    Then the chart's value for today rose by 1 and matches today's order count  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -3060,12 +3256,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a580)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Dashboard Shows Current Data
+**Rules Used** in Scenario: The chart shows current data each time it is opened
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -3078,41 +3274,41 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c65a580)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Dashboard Shows Current Data (2 transactions)
+**Logic Log** in Scenario: The chart shows current data each time it is opened (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10c6597b0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:27,716 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Hugo 1795142547708", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10c6ea050  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,716 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:27.716260, CreatedOnDay: 2026-11-19, payload: {"Account": "Hugo 1795142547708", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10c6ea050  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,716 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received:  [48-->] 49, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,716 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received:  [48-->] 49, request_processed: 42, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,717 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received:  [48-->] 49, request_processed: 42, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,717 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6597b0)   										 - 2026-11-19 18:42:27,717 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 18:42:27,717 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cecf0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:08,739 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Flow Chart 1795146368729", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f2e3b50  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,739 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:08.739843, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Chart 1795146368729", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10f2e3b50  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,739 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received:  [56-->] 57, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,740 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received:  [56-->] 57, request_processed: 45, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,740 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received:  [56-->] 57, request_processed: 45, request_rejected: 9, request_pending:  [2-->] 3  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,740 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cecf0)   										 - 2026-11-19 19:46:08,740 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cecf0)   										 - 2026-11-19 19:46:08,741 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10c6597b0) (sqlalchemy before_flush)			 - 2026-11-19 18:42:27,721 - logic_logger - INFO
-..OrderB2bRequest[109] {Update - client} id: 109, CreatedOn: 2026-11-19 18:42:27.716260, CreatedOnDay: 2026-11-19, payload: {"Account": "Hugo 1795142547708", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c6ea050  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,721 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 49, request_processed:  [42-->] 43, request_failed: 6, request_stuck: 1  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,721 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 49, request_processed:  [42-->] 43, request_failed: 6, request_stuck: 1  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,721 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 41, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 49, request_processed:  [42-->] 43, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,721 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10ccde9e0  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,721 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 64, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10cd02690  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,722 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10cd02690  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,722 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10cd02690  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,722 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [41-->] 42, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 49, request_processed: 43, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,722 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [41-->] 42, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 49, request_processed: 43, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,722 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [41-->] 42, order_amount: 8490.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 49, request_processed: 43, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,722 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10c5b4850  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,722 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10c5b4850  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,722 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10c5b4850  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,722 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd02690  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,722 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 42, order_amount:  [8490.00-->] 8580.0000000000, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 49, request_processed: 43, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,723 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 42, order_amount:  [8490.00-->] 8580.0000000000, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 49, request_processed: 43, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,723 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 42, order_amount:  [8490.00-->] 8580.0000000000, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 49, request_processed: 43, request_failed: 6, request_stuck: 0  row: 0x10c7af490  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,723 - logic_logger - INFO
-......Customer[64] {Update - Adjusting customer: balance} id: 64, name: Hugo 1795142547708, balance:  [0E-10-->] 90.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10c706050  session: 0x10c6597b0  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,723 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c6597b0)   										 - 2026-11-19 18:42:27,723 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 18:42:27,724 - logic_logger - INFO
-..Order[207] {AfterFlush Event} id: 207, notes: behave test, customer_id: 64, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd02690  session: 0x10c6597b0  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,724 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e4cecf0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:08,743 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, count_suppliers: 0, unit_price: 150.0000000000  row: 0x10f2f7150  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,743 - logic_logger - INFO
+..OrderB2bRequest[163] {Update - client} id: 163, CreatedOn: 2026-11-19 19:46:08.739843, CreatedOnDay: 2026-11-19, payload: {"Account": "Flow Chart 1795146368729", "Notes": "behave test", "Items": [{"Name": "Gadget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10f2e3b50  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,743 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 57, request_processed:  [45-->] 46, request_rejected: 9, request_pending: 3  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,744 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 57, request_processed:  [45-->] 46, request_rejected: 9, request_pending: 3  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,744 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 49, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 57, request_processed:  [45-->] 46, request_rejected: 9, request_pending:  [3-->] 2  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,744 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 70, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2db650  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,744 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 70, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2db650  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,744 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 70, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2db650  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,744 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [49-->] 50, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 57, request_processed: 46, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,744 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [49-->] 50, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 57, request_processed: 46, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,744 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [49-->] 50, order_amount: 14670.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 57, request_processed: 46, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,744 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10f2e36d0  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,744 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 150.0000000000  row: 0x10f2e36d0  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,745 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 150.0000000000, unit_price: 150.0000000000  row: 0x10f2e36d0  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,745 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 70, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2db650  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,745 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 50, order_amount:  [14670.00-->] 14820.0000000000, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 57, request_processed: 46, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,745 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 50, order_amount:  [14670.00-->] 14820.0000000000, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 57, request_processed: 46, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,745 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 50, order_amount:  [14670.00-->] 14820.0000000000, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 57, request_processed: 46, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,745 - logic_logger - INFO
+......Customer[70] {Update - Adjusting customer: balance} id: 70, name: Flow Chart 1795146368729, balance:  [0E-10-->] 150.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10f2ca850  session: 0x10e4cecf0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,745 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4cecf0)   										 - 2026-11-19 19:46:08,745 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4cecf0)   										 - 2026-11-19 19:46:08,746 - logic_logger - INFO
+..Order[241] {AfterFlush Event} id: 241, notes: behave test, customer_id: 70, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 150.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2db650  session: 0x10e4cecf0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,746 - logic_logger - INFO
 
 ```
 </details>
@@ -3125,15 +3321,23 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 
 &nbsp;
 &nbsp;
 
-#### Scenario: Sales Role Sees Limited Customers ✅ (0.06 s)
-&emsp;  Scenario: Sales Role Sees Limited Customers  
-&emsp;&emsp;    Given Customer "Lowlimit" with credit limit 1000  
-&emsp;&emsp;    And Customer "Highlimit" with credit limit 5000  
-&emsp;&emsp;    And Customer "Owing" with credit limit 1000  
-&emsp;&emsp;    And Order is created for "Owing" with 1 Widget  
-&emsp;&emsp;    When the sales user lists Customers  
-&emsp;&emsp;    Then "Highlimit" and "Owing" are listed, and "Lowlimit" is not  
-&emsp;&emsp;    And every listed Customer has credit_limit >= 3000 or balance > 0  
+#### Scenario: Sales sees a customer with a credit limit of 3000 or more ✅ (0.04 s)
+&emsp;  Scenario: Sales sees a customer with a credit limit of 3000 or more  
+&emsp;&emsp;    Given a new customer "Sec High" with credit limit 5000  
+&emsp;&emsp;    When a sales user queries the Customer list  
+&emsp;&emsp;    Then the sales user sees "Sec High"  
+
+_No rules fired in this scenario's logic log._
+
+&nbsp;
+&nbsp;
+
+#### Scenario: Sales sees a low-limit customer who has a balance ✅ (0.02 s)
+&emsp;  Scenario: Sales sees a low-limit customer who has a balance  
+&emsp;&emsp;    Given a new customer "Sec Owing" with credit limit 1000  
+&emsp;&emsp;    And a B2B order is placed for "Sec Owing" with 1 Widget  
+&emsp;&emsp;    When a sales user queries the Customer list  
+&emsp;&emsp;    Then the sales user sees "Sec Owing"  
 
 <details markdown>
 <summary>Rules exercised and logic log (2 transactions)</summary>
@@ -3143,12 +3347,12 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 
 &nbsp;
 
 
-**Rules Used** in Scenario: Sales Role Sees Limited Customers
+**Rules Used** in Scenario: Sales sees a low-limit customer who has a balance
 ```
   DailyFlow  
-    1. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
-    2. Derive DailyFlow.request_stuck as Formula (2): Rule.formula(derive=models.DailyFlow.request_stuc [...]  
-    3. Derive DailyFlow.request_failed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_failed, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    1. Derive DailyFlow.request_rejected as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_rejected, as_count_of=models.OrderB2bRequest, where=lambda row: row.error_text is not None, insert_parent=True), insert_parent)  
+    2. Derive DailyFlow.request_pending as Formula (2): Rule.formula(derive=models.DailyFlow.request_pend [...]  
+    3. Derive DailyFlow.request_processed as Count(OrderB2bRequest Where Rule.count(derive=models.DailyFlow.request_processed, as_count_of=models.OrderB2bRequest, where=lambda row: row.is_processed == True, insert_parent=True), insert_parent)  
     4. Derive DailyFlow.request_received as Count(OrderB2bRequest Where  - None, insert_parent)  
     5. Derive DailyFlow.order_amount as Sum(Order.amount_total Where  - None, insert_parent)  
     6. Derive DailyFlow.order_count as Count(Order Where  - None, insert_parent)  
@@ -3161,48 +3365,59 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c6597b0)   										 - 2026-11-19 
     10. RowEvent Order._send_order_to_shipping()  
     11. Derive Order.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Sales Role Sees Limited Customers (2 transactions)
+**Logic Log** in Scenario: Sales sees a low-limit customer who has a balance (2 transactions)
 ```
-Logic Phase:		ROW LOGIC		(session=0x10cd54270) (sqlalchemy before_flush)			 - 2026-11-19 18:42:27,750 - logic_logger - INFO
-..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Owing 1795142547746", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10c5ca250  session: 0x10cd54270  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,750 - logic_logger - INFO
-..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 18:42:27.750887, CreatedOnDay: 2026-11-19, payload: {"Account": "Owing 1795142547746", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10c5ca250  session: 0x10cd54270  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,750 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 42, order_amount: 8580.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received:  [49-->] 50, request_processed: 43, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,751 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 42, order_amount: 8580.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received:  [49-->] 50, request_processed: 43, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,751 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 42, order_amount: 8580.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received:  [49-->] 50, request_processed: 43, request_failed: 6, request_stuck:  [0-->] 1  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,751 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10cd54270)   										 - 2026-11-19 18:42:27,751 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10cd54270)   										 - 2026-11-19 18:42:27,751 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e433df0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:08,804 - logic_logger - INFO
+..OrderB2bRequest[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {"Account": "Sec Owing 1795146368799", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e809850  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,804 - logic_logger - INFO
+..OrderB2bRequest[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-19 19:46:08.804356, CreatedOnDay: 2026-11-19, payload: {"Account": "Sec Owing 1795146368799", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed: False, error_text: None  row: 0x10e809850  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,804 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_received} day: 2026-11-19, order_count: 50, order_amount: 14820.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received:  [57-->] 58, request_processed: 46, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,804 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 50, order_amount: 14820.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received:  [57-->] 58, request_processed: 46, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,804 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 50, order_amount: 14820.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received:  [57-->] 58, request_processed: 46, request_rejected: 9, request_pending:  [2-->] 3  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,804 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433df0)   										 - 2026-11-19 19:46:08,804 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433df0)   										 - 2026-11-19 19:46:08,805 - logic_logger - INFO
 
 
-Logic Phase:		ROW LOGIC		(session=0x10cd54270) (sqlalchemy before_flush)			 - 2026-11-19 18:42:27,754 - logic_logger - INFO
-..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10ccddef0  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,754 - logic_logger - INFO
-..OrderB2bRequest[110] {Update - client} id: 110, CreatedOn: 2026-11-19 18:42:27.750887, CreatedOnDay: 2026-11-19, payload: {"Account": "Owing 1795142547746", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10c5ca250  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,754 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 42, order_amount: 8580.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 50, request_processed:  [43-->] 44, request_failed: 6, request_stuck: 1  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,754 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 42, order_amount: 8580.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 50, request_processed:  [43-->] 44, request_failed: 6, request_stuck: 1  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,754 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Formula request_stuck} day: 2026-11-19, order_count: 42, order_amount: 8580.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 50, request_processed:  [43-->] 44, request_failed: 6, request_stuck:  [1-->] 0  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,754 - logic_logger - INFO
-..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 67, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10cd01d00  session: 0x10cd54270  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,754 - logic_logger - INFO
-..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 67, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10cd01d00  session: 0x10cd54270  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,754 - logic_logger - INFO
-..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 67, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10cd01d00  session: 0x10cd54270  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,754 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [42-->] 43, order_amount: 8580.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 50, request_processed: 44, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,754 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count:  [42-->] 43, order_amount: 8580.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 50, request_processed: 44, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,755 - logic_logger - INFO
-....DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count:  [42-->] 43, order_amount: 8580.00, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 50, request_processed: 44, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,755 - logic_logger - INFO
-..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10ccba750  session: 0x10cd54270  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,755 - logic_logger - INFO
-..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10ccba750  session: 0x10cd54270  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,755 - logic_logger - INFO
-..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10ccba750  session: 0x10cd54270  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,755 - logic_logger - INFO
-....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 67, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01d00  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,755 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 43, order_amount:  [8580.00-->] 8670.0000000000, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 50, request_processed: 44, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,755 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: message_stuck [['message_received', 'message_processed', 'message_failed']]} day: 2026-11-19, order_count: 43, order_amount:  [8580.00-->] 8670.0000000000, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 50, request_processed: 44, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,755 - logic_logger - INFO
-......DailyFlow[2026-11-19] {Prune Formula: request_stuck [['request_received', 'request_processed', 'request_failed']]} day: 2026-11-19, order_count: 43, order_amount:  [8580.00-->] 8670.0000000000, message_received: 11, message_processed: 5, message_failed: 6, message_stuck: 0, request_received: 50, request_processed: 44, request_failed: 6, request_stuck: 0  row: 0x10c7ac520  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,755 - logic_logger - INFO
-......Customer[67] {Update - Adjusting customer: balance} id: 67, name: Owing 1795142547746, balance:  [0E-10-->] 90.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10c6737d0  session: 0x10cd54270  ins_upd_dlt: upd, initial: upd - 2026-11-19 18:42:27,755 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10cd54270)   										 - 2026-11-19 18:42:27,755 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10cd54270)   										 - 2026-11-19 18:42:27,756 - logic_logger - INFO
-..Order[208] {AfterFlush Event} id: 208, notes: behave test, customer_id: 67, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10cd01d00  session: 0x10cd54270  ins_upd_dlt: ins, initial: ins - 2026-11-19 18:42:27,756 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10e433df0) (sqlalchemy before_flush)			 - 2026-11-19 19:46:08,807 - logic_logger - INFO
+..Product[2] {Update - client} id: 2, name: Widget, count_suppliers: 0, unit_price: 90.0000000000  row: 0x10f2f6d60  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,807 - logic_logger - INFO
+..OrderB2bRequest[164] {Update - client} id: 164, CreatedOn: 2026-11-19 19:46:08.804356, CreatedOnDay: 2026-11-19, payload: {"Account": "Sec Owing 1795146368799", "Notes": "behave test", "Items": [{"Name": "Widget", "QuantityOrdered": 1}]}, is_processed:  [False-->] True, error_text: None  row: 0x10e809850  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,807 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: request_processed} day: 2026-11-19, order_count: 50, order_amount: 14820.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 58, request_processed:  [46-->] 47, request_rejected: 9, request_pending: 3  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,807 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 50, order_amount: 14820.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 58, request_processed:  [46-->] 47, request_rejected: 9, request_pending: 3  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,808 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Formula request_pending} day: 2026-11-19, order_count: 50, order_amount: 14820.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 58, request_processed:  [46-->] 47, request_rejected: 9, request_pending:  [3-->] 2  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,808 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: behave test, customer_id: 72, CreatedOn: None, date_shipped: None, amount_total: None, CreatedOnDay: None  row: 0x10f2d9c70  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,808 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: behave test, customer_id: 72, CreatedOn: 2026-11-19, date_shipped: None, amount_total: None, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,808 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: behave test, customer_id: 72, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 0, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,808 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_count} day: 2026-11-19, order_count:  [50-->] 51, order_amount: 14820.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 58, request_processed: 47, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,808 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count:  [50-->] 51, order_amount: 14820.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 58, request_processed: 47, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,808 - logic_logger - INFO
+....DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count:  [50-->] 51, order_amount: 14820.00, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 58, request_processed: 47, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,808 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: None  row: 0x10e808350  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,808 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 1, amount: None, unit_price: 90.0000000000  row: 0x10e808350  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,808 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 1, amount: 90.0000000000, unit_price: 90.0000000000  row: 0x10e808350  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,808 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: behave test, customer_id: 72, CreatedOn: 2026-11-19, date_shipped: None, amount_total:  [0-->] 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,808 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Update - Adjusting daily_flow: order_amount} day: 2026-11-19, order_count: 51, order_amount:  [14820.00-->] 14910.0000000000, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 58, request_processed: 47, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,808 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: message_pending [['message_received', 'message_processed', 'message_rejected']]} day: 2026-11-19, order_count: 51, order_amount:  [14820.00-->] 14910.0000000000, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 58, request_processed: 47, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,808 - logic_logger - INFO
+......DailyFlow[2026-11-19] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-19, order_count: 51, order_amount:  [14820.00-->] 14910.0000000000, message_received: 14, message_processed: 6, message_rejected: 6, message_pending: 2, request_received: 58, request_processed: 47, request_rejected: 9, request_pending: 2  row: 0x10e861910  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,809 - logic_logger - INFO
+......Customer[72] {Update - Adjusting customer: balance} id: 72, name: Sec Owing 1795146368799, balance:  [0E-10-->] 90.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10f30c3d0  session: 0x10e433df0  ins_upd_dlt: upd, initial: upd - 2026-11-19 19:46:08,809 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e433df0)   										 - 2026-11-19 19:46:08,809 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e433df0)   										 - 2026-11-19 19:46:08,809 - logic_logger - INFO
+..Order[242] {AfterFlush Event} id: 242, notes: behave test, customer_id: 72, CreatedOn: 2026-11-19, date_shipped: None, amount_total: 90.0000000000, CreatedOnDay: 2026-11-19  row: 0x10f2d9c70  session: 0x10e433df0  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,809 - logic_logger - INFO
 
 ```
 </details>
 
+&nbsp;
+&nbsp;
+
+#### Scenario: Sales does not see a low-limit customer with no balance ✅ (0.01 s)
+&emsp;  Scenario: Sales does not see a low-limit customer with no balance  
+&emsp;&emsp;    Given a new customer "Sec Low" with credit limit 1000  
+&emsp;&emsp;    When a sales user queries the Customer list  
+&emsp;&emsp;    Then the sales user does not see "Sec Low"  
+&emsp;&emsp;    And an admin user sees "Sec Low"  
+
+_No rules fired in this scenario's logic log._
 &nbsp;&nbsp;  
-/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py completed at November 19, 2026 18:42:27  
-Behave run time: 5.041 s  
+/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py completed at November 19, 2026 19:46:08  
+Behave run time: 7.398 s  
 
 
 &nbsp;
@@ -3212,14 +3427,14 @@ Behave run time: 5.041 s
 
 | | |
 |---|---|
-| Generated | November 19, 2026 18:42 |
+| Generated | November 19, 2026 19:46 |
 | Generator | `requirements_traceability_report.py` 2.15 |
 | Report text from | reports/Requirements Traceability Report Template.md (sha256 a19673a13fa0) |
-| Tests last ran | November 19, 2026 18:42 |
+| Tests last ran | November 19, 2026 19:46 |
 | Project | basic_demo_eai |
-| Source commit | e3f8c946 (uncommitted changes) |
-| Project created | November 19, 2026 17:33:29 |
-| Requirement files read | `docs/requirements/check_credit/requirements.md` (sha256 58c5b552)<br>`docs/requirements/demo_eai/requirements.md` (sha256 5f955924)<br>`docs/requirements/order_b2b_consume/requirements.md` (sha256 e0565187)<br>`docs/requirements/order_flow_totals/requirements.md` (sha256 56547080)<br>`docs/requirements/order_shipping_publish/requirements.md` (sha256 fb4f0885) |
+| Source commit | 32e99ea5 (uncommitted changes) |
+| Project created | November 19, 2026 18:49:15 |
+| Requirement files read | `docs/requirements/check_credit/requirements.md` (sha256 3ed113d5)<br>`docs/requirements/demo_eai/requirements.md` (sha256 5f955924)<br>`docs/requirements/order_b2b_consume/requirements.md` (sha256 8aa5249b)<br>`docs/requirements/order_flow_dashboard/requirements.md` (sha256 e5d1d5fa)<br>`docs/requirements/shipping_notification/requirements.md` (sha256 ebe2f99c) |
 | Regenerate | `python requirements_traceability_report.py run`, from `test/api_logic_server_behave` |
 
 _The report is derived from the project's files and the last test run; nothing in it is stored anywhere else, so regenerating it always reflects the project as it is now._

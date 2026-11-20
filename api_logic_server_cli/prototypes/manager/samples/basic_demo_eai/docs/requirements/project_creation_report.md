@@ -4,7 +4,7 @@ This project was created by `genai-logic create`.
 
 - **Project name:** demo_eai
 - **Database:** `sqlite:///samples/dbs/basic_demo.sqlite`
-- **Created:** November 19, 2026 17:33:29
+- **Created:** November 19, 2026 18:49:15
 
 ## Scaffold
 
@@ -43,5 +43,4 @@ You can still add business logic at any time - say **"implement requirements"** 
 ## Use Cases
 
 *(each `impl req` run appends a link here to its `docs/requirements/<use_case>/ad-libs.md`)*
-
-- [demo_eai](demo_eai/ad-libs.md) — Check Credit, B2B API with request log, Kafka subscribe + publish, sales grants, rule-maintained order-flow totals and dashboard, 2026-11-19
+- [demo_eai](demo_eai/ad-libs.md) — Check Credit, B2B API with request log, Kafka subscribe/publish, sales row security, order flow dashboard, 2026-11-19

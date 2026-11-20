@@ -7,206 +7,257 @@ Feature: About Sample # features/about.feature:6
 
 Feature: B2B Order Integration # features/b2b_order_integration.feature:1
 
-  Scenario: Partner Order Accepted                             # features/b2b_order_integration.feature:5
-    Given Customer "Pat" with credit limit 5000                # features/steps/check_credit_steps.py:9
-    When B2B order placed for "Pat" with 1 Widget and 2 Gadget # features/steps/b2b_order_integration_steps.py:5
-    Then the partner order is accepted with 2 items            # features/steps/b2b_order_integration_steps.py:23
-    And Order amount_total should be 390                       # features/steps/check_credit_steps.py:74
-    And Customer balance should be 390                         # features/steps/check_credit_steps.py:67
+  Scenario: Partner order is mapped and the request recorded as processed  # features/b2b_order_integration.feature:3
+    Given a new customer "Partner Co" with credit limit 5000               # features/steps/demo_eai_steps.py:78
+    When a B2B order is placed for "Partner Co" with 3 Widget and 2 Gadget # features/steps/demo_eai_steps.py:94
+    Then the order is accepted                                             # features/steps/demo_eai_steps.py:254
+    And the order belongs to "Partner Co"                                  # features/steps/demo_eai_steps.py:273
+    And the order items are 3 Widget and 2 Gadget                          # features/steps/demo_eai_steps.py:278
+    And the B2B request is recorded as processed                           # features/steps/demo_eai_steps.py:284
 
-  Scenario: Unknown Account Rejected                   # features/b2b_order_integration.feature:12
-    When B2B order placed for unknown account "Nobody" # features/steps/b2b_order_integration_steps.py:16
-    Then the order is rejected for an unknown customer # features/steps/b2b_order_integration_steps.py:32
+  Scenario: Partner order with an unknown product is rejected and the request recorded with its error  # features/b2b_order_integration.feature:11
+    Given a new customer "Partner Bad" with credit limit 5000                                          # features/steps/demo_eai_steps.py:78
+    When a B2B order is placed for "Partner Bad" with 1 Sprocket                                       # features/steps/demo_eai_steps.py:99
+    Then the order is rejected with "Lookup failed"                                                    # features/steps/demo_eai_steps.py:259
+    And the B2B request is recorded with an error                                                      # features/steps/demo_eai_steps.py:290
+    And "Partner Bad" has no orders                                                                    # features/steps/demo_eai_steps.py:246
 
-  Scenario: Accepted Request Is Recorded                         # features/b2b_order_integration.feature:16
-    Given Customer "Pia" with credit limit 5000                  # features/steps/check_credit_steps.py:9
-    And the daily totals are read                                # features/steps/order_flow_dashboard_steps.py:20
-    When B2B order placed for "Pia" with 1 Widget                # features/steps/check_credit_steps.py:40
-    Then the B2B request is recorded as processed                # features/steps/b2b_order_integration_steps.py:49
-    And today's request_received and request_processed rise by 1 # features/steps/order_flow_dashboard_steps.py:75
-
-  Scenario: Rejected Request Is Recorded                                   # features/b2b_order_integration.feature:23
-    Given Customer "Rex" with credit limit 100                             # features/steps/check_credit_steps.py:9
-    And the daily totals are read                                          # features/steps/order_flow_dashboard_steps.py:20
-    When B2B order placed for "Rex" with 2 Widget                          # features/steps/check_credit_steps.py:40
-    Then the B2B request is recorded with the error "exceeds credit limit" # features/steps/b2b_order_integration_steps.py:56
-    And today's request_received and request_failed rise by 1              # features/steps/order_flow_dashboard_steps.py:75
+  Scenario: Partner order for an unknown account is rejected  # features/b2b_order_integration.feature:18
+    When a B2B order is placed for an unknown account         # features/steps/demo_eai_steps.py:89
+    Then the order is rejected with "Lookup failed"           # features/steps/demo_eai_steps.py:259
 
 Feature: Check Credit # features/check_credit.feature:1
 
-  Scenario: Good Order Placed                       # features/check_credit.feature:6
-    Given Customer "Alice" with credit limit 5000   # features/steps/check_credit_steps.py:9
-    When B2B order placed for "Alice" with 2 Widget # features/steps/check_credit_steps.py:40
-    Then Customer balance should be 180             # features/steps/check_credit_steps.py:67
-    And Order amount_total should be 180            # features/steps/check_credit_steps.py:74
+  Scenario: Good order is priced and added to the balance           # features/check_credit.feature:3
+    Given a new customer "Pat" with credit limit 1000               # features/steps/demo_eai_steps.py:78
+    When a B2B order is placed for "Pat" with 2 Widget and 1 Gadget # features/steps/demo_eai_steps.py:94
+    Then the order is accepted                                      # features/steps/demo_eai_steps.py:254
+    And the item prices are copied from the products                # features/steps/demo_eai_steps.py:302
+    And each item amount is quantity times unit price               # features/steps/demo_eai_steps.py:308
+    And the order total is 330                                      # features/steps/demo_eai_steps.py:336
+    And the balance of "Pat" is 330                                 # features/steps/demo_eai_steps.py:341
 
-  Scenario: Item Quantity Changed                # features/check_credit.feature:12
-    Given Customer "Bob" with credit limit 5000  # features/steps/check_credit_steps.py:9
-    And Order is created for "Bob" with 2 Widget # features/steps/check_credit_steps.py:30
-    When Item quantity changed to 3              # features/steps/check_credit_steps.py:50
-    Then Customer balance should be 270          # features/steps/check_credit_steps.py:67
+  Scenario: Changing an item quantity re-derives amount, total and balance  # features/check_credit.feature:12
+    Given a new customer "Quinn" with credit limit 2000                     # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Quinn" with 2 Widget and 1 Gadget        # features/steps/demo_eai_steps.py:94
+    When the quantity of the first item is changed to 5                     # features/steps/demo_eai_steps.py:117
+    Then the first item amount is 450                                       # features/steps/demo_eai_steps.py:320
+    And the order total is 600                                              # features/steps/demo_eai_steps.py:336
+    And the balance of "Quinn" is 600                                       # features/steps/demo_eai_steps.py:341
 
-  Scenario: Shipped Order Leaves Balance           # features/check_credit.feature:18
-    Given Customer "Carol" with credit limit 5000  # features/steps/check_credit_steps.py:9
-    And Order is created for "Carol" with 2 Widget # features/steps/check_credit_steps.py:30
-    When Order is shipped                          # features/steps/check_credit_steps.py:59
-    Then Customer balance should be 0              # features/steps/check_credit_steps.py:67
+  Scenario: Changing an item's product re-copies the price  # features/check_credit.feature:20
+    Given a new customer "Ravi" with credit limit 2000      # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Ravi" with 2 Widget      # features/steps/demo_eai_steps.py:99
+    When the product of the first item is changed to Doodad # features/steps/demo_eai_steps.py:123
+    Then the first item unit price is 110                   # features/steps/demo_eai_steps.py:314
+    And the first item amount is 220                        # features/steps/demo_eai_steps.py:320
+    And the order total is 220                              # features/steps/demo_eai_steps.py:336
+    And the balance of "Ravi" is 220                        # features/steps/demo_eai_steps.py:341
 
-  Scenario: Order Exceeding Credit Rejected            # features/check_credit.feature:24
-    Given Customer "Dave" with credit limit 100        # features/steps/check_credit_steps.py:9
-    When B2B order placed for "Dave" with 2 Widget     # features/steps/check_credit_steps.py:40
-    Then Order is rejected with a credit limit message # features/steps/check_credit_steps.py:82
-    And Customer balance should be 0                   # features/steps/check_credit_steps.py:67
+  Scenario: Deleting an item reduces the order total and balance   # features/check_credit.feature:29
+    Given a new customer "Sam" with credit limit 2000              # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Sam" with 2 Widget and 1 Gadget # features/steps/demo_eai_steps.py:94
+    When the first item is deleted                                 # features/steps/demo_eai_steps.py:137
+    Then the order total is 150                                    # features/steps/demo_eai_steps.py:336
+    And the balance of "Sam" is 150                                # features/steps/demo_eai_steps.py:341
 
-  Scenario: Order At Credit Limit Accepted         # features/check_credit.feature:30
-    Given Customer "Erin" with credit limit 180    # features/steps/check_credit_steps.py:9
-    When B2B order placed for "Erin" with 2 Widget # features/steps/check_credit_steps.py:40
-    Then Order is accepted                         # features/steps/check_credit_steps.py:171
-    And Customer balance should be 180             # features/steps/check_credit_steps.py:67
+  Scenario: Moving an item to another order adjusts both orders         # features/check_credit.feature:36
+    Given a new customer "Tara" with credit limit 5000                  # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Tara" with 2 Widget and 1 Gadget     # features/steps/demo_eai_steps.py:94
+    And a second B2B order is placed for "Tara" with 1 Doodad           # features/steps/demo_eai_steps.py:84
+    When the first item of the first order is moved to the second order # features/steps/demo_eai_steps.py:130
+    Then the first order total is 150                                   # features/steps/demo_eai_steps.py:326
+    And the second order total is 290                                   # features/steps/demo_eai_steps.py:331
+    And the balance of "Tara" is 440                                    # features/steps/demo_eai_steps.py:341
 
-  Scenario: Unshipped Order Enters Balance       # features/check_credit.feature:36
-    Given Customer "Fay" with credit limit 5000  # features/steps/check_credit_steps.py:9
-    And Order is created for "Fay" with 2 Widget # features/steps/check_credit_steps.py:30
-    And Order has been shipped                   # features/steps/check_credit_steps.py:123
-    When Order is unshipped                      # features/steps/check_credit_steps.py:129
-    Then Customer balance should be 180          # features/steps/check_credit_steps.py:67
+  Scenario: Moving an order to another customer adjusts both balances  # features/check_credit.feature:45
+    Given a new customer "Uma" with credit limit 2000                  # features/steps/demo_eai_steps.py:78
+    And a new customer "Vic" with credit limit 2000                    # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Uma" with 2 Widget and 1 Gadget     # features/steps/demo_eai_steps.py:94
+    When the order is moved to customer "Vic"                          # features/steps/demo_eai_steps.py:144
+    Then the balance of "Uma" is 0                                     # features/steps/demo_eai_steps.py:341
+    And the balance of "Vic" is 330                                    # features/steps/demo_eai_steps.py:341
 
-  Scenario: Item Deleted Reduces Order                        # features/check_credit.feature:43
-    Given Customer "Gus" with credit limit 5000               # features/steps/check_credit_steps.py:9
-    And Order is created for "Gus" with 2 Widget and 1 Gadget # features/steps/check_credit_steps.py:20
-    When the Gadget Item is deleted                           # features/steps/check_credit_steps.py:135
-    Then Order amount_total should be 180                     # features/steps/check_credit_steps.py:74
-    And Customer balance should be 180                        # features/steps/check_credit_steps.py:67
+  Scenario: Deleting an order reduces the balance     # features/check_credit.feature:53
+    Given a new customer "Wen" with credit limit 2000 # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Wen" with 1 Gadget # features/steps/demo_eai_steps.py:99
+    When the order is deleted                         # features/steps/demo_eai_steps.py:156
+    Then the balance of "Wen" is 0                    # features/steps/demo_eai_steps.py:341
 
-  Scenario: Order Deleted Leaves Balance          # features/check_credit.feature:50
-    Given Customer "Hank" with credit limit 5000  # features/steps/check_credit_steps.py:9
-    And Order is created for "Hank" with 2 Widget # features/steps/check_credit_steps.py:30
-    When Order is deleted                         # features/steps/check_credit_steps.py:143
-    Then Customer balance should be 0             # features/steps/check_credit_steps.py:67
+  Scenario: Shipping an order removes it from the balance          # features/check_credit.feature:59
+    Given a new customer "Xia" with credit limit 2000              # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Xia" with 2 Widget and 1 Gadget # features/steps/demo_eai_steps.py:94
+    When the order is shipped                                      # features/steps/demo_eai_steps.py:168
+    Then the balance of "Xia" is 0                                 # features/steps/demo_eai_steps.py:341
 
-  Scenario: Order Moved To Another Customer      # features/check_credit.feature:56
-    Given Customer "Ivy" with credit limit 5000  # features/steps/check_credit_steps.py:9
-    And Customer "Jack" with credit limit 5000   # features/steps/check_credit_steps.py:9
-    And Order is created for "Ivy" with 2 Widget # features/steps/check_credit_steps.py:30
-    When Order is moved to Customer "Jack"       # features/steps/check_credit_steps.py:150
-    Then Customer "Ivy" balance should be 0      # features/steps/check_credit_steps.py:178
-    And Customer "Jack" balance should be 180    # features/steps/check_credit_steps.py:178
+  Scenario: Unshipping an order adds it back to the balance        # features/check_credit.feature:65
+    Given a new customer "Yan" with credit limit 2000              # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Yan" with 2 Widget and 1 Gadget # features/steps/demo_eai_steps.py:94
+    And the order is shipped                                       # features/steps/demo_eai_steps.py:168
+    When the order is unshipped                                    # features/steps/demo_eai_steps.py:162
+    Then the balance of "Yan" is 330                               # features/steps/demo_eai_steps.py:341
 
-  Scenario: Item Moved To Another Order                   # features/check_credit.feature:64
-    Given Customer "Kim" with credit limit 5000           # features/steps/check_credit_steps.py:9
-    And Order is created for "Kim" with 2 Widget          # features/steps/check_credit_steps.py:30
-    And a second Order is created for "Kim" with 1 Gadget # features/steps/check_credit_steps.py:114
-    When the Widget Item is moved to the second Order     # features/steps/check_credit_steps.py:156
-    Then Order amount_total should be 0                   # features/steps/check_credit_steps.py:74
-    And second Order amount_total should be 330           # features/steps/check_credit_steps.py:185
-    And Customer balance should be 330                    # features/steps/check_credit_steps.py:67
+  Scenario: Order exactly at the credit limit is accepted  # features/check_credit.feature:72
+    Given a new customer "Zed" with credit limit 300       # features/steps/demo_eai_steps.py:78
+    When a B2B order is placed for "Zed" with 2 Gadget     # features/steps/demo_eai_steps.py:99
+    Then the order is accepted                             # features/steps/demo_eai_steps.py:254
+    And the balance of "Zed" is 300                        # features/steps/demo_eai_steps.py:341
 
-  Scenario: Item Product Changed                 # features/check_credit.feature:73
-    Given Customer "Lee" with credit limit 5000  # features/steps/check_credit_steps.py:9
-    And Order is created for "Lee" with 2 Widget # features/steps/check_credit_steps.py:30
-    When the Item product is changed to Gadget   # features/steps/check_credit_steps.py:163
-    Then Item unit_price should be 150           # features/steps/check_credit_steps.py:192
-    And Order amount_total should be 300         # features/steps/check_credit_steps.py:74
-    And Customer balance should be 300           # features/steps/check_credit_steps.py:67
+  Scenario: Order over the credit limit is rejected        # features/check_credit.feature:78
+    Given a new customer "Abe" with credit limit 299       # features/steps/demo_eai_steps.py:78
+    When a B2B order is placed for "Abe" with 2 Gadget     # features/steps/demo_eai_steps.py:99
+    Then the order is rejected with "exceeds credit limit" # features/steps/demo_eai_steps.py:259
+    And the balance of "Abe" is 0                          # features/steps/demo_eai_steps.py:341
 
-Feature: Kafka Publish Shipping Notification # features/kafka_publish_shipping_notification.feature:1
+  Scenario: Raising a quantity over the credit limit is rejected   # features/check_credit.feature:84
+    Given a new customer "Bea" with credit limit 500               # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Bea" with 2 Widget and 1 Gadget # features/steps/demo_eai_steps.py:94
+    When the quantity of the first item is changed to 10           # features/steps/demo_eai_steps.py:117
+    Then the change is rejected with "exceeds credit limit"        # features/steps/demo_eai_steps.py:266
+    And the first item amount is 180                               # features/steps/demo_eai_steps.py:320
+    And the balance of "Bea" is 330                                # features/steps/demo_eai_steps.py:341
 
-  Scenario: Shipping Notification Published                                  # features/kafka_publish_shipping_notification.feature:6
-    Given Customer "Gina" with credit limit 5000                             # features/steps/check_credit_steps.py:9
-    And Order is created for "Gina" with 1 Widget                            # features/steps/check_credit_steps.py:30
-    When Order is shipped                                                    # features/steps/check_credit_steps.py:59
-    Then the order_shipping message is published with the order id and total # features/steps/kafka_publish_shipping_notification_steps.py:8
+Feature: Kafka Publish Shipping Notification # features/kafka_publish.feature:1
 
-  Scenario: Unshipped Order Not Published         # features/kafka_publish_shipping_notification.feature:12
-    Given Customer "Hal" with credit limit 5000   # features/steps/check_credit_steps.py:9
-    When B2B order placed for "Hal" with 1 Widget # features/steps/check_credit_steps.py:40
-    Then no order_shipping message is published   # features/steps/kafka_publish_shipping_notification_steps.py:19
+  Scenario: Shipping an order publishes the shipping message                # features/kafka_publish.feature:3
+    Given a new customer "Ship Cust" with credit limit 2000                 # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Ship Cust" with 2 Widget and 1 Gadget    # features/steps/demo_eai_steps.py:94
+    When the order is shipped                                               # features/steps/demo_eai_steps.py:168
+    Then an order_shipping message is published for the order               # features/steps/demo_eai_steps.py:359
+    And the message has the order_shipping shape with total 330 and 2 items # features/steps/demo_eai_steps.py:364
 
-Feature: Kafka Subscribe Order Integration # features/kafka_subscribe_order_integration.feature:1
+  Scenario: Changing an order without shipping it publishes nothing  # features/kafka_publish.feature:10
+    Given a new customer "Noship Cust" with credit limit 2000        # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Noship Cust" with 1 Gadget        # features/steps/demo_eai_steps.py:99
+    When the order notes are changed                                 # features/steps/demo_eai_steps.py:175
+    Then no order_shipping message is published for the order        # features/steps/demo_eai_steps.py:376
 
-  Scenario: Order Message Delivered                                                                      # features/kafka_subscribe_order_integration.feature:5
-    Given Customer "Quinn" with credit limit 5000                                                        # features/steps/check_credit_steps.py:9
-    When an inbound order message for "Quinn" with 1 Widget and 2 Gadget is delivered to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:5
-    Then the message is processed                                                                        # features/steps/kafka_subscribe_order_integration_steps.py:27
-    And the Customer's newest order has 2 items totaling 390                                             # features/steps/kafka_subscribe_order_integration_steps.py:33
-    And Customer balance should be 390                                                                   # features/steps/check_credit_steps.py:67
+  Scenario: Changing an already shipped order does not publish again   # features/kafka_publish.feature:16
+    Given a new customer "Reship Cust" with credit limit 2000          # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Reship Cust" with 1 Gadget          # features/steps/demo_eai_steps.py:99
+    And the order is shipped                                           # features/steps/demo_eai_steps.py:168
+    When the order notes are changed                                   # features/steps/demo_eai_steps.py:175
+    Then exactly one order_shipping message is published for the order # features/steps/demo_eai_steps.py:381
 
-  Scenario: Unknown Account Message Rejected                                             # features/kafka_subscribe_order_integration.feature:12
-    When an inbound order message for an unknown account is delivered to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:13
-    Then the message is rejected with "no Customer found"                                # features/steps/kafka_subscribe_order_integration_steps.py:47
+Feature: Kafka Subscribe Order Integration # features/kafka_subscribe.feature:1
 
-  Scenario: Rejected Message Keeps Its Error (live Kafka only)                                # features/kafka_subscribe_order_integration.feature:16
-    When an inbound order message for an unknown account is delivered live to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:20
-    Then the message row keeps is_processed false and its error_text                          # features/steps/kafka_subscribe_order_integration_steps.py:54
+  Scenario: Order message for a known customer creates the order                                      # features/kafka_subscribe.feature:3
+    Given a new customer "Kafka Cust" with credit limit 5000                                          # features/steps/demo_eai_steps.py:78
+    When an order message for "Kafka Cust" with 1 Widget and 2 Gadget is delivered to topic order_b2b # features/steps/demo_eai_steps.py:196
+    Then the message is processed                                                                     # features/steps/demo_eai_steps.py:214
+    And "Kafka Cust" has one order with total 390                                                     # features/steps/demo_eai_steps.py:238
+    And the order items are 1 Widget and 2 Gadget                                                     # features/steps/demo_eai_steps.py:278
+
+  Scenario: Order message with an unknown product is rejected                             # features/kafka_subscribe.feature:10
+    Given a new customer "Kafka Bad" with credit limit 5000                               # features/steps/demo_eai_steps.py:78
+    When an order message for "Kafka Bad" with 1 Sprocket is delivered to topic order_b2b # features/steps/demo_eai_steps.py:208
+    Then the message is rejected with "Product"                                           # features/steps/demo_eai_steps.py:219
+    And "Kafka Bad" has no orders                                                         # features/steps/demo_eai_steps.py:246
+
+  Scenario: Rejected message stays on the blob with its error (live Kafka only)                     # features/kafka_subscribe.feature:16
+    Given a new customer "Kafka Live Bad" with credit limit 5000                                    # features/steps/demo_eai_steps.py:78
+    When an order message for "Kafka Live Bad" with 1 Sprocket is delivered live to topic order_b2b # features/steps/demo_eai_steps.py:202
+    Then the message blob is not processed and has error text                                       # features/steps/demo_eai_steps.py:225
 
 Feature: Order Flow Dashboard # features/order_flow_dashboard.feature:1
 
-  Scenario: Order Placed Is Dated Today            # features/order_flow_dashboard.feature:5
-    Given Customer "Dana" with credit limit 5000   # features/steps/check_credit_steps.py:9
-    When B2B order placed for "Dana" with 1 Widget # features/steps/check_credit_steps.py:40
-    Then the Order is dated today                  # features/steps/order_flow_dashboard_steps.py:27
+  Scenario: A new order is dated today and counted in today's totals      # features/order_flow_dashboard.feature:3
+    Given a new customer "Flow Cust" with credit limit 5000               # features/steps/demo_eai_steps.py:78
+    And today's totals are noted                                          # features/steps/demo_eai_steps.py:104
+    When a B2B order is placed for "Flow Cust" with 2 Widget and 1 Gadget # features/steps/demo_eai_steps.py:94
+    Then the order is dated today                                         # features/steps/demo_eai_steps.py:347
+    And today's order count rose by 1 and order amount by 330             # features/steps/demo_eai_steps.py:411
 
-  Scenario: Order With Its Own Date Keeps It                            # features/order_flow_dashboard.feature:10
-    Given Customer "Eli" with credit limit 5000                         # features/steps/check_credit_steps.py:9
-    When an Order dated 2026-01-15 is created for "Eli" through the API # features/steps/order_flow_dashboard_steps.py:34
-    Then the Order keeps its date 2026-01-15                            # features/steps/order_flow_dashboard_steps.py:44
+  Scenario: Changing an order's value adjusts today's order amount         # features/order_flow_dashboard.feature:10
+    Given a new customer "Flow Change" with credit limit 5000              # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Flow Change" with 2 Widget and 1 Gadget # features/steps/demo_eai_steps.py:94
+    And today's totals are noted                                           # features/steps/demo_eai_steps.py:104
+    When the quantity of the first item is changed to 3                    # features/steps/demo_eai_steps.py:117
+    Then today's order count rose by 0 and order amount by 90              # features/steps/demo_eai_steps.py:411
 
-  Scenario: New Order Counts In Daily Totals                    # features/order_flow_dashboard.feature:15
-    Given Customer "Fran" with credit limit 5000                # features/steps/check_credit_steps.py:9
-    And the daily totals are read                               # features/steps/order_flow_dashboard_steps.py:20
-    When B2B order placed for "Fran" with 2 Widget              # features/steps/check_credit_steps.py:40
-    Then today's order_count rises by 1 and order_amount by 180 # features/steps/order_flow_dashboard_steps.py:59
+  Scenario: Deleting an order removes it from today's totals     # features/order_flow_dashboard.feature:17
+    Given a new customer "Flow Delete" with credit limit 5000    # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Flow Delete" with 1 Gadget    # features/steps/demo_eai_steps.py:99
+    And today's totals are noted                                 # features/steps/demo_eai_steps.py:104
+    When the order is deleted                                    # features/steps/demo_eai_steps.py:156
+    Then today's order count rose by -1 and order amount by -150 # features/steps/demo_eai_steps.py:411
 
-  Scenario: Changed Item Adjusts Daily Amount                  # features/order_flow_dashboard.feature:21
-    Given Customer "Gale" with credit limit 5000               # features/steps/check_credit_steps.py:9
-    And Order is created for "Gale" with 2 Widget              # features/steps/check_credit_steps.py:30
-    And the daily totals are read                              # features/steps/order_flow_dashboard_steps.py:20
-    When Item quantity changed to 3                            # features/steps/check_credit_steps.py:50
-    Then today's order_count rises by 0 and order_amount by 90 # features/steps/order_flow_dashboard_steps.py:59
+  Scenario: Moving an order to another day adjusts both days           # features/order_flow_dashboard.feature:24
+    Given a new customer "Flow Move" with credit limit 5000            # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Flow Move" with 1 Gadget            # features/steps/demo_eai_steps.py:99
+    And today's totals are noted                                       # features/steps/demo_eai_steps.py:104
+    And the totals of day "2000-01-01" are noted                       # features/steps/demo_eai_steps.py:110
+    When the order is moved to day "2000-01-01"                        # features/steps/demo_eai_steps.py:150
+    Then today's order count rose by -1 and order amount by -150       # features/steps/demo_eai_steps.py:411
+    And day "2000-01-01" order count rose by 1 and order amount by 150 # features/steps/demo_eai_steps.py:417
 
-  Scenario: Deleted Order Leaves Daily Totals                     # features/order_flow_dashboard.feature:28
-    Given Customer "Hank" with credit limit 5000                  # features/steps/check_credit_steps.py:9
-    And Order is created for "Hank" with 2 Widget                 # features/steps/check_credit_steps.py:30
-    And the daily totals are read                                 # features/steps/order_flow_dashboard_steps.py:20
-    When Order is deleted                                         # features/steps/check_credit_steps.py:143
-    Then today's order_count rises by -1 and order_amount by -180 # features/steps/order_flow_dashboard_steps.py:59
+  Scenario: Accepted and rejected B2B requests are counted                               # features/order_flow_dashboard.feature:33
+    Given a new customer "Flow Req" with credit limit 5000                               # features/steps/demo_eai_steps.py:78
+    And today's totals are noted                                                         # features/steps/demo_eai_steps.py:104
+    When a B2B order is placed for "Flow Req" with 1 Widget                              # features/steps/demo_eai_steps.py:99
+    And a B2B order is placed for "Flow Req" with 1 Sprocket                             # features/steps/demo_eai_steps.py:99
+    Then today's requests rose by 2 received, 1 processed, 1 rejected and 0 not yet done # features/steps/demo_eai_steps.py:423
+    And the B2B request is dated today                                                   # features/steps/demo_eai_steps.py:296
 
-  Scenario: Order Moved To Another Day                           # features/order_flow_dashboard.feature:35
-    Given Customer "Ivo" with credit limit 5000                  # features/steps/check_credit_steps.py:9
-    And Order is created for "Ivo" with 1 Widget                 # features/steps/check_credit_steps.py:30
-    And the daily totals are read                                # features/steps/order_flow_dashboard_steps.py:20
-    When the Order is moved to yesterday                         # features/steps/order_flow_dashboard_steps.py:51
-    Then today's order_count rises by -1 and order_amount by -90 # features/steps/order_flow_dashboard_steps.py:59
-    And yesterday's order_count rises by 1                       # features/steps/order_flow_dashboard_steps.py:68
+  Scenario: A request set back to not processed counts as not yet done                    # features/order_flow_dashboard.feature:41
+    Given a new customer "Flow Req Undo" with credit limit 5000                           # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Flow Req Undo" with 1 Widget                           # features/steps/demo_eai_steps.py:99
+    And today's totals are noted                                                          # features/steps/demo_eai_steps.py:104
+    When the B2B request is set back to not processed                                     # features/steps/demo_eai_steps.py:182
+    Then today's requests rose by 0 received, -1 processed, 0 rejected and 1 not yet done # features/steps/demo_eai_steps.py:423
 
-  Scenario: Delivered Message Counts In Daily Totals                                                   # features/order_flow_dashboard.feature:43
-    Given Customer "Gil" with credit limit 5000                                                        # features/steps/check_credit_steps.py:9
-    And the daily totals are read                                                                      # features/steps/order_flow_dashboard_steps.py:20
-    When an inbound order message for "Gil" with 1 Widget and 2 Gadget is delivered to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:5
-    Then today's message_received and message_processed rise by 1                                      # features/steps/order_flow_dashboard_steps.py:75
-    And today's message_stuck is unchanged                                                             # features/steps/order_flow_dashboard_steps.py:84
+  Scenario: An accepted message is counted                                                          # features/order_flow_dashboard.feature:48
+    Given a new customer "Flow Msg" with credit limit 5000                                          # features/steps/demo_eai_steps.py:78
+    And today's totals are noted                                                                    # features/steps/demo_eai_steps.py:104
+    When an order message for "Flow Msg" with 1 Widget and 2 Gadget is delivered to topic order_b2b # features/steps/demo_eai_steps.py:196
+    Then the message is processed                                                                   # features/steps/demo_eai_steps.py:214
+    And today's messages rose by 1 received, 1 processed, 0 rejected and 0 not yet done             # features/steps/demo_eai_steps.py:430
+    And the message is dated today                                                                  # features/steps/demo_eai_steps.py:232
 
-  Scenario: Rejected Message Counts In Daily Totals (live Kafka only)                         # features/order_flow_dashboard.feature:50
-    Given the daily totals are read                                                           # features/steps/order_flow_dashboard_steps.py:20
-    When an inbound order message for an unknown account is delivered live to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:20
-    Then today's message_received and message_failed rise by 1                                # features/steps/order_flow_dashboard_steps.py:75
+  Scenario: A message set back to not processed counts as not yet done                                  # features/order_flow_dashboard.feature:56
+    Given a new customer "Flow Msg Undo" with credit limit 5000                                         # features/steps/demo_eai_steps.py:78
+    And an order message for "Flow Msg Undo" with 1 Widget and 2 Gadget is delivered to topic order_b2b # features/steps/demo_eai_steps.py:196
+    And today's totals are noted                                                                        # features/steps/demo_eai_steps.py:104
+    When the message is set back to not processed                                                       # features/steps/demo_eai_steps.py:188
+    Then today's messages rose by 0 received, -1 processed, 0 rejected and 1 not yet done               # features/steps/demo_eai_steps.py:430
 
-  Scenario: Dashboard Shows Current Data                 # features/order_flow_dashboard.feature:55
-    Given Customer "Hugo" with credit limit 5000         # features/steps/check_credit_steps.py:9
-    When B2B order placed for "Hugo" with 1 Widget       # features/steps/check_credit_steps.py:40
-    Then the dashboard shows the three charts with today # features/steps/order_flow_dashboard_steps.py:90
+  Scenario: A rejected message is counted (live Kafka only)                                       # features/order_flow_dashboard.feature:63
+    Given a new customer "Flow Msg Bad" with credit limit 5000                                    # features/steps/demo_eai_steps.py:78
+    And today's totals are noted                                                                  # features/steps/demo_eai_steps.py:104
+    When an order message for "Flow Msg Bad" with 1 Sprocket is delivered live to topic order_b2b # features/steps/demo_eai_steps.py:202
+    Then today's messages rose by 1 received, 0 processed, 1 rejected and 0 not yet done          # features/steps/demo_eai_steps.py:430
+
+  Scenario: The chart shows the last 30 days with quiet days as zero  # features/order_flow_dashboard.feature:69
+    When the order volume chart is opened                             # features/steps/demo_eai_steps.py:450
+    Then the chart shows 31 days ending today                         # features/steps/demo_eai_steps.py:456
+    And every day with no totals shows zero                           # features/steps/demo_eai_steps.py:462
+
+  Scenario: The chart shows current data each time it is opened                # features/order_flow_dashboard.feature:74
+    Given a new customer "Flow Chart" with credit limit 5000                   # features/steps/demo_eai_steps.py:78
+    And the order volume chart is opened                                       # features/steps/demo_eai_steps.py:450
+    When a B2B order is placed for "Flow Chart" with 1 Gadget                  # features/steps/demo_eai_steps.py:99
+    And the order volume chart is opened again                                 # features/steps/demo_eai_steps.py:445
+    Then the chart's value for today rose by 1 and matches today's order count # features/steps/demo_eai_steps.py:474
 
 Feature: Row-Level Security # features/row_level_security.feature:1
 
-  Scenario: Sales Role Sees Limited Customers                         # features/row_level_security.feature:5
-    Given Customer "Lowlimit" with credit limit 1000                  # features/steps/check_credit_steps.py:9
-    And Customer "Highlimit" with credit limit 5000                   # features/steps/check_credit_steps.py:9
-    And Customer "Owing" with credit limit 1000                       # features/steps/check_credit_steps.py:9
-    And Order is created for "Owing" with 1 Widget                    # features/steps/check_credit_steps.py:30
-    When the sales user lists Customers                               # features/steps/row_level_security_steps.py:5
-    Then "Highlimit" and "Owing" are listed, and "Lowlimit" is not    # features/steps/row_level_security_steps.py:13
-    And every listed Customer has credit_limit >= 3000 or balance > 0 # features/steps/row_level_security_steps.py:22
+  Scenario: Sales sees a customer with a credit limit of 3000 or more  # features/row_level_security.feature:3
+    Given a new customer "Sec High" with credit limit 5000             # features/steps/demo_eai_steps.py:78
+    When a sales user queries the Customer list                        # features/steps/demo_eai_steps.py:388
+    Then the sales user sees "Sec High"                                # features/steps/demo_eai_steps.py:394
+
+  Scenario: Sales sees a low-limit customer who has a balance  # features/row_level_security.feature:8
+    Given a new customer "Sec Owing" with credit limit 1000    # features/steps/demo_eai_steps.py:78
+    And a B2B order is placed for "Sec Owing" with 1 Widget    # features/steps/demo_eai_steps.py:99
+    When a sales user queries the Customer list                # features/steps/demo_eai_steps.py:388
+    Then the sales user sees "Sec Owing"                       # features/steps/demo_eai_steps.py:394
+
+  Scenario: Sales does not see a low-limit customer with no balance  # features/row_level_security.feature:14
+    Given a new customer "Sec Low" with credit limit 1000            # features/steps/demo_eai_steps.py:78
+    When a sales user queries the Customer list                      # features/steps/demo_eai_steps.py:388
+    Then the sales user does not see "Sec Low"                       # features/steps/demo_eai_steps.py:399
+    And an admin user sees "Sec Low"                                 # features/steps/demo_eai_steps.py:404
 
 &nbsp;&nbsp;
-/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py completed at November 19, 2026 18:42:27
-Behave run time: 5.041 s
+/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py completed at November 19, 2026 19:46:08
+Behave run time: 7.398 s

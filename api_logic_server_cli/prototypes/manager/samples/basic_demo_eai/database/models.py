@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  November 19, 2026 17:34:14
+# Created:  November 19, 2026 18:51:34
 # Database: sqlite:////Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -71,12 +71,12 @@ class DailyFlow(Base):  # type: ignore
     order_amount = Column(Numeric(15, 2), server_default=text("0"))
     message_received = Column(Integer, server_default=text("0"))
     message_processed = Column(Integer, server_default=text("0"))
-    message_failed = Column(Integer, server_default=text("0"))
-    message_stuck = Column(Integer, server_default=text("0"))
+    message_rejected = Column(Integer, server_default=text("0"))
+    message_pending = Column(Integer, server_default=text("0"))
     request_received = Column(Integer, server_default=text("0"))
     request_processed = Column(Integer, server_default=text("0"))
-    request_failed = Column(Integer, server_default=text("0"))
-    request_stuck = Column(Integer, server_default=text("0"))
+    request_rejected = Column(Integer, server_default=text("0"))
+    request_pending = Column(Integer, server_default=text("0"))
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
@@ -149,12 +149,11 @@ class OrderB2bMessage(Base):  # type: ignore
     _s_collection_name = 'OrderB2bMessage'  # type: ignore
 
     id = Column(Integer, primary_key=True)
-    received_at = Column(DateTime)
+    CreatedOn = Column(DateTime)
+    CreatedOnDay = Column(ForeignKey('daily_flow.day'))
     payload = Column(Text, nullable=False)
     is_processed = Column(Boolean, default=False)
     error_text = Column(Text)
-    CreatedOn = Column(DateTime)
-    CreatedOnDay = Column(ForeignKey('daily_flow.day'))
 
     # parent relationships (access parent)
     daily_flow : Mapped["DailyFlow"] = relationship(back_populates=("OrderB2bMessageList"))
@@ -170,7 +169,7 @@ class OrderB2bRequest(Base):  # type: ignore
     id = Column(Integer, primary_key=True)
     CreatedOn = Column(DateTime)
     CreatedOnDay = Column(ForeignKey('daily_flow.day'))
-    payload = Column(Text, nullable=False)
+    payload = Column(Text)
     is_processed = Column(Boolean, default=False)
     error_text = Column(Text)
 

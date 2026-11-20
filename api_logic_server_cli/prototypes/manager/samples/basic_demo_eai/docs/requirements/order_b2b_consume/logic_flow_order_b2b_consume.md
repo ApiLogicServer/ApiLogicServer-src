@@ -13,7 +13,7 @@
 
 ### Rules
 
-1. `OrderB2bMessage` → `_publish_order_b2b` (after_flush) — OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so Consumer 2
+1. `OrderB2bMessage` → `_publish_order_b2b` (after_flush) — OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so consumer 2
 
 </td>
 </tr>
@@ -32,9 +32,9 @@ Feature: Kafka Subscribe Order Integration
     And map Items.QuantityOrdered to Item.quantity
 
 version: 1.0
-created: 2026-11-19T14:30:00
+created: 2026-11-19T18:58:00
 created_by: claude-opus-5-5 (valjhuber@gmail.com)
 ```
 
 ---
-_Generated 2026-11-19 17:40_
+_Generated 2026-11-19 18:57_

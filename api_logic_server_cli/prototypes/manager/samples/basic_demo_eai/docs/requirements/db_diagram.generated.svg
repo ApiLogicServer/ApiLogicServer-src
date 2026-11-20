@@ -106,15 +106,15 @@
 <text xml:space="preserve" text-anchor="start" x="666.5" y="-606.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="8.00" fill="#777777">derived</text>
 <text xml:space="preserve" text-anchor="start" x="692.75" y="-606.05" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
 <text xml:space="preserve" text-anchor="start" x="735.75" y="-606.88" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">INTEGER</text>
-<text xml:space="preserve" text-anchor="start" x="564.5" y="-584.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="11.00">message_failed</text>
-<text xml:space="preserve" text-anchor="start" x="639.5" y="-584.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
-<text xml:space="preserve" text-anchor="start" x="642.5" y="-584.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="8.00" fill="#777777">derived</text>
-<text xml:space="preserve" text-anchor="start" x="668.75" y="-584.05" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
+<text xml:space="preserve" text-anchor="start" x="564.5" y="-584.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="11.00">message_rejected</text>
+<text xml:space="preserve" text-anchor="start" x="652.25" y="-584.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="655.25" y="-584.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="8.00" fill="#777777">derived</text>
+<text xml:space="preserve" text-anchor="start" x="681.5" y="-584.05" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
 <text xml:space="preserve" text-anchor="start" x="735.75" y="-584.88" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">INTEGER</text>
-<text xml:space="preserve" text-anchor="start" x="564.5" y="-562.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="11.00">message_stuck</text>
-<text xml:space="preserve" text-anchor="start" x="638.75" y="-562.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
-<text xml:space="preserve" text-anchor="start" x="641.75" y="-562.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="8.00" fill="#777777">derived</text>
-<text xml:space="preserve" text-anchor="start" x="668" y="-562.05" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
+<text xml:space="preserve" text-anchor="start" x="564.5" y="-562.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="11.00">message_pending</text>
+<text xml:space="preserve" text-anchor="start" x="652.25" y="-562.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="655.25" y="-562.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="8.00" fill="#777777">derived</text>
+<text xml:space="preserve" text-anchor="start" x="681.5" y="-562.05" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
 <text xml:space="preserve" text-anchor="start" x="735.75" y="-562.88" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">INTEGER</text>
 <text xml:space="preserve" text-anchor="start" x="564.5" y="-540.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="11.00">request_received</text>
 <text xml:space="preserve" text-anchor="start" x="647" y="-540.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
@@ -126,15 +126,15 @@
 <text xml:space="preserve" text-anchor="start" x="659" y="-518.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="8.00" fill="#777777">derived</text>
 <text xml:space="preserve" text-anchor="start" x="685.25" y="-518.05" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
 <text xml:space="preserve" text-anchor="start" x="735.75" y="-518.88" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">INTEGER</text>
-<text xml:space="preserve" text-anchor="start" x="564.5" y="-496.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="11.00">request_failed</text>
-<text xml:space="preserve" text-anchor="start" x="632" y="-496.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
-<text xml:space="preserve" text-anchor="start" x="635" y="-496.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="8.00" fill="#777777">derived</text>
-<text xml:space="preserve" text-anchor="start" x="661.25" y="-496.05" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
+<text xml:space="preserve" text-anchor="start" x="564.5" y="-496.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="11.00">request_rejected</text>
+<text xml:space="preserve" text-anchor="start" x="644.75" y="-496.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="647.75" y="-496.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="8.00" fill="#777777">derived</text>
+<text xml:space="preserve" text-anchor="start" x="674" y="-496.05" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
 <text xml:space="preserve" text-anchor="start" x="735.75" y="-496.88" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">INTEGER</text>
-<text xml:space="preserve" text-anchor="start" x="564.5" y="-474.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="11.00">request_stuck</text>
-<text xml:space="preserve" text-anchor="start" x="631.25" y="-474.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
-<text xml:space="preserve" text-anchor="start" x="634.25" y="-474.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="8.00" fill="#777777">derived</text>
-<text xml:space="preserve" text-anchor="start" x="660.5" y="-474.05" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
+<text xml:space="preserve" text-anchor="start" x="564.5" y="-474.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="11.00">request_pending</text>
+<text xml:space="preserve" text-anchor="start" x="644.75" y="-474.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="647.75" y="-474.05" font-family="Helvetica,sans-Serif" font-style="italic" font-size="8.00" fill="#777777">derived</text>
+<text xml:space="preserve" text-anchor="start" x="674" y="-474.05" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
 <text xml:space="preserve" text-anchor="start" x="735.75" y="-474.88" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">INTEGER</text>
 <polygon fill="none" stroke="#d9d9d9" points="558.5,-465.5 558.5,-732.25 781.5,-732.25 781.5,-465.5 558.5,-465.5"/>
 </g>
@@ -149,37 +149,35 @@
 <!-- OrderB2bMessage -->
 <g id="node6" class="node">
 <title>OrderB2bMessage</title>
-<polygon fill="#f2f2f2" stroke="none" points="782.38,-221.75 782.38,-400.5 941.62,-400.5 941.62,-221.75 782.38,-221.75"/>
-<polygon fill="#3f6792" stroke="none" points="783.38,-376.75 783.38,-399.5 940.62,-399.5 940.62,-376.75 783.38,-376.75"/>
-<text xml:space="preserve" text-anchor="start" x="788.38" y="-384.1" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="12.00" fill="white">OrderB2bMessage</text>
-<text xml:space="preserve" text-anchor="start" x="788.38" y="-362.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">id</text>
-<text xml:space="preserve" text-anchor="start" x="798.12" y="-362.3" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
-<text xml:space="preserve" text-anchor="start" x="801.12" y="-362.3" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#3f6792">PK</text>
-<text xml:space="preserve" text-anchor="start" x="811.62" y="-362.3" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
-<text xml:space="preserve" text-anchor="start" x="895.88" y="-363.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">INTEGER</text>
-<text xml:space="preserve" text-anchor="start" x="788.38" y="-340.75" font-family="Helvetica,sans-Serif" font-size="11.00">received_at  </text>
-<text xml:space="preserve" text-anchor="start" x="890.62" y="-341.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">DATETIME</text>
-<text xml:space="preserve" text-anchor="start" x="788.38" y="-318.75" font-family="Helvetica,sans-Serif" font-size="11.00">payload  </text>
-<text xml:space="preserve" text-anchor="start" x="913.12" y="-319.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">TEXT</text>
-<text xml:space="preserve" text-anchor="start" x="788.38" y="-296.75" font-family="Helvetica,sans-Serif" font-size="11.00">is_processed  </text>
-<text xml:space="preserve" text-anchor="start" x="892.12" y="-297.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">BOOLEAN</text>
-<text xml:space="preserve" text-anchor="start" x="788.38" y="-274.75" font-family="Helvetica,sans-Serif" font-size="11.00">error_text  </text>
-<text xml:space="preserve" text-anchor="start" x="913.12" y="-275.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">TEXT</text>
-<text xml:space="preserve" text-anchor="start" x="788.38" y="-252.75" font-family="Helvetica,sans-Serif" font-size="11.00">CreatedOn  </text>
-<text xml:space="preserve" text-anchor="start" x="890.62" y="-253.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">DATETIME</text>
-<text xml:space="preserve" text-anchor="start" x="788.38" y="-230.3" font-family="Helvetica,sans-Serif" font-size="11.00">CreatedOnDay </text>
-<text xml:space="preserve" text-anchor="start" x="864.12" y="-230.3" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#3f6792">FK</text>
-<text xml:space="preserve" text-anchor="start" x="874.62" y="-230.3" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
-<text xml:space="preserve" text-anchor="start" x="913.12" y="-231.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">TEXT</text>
-<polygon fill="none" stroke="#d9d9d9" points="782.38,-221.75 782.38,-400.5 941.62,-400.5 941.62,-221.75 782.38,-221.75"/>
+<polygon fill="#f2f2f2" stroke="none" points="782.38,-232.75 782.38,-389.5 941.62,-389.5 941.62,-232.75 782.38,-232.75"/>
+<polygon fill="#3f6792" stroke="none" points="783.38,-365.75 783.38,-388.5 940.62,-388.5 940.62,-365.75 783.38,-365.75"/>
+<text xml:space="preserve" text-anchor="start" x="788.38" y="-373.1" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="12.00" fill="white">OrderB2bMessage</text>
+<text xml:space="preserve" text-anchor="start" x="788.38" y="-351.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">id</text>
+<text xml:space="preserve" text-anchor="start" x="798.12" y="-351.3" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="801.12" y="-351.3" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#3f6792">PK</text>
+<text xml:space="preserve" text-anchor="start" x="811.62" y="-351.3" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
+<text xml:space="preserve" text-anchor="start" x="895.88" y="-352.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">INTEGER</text>
+<text xml:space="preserve" text-anchor="start" x="788.38" y="-329.75" font-family="Helvetica,sans-Serif" font-size="11.00">CreatedOn  </text>
+<text xml:space="preserve" text-anchor="start" x="890.62" y="-330.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">DATETIME</text>
+<text xml:space="preserve" text-anchor="start" x="788.38" y="-307.3" font-family="Helvetica,sans-Serif" font-size="11.00">CreatedOnDay </text>
+<text xml:space="preserve" text-anchor="start" x="864.12" y="-307.3" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#3f6792">FK</text>
+<text xml:space="preserve" text-anchor="start" x="874.62" y="-307.3" font-family="Helvetica,sans-Serif" font-size="11.00">  </text>
+<text xml:space="preserve" text-anchor="start" x="913.12" y="-308.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">TEXT</text>
+<text xml:space="preserve" text-anchor="start" x="788.38" y="-285.75" font-family="Helvetica,sans-Serif" font-size="11.00">payload  </text>
+<text xml:space="preserve" text-anchor="start" x="913.12" y="-286.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">TEXT</text>
+<text xml:space="preserve" text-anchor="start" x="788.38" y="-263.75" font-family="Helvetica,sans-Serif" font-size="11.00">is_processed  </text>
+<text xml:space="preserve" text-anchor="start" x="892.12" y="-264.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">BOOLEAN</text>
+<text xml:space="preserve" text-anchor="start" x="788.38" y="-241.75" font-family="Helvetica,sans-Serif" font-size="11.00">error_text  </text>
+<text xml:space="preserve" text-anchor="start" x="913.12" y="-242.12" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#777777">TEXT</text>
+<polygon fill="none" stroke="#d9d9d9" points="782.38,-232.75 782.38,-389.5 941.62,-389.5 941.62,-232.75 782.38,-232.75"/>
 </g>
 <!-- DailyFlow&#45;&gt;OrderB2bMessage -->
 <g id="edge5" class="edge">
 <title>DailyFlow&#45;&gt;OrderB2bMessage</title>
-<path fill="none" stroke="#9b9ca4" stroke-width="1.2" d="M760.8,-462.75C773.38,-444.02 786.08,-425.11 798.03,-407.32"/>
+<path fill="none" stroke="#9b9ca4" stroke-width="1.2" d="M760.76,-462.8C775.96,-440.18 791.34,-417.29 805.36,-396.42"/>
 <polygon fill="#9b9ca4" stroke="#9b9ca4" stroke-width="1.2" points="762.46,-467.44 755.82,-462.98 756.71,-461.65 763.35,-466.11 762.46,-467.44"/>
 <polyline fill="none" stroke="#9b9ca4" stroke-width="1.2" points="758.69,-465.87 760.92,-462.55"/>
-<polygon fill="#9b9ca4" stroke="#9b9ca4" stroke-width="1.2" points="798.07,-407.27 805.52,-402.64 800.52,-403.62 802.31,-400.97 802.31,-400.97 802.31,-400.97 800.52,-403.62 799.54,-398.63 798.07,-407.27"/>
+<polygon fill="#9b9ca4" stroke="#9b9ca4" stroke-width="1.2" points="805.38,-396.39 812.83,-391.76 807.83,-392.74 809.62,-390.09 809.62,-390.09 809.62,-390.09 807.83,-392.74 806.85,-387.74 805.38,-396.39"/>
 </g>
 <!-- OrderB2bRequest -->
 <g id="node7" class="node">

@@ -1,7 +1,8 @@
 ---
-created: 2026-11-19T14:27:00
+created: 2026-11-19T19:05:00
 created_by: claude-opus-5-5 (valjhuber@gmail.com)
 use_case: check_credit
+source: docs/requirements/demo_eai/requirements.md
 ---
 
 ## 1. Business Logic — Check Credit

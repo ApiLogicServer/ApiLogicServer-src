@@ -1,21 +1,25 @@
 {
-  "Kafka Subscribe Order Integration / Order Message Delivered": {
+  "Kafka Subscribe Order Integration / Order message for a known customer creates the order": {
     "mode": "live",
     "broker": "localhost:9092"
   },
-  "Kafka Subscribe Order Integration / Unknown Account Message Rejected": {
+  "Kafka Subscribe Order Integration / Order message with an unknown product is rejected": {
     "mode": "live",
     "broker": "localhost:9092"
   },
-  "Kafka Subscribe Order Integration / Rejected Message Keeps Its Error (live Kafka only)": {
+  "Kafka Subscribe Order Integration / Rejected message stays on the blob with its error (live Kafka only)": {
     "mode": "live",
     "broker": "localhost:9092"
   },
-  "Order Flow Dashboard / Delivered Message Counts In Daily Totals": {
+  "Order Flow Dashboard / An accepted message is counted": {
     "mode": "live",
     "broker": "localhost:9092"
   },
-  "Order Flow Dashboard / Rejected Message Counts In Daily Totals (live Kafka only)": {
+  "Order Flow Dashboard / A message set back to not processed counts as not yet done": {
+    "mode": "live",
+    "broker": "localhost:9092"
+  },
+  "Order Flow Dashboard / A rejected message is counted (live Kafka only)": {
     "mode": "live",
     "broker": "localhost:9092"
   }

@@ -17,12 +17,12 @@ Table DailyFlow {
     order_amount NUMERIC(15, 2) 
     message_received INTEGER 
     message_processed INTEGER 
-    message_failed INTEGER 
-    message_stuck INTEGER 
+    message_rejected INTEGER 
+    message_pending INTEGER 
     request_received INTEGER 
     request_processed INTEGER 
-    request_failed INTEGER 
-    request_stuck INTEGER 
+    request_rejected INTEGER 
+    request_pending INTEGER 
     }
 
 Table Item {
@@ -53,12 +53,11 @@ Table Product {
 
 Table OrderB2bMessage {
     id INTEGER [primary key]
-    received_at DATETIME 
+    CreatedOn DATETIME 
+    CreatedOnDay TEXT 
     payload TEXT 
     is_processed BOOLEAN 
     error_text TEXT 
-    CreatedOn DATETIME 
-    CreatedOnDay TEXT 
     }
 
 Table OrderB2bRequest {

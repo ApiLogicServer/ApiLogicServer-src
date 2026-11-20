@@ -6,6 +6,8 @@ add security (degrade to SQL if Keycloak is not available)
 
 implement requirements samples/requirements/demo_eai/docs/requirements/demo_eai
 
+update the Admin App to show the new tables: replace ui/admin/admin.yaml with admin-merge.yaml (keep a backup), and show the message and request payloads as text areas
+
 seed order history for the dashboard: the 30 days before today, through the rules (not SQL), with weekday and weekend volumes (orders arriving as B2B requests and as Kafka messages), one day with mostly rejected messages, and no activity 3 and 2 days ago
 
 verify message subscriptions (all topics)

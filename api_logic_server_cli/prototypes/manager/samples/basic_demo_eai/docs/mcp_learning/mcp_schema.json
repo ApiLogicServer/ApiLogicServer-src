@@ -45,12 +45,12 @@
                 "order_amount",
                 "message_received",
                 "message_processed",
-                "message_failed",
-                "message_stuck",
+                "message_rejected",
+                "message_pending",
                 "request_received",
                 "request_processed",
-                "request_failed",
-                "request_stuck"
+                "request_rejected",
+                "request_pending"
             ],
             "filterable": [
                 "day",
@@ -58,12 +58,12 @@
                 "order_amount",
                 "message_received",
                 "message_processed",
-                "message_failed",
-                "message_stuck",
+                "message_rejected",
+                "message_pending",
                 "request_received",
                 "request_processed",
-                "request_failed",
-                "request_stuck"
+                "request_rejected",
+                "request_pending"
             ]
         },
         {
@@ -153,21 +153,19 @@
             ],
             "fields": [
                 "id",
-                "received_at",
+                "CreatedOn",
+                "CreatedOnDay",
                 "payload",
                 "is_processed",
-                "error_text",
-                "CreatedOn",
-                "CreatedOnDay"
+                "error_text"
             ],
             "filterable": [
                 "id",
-                "received_at",
+                "CreatedOn",
+                "CreatedOnDay",
                 "payload",
                 "is_processed",
-                "error_text",
-                "CreatedOn",
-                "CreatedOnDay"
+                "error_text"
             ]
         },
         {

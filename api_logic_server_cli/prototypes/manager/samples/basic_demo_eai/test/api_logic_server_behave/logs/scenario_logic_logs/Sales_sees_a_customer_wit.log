@@ -1,0 +1,11 @@
+ Sales sees a customer with a credit limit of 3000 or more  - 2026-11-19 19:46:08,754 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10e4ce250) (sqlalchemy before_flush)			 - 2026-11-19 19:46:08,758 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: Sec High 1795146368757, balance: 0, credit_limit: 5000, email: None, email_opt_out: None  row: 0x10f357c50  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,758 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: Sec High 1795146368757, balance: 0, credit_limit: 5000, email: None, email_opt_out: None  row: 0x10f357c50  session: 0x10e4ce250  ins_upd_dlt: ins, initial: ins - 2026-11-19 19:46:08,758 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10e4ce250)   										 - 2026-11-19 19:46:08,759 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10e4ce250)   										 - 2026-11-19 19:46:08,759 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-19 19:46:08,759 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10e4ce250))       	 - 2026-11-19 19:46:08,759 - logic_logger - INFO

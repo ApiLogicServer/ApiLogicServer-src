@@ -1,58 +1,79 @@
 Feature: Order Flow Dashboard
 
-  # Daily totals (DailyFlow) maintained by rules; checked as changes to today's /order_flow/daily figures.
+  Scenario: A new order is dated today and counted in today's totals
+    Given a new customer "Flow Cust" with credit limit 5000
+    And today's totals are noted
+    When a B2B order is placed for "Flow Cust" with 2 Widget and 1 Gadget
+    Then the order is dated today
+    And today's order count rose by 1 and order amount by 330
 
-  Scenario: Order Placed Is Dated Today
-    Given Customer "Dana" with credit limit 5000
-    When B2B order placed for "Dana" with 1 Widget
-    Then the Order is dated today
+  Scenario: Changing an order's value adjusts today's order amount
+    Given a new customer "Flow Change" with credit limit 5000
+    And a B2B order is placed for "Flow Change" with 2 Widget and 1 Gadget
+    And today's totals are noted
+    When the quantity of the first item is changed to 3
+    Then today's order count rose by 0 and order amount by 90
 
-  Scenario: Order With Its Own Date Keeps It
-    Given Customer "Eli" with credit limit 5000
-    When an Order dated 2026-01-15 is created for "Eli" through the API
-    Then the Order keeps its date 2026-01-15
+  Scenario: Deleting an order removes it from today's totals
+    Given a new customer "Flow Delete" with credit limit 5000
+    And a B2B order is placed for "Flow Delete" with 1 Gadget
+    And today's totals are noted
+    When the order is deleted
+    Then today's order count rose by -1 and order amount by -150
 
-  Scenario: New Order Counts In Daily Totals
-    Given Customer "Fran" with credit limit 5000
-    And the daily totals are read
-    When B2B order placed for "Fran" with 2 Widget
-    Then today's order_count rises by 1 and order_amount by 180
+  Scenario: Moving an order to another day adjusts both days
+    Given a new customer "Flow Move" with credit limit 5000
+    And a B2B order is placed for "Flow Move" with 1 Gadget
+    And today's totals are noted
+    And the totals of day "2000-01-01" are noted
+    When the order is moved to day "2000-01-01"
+    Then today's order count rose by -1 and order amount by -150
+    And day "2000-01-01" order count rose by 1 and order amount by 150
 
-  Scenario: Changed Item Adjusts Daily Amount
-    Given Customer "Gale" with credit limit 5000
-    And Order is created for "Gale" with 2 Widget
-    And the daily totals are read
-    When Item quantity changed to 3
-    Then today's order_count rises by 0 and order_amount by 90
+  Scenario: Accepted and rejected B2B requests are counted
+    Given a new customer "Flow Req" with credit limit 5000
+    And today's totals are noted
+    When a B2B order is placed for "Flow Req" with 1 Widget
+    And a B2B order is placed for "Flow Req" with 1 Sprocket
+    Then today's requests rose by 2 received, 1 processed, 1 rejected and 0 not yet done
+    And the B2B request is dated today
 
-  Scenario: Deleted Order Leaves Daily Totals
-    Given Customer "Hank" with credit limit 5000
-    And Order is created for "Hank" with 2 Widget
-    And the daily totals are read
-    When Order is deleted
-    Then today's order_count rises by -1 and order_amount by -180
+  Scenario: A request set back to not processed counts as not yet done
+    Given a new customer "Flow Req Undo" with credit limit 5000
+    And a B2B order is placed for "Flow Req Undo" with 1 Widget
+    And today's totals are noted
+    When the B2B request is set back to not processed
+    Then today's requests rose by 0 received, -1 processed, 0 rejected and 1 not yet done
 
-  Scenario: Order Moved To Another Day
-    Given Customer "Ivo" with credit limit 5000
-    And Order is created for "Ivo" with 1 Widget
-    And the daily totals are read
-    When the Order is moved to yesterday
-    Then today's order_count rises by -1 and order_amount by -90
-    And yesterday's order_count rises by 1
+  Scenario: An accepted message is counted
+    Given a new customer "Flow Msg" with credit limit 5000
+    And today's totals are noted
+    When an order message for "Flow Msg" with 1 Widget and 2 Gadget is delivered to topic order_b2b
+    Then the message is processed
+    And today's messages rose by 1 received, 1 processed, 0 rejected and 0 not yet done
+    And the message is dated today
 
-  Scenario: Delivered Message Counts In Daily Totals
-    Given Customer "Gil" with credit limit 5000
-    And the daily totals are read
-    When an inbound order message for "Gil" with 1 Widget and 2 Gadget is delivered to topic order_b2b
-    Then today's message_received and message_processed rise by 1
-    And today's message_stuck is unchanged
+  Scenario: A message set back to not processed counts as not yet done
+    Given a new customer "Flow Msg Undo" with credit limit 5000
+    And an order message for "Flow Msg Undo" with 1 Widget and 2 Gadget is delivered to topic order_b2b
+    And today's totals are noted
+    When the message is set back to not processed
+    Then today's messages rose by 0 received, -1 processed, 0 rejected and 1 not yet done
 
-  Scenario: Rejected Message Counts In Daily Totals (live Kafka only)
-    Given the daily totals are read
-    When an inbound order message for an unknown account is delivered live to topic order_b2b
-    Then today's message_received and message_failed rise by 1
+  Scenario: A rejected message is counted (live Kafka only)
+    Given a new customer "Flow Msg Bad" with credit limit 5000
+    And today's totals are noted
+    When an order message for "Flow Msg Bad" with 1 Sprocket is delivered live to topic order_b2b
+    Then today's messages rose by 1 received, 0 processed, 1 rejected and 0 not yet done
 
-  Scenario: Dashboard Shows Current Data
-    Given Customer "Hugo" with credit limit 5000
-    When B2B order placed for "Hugo" with 1 Widget
-    Then the dashboard shows the three charts with today
+  Scenario: The chart shows the last 30 days with quiet days as zero
+    When the order volume chart is opened
+    Then the chart shows 31 days ending today
+    And every day with no totals shows zero
+
+  Scenario: The chart shows current data each time it is opened
+    Given a new customer "Flow Chart" with credit limit 5000
+    And the order volume chart is opened
+    When a B2B order is placed for "Flow Chart" with 1 Gadget
+    And the order volume chart is opened again
+    Then the chart's value for today rose by 1 and matches today's order count

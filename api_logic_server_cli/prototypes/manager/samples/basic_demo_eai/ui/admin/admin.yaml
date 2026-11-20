@@ -1,5 +1,10 @@
 about:
-  date: November 19, 2026 17:33:29
+  date: November 19, 2026 18:49:15
+  merged:
+    at: November 19, 2026 18:51:34
+    new_attributes: 'Order.CreatedOnDay '
+    new_resources: 'DailyFlow OrderB2bMessage OrderB2bRequest '
+    new_tab_groups: 'Order.daily_flow '
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -40,14 +45,14 @@ resources:
       sort: true
     - name: order_count
     - name: order_amount
-    - name: message_stuck
-    - name: request_stuck
+    - name: message_pending
+    - name: request_pending
     - name: message_received
     - name: message_processed
-    - name: message_failed
+    - name: message_rejected
     - name: request_received
     - name: request_processed
-    - name: request_failed
+    - name: request_rejected
     tab_groups:
     - direction: tomany
       fks:
@@ -109,6 +114,7 @@ resources:
       type: DECIMAL
     - name: date_shipped
       type: DATE
+    - name: CreatedOnDay
     tab_groups:
     - direction: tomany
       fks:
@@ -129,22 +135,14 @@ resources:
       search: true
       sort: true
     - name: CreatedOnDay
-    - name: received_at
-      type: DATETIME
-    - name: error_text
     - name: CreatedOn
       type: DATETIME
+    - name: error_text
     - name: payload
       required: true
       type: textarea
     - name: is_processed
       type: Boolean
-    tab_groups:
-    - direction: toone
-      fks:
-      - CreatedOnDay
-      name: daily_flow
-      resource: DailyFlow
     type: OrderB2bMessage
     user_key: id
   OrderB2bRequest:
@@ -158,16 +156,9 @@ resources:
       type: DATETIME
     - name: error_text
     - name: payload
-      required: true
       type: textarea
     - name: is_processed
       type: Boolean
-    tab_groups:
-    - direction: toone
-      fks:
-      - CreatedOnDay
-      name: daily_flow
-      resource: DailyFlow
     type: OrderB2bRequest
     user_key: id
   Product:
