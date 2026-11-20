@@ -1,9 +1,15 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.29
-# Last Updated: October 13, 2026
+# Version: 1.0.30
+# Last Updated: November 4, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 # Changelog:
+#   1.0.30 (Nov 4 2026) - Documented `when_condition` on Rule.after_flush_row_event. It existed only as a bare
+#     parameter in the signature, and the text said "use if_condition", so a scripted demo_ai_rules_supplier build
+#     implemented "publish the Order to Kafka if date_shipped is not None" with if_condition: the Order was
+#     re-published on every later commit of a shipped order (e.g. a notes edit). when_condition fires once, when the
+#     condition goes from False to True (an insert counts as "was False"), which is what "when/once/on X" usually
+#     means for Kafka, email and other publish events. Choosing between the two is now stated.
 #   1.0.29 (Oct 13 2026) - Added "EXTENDED RULE: insert_parent" section (composite natural-key
 #     bucket/rollup rows, auto-created on first reference, adjusted not recreated thereafter).
 #     insert_parent itself was documented only as a one-line parameter description with no
@@ -734,26 +740,37 @@ class Rule:
         Events are triggered after database flush for integration (Kafka, etc.)
         
         IMPORTANT: Use this simple pattern - do NOT create custom functions unless absolutely necessary.
-        Use if_condition parameter for conditional logic instead of writing custom event handlers.
+        Use if_condition / when_condition for conditional logic instead of writing custom event handlers.
+
+        CHOOSE THE CONDITION BY WHAT THE REQUIREMENT MEANS:
+            when_condition - fires ONCE, on the transition: the condition was False (or the row is new) and is True now.
+                             Use for "when X becomes true", "once X", "on shipping", "when approved" - the usual intent
+                             for a published message, an email or any one-time side effect.
+            if_condition   - fires on EVERY commit of the row while the condition holds (a notes edit on a shipped
+                             Order fires it again). Use only when each commit really should act.
+            A bare "if X" in a requirement is ambiguous: prefer when_condition for a publish/notify event, and log the
+            choice as a 🔴 ad-lib so the user can confirm the transition reading.
+            Both lambdas must return a real bool (they are compared with == True / == False).
 
         Example:
             Prompt:
-                Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None
+                Send the Order to Kafka topic 'order_shipping' when the date_shipped is not None
             Response:
                 Rule.after_flush_row_event(on_class=Order, calling=kafka_producer.send_row_to_kafka,
-                               if_condition=lambda row: row.date_shipped is not None,
+                               when_condition=lambda row: row.date_shipped is not None,
                                with_args={"topic": "order_shipping"})
             Prompt:
                 Send the Product to Kafka topic 'ready_to_ship' if the is_complete is True
             Response:
                 Rule.after_flush_row_event(on_class=Product, calling=kafka_producer.send_row_to_kafka,
                                if_condition=lambda row: row.is_complete is True,
-                               with_args={"topic": "ready_to_ship"})
+                               with_args={"topic": "ready_to_ship"})   # every commit while complete
 
         Args:
             on_class: The model class to watch for changes
             calling: Use kafka_producer.send_row_to_kafka for Kafka integration
-            if_condition: Lambda function to specify when the event should trigger
+            if_condition: Lambda function; execute calling on every commit while it is True
+            when_condition: Lambda function; execute calling only when it was False (or the row is new) and is now True
             with_args: Dictionary with parameters like {"topic": "topic_name"}
         """
 
@@ -1384,7 +1401,7 @@ Required (must-have) related parent constraints require an update to the data mo
     Response: product_id = Column(ForeignKey('product.id'), nullable=False)
 
 CRITICAL: For event handling (Kafka integration, etc.), do NOT create custom event functions.
-Use Rule.after_flush_row_event with if_condition parameter instead.
+Use Rule.after_flush_row_event with the when_condition (once, on the transition) or if_condition (every commit) parameter instead.
 
 WRONG (do not do this):
     def my_custom_kafka_function(row, old_row, logic_row):

@@ -1,11 +1,12 @@
 Feature: Row-Level Security
 
-  # Role sales (Keycloak user s1): Customers where credit_limit >= 3000 or balance > 0 (Grants are OR'd)
+  # Role sales (Keycloak user s1): Customer grants credit_limit >= 3000 OR balance > 0.
 
   Scenario: Sales Role Sees Limited Customers
-    Given Customer "LowCredit" with credit limit 1000
-    And Customer "HighCredit" with credit limit 3000
+    Given Customer "Lowlimit" with credit limit 1000
+    And Customer "Highlimit" with credit limit 5000
     And Customer "Owing" with credit limit 1000
     And Order is created for "Owing" with 1 Widget
-    When Sales user queries each Customer by name
-    Then Sales sees HighCredit and Owing but not LowCredit
+    When the sales user lists Customers
+    Then "Highlimit" and "Owing" are listed, and "Lowlimit" is not
+    And every listed Customer has credit_limit >= 3000 or balance > 0

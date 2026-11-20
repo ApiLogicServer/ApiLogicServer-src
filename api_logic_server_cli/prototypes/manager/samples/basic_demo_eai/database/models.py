@@ -1,6 +1,6 @@
 # coding: utf-8
 from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
-from sqlalchemy import Boolean, Column, DECIMAL, Date, DateTime, ForeignKey, Integer, String, Text, text
+from sqlalchemy import Boolean, Column, DECIMAL, Date, DateTime, ForeignKey, Integer, Numeric, String, Text, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -10,8 +10,8 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  October 24, 2026 15:03:36
-# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/database/db.sqlite
+# Created:  November 19, 2026 17:34:14
+# Database: sqlite:////Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/database/db.sqlite
 # Dialect:  sqlite
 #
 # mypy: ignore-errors
@@ -62,19 +62,29 @@ class Customer(Base):  # type: ignore
 
 
 
-class OrderB2bMessage(Base):  # type: ignore
-    __tablename__ = 'order_b2b_message'
-    _s_collection_name = 'OrderB2bMessage'  # type: ignore
+class DailyFlow(Base):  # type: ignore
+    __tablename__ = 'daily_flow'
+    _s_collection_name = 'DailyFlow'  # type: ignore
 
-    id = Column(Integer, primary_key=True)
-    received_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
-    payload = Column(Text, nullable=False)
-    is_processed = Column(Boolean, default=False)
-    error_text = Column(Text)
+    day = Column(Text, primary_key=True)
+    order_count = Column(Integer, server_default=text("0"))
+    order_amount = Column(Numeric(15, 2), server_default=text("0"))
+    message_received = Column(Integer, server_default=text("0"))
+    message_processed = Column(Integer, server_default=text("0"))
+    message_failed = Column(Integer, server_default=text("0"))
+    message_stuck = Column(Integer, server_default=text("0"))
+    request_received = Column(Integer, server_default=text("0"))
+    request_processed = Column(Integer, server_default=text("0"))
+    request_failed = Column(Integer, server_default=text("0"))
+    request_stuck = Column(Integer, server_default=text("0"))
+    allow_client_generated_ids = True
 
     # parent relationships (access parent)
 
     # child relationships (access children)
+    OrderList : Mapped[List["Order"]] = relationship(back_populates="daily_flow")
+    OrderB2bMessageList : Mapped[List["OrderB2bMessage"]] = relationship(back_populates="daily_flow")
+    OrderB2bRequestList : Mapped[List["OrderB2bRequest"]] = relationship(back_populates="daily_flow")
 
 
 
@@ -123,12 +133,51 @@ class Order(Base):  # type: ignore
     CreatedOn = Column(Date)
     date_shipped = Column(Date)
     amount_total : DECIMAL = Column(DECIMAL)
+    CreatedOnDay = Column(ForeignKey('daily_flow.day'))
 
     # parent relationships (access parent)
+    daily_flow : Mapped["DailyFlow"] = relationship(back_populates=("OrderList"))
     customer : Mapped["Customer"] = relationship(back_populates=("OrderList"))
 
     # child relationships (access children)
     ItemList : Mapped[List["Item"]] = relationship(back_populates="order")
+
+
+
+class OrderB2bMessage(Base):  # type: ignore
+    __tablename__ = 'order_b2b_message'
+    _s_collection_name = 'OrderB2bMessage'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    received_at = Column(DateTime)
+    payload = Column(Text, nullable=False)
+    is_processed = Column(Boolean, default=False)
+    error_text = Column(Text)
+    CreatedOn = Column(DateTime)
+    CreatedOnDay = Column(ForeignKey('daily_flow.day'))
+
+    # parent relationships (access parent)
+    daily_flow : Mapped["DailyFlow"] = relationship(back_populates=("OrderB2bMessageList"))
+
+    # child relationships (access children)
+
+
+
+class OrderB2bRequest(Base):  # type: ignore
+    __tablename__ = 'order_b2b_request'
+    _s_collection_name = 'OrderB2bRequest'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    CreatedOn = Column(DateTime)
+    CreatedOnDay = Column(ForeignKey('daily_flow.day'))
+    payload = Column(Text, nullable=False)
+    is_processed = Column(Boolean, default=False)
+    error_text = Column(Text)
+
+    # parent relationships (access parent)
+    daily_flow : Mapped["DailyFlow"] = relationship(back_populates=("OrderB2bRequestList"))
+
+    # child relationships (access children)
 
 
 

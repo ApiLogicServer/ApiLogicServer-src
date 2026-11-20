@@ -11,6 +11,11 @@ Behave hooks, shared by every project.
 import json
 import time
 from pathlib import Path
+import urllib3.util.connection
+
+# The server listens on IPv4 only. On Windows, 'localhost' resolves to IPv6 (::1) first, and each request
+# waits ~2 s before falling back to IPv4 (measured: 2042 ms vs 2 ms per request). Resolve IPv4 only.
+urllib3.util.connection.HAS_IPV6 = False
 
 LOGS = Path(__file__).resolve().parent.parent / 'logs'
 TIMES_FILE = LOGS / 'scenario_times.json'
@@ -36,4 +41,4 @@ def after_scenario(context, scenario):
         return
     _times[f'{scenario.feature.name} / {scenario.name}'] = round(time.perf_counter() - started, 3)
     LOGS.mkdir(parents=True, exist_ok=True)
-    TIMES_FILE.write_text(json.dumps(_times, indent=2))
+    TIMES_FILE.write_text(json.dumps(_times, indent=2), encoding='utf-8')

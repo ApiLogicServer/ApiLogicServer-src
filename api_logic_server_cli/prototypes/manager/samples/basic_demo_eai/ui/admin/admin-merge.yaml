@@ -1,10 +1,10 @@
 about:
-  date: October 24, 2026 15:03:09
+  date: November 19, 2026 17:33:29
   merged:
-    at: October 24, 2026 15:03:36
-    new_attributes: ''
-    new_resources: 'OrderB2bMessage '
-    new_tab_groups: ''
+    at: November 19, 2026 17:34:14
+    new_attributes: 'Order.CreatedOnDay '
+    new_resources: 'DailyFlow OrderB2bMessage OrderB2bRequest '
+    new_tab_groups: 'Order.daily_flow '
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -36,6 +36,41 @@ resources:
       resource: Order
     type: Customer
     user_key: name
+  DailyFlow:
+    attributes:
+    - label: ' day*'
+      name: day
+      required: true
+      search: true
+      sort: true
+    - name: order_count
+    - name: order_amount
+    - name: message_stuck
+    - name: request_stuck
+    - name: message_received
+    - name: message_processed
+    - name: message_failed
+    - name: request_received
+    - name: request_processed
+    - name: request_failed
+    tab_groups:
+    - direction: tomany
+      fks:
+      - CreatedOnDay
+      name: OrderList
+      resource: Order
+    - direction: tomany
+      fks:
+      - CreatedOnDay
+      name: OrderB2bMessageList
+      resource: OrderB2bMessage
+    - direction: tomany
+      fks:
+      - CreatedOnDay
+      name: OrderB2bRequestList
+      resource: OrderB2bRequest
+    type: DailyFlow
+    user_key: day
   Item:
     attributes:
     - label: ' id*'
@@ -79,6 +114,7 @@ resources:
       type: DECIMAL
     - name: date_shipped
       type: DATE
+    - name: CreatedOnDay
     tab_groups:
     - direction: tomany
       fks:
@@ -90,6 +126,11 @@ resources:
       - customer_id
       name: customer
       resource: Customer
+    - direction: toone
+      fks:
+      - CreatedOnDay
+      name: daily_flow
+      resource: DailyFlow
     type: Order
     user_key: id
   OrderB2bMessage:
@@ -98,14 +139,45 @@ resources:
       name: id
       search: true
       sort: true
+    - name: CreatedOnDay
     - name: received_at
+      type: DATETIME
+    - name: error_text
+    - name: CreatedOn
+      type: DATETIME
+    - name: payload
+      required: true
+    - name: is_processed
+      type: Boolean
+    tab_groups:
+    - direction: toone
+      fks:
+      - CreatedOnDay
+      name: daily_flow
+      resource: DailyFlow
+    type: OrderB2bMessage
+    user_key: id
+  OrderB2bRequest:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: CreatedOnDay
+    - name: CreatedOn
       type: DATETIME
     - name: error_text
     - name: payload
       required: true
     - name: is_processed
       type: Boolean
-    type: OrderB2bMessage
+    tab_groups:
+    - direction: toone
+      fks:
+      - CreatedOnDay
+      name: daily_flow
+      resource: DailyFlow
+    type: OrderB2bRequest
     user_key: id
   Product:
     attributes:

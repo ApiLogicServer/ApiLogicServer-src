@@ -1,23 +1,23 @@
 from behave import *
 import demo_eai_helpers as h
+import test_utils
 
-# Reuses from check_credit_steps.py: Given Customer "{}" with credit limit {}, Given Order is created for ...,
-# When Order is shipped, When B2B order placed for ...
+SERVER_LOG = h.PROJECT_DIR / 'logs' / 'als.log'
 
 
-@then('Order is published to Kafka topic order_shipping')
+@then('the order_shipping message is published with the order id and total')
 def step_impl(context):
-    """The logic log of this scenario shows publish_kafka_message for topic order_shipping and this Order's key."""
-    log = h.scenario_log(context.scenario.name)
-    assert log.is_file(), f'no logic log: {log}'
-    text = log.read_text()
-    assert "publish_kafka_message: topic='order_shipping'" in text, 'no publish to order_shipping in the logic log'
-    assert f"'id': {context.order_id}" in text, f'the publish is not for order {context.order_id}'
+    """The publish event fired (scenario logic log), and the server log has the by-example message for this order."""
+    log = str(h.scenario_log(context.scenario.name))
+    assert test_utils.does_file_contain("publish_kafka_message: topic='order_shipping'", log), 'publish event not in the logic log'
+    total = float(h.order_attrs(context.order_id)['amount_total'])
+    text = SERVER_LOG.read_text(encoding='utf-8')
+    assert f'"order_id": {context.order_id},' in text, f'order_shipping message for order {context.order_id} not in logs/als.log'
+    assert f'"total": {total}' in text, f'order_shipping message total {total} not in logs/als.log'
 
 
-@then('no shipping notification is published')
+@then('no order_shipping message is published')
 def step_impl(context):
-    """An order that is not shipped must not publish."""
-    log = h.scenario_log(context.scenario.name)
-    text = log.read_text() if log.is_file() else ''
-    assert "publish_kafka_message: topic='order_shipping'" not in text, 'published although not shipped'
+    """An unshipped order publishes nothing."""
+    log = str(h.scenario_log(context.scenario.name))
+    assert not test_utils.does_file_contain("publish_kafka_message: topic='order_shipping'", log), 'unexpected publish'

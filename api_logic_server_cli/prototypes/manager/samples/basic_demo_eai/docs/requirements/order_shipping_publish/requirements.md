@@ -1,9 +1,12 @@
 ---
-created: 2026-10-24T15:10:00
-created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
+created: 2026-11-19T14:32:00
+created_by: claude-opus-5-5 (valjhuber@gmail.com)
 use_case: order_shipping_publish
 ---
 
+## 4. Kafka Publish — Notify shipping on dispatch
+
+```gherkin
 Feature: Kafka Publish Shipping Notification
 
   Scenario: Notify shipping when an order is dispatched
@@ -12,3 +15,4 @@ Feature: Kafka Publish Shipping Notification
     Then publish to Kafka topic order_shipping
     And use message_formats/order_shipping.json as the message shape
     And use by-example publish rather than key-only publish
+```

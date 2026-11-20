@@ -3,13 +3,19 @@ title: EAI Consume Pattern — Kafka + XML/JSON → DB
 description: Two-message Kafka consume pattern with generic by-name XML/JSON mapper. Covers blob-row bridge, 3-tier mapping contract, local debug mode, and generated test data.
 source: Generic training for ApiLogicServer projects with GenAI integration
 usage: AI assistants read this when detecting Kafka consume, EAI, or XML/JSON-to-DB patterns in a user prompt
-version: 1.7
+version: 1.8
 date: April 4, 2026
 related:
   - implement_requirements.md (Kafka outbound, row_event patterns)
   - logic_bank_patterns.md (row_event, commit_row_event)
   - logic_bank_api.md (full rule API)
 changelog:
+  - 1.8 (Nov 19, 2026): (1) `record_error_text` now rolls back the failed Tx 2 and writes `error_text` through the GOVERNED
+    session (`safrs.DB.session`), not a fresh `Session(engine)`: the fresh session was invisible to the rules, so a rule
+    counting failed messages (an order-flow dashboard's daily totals) never moved. (2) Consumers COMMIT offsets after each
+    message (`APILOGICPROJECT_KAFKA_COMMIT_OFFSETS`, default true; FlaskKafka 1.02): a restart no longer replays the topic.
+    Found building demo_eai's order-flow dashboard: each restart re-inserted every test message (duplicate orders, then
+    credit-limit "rejections" on the chart).
   - 1.7 (Nov 1, 2026): New "Verifying a subscribe pipeline" section: the checks to run on every pipeline (replay x2, delete
     integrity, induced failure, cardinality), how to start clean (stop server, reset db, reset topics, start), poll before
     asserting on a live send, and a count query to see where a message ended up. Extracted from the customs `test_gate.sh`
@@ -213,8 +219,8 @@ def register(bus):
             except Exception as e:
                 logger.exception(f"xyz_processed parse error (blob_id={blob_id})")  # full traceback logged
                 # 🚨 mandatory — record failure on the blob row itself, not just the log (see § error_text).
-                # Call the SYSTEM helper (new Session on the engine); never write your own on safrs.DB.session:
-                # that session still holds the failed Tx 2's rows, so it would raise the same error again.
+                # Call the SYSTEM helper; never write your own: it rolls back the failed Tx 2 (the one rollback needed),
+                # then writes error_text on the governed session, so rules on the blob (failure counts) see it.
                 if blob_id:
                     try:
                         record_error_text(models.XyzMessage, blob_id, str(e))
@@ -370,8 +376,8 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
             except Exception as e:
                 logger.exception(f"xyz_processed parse error (blob_id={blob_id})")  # full traceback logged
                 # 🚨 mandatory — record failure on the blob row itself, not just the log (see § error_text).
-                # Call the SYSTEM helper (new Session on the engine); never write your own on safrs.DB.session:
-                # that session still holds the failed Tx 2's rows, so it would raise the same error again.
+                # Call the SYSTEM helper; never write your own: it rolls back the failed Tx 2 (the one rollback needed),
+                # then writes error_text on the governed session, so rules on the blob (failure counts) see it.
                 if blob_id:
                     try:
                         record_error_text(models.XyzMessage, blob_id, str(e))
@@ -614,7 +620,7 @@ Consumer 1, the bridge and Consumer 2 never run when simulated. Say so wherever 
 *Live Kafka:*
 6. Start Kafka (idempotent): `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d` (Podman: `podman compose`).
 7. Set `KAFKA_SERVER` and a project-unique `KAFKA_CONSUMER_GROUP` in `config/default.env` (or as environment variables). The
-   server must be (re)started AFTER Kafka is up. The default consumer settings (config/config.py: earliest offsets, no auto-commit, `session.timeout.ms` 6000) are enough for local tests; because offsets are never committed, every server start replays the whole topic, so reset the topics before the first live start (see "Verify Message Subscriptions" in the project CE); if you set
+   server must be (re)started AFTER Kafka is up. The default consumer settings (config/config.py: earliest offsets, no auto-commit, `session.timeout.ms` 6000) are enough for local tests; offsets are committed after each message (`APILOGICPROJECT_KAFKA_COMMIT_OFFSETS`, default true), so a restart resumes where it left off; still reset the topics before the FIRST live start, since messages left by other projects or runs on the same broker would otherwise be consumed (see "Verify Message Subscriptions" in the project CE); if you set
    `APILOGICPROJECT_KAFKA_CONSUMER` yourself you own all keys (use the full form):
     ```
     KAFKA_SERVER = localhost:9092
@@ -720,7 +726,7 @@ echo "Kafka topics reset."
 | Induced failure (bad lookup, rule rejection, malformed message) | live: the blob stays `is_processed = 0` with a non-null `error_text`. Simulated leaves no blob |
 | Cardinality, after one clean run | parent and child counts equal those derived from the sample payload |
 
-**Start clean (SQLite).** Offsets are never committed, so every server start replays the whole topic: empty the topics before starting.
+**Start clean (SQLite).** Offsets are committed after each message (default), but a broker can hold messages from earlier runs or projects: empty the topics before the first start.
 1. Stop the server: `pkill -f api_logic_server_run.py`, then confirm the port is free (`lsof -i :5656` prints nothing).
 2. `bash integration/kafka/xyz_reset_db.sh` clears the domain and blob tables (lookup tables stay). Run it with the server stopped, as its header says.
 3. Live only: `bash integration/kafka/xyz_reset.sh` recreates the topics. With the server already running, `POST /consume_debug/xyz/reset` purges them instead.
@@ -828,7 +834,9 @@ For XML payloads with multiple section tags mapping to different tables:
 - If **no sample XML**: generate sample first (see above), then generate `TAG_ROUTING`
 - Child rows are returned as a flat list from `parse()` — the caller zips them with the raw payload's child array for lookup resolution.
 
-> **CONSUMER ROLLBACKS:** NEVER call `session.rollback()` in a Kafka consumer's `except` block. The framework relies on implicit rollbacks; adding one manually masks errors and poisons the session.
+> **CONSUMER ROLLBACKS:** do not call `session.rollback()` yourself in a Kafka consumer's `except` block: call `record_error_text(...)`, which does the one rollback needed (discarding the failed Tx 2) and then records the error through the governed session. A hand-written rollback elsewhere masks errors.
+
+> **PRODUCTION — offsets:** keep `APILOGICPROJECT_KAFKA_COMMIT_OFFSETS` true (the default). With false, every server start replays the whole topic and Consumer 1 re-inserts every message: duplicate rows. false is only for re-running a pipeline by hand.
 
 > **DEBUG ENDPOINT GUARD:** the endpoints are registered only when `APILOGICPROJECT_CONSUME_DEBUG` is true / 1 / yes / on (`EaiDebug.debug_enabled()`); `false`, `0` or unset leaves them unregistered. Never test it with `if not os.getenv(...)`: that returns the string `"false"`, which is truthy, so `false` would leave the endpoint ON. They have no authentication and the reset is destructive: development and demo only; set the variable to `false` anywhere else.
 

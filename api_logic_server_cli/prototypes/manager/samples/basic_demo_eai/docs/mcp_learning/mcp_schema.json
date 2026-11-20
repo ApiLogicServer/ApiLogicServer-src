@@ -31,6 +31,42 @@
             ]
         },
         {
+            "name": "DailyFlow",
+            "path": "/DailyFlow",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "day",
+                "order_count",
+                "order_amount",
+                "message_received",
+                "message_processed",
+                "message_failed",
+                "message_stuck",
+                "request_received",
+                "request_processed",
+                "request_failed",
+                "request_stuck"
+            ],
+            "filterable": [
+                "day",
+                "order_count",
+                "order_amount",
+                "message_received",
+                "message_processed",
+                "message_failed",
+                "message_stuck",
+                "request_received",
+                "request_processed",
+                "request_failed",
+                "request_stuck"
+            ]
+        },
+        {
             "name": "Item",
             "path": "/Item",
             "methods": [
@@ -71,7 +107,8 @@
                 "customer_id",
                 "CreatedOn",
                 "date_shipped",
-                "amount_total"
+                "amount_total",
+                "CreatedOnDay"
             ],
             "filterable": [
                 "id",
@@ -79,7 +116,8 @@
                 "customer_id",
                 "CreatedOn",
                 "date_shipped",
-                "amount_total"
+                "amount_total",
+                "CreatedOnDay"
             ]
         },
         {
@@ -118,11 +156,41 @@
                 "received_at",
                 "payload",
                 "is_processed",
-                "error_text"
+                "error_text",
+                "CreatedOn",
+                "CreatedOnDay"
             ],
             "filterable": [
                 "id",
                 "received_at",
+                "payload",
+                "is_processed",
+                "error_text",
+                "CreatedOn",
+                "CreatedOnDay"
+            ]
+        },
+        {
+            "name": "OrderB2bRequest",
+            "path": "/OrderB2bRequest",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "CreatedOn",
+                "CreatedOnDay",
+                "payload",
+                "is_processed",
+                "error_text"
+            ],
+            "filterable": [
+                "id",
+                "CreatedOn",
+                "CreatedOnDay",
                 "payload",
                 "is_processed",
                 "error_text"

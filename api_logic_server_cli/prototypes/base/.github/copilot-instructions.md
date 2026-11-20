@@ -1,4 +1,5 @@
 ---
+version: 3.71 - 11/19/26 - Opt-in B2B request log ("record each request, with its outcome"): request row committed first, failure recorded on the governed session. Verify Message Subscriptions: offsets are now committed (FlaskKafka 1.02), so only the first start reads old messages. Order-flow dashboards: see queries_dashboards.md 1.6 (rule-maintained daily totals, stamping keys, zero days, no cache).
 version: 3.70 - 11/17/26 - Executable Requirements: "implement reqs" now finds the existing logic file by content (the `Feature:` line, or the verbatim requirement text in its docstring), not by name; the naming convention is the fallback. One match: edit it; none: new use case; several: ask. A renamed or moved logic file was otherwise missed, and a second file written beside it: duplicate derivations stop the server, but duplicate constraints and events run twice.
 version: 3.69 - 11/13/26 - Requirements Traceability Report (generator 2.15+): each "Logic diagram" fold now shows the numbered rules beside the diagram (the same list as logic_flow_<req>.md), so the numbers on the diagram arrows can be matched to rules. The list is read from logic_flow_<req>.md, which `logic_diagram_gv.py --each` writes with the SVG; without it the fold shows the diagram alone.
 version: 3.68 - 11/10/26 - "Migrate AI Rules": two gaps found by migrating samples/allocate_dept_account_demo by hand. (1) The sequence assumed `integration/ai/llm_client.py` exists; older projects lack it, so STEP 2b copies it from the installed package first. (2) Detection now also looks for other key variable names (`OPENAI_API_KEY`, `os.environ`/`os.getenv` reads of a key) and STEP 4 / the summary must tell the user that the old variable is no longer read; failures the old handler swallowed are now logged.
@@ -679,8 +680,8 @@ STEP 2: Is a broker available? If the run is DEGRADED (the user opted out of con
         this). Tell the user you did.
 STEP 3: Stop any running server (restart hygiene), then reset the topics BEFORE the first live start:
         bash integration/kafka/<topic>_reset.sh (creates the topics if missing).
-        Why: offsets are never committed and the consumer starts at the earliest offset, so every start
-        REPLAYS the whole topic; messages left by earlier projects or runs become junk rows (real case,
+        Why: the consumer starts at the earliest offset its group has not committed, so the first start
+        reads everything already on the topic; messages left by earlier projects or runs become junk rows (real case,
         demo_eai Oct 2026: 3 junk orders and 3 failed lookups on the first live start). The script
         deletes and recreates those topics on the broker (other projects using the same names lose their
         messages). With the server already up and Kafka enabled, use the purge instead:
@@ -3453,6 +3454,20 @@ When creating new B2B APIs, follow this proven pattern:
 - Provide meaningful success messages with key information (ID, customer, item count)
 - Use YAML format in docstrings for clean Swagger documentation
 - Always use actual database data in examples (check with sqlite3 queries)
+
+**Opt-in: record each request (B2B request log).** Only when the requirement asks for it — phrasing like "record each
+request, with its outcome" — keep a row per call, the same shape as an EAI blob table: `<Api>Request` (id, `CreatedOn`
+DATETIME, `CreatedOnDay` TEXT if a daily-totals table counts it, `payload` TEXT, `is_processed` BOOLEAN default 0,
+`error_text` TEXT) — on the DDL list in Phase 1, created by DDL + rebuild-from-database. In the service:
+1. Insert the request row (`is_processed=False`) and **commit** it first (Tx 1): the call is recorded even if processing fails.
+2. Process as usual (mapper, `session.add`, `session.flush()`); on success set `is_processed=True` on the request row and
+   let the request commit (Tx 2).
+3. On failure: `session.rollback()` (this service owns its transaction), re-read the request row, set `error_text`,
+   `session.commit()` — on the governed session, so rules on the request table (failure counts) see it — then
+   `raise safrs.ValidationError(...)` as before, so the partner still gets HTTP 400.
+Not the default: it costs a write per call, grows without bound (put a retention TODO in the service: never delete
+rows that a totals table counts), and stores partner payloads. Without the clause, a rejected call is rolled back
+and leaves no row — say so in ad-libs.md when a dashboard counts rejections.
 
 **AI Anti-Patterns to Avoid**:
 - **Don't assume CRUD operations**: If user asks for "create order API", only implement POST/insert (ask if they need GET/PUT/DELETE)

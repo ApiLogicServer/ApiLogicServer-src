@@ -1,9 +1,12 @@
 ---
-created: 2026-10-24T15:10:00
-created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
+created: 2026-11-19T14:27:00
+created_by: claude-opus-5-5 (valjhuber@gmail.com)
 use_case: check_credit
 ---
 
+## 1. Business Logic — Check Credit
+
+```gherkin
 Feature: Check Credit
 
   Scenario: Place an order
@@ -14,3 +17,4 @@ Feature: Check Credit
     And sum item amounts to get the order total
     And sum unpaid order totals to get the customer balance
     And reject if balance exceeds the credit limit
+```

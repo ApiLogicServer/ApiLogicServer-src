@@ -7,81 +7,206 @@ Feature: About Sample # features/about.feature:6
 
 Feature: B2B Order Integration # features/b2b_order_integration.feature:1
 
-  Scenario: Partner Order Accepted                                                       # features/b2b_order_integration.feature:5
-    Given Customer "Erin" with credit limit 5000                                         # features/steps/check_credit_steps.py:9
-    When Partner order posted via OrderB2B for account "Erin" with 2 Widget and 1 Gadget # features/steps/b2b_order_integration_steps.py:9
-    Then OrderB2B reports an Order with 2 items for the customer                         # features/steps/b2b_order_integration_steps.py:32
-    And Items are mapped to Products Widget and Gadget with quantities 2 and 1           # features/steps/b2b_order_integration_steps.py:41
+  Scenario: Partner Order Accepted                             # features/b2b_order_integration.feature:5
+    Given Customer "Pat" with credit limit 5000                # features/steps/check_credit_steps.py:9
+    When B2B order placed for "Pat" with 1 Widget and 2 Gadget # features/steps/b2b_order_integration_steps.py:5
+    Then the partner order is accepted with 2 items            # features/steps/b2b_order_integration_steps.py:23
+    And Order amount_total should be 390                       # features/steps/check_credit_steps.py:74
+    And Customer balance should be 390                         # features/steps/check_credit_steps.py:67
 
-  Scenario: Unknown Account Rejected                                                            # features/b2b_order_integration.feature:11
-    When Partner order posted via OrderB2B for unknown account "No Such Customer" with 1 Widget # features/steps/b2b_order_integration_steps.py:20
-    Then OrderB2B answers HTTP 400 and no Order is created                                      # features/steps/b2b_order_integration_steps.py:51
+  Scenario: Unknown Account Rejected                   # features/b2b_order_integration.feature:12
+    When B2B order placed for unknown account "Nobody" # features/steps/b2b_order_integration_steps.py:16
+    Then the order is rejected for an unknown customer # features/steps/b2b_order_integration_steps.py:32
+
+  Scenario: Accepted Request Is Recorded                         # features/b2b_order_integration.feature:16
+    Given Customer "Pia" with credit limit 5000                  # features/steps/check_credit_steps.py:9
+    And the daily totals are read                                # features/steps/order_flow_dashboard_steps.py:20
+    When B2B order placed for "Pia" with 1 Widget                # features/steps/check_credit_steps.py:40
+    Then the B2B request is recorded as processed                # features/steps/b2b_order_integration_steps.py:49
+    And today's request_received and request_processed rise by 1 # features/steps/order_flow_dashboard_steps.py:75
+
+  Scenario: Rejected Request Is Recorded                                   # features/b2b_order_integration.feature:23
+    Given Customer "Rex" with credit limit 100                             # features/steps/check_credit_steps.py:9
+    And the daily totals are read                                          # features/steps/order_flow_dashboard_steps.py:20
+    When B2B order placed for "Rex" with 2 Widget                          # features/steps/check_credit_steps.py:40
+    Then the B2B request is recorded with the error "exceeds credit limit" # features/steps/b2b_order_integration_steps.py:56
+    And today's request_received and request_failed rise by 1              # features/steps/order_flow_dashboard_steps.py:75
 
 Feature: Check Credit # features/check_credit.feature:1
 
   Scenario: Good Order Placed                       # features/check_credit.feature:6
     Given Customer "Alice" with credit limit 5000   # features/steps/check_credit_steps.py:9
-    When B2B order placed for "Alice" with 2 Widget # features/steps/check_credit_steps.py:30
-    Then Customer balance should be 180             # features/steps/check_credit_steps.py:58
-    And Order amount_total should be 180            # features/steps/check_credit_steps.py:65
+    When B2B order placed for "Alice" with 2 Widget # features/steps/check_credit_steps.py:40
+    Then Customer balance should be 180             # features/steps/check_credit_steps.py:67
+    And Order amount_total should be 180            # features/steps/check_credit_steps.py:74
 
   Scenario: Item Quantity Changed                # features/check_credit.feature:12
     Given Customer "Bob" with credit limit 5000  # features/steps/check_credit_steps.py:9
-    And Order is created for "Bob" with 2 Widget # features/steps/check_credit_steps.py:19
-    When Item quantity changed to 3              # features/steps/check_credit_steps.py:41
-    Then Customer balance should be 270          # features/steps/check_credit_steps.py:58
+    And Order is created for "Bob" with 2 Widget # features/steps/check_credit_steps.py:30
+    When Item quantity changed to 3              # features/steps/check_credit_steps.py:50
+    Then Customer balance should be 270          # features/steps/check_credit_steps.py:67
 
   Scenario: Shipped Order Leaves Balance           # features/check_credit.feature:18
     Given Customer "Carol" with credit limit 5000  # features/steps/check_credit_steps.py:9
-    And Order is created for "Carol" with 2 Widget # features/steps/check_credit_steps.py:19
-    When Order is shipped                          # features/steps/check_credit_steps.py:50
-    Then Customer balance should be 0              # features/steps/check_credit_steps.py:58
+    And Order is created for "Carol" with 2 Widget # features/steps/check_credit_steps.py:30
+    When Order is shipped                          # features/steps/check_credit_steps.py:59
+    Then Customer balance should be 0              # features/steps/check_credit_steps.py:67
 
   Scenario: Order Exceeding Credit Rejected            # features/check_credit.feature:24
     Given Customer "Dave" with credit limit 100        # features/steps/check_credit_steps.py:9
-    When B2B order placed for "Dave" with 2 Widget     # features/steps/check_credit_steps.py:30
-    Then Order is rejected with a credit limit message # features/steps/check_credit_steps.py:73
-    And Customer balance should be 0                   # features/steps/check_credit_steps.py:58
+    When B2B order placed for "Dave" with 2 Widget     # features/steps/check_credit_steps.py:40
+    Then Order is rejected with a credit limit message # features/steps/check_credit_steps.py:82
+    And Customer balance should be 0                   # features/steps/check_credit_steps.py:67
+
+  Scenario: Order At Credit Limit Accepted         # features/check_credit.feature:30
+    Given Customer "Erin" with credit limit 180    # features/steps/check_credit_steps.py:9
+    When B2B order placed for "Erin" with 2 Widget # features/steps/check_credit_steps.py:40
+    Then Order is accepted                         # features/steps/check_credit_steps.py:171
+    And Customer balance should be 180             # features/steps/check_credit_steps.py:67
+
+  Scenario: Unshipped Order Enters Balance       # features/check_credit.feature:36
+    Given Customer "Fay" with credit limit 5000  # features/steps/check_credit_steps.py:9
+    And Order is created for "Fay" with 2 Widget # features/steps/check_credit_steps.py:30
+    And Order has been shipped                   # features/steps/check_credit_steps.py:123
+    When Order is unshipped                      # features/steps/check_credit_steps.py:129
+    Then Customer balance should be 180          # features/steps/check_credit_steps.py:67
+
+  Scenario: Item Deleted Reduces Order                        # features/check_credit.feature:43
+    Given Customer "Gus" with credit limit 5000               # features/steps/check_credit_steps.py:9
+    And Order is created for "Gus" with 2 Widget and 1 Gadget # features/steps/check_credit_steps.py:20
+    When the Gadget Item is deleted                           # features/steps/check_credit_steps.py:135
+    Then Order amount_total should be 180                     # features/steps/check_credit_steps.py:74
+    And Customer balance should be 180                        # features/steps/check_credit_steps.py:67
+
+  Scenario: Order Deleted Leaves Balance          # features/check_credit.feature:50
+    Given Customer "Hank" with credit limit 5000  # features/steps/check_credit_steps.py:9
+    And Order is created for "Hank" with 2 Widget # features/steps/check_credit_steps.py:30
+    When Order is deleted                         # features/steps/check_credit_steps.py:143
+    Then Customer balance should be 0             # features/steps/check_credit_steps.py:67
+
+  Scenario: Order Moved To Another Customer      # features/check_credit.feature:56
+    Given Customer "Ivy" with credit limit 5000  # features/steps/check_credit_steps.py:9
+    And Customer "Jack" with credit limit 5000   # features/steps/check_credit_steps.py:9
+    And Order is created for "Ivy" with 2 Widget # features/steps/check_credit_steps.py:30
+    When Order is moved to Customer "Jack"       # features/steps/check_credit_steps.py:150
+    Then Customer "Ivy" balance should be 0      # features/steps/check_credit_steps.py:178
+    And Customer "Jack" balance should be 180    # features/steps/check_credit_steps.py:178
+
+  Scenario: Item Moved To Another Order                   # features/check_credit.feature:64
+    Given Customer "Kim" with credit limit 5000           # features/steps/check_credit_steps.py:9
+    And Order is created for "Kim" with 2 Widget          # features/steps/check_credit_steps.py:30
+    And a second Order is created for "Kim" with 1 Gadget # features/steps/check_credit_steps.py:114
+    When the Widget Item is moved to the second Order     # features/steps/check_credit_steps.py:156
+    Then Order amount_total should be 0                   # features/steps/check_credit_steps.py:74
+    And second Order amount_total should be 330           # features/steps/check_credit_steps.py:185
+    And Customer balance should be 330                    # features/steps/check_credit_steps.py:67
+
+  Scenario: Item Product Changed                 # features/check_credit.feature:73
+    Given Customer "Lee" with credit limit 5000  # features/steps/check_credit_steps.py:9
+    And Order is created for "Lee" with 2 Widget # features/steps/check_credit_steps.py:30
+    When the Item product is changed to Gadget   # features/steps/check_credit_steps.py:163
+    Then Item unit_price should be 150           # features/steps/check_credit_steps.py:192
+    And Order amount_total should be 300         # features/steps/check_credit_steps.py:74
+    And Customer balance should be 300           # features/steps/check_credit_steps.py:67
 
 Feature: Kafka Publish Shipping Notification # features/kafka_publish_shipping_notification.feature:1
 
-  Scenario: Shipping Notification Published               # features/kafka_publish_shipping_notification.feature:6
-    Given Customer "Gina" with credit limit 5000          # features/steps/check_credit_steps.py:9
-    And Order is created for "Gina" with 1 Widget         # features/steps/check_credit_steps.py:19
-    When Order is shipped                                 # features/steps/check_credit_steps.py:50
-    Then Order is published to Kafka topic order_shipping # features/steps/kafka_publish_shipping_notification_steps.py:8
+  Scenario: Shipping Notification Published                                  # features/kafka_publish_shipping_notification.feature:6
+    Given Customer "Gina" with credit limit 5000                             # features/steps/check_credit_steps.py:9
+    And Order is created for "Gina" with 1 Widget                            # features/steps/check_credit_steps.py:30
+    When Order is shipped                                                    # features/steps/check_credit_steps.py:59
+    Then the order_shipping message is published with the order id and total # features/steps/kafka_publish_shipping_notification_steps.py:8
 
   Scenario: Unshipped Order Not Published         # features/kafka_publish_shipping_notification.feature:12
     Given Customer "Hal" with credit limit 5000   # features/steps/check_credit_steps.py:9
-    When B2B order placed for "Hal" with 1 Widget # features/steps/check_credit_steps.py:30
-    Then no shipping notification is published    # features/steps/kafka_publish_shipping_notification_steps.py:18
+    When B2B order placed for "Hal" with 1 Widget # features/steps/check_credit_steps.py:40
+    Then no order_shipping message is published   # features/steps/kafka_publish_shipping_notification_steps.py:19
 
 Feature: Kafka Subscribe Order Integration # features/kafka_subscribe_order_integration.feature:1
 
-  Scenario: Order Message Delivered                                                                            # features/kafka_subscribe_order_integration.feature:7
-    Given Customer "Frank" with credit limit 5000                                                              # features/steps/check_credit_steps.py:9
-    When an inbound order message for that customer is delivered to topic order_b2b with 2 Widget and 1 Gadget # features/steps/kafka_subscribe_order_integration_steps.py:10
-    Then the message is processed                                                                              # features/steps/kafka_subscribe_order_integration_steps.py:36
-    And an Order for the customer has 2 items totalling 330                                                    # features/steps/kafka_subscribe_order_integration_steps.py:43
+  Scenario: Order Message Delivered                                                                      # features/kafka_subscribe_order_integration.feature:5
+    Given Customer "Quinn" with credit limit 5000                                                        # features/steps/check_credit_steps.py:9
+    When an inbound order message for "Quinn" with 1 Widget and 2 Gadget is delivered to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:5
+    Then the message is processed                                                                        # features/steps/kafka_subscribe_order_integration_steps.py:27
+    And the Customer's newest order has 2 items totaling 390                                             # features/steps/kafka_subscribe_order_integration_steps.py:33
+    And Customer balance should be 390                                                                   # features/steps/check_credit_steps.py:67
 
-  Scenario: Unknown Account Message Rejected                                             # features/kafka_subscribe_order_integration.feature:13
-    When an inbound order message for an unknown account is delivered to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:18
-    Then the message is rejected with a reason                                           # features/steps/kafka_subscribe_order_integration_steps.py:57
+  Scenario: Unknown Account Message Rejected                                             # features/kafka_subscribe_order_integration.feature:12
+    When an inbound order message for an unknown account is delivered to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:13
+    Then the message is rejected with "no Customer found"                                # features/steps/kafka_subscribe_order_integration_steps.py:47
 
-  Scenario: Rejected Message Keeps Its Error (live Kafka only)                          # features/kafka_subscribe_order_integration.feature:17
-    When an inbound message for an unknown account is delivered live to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:27
-    Then the blob stays unprocessed with error_text                                     # features/steps/kafka_subscribe_order_integration_steps.py:64
+  Scenario: Rejected Message Keeps Its Error (live Kafka only)                                # features/kafka_subscribe_order_integration.feature:16
+    When an inbound order message for an unknown account is delivered live to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:20
+    Then the message row keeps is_processed false and its error_text                          # features/steps/kafka_subscribe_order_integration_steps.py:54
+
+Feature: Order Flow Dashboard # features/order_flow_dashboard.feature:1
+
+  Scenario: Order Placed Is Dated Today            # features/order_flow_dashboard.feature:5
+    Given Customer "Dana" with credit limit 5000   # features/steps/check_credit_steps.py:9
+    When B2B order placed for "Dana" with 1 Widget # features/steps/check_credit_steps.py:40
+    Then the Order is dated today                  # features/steps/order_flow_dashboard_steps.py:27
+
+  Scenario: Order With Its Own Date Keeps It                            # features/order_flow_dashboard.feature:10
+    Given Customer "Eli" with credit limit 5000                         # features/steps/check_credit_steps.py:9
+    When an Order dated 2026-01-15 is created for "Eli" through the API # features/steps/order_flow_dashboard_steps.py:34
+    Then the Order keeps its date 2026-01-15                            # features/steps/order_flow_dashboard_steps.py:44
+
+  Scenario: New Order Counts In Daily Totals                    # features/order_flow_dashboard.feature:15
+    Given Customer "Fran" with credit limit 5000                # features/steps/check_credit_steps.py:9
+    And the daily totals are read                               # features/steps/order_flow_dashboard_steps.py:20
+    When B2B order placed for "Fran" with 2 Widget              # features/steps/check_credit_steps.py:40
+    Then today's order_count rises by 1 and order_amount by 180 # features/steps/order_flow_dashboard_steps.py:59
+
+  Scenario: Changed Item Adjusts Daily Amount                  # features/order_flow_dashboard.feature:21
+    Given Customer "Gale" with credit limit 5000               # features/steps/check_credit_steps.py:9
+    And Order is created for "Gale" with 2 Widget              # features/steps/check_credit_steps.py:30
+    And the daily totals are read                              # features/steps/order_flow_dashboard_steps.py:20
+    When Item quantity changed to 3                            # features/steps/check_credit_steps.py:50
+    Then today's order_count rises by 0 and order_amount by 90 # features/steps/order_flow_dashboard_steps.py:59
+
+  Scenario: Deleted Order Leaves Daily Totals                     # features/order_flow_dashboard.feature:28
+    Given Customer "Hank" with credit limit 5000                  # features/steps/check_credit_steps.py:9
+    And Order is created for "Hank" with 2 Widget                 # features/steps/check_credit_steps.py:30
+    And the daily totals are read                                 # features/steps/order_flow_dashboard_steps.py:20
+    When Order is deleted                                         # features/steps/check_credit_steps.py:143
+    Then today's order_count rises by -1 and order_amount by -180 # features/steps/order_flow_dashboard_steps.py:59
+
+  Scenario: Order Moved To Another Day                           # features/order_flow_dashboard.feature:35
+    Given Customer "Ivo" with credit limit 5000                  # features/steps/check_credit_steps.py:9
+    And Order is created for "Ivo" with 1 Widget                 # features/steps/check_credit_steps.py:30
+    And the daily totals are read                                # features/steps/order_flow_dashboard_steps.py:20
+    When the Order is moved to yesterday                         # features/steps/order_flow_dashboard_steps.py:51
+    Then today's order_count rises by -1 and order_amount by -90 # features/steps/order_flow_dashboard_steps.py:59
+    And yesterday's order_count rises by 1                       # features/steps/order_flow_dashboard_steps.py:68
+
+  Scenario: Delivered Message Counts In Daily Totals                                                   # features/order_flow_dashboard.feature:43
+    Given Customer "Gil" with credit limit 5000                                                        # features/steps/check_credit_steps.py:9
+    And the daily totals are read                                                                      # features/steps/order_flow_dashboard_steps.py:20
+    When an inbound order message for "Gil" with 1 Widget and 2 Gadget is delivered to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:5
+    Then today's message_received and message_processed rise by 1                                      # features/steps/order_flow_dashboard_steps.py:75
+    And today's message_stuck is unchanged                                                             # features/steps/order_flow_dashboard_steps.py:84
+
+  Scenario: Rejected Message Counts In Daily Totals (live Kafka only)                         # features/order_flow_dashboard.feature:50
+    Given the daily totals are read                                                           # features/steps/order_flow_dashboard_steps.py:20
+    When an inbound order message for an unknown account is delivered live to topic order_b2b # features/steps/kafka_subscribe_order_integration_steps.py:20
+    Then today's message_received and message_failed rise by 1                                # features/steps/order_flow_dashboard_steps.py:75
+
+  Scenario: Dashboard Shows Current Data                 # features/order_flow_dashboard.feature:55
+    Given Customer "Hugo" with credit limit 5000         # features/steps/check_credit_steps.py:9
+    When B2B order placed for "Hugo" with 1 Widget       # features/steps/check_credit_steps.py:40
+    Then the dashboard shows the three charts with today # features/steps/order_flow_dashboard_steps.py:90
 
 Feature: Row-Level Security # features/row_level_security.feature:1
 
-  Scenario: Sales Role Sees Limited Customers              # features/row_level_security.feature:5
-    Given Customer "LowCredit" with credit limit 1000      # features/steps/check_credit_steps.py:9
-    And Customer "HighCredit" with credit limit 3000       # features/steps/check_credit_steps.py:9
-    And Customer "Owing" with credit limit 1000            # features/steps/check_credit_steps.py:9
-    And Order is created for "Owing" with 1 Widget         # features/steps/check_credit_steps.py:19
-    When Sales user queries each Customer by name          # features/steps/row_level_security_steps.py:9
-    Then Sales sees HighCredit and Owing but not LowCredit # features/steps/row_level_security_steps.py:20
+  Scenario: Sales Role Sees Limited Customers                         # features/row_level_security.feature:5
+    Given Customer "Lowlimit" with credit limit 1000                  # features/steps/check_credit_steps.py:9
+    And Customer "Highlimit" with credit limit 5000                   # features/steps/check_credit_steps.py:9
+    And Customer "Owing" with credit limit 1000                       # features/steps/check_credit_steps.py:9
+    And Order is created for "Owing" with 1 Widget                    # features/steps/check_credit_steps.py:30
+    When the sales user lists Customers                               # features/steps/row_level_security_steps.py:5
+    Then "Highlimit" and "Owing" are listed, and "Lowlimit" is not    # features/steps/row_level_security_steps.py:13
+    And every listed Customer has credit_limit >= 3000 or balance > 0 # features/steps/row_level_security_steps.py:22
 
 &nbsp;&nbsp;
-/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py completed at October 24, 2026 15:10:03
-Behave run time: 3.051 s
+/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py completed at November 19, 2026 17:41:45
+Behave run time: 3.448 s

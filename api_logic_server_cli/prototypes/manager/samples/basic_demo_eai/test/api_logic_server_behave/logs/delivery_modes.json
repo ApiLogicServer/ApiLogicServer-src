@@ -10,5 +10,13 @@
   "Kafka Subscribe Order Integration / Rejected Message Keeps Its Error (live Kafka only)": {
     "mode": "live",
     "broker": "localhost:9092"
+  },
+  "Order Flow Dashboard / Delivered Message Counts In Daily Totals": {
+    "mode": "live",
+    "broker": "localhost:9092"
+  },
+  "Order Flow Dashboard / Rejected Message Counts In Daily Totals (live Kafka only)": {
+    "mode": "live",
+    "broker": "localhost:9092"
   }
 }

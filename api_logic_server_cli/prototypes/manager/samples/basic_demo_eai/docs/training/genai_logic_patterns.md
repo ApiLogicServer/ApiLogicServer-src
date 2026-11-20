@@ -138,7 +138,7 @@ def get_supplier_price_from_ai(row, logic_row):
     supplier_req = supplier_req_logic_row.row
     supplier_req_logic_row.link(to_parent=logic_row)
     supplier_req.product_id = row.product_id
-    supplier_req.item_id = row.id
+    supplier_req.item = row   # by object, not row.id: a new row has no id until flush (this runs in an early event)
     
     # Insert triggers supplier_id_from_ai event handler which populates chosen_* fields
     supplier_req_logic_row.insert(reason="AI supplier selection request")

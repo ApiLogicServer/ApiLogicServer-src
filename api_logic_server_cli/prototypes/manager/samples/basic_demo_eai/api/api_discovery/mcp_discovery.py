@@ -78,7 +78,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             schema_path = mcp_learning_path.joinpath('mcp_schema.json')
             if not schema_path.exists():
                 return jsonify({"error": "System Error - /docs/mcp_learning/mcp_schema.json not found"}), 404
-            with open(schema_path, "r") as schema_file:
+            with open(schema_path, "r", encoding='utf-8') as schema_file:
                 schema = json.load(schema_file)
         except Exception as e:
             app_logger.error(f"Error loading MCP schema: {e}")
@@ -88,7 +88,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             learnings_path = mcp_learning_path.joinpath('mcp.prompt')
             if not learnings_path.exists():
                 return jsonify({"error": "System Error - /docs/mcp_learning/mcp,prompt not found"}), 404
-            with open(learnings_path, "r") as learnings_file:
+            with open(learnings_path, "r", encoding='utf-8') as learnings_file:
                 learnings = learnings_file.read()
         except Exception as e:
             app_logger.error(f"Error loading MCP learnings: {e}")

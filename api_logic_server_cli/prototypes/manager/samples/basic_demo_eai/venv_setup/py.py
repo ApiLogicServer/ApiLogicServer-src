@@ -103,9 +103,9 @@ def python_status():
                     everytime = input("Show this next time? (y/n) ")
                     if everytime == "y":
                         print("..changing .vscode/tasks.json: replace 'welcome-first-time' with 'welcome'")
-                        data = tasks_json_path.read_text() 
+                        data = tasks_json_path.read_text(encoding='utf-8') 
                         data = data.replace('welcome-first-time', 'welcome') 
-                        tasks_json_path.write_text(data) 
+                        tasks_json_path.write_text(data, encoding='utf-8') 
                     else:
                         print("..renaming .vscode/tasks.json to .vscode/tasks.json-disabled")
                         tasks_json_str = str(tasks_json_path)

@@ -1,4 +1,4 @@
-# Logic Flow — samples/basic_demo_eai [check_credit]
+# Logic Flow — demo_eai [check_credit]
 
 > Scoped to requirement: **check_credit**
 
@@ -38,9 +38,9 @@ Feature: Check Credit
     And reject if balance exceeds the credit limit
 
 version: 1.0
-created: 2026-10-24
-created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
+created: 2026-11-19T14:27:00
+created_by: claude-opus-5-5 (valjhuber@gmail.com)
 ```
 
 ---
-_Generated 2026-10-24 15:06_
+_Generated 2026-11-19 17:40_

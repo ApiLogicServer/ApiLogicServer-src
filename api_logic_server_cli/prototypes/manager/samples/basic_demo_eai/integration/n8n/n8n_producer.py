@@ -26,7 +26,7 @@ from config.config import Args
     wh_endpoint = "webhook-test"
     wh_path = "002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69"
     token = "YWRtaW46cA==" # Basic auth for n8n
-    N8N_PRODUCER = {"authorization": f"Basic {token}", "n8n_url": f'"{wh_scheme}://{wh_server}:{wh_port}/{wh_endpoint}/{wh_path}"'} 
+    N8N_PRODUCER = {"authorization": f"Basic {token}", "n8n_url": f'{wh_scheme}://{wh_server}:{wh_port}/{wh_endpoint}/{wh_path}'}
     # Or enter the n8n_url directly:
     N8N_PRODUCER = {"authorization": f"Basic {token}","n8n_url":"http://localhost:5678/webhook-test/002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69"}    
 
@@ -83,7 +83,7 @@ def configure_n8n_producer(wh_endpoint: str = None, wh_path: str = None) -> dict
         logger.debug('N8N producer not configured in config/Config.py or environment variables')
         conf = getenv("N8N_PRODUCER", Args.instance.n8n_producer)
     else:
-        conf = {"authorization": f"Basic {token}", "n8n_url": f'"{scheme}://{server}:{port}/{wh_endpoint if wh_endpoint is not None else endpoint}/{path}"'}
+        conf = {"authorization": f"Basic {token}", "n8n_url": f'{scheme}://{server}:{port}/{wh_endpoint if wh_endpoint is not None else endpoint}/{path}'}
             
     return conf
 

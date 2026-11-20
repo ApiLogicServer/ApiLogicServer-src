@@ -1112,6 +1112,11 @@ Create a fully functional application and database
      parent FKs nullable (see `.github/copilot-instructions.md`, System Creation Services step 4c). Put it on the DDL
      change list now; create it with SQL DDL + rebuild-from-database, never by editing models.py by hand.
    - Any requirement references a column not yet in models.py? → add it now
+   - Per-day / per-month totals (an operations or flow dashboard)? → a totals table (`daily_flow`, PK `day` TEXT) plus
+     `CreatedOn` and `CreatedOnDay` columns (FK to it) on each counted table, and stamping turned on — see
+     `queries_dashboards.md`, "Per-period totals". Add them to the DDL list now.
+   - "Record each request, with its outcome" on a custom API? → an `<Api>Request` table (project CE, B2B API section,
+     "Opt-in: record each request"). Not without that clause.
    - Does the requirement describe something already represented by an existing
      table (e.g. "past due letters" → `SysEmail`, "current rates" → `SysConfig`)?
      → reuse that table (add a column to it if needed, e.g. `SysEmail.resolved`)

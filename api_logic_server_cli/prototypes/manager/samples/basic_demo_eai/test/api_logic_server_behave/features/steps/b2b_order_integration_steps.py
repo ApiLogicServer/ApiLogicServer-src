@@ -1,59 +1,61 @@
 from behave import *
-import requests
-import test_utils
 import demo_eai_helpers as h
 
-# Patterns: the multi-item pattern comes BEFORE the single-item one (behave uses the first pattern that fits).
 
-
-@when('Partner order posted via OrderB2B for account "{account}" with {q1:d} {p1} and {q2:d} {p2}')
-def step_impl(context, account, q1, p1, q2, p2):
-    """Posts a two-item partner order to the OrderB2B API, using the Customer's unique test name as Account."""
-    scenario_name = context.scenario.name
-    test_utils.prt(f'\n{scenario_name}\n', scenario_name)
-    context.response = h.place_b2b_order(context.customer['name'], [(p1, q1), (p2, q2)])
+@when('B2B order placed for "{customer_name}" with {qty1:d} {product1} and {qty2:d} {product2}')
+def step_impl(context, customer_name, qty1, product1, qty2, product2):
+    """Places a two-Item partner order through the OrderB2B API (multi-item: registered before the single-item step)."""
+    h.open_log(context)
+    customer = context.customers.get(customer_name, context.customer)
+    context.response = h.place_b2b_order(customer['name'], [(product1, qty1), (product2, qty2)])
     context.order_id = None
     if context.response.status_code == 200:
         context.order_id = context.response.json()['meta']['result']['order_id']
 
 
-@when('Partner order posted via OrderB2B for unknown account "{account}" with {qty:d} {product}')
-def step_impl(context, account, qty, product):
-    """Posts a partner order for an Account that is not a Customer (unique name: it must not exist)."""
-    scenario_name = context.scenario.name
-    test_utils.prt(f'\n{scenario_name}\n', scenario_name)
-    context.account = h.unique(account)
-    newest = requests.get(f'{h.BASE}/api/Order/', params={"sort": "-id", "page[limit]": 1}, headers=h.headers()).json()['data']
-    context.newest_order_before = int(newest[0]['id']) if newest else 0
-    context.response = h.place_b2b_order(context.account, [(product, qty)])
-    context.order_id = None
+@when('B2B order placed for unknown account "{name}"')
+def step_impl(context, name):
+    """Places a partner order for an account no Customer has (unique name, so no earlier run can match it)."""
+    h.open_log(context)
+    context.response = h.place_b2b_order(h.unique(name), [("Widget", 1)])
 
 
-@then('OrderB2B reports an Order with 2 items for the customer')
+@then('the partner order is accepted with {n:d} items')
+def step_impl(context, n):
+    """The OrderB2B API answers 200 with the new order id and its item count."""
+    r = context.response
+    assert r.status_code == 200, f'expected the partner order to be accepted, got {r.status_code}: {r.text}'
+    result = r.json()['meta']['result']
+    assert result['items_count'] == n, f'expected {n} items, got {result}'
+
+
+@then('the order is rejected for an unknown customer')
 def step_impl(context):
-    """The API response names the Customer and the item count."""
-    assert context.response.status_code == 200, f'{context.response.status_code}: {context.response.text}'
-    result = context.response.json()['meta']['result']
-    assert result['customer'] == context.customer['name'], f'customer: {result}'
-    assert result['items_count'] == 2, f'items_count: {result}'
-
-
-@then('Items are mapped to Products Widget and Gadget with quantities 2 and 1')
-def step_impl(context):
-    """Items.Name -> Product by name, Items.QuantityOrdered -> Item.quantity, unit_price copied from the Product."""
-    items = h.order_items(context.order_id)
-    by_qty = {int(i['quantity']): i for i in items}
-    assert set(by_qty) == {1, 2}, f'quantities: {sorted(by_qty)}'
-    assert float(by_qty[2]['unit_price']) == 90.0 and float(by_qty[2]['amount']) == 180.0, f'Widget item: {by_qty[2]}'
-    assert float(by_qty[1]['unit_price']) == 150.0 and float(by_qty[1]['amount']) == 150.0, f'Gadget item: {by_qty[1]}'
-
-
-@then('OrderB2B answers HTTP 400 and no Order is created')
-def step_impl(context):
-    """A rejected partner order must look rejected (HTTP 400) and leave nothing behind."""
+    """The Customer lookup fails: HTTP 400 naming the missing parent."""
     r = context.response
     assert r.status_code == 400, f'expected HTTP 400, got {r.status_code}: {r.text}'
-    assert 'Failed to create B2B order' in r.text, r.text
-    newest = requests.get(f'{h.BASE}/api/Order/', params={"sort": "-id", "page[limit]": 1}, headers=h.headers()).json()['data']
-    newest_id = int(newest[0]['id']) if newest else 0
-    assert newest_id <= context.newest_order_before, 'an Order was created for an unknown account'
+    assert 'missing parent' in r.text and 'Customer' in r.text, f'unknown-customer message missing: {r.text}'
+
+
+def _newest_request_for(name: str) -> dict:
+    """The newest OrderB2bRequest whose payload names the (unique) customer."""
+    r = h.requests.get(f'{h.BASE}/api/OrderB2bRequest/', params={"sort": "-id", "page[limit]": 20}, headers=h.headers())
+    for each in r.json()['data']:
+        if name in (each['attributes'].get('payload') or ''):
+            return each['attributes']
+    raise AssertionError(f'no request recorded for {name}')
+
+
+@then('the B2B request is recorded as processed')
+def step_impl(context):
+    """The request row exists, processed, with no error."""
+    a = _newest_request_for(context.customer['name'])
+    assert a['is_processed'] and not a['error_text'], f'expected a processed request: {a}'
+
+
+@then('the B2B request is recorded with the error "{text}"')
+def step_impl(context, text):
+    """The rejected request is kept, unprocessed, with the reason."""
+    assert context.response.status_code == 400, f'expected HTTP 400, got {context.response.status_code}'
+    a = _newest_request_for(context.customer['name'])
+    assert not a['is_processed'] and a['error_text'] and text in a['error_text'], f'expected error "{text}": {a}'

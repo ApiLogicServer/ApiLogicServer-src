@@ -1,6 +1,6 @@
 <!--
   src/prototypes/manager/samples/requirements/demo-eai/requirements.md
-  Version: 1.0 (Apr 16, 2026)
+  Version: 1.2 (Nov 19, 2026) - 6. Operations Dashboard: maintained daily totals (orders, messages, B2B requests); 2: record each request
   Executable Requirements spec — say "implement requirements docs/requirements/demo_eai" to run
 -->
 
@@ -30,6 +30,7 @@ Feature: B2B Order Integration
     Then map Account to Customer by name
     And map Items.Name to Product by name
     And map Items.QuantityOrdered to Item.quantity
+    And record each request, with its outcome, for the order flow dashboard
 ```
 
 ## 3. Kafka Subscribe — Inbound orders from sales channel
@@ -70,15 +71,27 @@ Feature: Row-Level Security
     Then only return customers where credit_limit >= 3000 or balance > 0
 ```
 
-## 6. How to Test
+## 6. Operations Dashboard — Order flow
 
-- Test without Kafka (debug endpoint bypasses Kafka entirely):
-```
-curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/demo_eai/message_formats/order_b2b.json"
+```gherkin
+Feature: Order Flow Dashboard
+
+  Scenario: Show that orders are flowing
+    Given orders arrive through the B2B API and the Kafka topic order_b2b
+    When an operator opens the Admin App home page
+    Then maintain daily totals of orders (count and total amount), and of order_b2b messages and B2B requests
+         (received, processed, rejected, and not yet done)
+    And chart the daily totals for the last 30 days, showing a day with no activity as zero
+    And date each Order, message and request when it arrives
+    And show current data each time the page is opened
 ```
 
-- Kafka is optional. To test with live Kafka:
-  1. Start Docker: `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
-  2. Reset topics: `bash integration/kafka/order_b2b_reset.sh`
-  3. Restart the server (after Docker is up, so it picks up Kafka env vars and subscribes to topics)
-  4. Send a test message using the curl command above
+
+## 7. How to Test
+
+- Without Kafka (the debug endpoint runs the same parse-and-save function the consumer uses):
+```
+curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/demo_eai/message_formats/order_b2b.json&mode=simulated"
+```
+
+- With live Kafka: say `verify message subscriptions`. It resets the topics first (messages left on the broker by earlier runs would otherwise be replayed), enables Kafka when a broker answers, sends the sample message live, and confirms the new order.

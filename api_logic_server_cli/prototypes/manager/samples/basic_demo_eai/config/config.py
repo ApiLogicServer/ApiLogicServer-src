@@ -73,7 +73,7 @@ def logging_setup() -> logging.Logger:
     logging_config = f'{project_path}/config/logging.yml'
     if os.getenv('APILOGICPROJECT_LOGGING_CONFIG'):
         logging_config = project_path.joinpath(os.getenv("APILOGICPROJECT_LOGGING_CONFIG"))
-    with open(logging_config,'rt') as f:  # see also logic/declare_logic.py
+    with open(logging_config,'rt', encoding='utf-8') as f:  # see also logic/declare_logic.py
             config=yaml.safe_load(f.read())
             f.close()
     logging.config.dictConfig(config)  # log levels: notset 0, debug 10, info 20, warn 30, error 40, critical 50
@@ -233,7 +233,7 @@ class Config:
         KAFKA_PRODUCER = os.getenv('KAFKA_PRODUCER',{"bootstrap.servers": f"{KAFKA_SERVER}"})  #  , "client.id": "aaa.b.c.d"}'
         KAFKA_CONSUMER_GROUP = os.getenv('KAFKA_CONSUMER_GROUP') #'als-default-group1'
         if KAFKA_CONSUMER_GROUP is not None: # and KAFKA_CONSUMER_GROUP != "None":
-            KAFKA_CONSUMER =  os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest"})
+            KAFKA_CONSUMER =  os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest", "session.timeout.ms": "6000", "heartbeat.interval.ms": "2000"})  # short session: a restart does not wait ~45 s for the old one to expire
     else:
         app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER} - not set, no kafka producer/consumer')
     producer_is_empty = "" == KAFKA_PRODUCER
@@ -250,7 +250,7 @@ class Config:
     wh_endpoint = "webhook-test" # This comes from the WebHook node in n8n
     wh_path = "002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69" # This comes from the WebHook node in n8n
     wh_token = "YWRtaW46cA==" # This is the base64 encoded string of username:password (e.g. admin:password)
-    N8N_PRODUCER = {"authorization": f"Basic {wh_token}", "n8n_url": f'"{wh_scheme}://{wh_server}:{wh_port}/{wh_endpoint}/{wh_path}"'} 
+    N8N_PRODUCER = {"authorization": f"Basic {wh_token}", "n8n_url": f'{wh_scheme}://{wh_server}:{wh_port}/{wh_endpoint}/{wh_path}'}
     # Or enter the n8n_url directly:
     #N8N_PRODUCER = {"authorization": f"Basic {wh_token}","n8n_url":"http://localhost:5678/webhook-test/002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69"}  
     N8N_PRODUCER = None # comment out to enable N8N producer

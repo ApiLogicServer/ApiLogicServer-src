@@ -8,10 +8,9 @@ Feature: Kafka Publish Shipping Notification
     And use message_formats/order_shipping.json as the message shape
     And use by-example publish rather than key-only publish
 """
-
 from integration.system.EaiPublishMapper import serialize_row
 
-# Message shape, copied from docs/requirements/demo_eai/message_formats/order_shipping.json
+# The message shape, by example: docs/requirements/demo_eai/message_formats/order_shipping.json
 SAMPLE = {
     "order_id": 1,
     "order_date": "2026-04-06",
@@ -22,7 +21,7 @@ SAMPLE = {
     ]
 }
 
-# sample key -> model attribute (plain), "Relationship.column" (join), or relationship name (child list)
+# sample key -> column (rename), "relationship.column" (join), or relationship name (child list)
 FIELD_EXCEPTIONS = {
     "order_id": "id",
     "order_date": "CreatedOn",
@@ -34,5 +33,5 @@ FIELD_EXCEPTIONS = {
 
 
 def row_to_dict(row) -> dict:
-    """Order mapper: shapes an Order like order_shipping.json (by-example publish)."""
+    """Order mapper: shapes an Order (and its Items) as the order_shipping message, by example."""
     return serialize_row(row, sample=SAMPLE, exceptions=FIELD_EXCEPTIONS)

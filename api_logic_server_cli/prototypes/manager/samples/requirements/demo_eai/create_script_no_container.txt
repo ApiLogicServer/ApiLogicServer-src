@@ -11,6 +11,8 @@ add security (degrade to SQL if Keycloak is not available)
 
 implement requirements samples/requirements/demo_eai/docs/requirements/demo_eai
 
+seed order history for the dashboard: the 30 days before today, through the rules (not SQL), with weekday and weekend volumes (orders arriving as B2B requests and as Kafka messages), one day with mostly rejected messages, and no activity 3 and 2 days ago
+
 verify message subscriptions (all topics)
 
 create logic diagram for each requirement (skip if graphviz is not available)
@@ -18,6 +20,8 @@ create logic diagram for each requirement (skip if graphviz is not available)
 create tests from rules, using default names
 
 run the tests
+
+empty the Kafka topics, so a server restart does not read the test messages again (skip if no broker is running)
 
 run the requirements traceability report
 When the report is done, print this verbatim: "Next: scan these two files: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made). Then open the report: demo_eai/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."

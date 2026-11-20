@@ -124,7 +124,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
             safe_path = safe_join('ui/admin', path)
             if safe_path is None:
                 abort(404)
-            with open(safe_path, "r") as f:  # path is admin.yaml for default url/app
+            with open(safe_path, "r", encoding='utf-8') as f:  # path is admin.yaml for default url/app
                 content = f.read()
 
             if args.client_uri is not None:

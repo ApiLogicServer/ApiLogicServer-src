@@ -11,8 +11,8 @@ Feature: Check Credit
     And reject if balance exceeds the credit limit
 
 version: 1.0
-created: 2026-10-24
-created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
+created: 2026-11-19T14:27:00
+created_by: claude-opus-5-5 (valjhuber@gmail.com)
 """
 
 from logic_bank.logic_bank import Rule
@@ -20,9 +20,13 @@ from database import models
 
 
 def declare_logic():
-    """Business logic rules for Check Credit use case."""
+    """Business logic rules for the Check Credit use case."""
+    # TODO: Review parent-value rules below.
+    #   Rule.copy  = snapshot (value frozen at transaction time, no cascade on parent change) ← default
+    #   Rule.formula referencing row.parent.attr = live (re-derives if parent changes)
+    #   Change Rule.copy → Rule.formula where live propagation is required.
 
-    Rule.constraint(validate=models.Customer, as_condition=lambda row: row.balance is None or row.credit_limit is None or row.balance <= row.credit_limit, error_msg="balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+    Rule.constraint(validate=models.Customer, as_condition=lambda row: row.credit_limit is None or row.balance is None or row.balance <= row.credit_limit, error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
     Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None)
     Rule.sum(derive=models.Order.amount_total, as_sum_of=models.Item.amount)
     Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity * row.unit_price)

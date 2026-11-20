@@ -1,7 +1,7 @@
 ---
 title: Sample_Basic_EAI
 do_process_code_block_titles: True
-version: 1.11 from docsite, for readme, for readme 10/24/2026 - the no-container script is an opt-out of Docker/Podman, not only for machines without them; (1.10: 10/24/2026 - no-container script (Docker/Podman optional); (1.9: 10/20/2026 - no bootstrap prompt; Build It adds diagrams, tests, run tests, Behave Logic Report. (1.8: message_formats auto-included in prototype, xr))
+version: 1.14 from docsite, for readme, for readme 10/24/2026 - one closing message (what to review, where the report is) instead of a mid-run "Built" line that runs did not print; (1.13: Build It is the adaptive clean script (sentences, no shell lines; degrades instead of stopping); (1.12: "This sample" instead of the project name (the same readme is fetched for demo_eai); (1.11: the no-container script is an opt-out of Docker/Podman, not only for machines without them; (1.10: 10/24/2026 - no-container script (Docker/Podman optional); (1.9: 10/20/2026 - no bootstrap prompt; Build It adds diagrams, tests, run tests, Behave Logic Report. (1.8: message_formats auto-included in prototype, xr))
 source: docs/Sample-Basic-EAI
 Propagation: see api_logic_server_cli/sample_mgr/create_readme.py
 ---
@@ -39,7 +39,7 @@ This app illustrates using IntegrationServices for B2B push-style integrations w
 
 ![demo-eai](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/demo-eai.png)
 
-**basic_demo_eai** is a single API Logic Server providing APIs *and logic* — it both
+**This sample** is a single API Logic Server providing APIs *and logic* — it both
 subscribes and publishes, so there's no second project to stand up:
 
 1. **Order Logic:** enforcing database integrity (Check Credit) and application
@@ -62,79 +62,71 @@ subscribes and publishes, so there's no second project to stand up:
 
 ![create_script](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/demo_eai/create_script.png)
 
-**No Kafka installed? No Docker?** Not required for any of this. The Kafka client
-library installs with the project either way; you only need an actual broker
-running if you want to see live message delivery (Section 6, Step 6 — optional).
-Everything else — building, running, Check Credit, the Custom API, and even the
-Kafka Subscribe/Publish logic itself — works and is fully testable without one.
-If/when you do want live Kafka, the project includes everything to stand one up —
-see `integration/kafka/kafka_readme.md`'s **Live Kafka Test** section
-(`docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`, Podman
-alternative included).
+The requirements are shown at right above, truncated.  To see the entire file, [click here](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/requirements/demo_eai/docs/requirements/demo_eai/requirements.md).  
+
+> This creates the executable project: **integration** (MCP-enabled API, messaging), **business logic**, and the **Admin App**.  It then creates / runs the tests, and documents it all in [this file](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/basic_demo_eai/docs/requirements/Requirements%20Traceability%20Report.md). This example uses Gherkin `md` file; you can also use your existing methodolgies.
 
 &nbsp;
 
-**Just want to run it, skip building?** The Manager already has a pre-built
-`basic_demo_eai` — jump straight to [Section 1, Run and Verify](#1-run-and-verify).
-Everyone — whether you just built it or you're using the pre-built copy — starts
+### Using Kafka
+
+**No Kafka installed? No Docker?** Not required for any of this. The Kafka client library installs with the project either way; you only need an actual broker running if you want to see live message delivery (Section 6, Step 6 — optional).
+
+Everything else — building, running, Check Credit, the Custom API, and even the Kafka Subscribe/Publish logic itself — works and is fully testable without one.  
+
+If/when you do want live Kafka, the manager readme contains setup and verification instructions.  To see them, [click here](https://apilogicserver.github.io/Docs/DevOps-Quick-Start).
+
+**Just want to run it, skip building?** The Manager already has a pre-built `basic_demo_eai` — jump straight to [Section 1, Run and Verify](#1-run-and-verify).  Everyone — whether you just built it or you're using the pre-built copy — starts
 there.
 
 &nbsp;
 
 ## Build It
 
-One command creates the project; one command executes **every** requirement below
-(Check Credit, B2B API, Kafka Subscribe, Kafka Publish, Security) — steps A-D are the
-**entire build**, not the first of several. Steps E-H (diagrams, tests, report) are
-optional extras that document and verify it. Here is the whole procedure, then what each step means:
+One sentence creates the project; one sentence executes **every** requirement below
+(Check Credit, B2B API, Kafka Subscribe, Kafka Publish, Security) — steps A-C are the
+**entire build**, not the first of several. Steps D-H (Kafka check, diagrams, tests, report) are
+optional extras that verify and document it. Here is the whole procedure, then what each step means:
 
 > **Important:** be sure your AI assistant is in "Agent" mode ("Ask" will not work). No bootstrap prompt is needed: the Manager's context loads automatically when you open it in your AI assistant.
 
-**The entire procedure — Claude Code CLI: lines starting with ! run as shell commands, the rest are prompts:**
-```bash title="The entire procedure — Claude Code CLI: lines starting with ! run as shell commands, the rest are prompts"
-# A - Create Project
-!genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite
+**The entire procedure: every line is a sentence to your AI assistant, none is a shell command:**
+```text title="The entire procedure: every line is a sentence to your AI assistant, none is a shell command"
+// 0 - Environment
+Check for Docker or Podman. If neither is running, continue in degraded mode (SQL security, simulated Kafka) and tell me so up front.
 
-# B - Get Requirements
-!cd demo_eai && cp -r ../samples/requirements/demo_eai/ .
+// A - Create Project
+create project demo_eai from samples/dbs/basic_demo.sqlite
 
-# C - Add Security (optional)
-!cd demo_eai/devops/keycloak && docker compose up -d
-!cd demo_eai && genai-logic add-auth --provider-type=keycloak --db-url=localhost
+// B - Security
+add security (degrade to SQL if Keycloak is not available)
 
-# D - Implement Requirements
-implement requirements docs/requirements/demo_eai in project demo_eai
+// C - Implement Requirements
+implement requirements samples/requirements/demo_eai/docs/requirements/demo_eai
 
-# E - Logic Diagrams (optional)
-create logic diagram for each requirement in demo_eai
+// D - Verify Kafka
+verify message subscriptions (all topics)
 
-# F - Create Tests (optional)
-create tests from rules in demo_eai, one Feature per requirement, named exactly:
-- Check Credit
-- B2B Order Integration
-- Kafka Subscribe Order Integration
-- Kafka Publish Shipping Notification
-- Row-Level Security
+// E - Logic Diagrams
+create logic diagram for each requirement (skip if graphviz is not available)
 
-# G - Run Tests (optional)
-run the tests in demo_eai
+// F - Create Tests
+create tests from rules, using default names
 
-# H - Traceability Report (optional)
-run the requirements traceability report in demo_eai
+// G - Run Tests
+run the tests
 
-# Then OPEN the report: demo_eai/docs/requirements/Requirements Traceability Report
-# (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)
+// H - Traceability Report
+run the requirements traceability report
+When the report is done, print this verbatim: "Next: scan these two files: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs (the judgment calls the AI made). Then open the report: demo_eai/docs/requirements/Requirements Traceability Report (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
 ```
 
-**Running it in the CLI:** start Claude Code in the Manager folder and paste one step at a time (a `!` line, or a prompt), not the whole block at once. A `!` line is run as a shell command by Claude Code. Each line names the project (`demo_eai`) so it works from the Manager root; if you would rather work inside the project, open `demo_eai` as the workspace and drop the `in demo_eai` and `cd demo_eai` parts. Steps E-H use triggers that live in the project's own context (`demo_eai/.github/copilot-instructions.md`); if the assistant does not recognise one from the Manager root, that is the reason, and opening `demo_eai` as the workspace fixes it.
+**Running it:** start your AI assistant (Claude Code, for example) in the Manager folder and paste the block, or paste [`create_script.txt`](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/requirements/demo_eai/create_script.txt), which is the same script, with [each step explained](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/requirements/demo_eai/create_script_annotated.txt). Lines starting with `//` are notes for you; the assistant ignores them. The first steps run from the Manager root; later ones (tests, report) use triggers that live in the created project's context (`demo_eai/.github/copilot-instructions.md`). If the assistant does not recognise one, open `demo_eai` as the workspace.
 
-**Using Podman instead of Docker?** Step C's `docker compose up -d` can be `podman compose up -d`
-instead — `devops/keycloak/docker-compose.yml` works unchanged. One-time setup: see
+**Using Podman instead of Docker?** Nothing to change: the script uses `podman compose` when only Podman is running. One-time setup: see
 [DevOps-Podman](https://apilogicserver.github.io/Docs/DevOps-Podman).
 
-**Skip Docker/Podman?** Use the no-container script, `samples/requirements/demo_eai/create_script_no_container.txt`,
-instead of the commands above. It never uses a container, so it works whether or not a container runtime is installed
-(a Codespace, say, has none). It builds the same system from the same requirements, with two differences:
+**No Docker or Podman?** The script notices, tells you up front, and carries on in degraded mode (it does not stop). To choose that mode even when a runtime is installed, paste [`create_script_no_container.txt`](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/requirements/demo_eai/create_script_no_container.txt) instead: the same script with a different first line. Degraded mode builds the same system from the same requirements, with two differences:
 
 * **Security** uses the SQL authentication provider (no Keycloak), and Row-Level Security is still tested.
 * **Kafka** runs in fallback mode (`KAFKA_SERVER` unset). Subscribe is tested through the debug endpoint,
@@ -142,7 +134,6 @@ instead of the commands above. It never uses a container, so it works whether or
   those scenarios *simulated*. Live Kafka delivery is not verified in this mode. Start a broker and set `KAFKA_SERVER`
   and `KAFKA_CONSUMER_GROUP`, and the same endpoint publishes through the broker and the same tests run live.
 
-Either script ends with a line saying which mode ran.
 
 &nbsp;
 
@@ -150,21 +141,22 @@ Either script ends with a line saying which mode ran.
 
 | Step | What it does |
 |---|---|
+| **0 - Environment** | Your assistant checks for Docker or Podman. With neither running it says so up front and continues in degraded mode (SQL security, Kafka tested through the debug endpoint). |
 | **A - Create Project** | Creates a working, MCP-enabled API and Admin App from the existing database (and the `genai-logic` CLI to manage it). No logic yet. |
-| **B - Get Requirements** | Copies the requirements (5 Gherkin features, plus the message formats) into the project. |
-| **C - Add Security (optional)** | Turns on Keycloak security so the row-level security requirement (§5) is enforced. Skip it and everything else still runs. |
-| **D - Implement Requirements** | The build: your AI assistant reads the requirements and writes the rules, the Custom API, the Kafka subscribe and publish, and the security declarations. Sections 2-5b and 7 below tour what it produced. |
-| **E - Logic Diagrams (optional)** | Draws the rule chain for each requirement as an SVG; the report shows each one under its requirement. |
-| **F - Create Tests (optional)** | Writes Behave scenarios from the rules. Naming the Features exactly as the requirements do lets the report show, per requirement, which tests exercised it. |
-| **G - Run Tests (optional)** | Runs the scenarios against the live API and records the logic log for each. |
-| **H - Traceability Report (optional)** | Writes the report, `demo_eai/docs/requirements/Requirements Traceability Report.md`. **Open it** (VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview): requirements traced to rules, tests and logic logs, the data model, security and messages. See an example in [Requirements Traceability Report](https://apilogicserver.github.io/Docs/Behave-Logic_Report-bd-eai). |
+| **B - Security** | Keycloak when a container runtime is running, else the SQL authentication provider that ships in the project, so the row-level security requirement (§5) is enforced either way. You are told which was used. |
+| **C - Implement Requirements** | The build: the requirements (5 Gherkin features, plus the message formats) are copied into the project, and your AI assistant writes the rules, the Custom API, the Kafka subscribe and publish, and the security declarations. It also writes `ad-libs.md`, the judgment calls it made, for you to review (the closing message points you at it). Sections 2-5b and 7 below tour what it produced. |
+| **D - Verify Kafka** | With a broker running: enables live Kafka, resets the topics first (messages left by earlier runs would otherwise be replayed), sends the sample message, and confirms a processed blob and a new order. With no broker it verifies the simulated path and says so. |
+| **E - Logic Diagrams** | Draws the rule chain for each requirement as an SVG; the report shows each one under its requirement. Skipped with a one-line note if graphviz is missing. |
+| **F - Create Tests** | Writes Behave scenarios from the rules. "Default names" means each Feature is named exactly as its requirement, so the report can show, per requirement, which tests exercised it. |
+| **G - Run Tests** | Starts the server if needed, runs the scenarios against the live API, records the logic log for each, and stops the server it started. |
+| **H - Traceability Report** | Writes the report, `demo_eai/docs/requirements/Requirements Traceability Report.md`. **Open it** (VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview): requirements traced to rules, tests and logic. |
 
-* Steps E-H are also said to your AI assistant with the created project as its workspace. Each is optional, and H works without the others (run it right after D for everything except test results).
-* The *Row-Level Security* scenarios only mean something once security is on (step C); without it the report shows that requirement as untested.
+* Steps D-H are each optional, and H works without the others (run it right after C for everything except test results).
+* The *Row-Level Security* scenarios are exercised in both modes: step B turns security on with Keycloak or with the SQL provider.
 * A scenario that reads a message back from the `order_shipping` topic needs a live broker (Section 6, Step 6); every other scenario runs with no Kafka.
-* The full requirements spec that step D executes is
+* The full requirements spec that step C executes is
   [docs/requirements/demo_eai/requirements.md](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/manager/samples/requirements/demo_eai/docs/requirements/demo_eai/requirements.md).
-  **Sections 2-5b and 7 below are a tour of what step D built** — each maps back to the requirement that produced it. They are not additional steps to run.
+  **Sections 2-5b and 7 below are a tour of what step C built** — each maps back to the requirement that produced it. They are not additional steps to run.
 
 This is a real project: your IDE, your Python, your source control. The prompt creates it in minutes — but you own it fully and iterate from there. Change a rule; the engine determines execution order automatically. Add an endpoint; the rules are already there waiting for it.
 
@@ -239,7 +231,7 @@ Use case: App Integration
     1. Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
 ```
 
-![Nat Lang Logic](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/sample-ai/copilot/copilot-logic-vibe.png)
+![Nat Lang Logic](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/integration/demo_eai/rules_code.png)
 
 > **These rules are declared once, on the data — not once per entry point.** LogicBank hooks
 > the database commit itself, so Check Credit fires on *every* write path that touches an

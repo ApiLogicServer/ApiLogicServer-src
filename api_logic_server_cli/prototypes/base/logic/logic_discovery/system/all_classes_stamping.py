@@ -10,6 +10,15 @@ import logging
 app_logger = logging.getLogger(__name__)
 
 
+def _now_for(row, column_name: str):
+    """Stamping: now, as a date for a Date column, as a datetime otherwise (e.g. DateTime)."""
+    import sqlalchemy
+    column = type(row).__table__.columns.get(column_name)
+    if column is not None and isinstance(column.type, sqlalchemy.Date) and not isinstance(column.type, sqlalchemy.DateTime):
+        return datetime.date.today()
+    return datetime.datetime.now()
+
+
 def declare_logic():
     """Cross-cutting rules applied to every class (optimistic locking, RBAC, stamping)."""
 
@@ -23,8 +32,14 @@ def declare_logic():
         3. Date/User stamping (opt-in: set enable_stamping = True below)
 
         Date/User Stamping - auto-populates audit fields on insert/update:
-          CreatedOn, CreatedBy  → set on insert
-          UpdatedOn, UpdatedBy  → set on update
+          CreatedOn             → set on insert, ONLY IF EMPTY (a supplied date is kept: imports, seeds, partner
+                                  dates). A date for a Date column, a datetime for a DateTime column.
+                                  CreatedOn is a default, not an audit stamp: a client may supply it. For a
+                                  tamper-proof creation time, use a separate always-forced column.
+          CreatedOnDay          → set on insert, from CreatedOn ('YYYY-MM-DD'): key for day-total tables
+          CreatedOnYearMonth    → set on insert, from CreatedOn ('YYYY-MM'): key for month-total tables
+          CreatedBy             → set on insert, always (audit)
+          UpdatedOn, UpdatedBy  → set on update, always (audit)
           Any subset works — hasattr() checks before setting each field.
           To activate: change `enable_stamping := False` to `enable_stamping := True`
 
@@ -44,9 +59,19 @@ def declare_logic():
         did_stamping = False
         if enable_stamping := False:  # #als: change False to True to enable date/user stamping
             row = logic_row.row
-            if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn"):
-                row.CreatedOn = datetime.datetime.now()
+            if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn") and row.CreatedOn is None:
+                row.CreatedOn = _now_for(row, "CreatedOn")
                 did_stamping = True
+            if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn") and row.CreatedOn is not None:
+                created = row.CreatedOn
+                if isinstance(created, str):
+                    created = datetime.datetime.fromisoformat(created)
+                if hasattr(row, "CreatedOnDay") and row.CreatedOnDay is None:
+                    row.CreatedOnDay = created.strftime('%Y-%m-%d')
+                    did_stamping = True
+                if hasattr(row, "CreatedOnYearMonth") and row.CreatedOnYearMonth is None:
+                    row.CreatedOnYearMonth = created.strftime('%Y-%m')
+                    did_stamping = True
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedBy"):
                 row.CreatedBy = Security.current_user().id \
                     if Config.SECURITY_ENABLED == True else 'public'

@@ -16,7 +16,14 @@ except ImportError:
 ####
 
 logger = logging.getLogger('integration.kafka')
-__version__ = "1.01"
+__version__ = "1.02"   # 1.02 (Nov 2026): commits offsets after each message (APILOGICPROJECT_KAFKA_COMMIT_OFFSETS, default true)
+
+
+def commit_offsets_enabled() -> bool:
+    """ APILOGICPROJECT_KAFKA_COMMIT_OFFSETS: true / 1 / yes / on (the default), else false.  Not `if os.getenv(...)`:
+    the string "false" is truthy. """
+    import os
+    return os.getenv("APILOGICPROJECT_KAFKA_COMMIT_OFFSETS", "true").strip().lower() in ("true", "1", "yes", "on")
 
 class FlaskKafka():
     def __init__(self, interrupt_event: object, conf: dict, safrs_api: object, **kw):
@@ -49,16 +56,27 @@ class FlaskKafka():
             handlers = self.handlers[msg.topic()]
             for handler in handlers:
                 handler(msg = msg, safrs_api = self.safrs_api)
-            # self.consumer.commit(asynchronous=False)
-            # DEV/DEMO: commit is intentionally disabled (enable.auto.commit=false in config).
-            # Effect: offsets are never committed, so server restart replays all messages from earliest.
-            # The is_processed guard on Consumer 2 makes replays a safe no-op (skips already-processed blobs).
-            # PRODUCTION: uncomment the commit line above for at-least-once delivery with no replays.
         except Exception as e:
             # Log and carry on with the next message.  (This used to sys.exit, which ended the consumer thread:
-            # one failed message silently stopped all later processing.)  Offsets are not committed, so a restart
-            # replays; handlers record their own failures (e.g. error_text on the blob row).
+            # one failed message silently stopped all later processing.)  Handlers record their own failures
+            # (e.g. error_text on the blob row), so a failed message is not retried by replaying it.
             logger.critical(f"FlaskKafka: a handler failed on topic {msg.topic()}; the message is skipped: {e}", exc_info=1)
+        finally:
+            self._commit(msg)
+
+    def _commit(self, msg):
+        """ Commit the message's offset, so a server restart resumes AFTER it (no replay).
+
+        APILOGICPROJECT_KAFKA_COMMIT_OFFSETS (default true).  Set it to false only to replay every message on each
+        start, e.g. to re-run a pipeline by hand: replays re-insert every message (Consumer 1 saves a new blob row
+        each time), so they create duplicate rows - never use false in production.
+        """
+        if not commit_offsets_enabled():
+            return
+        try:
+            self.consumer.commit(message=msg, asynchronous=False)
+        except Exception as e:
+            logger.error(f"FlaskKafka: could not commit offset for topic {msg.topic()}: {e}")
 
     def signal_term_handler(self, signal, frame):
         logger.info("closing consumer")
@@ -75,6 +93,7 @@ class FlaskKafka():
         logger.info(f" - FlaskKafka._start: begin polling (v {__version__}), with \n -- conf: {self.conf} \n -- topics: {topics}")
         try:
             consumer = Consumer(self.conf)
+            self.consumer = consumer   # used by _commit (and close on shutdown)
             consumer.subscribe(topics=list(topics))
         except Exception as e:
             logger.critical(f"FlaskKafka._start: Consumer init/subscribe failed: {e}", exc_info=True)

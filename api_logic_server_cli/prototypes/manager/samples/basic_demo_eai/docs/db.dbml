@@ -11,6 +11,20 @@ Table Customer {
     email_opt_out BOOLEAN 
     }
 
+Table DailyFlow {
+    day TEXT [primary key]
+    order_count INTEGER 
+    order_amount NUMERIC(15, 2) 
+    message_received INTEGER 
+    message_processed INTEGER 
+    message_failed INTEGER 
+    message_stuck INTEGER 
+    request_received INTEGER 
+    request_processed INTEGER 
+    request_failed INTEGER 
+    request_stuck INTEGER 
+    }
+
 Table Item {
     id INTEGER [primary key]
     order_id INTEGER 
@@ -27,6 +41,7 @@ Table Order {
     CreatedOn DATE 
     date_shipped DATE 
     amount_total DECIMAL 
+    CreatedOnDay TEXT 
     }
 
 Table Product {
@@ -39,6 +54,17 @@ Table Product {
 Table OrderB2bMessage {
     id INTEGER [primary key]
     received_at DATETIME 
+    payload TEXT 
+    is_processed BOOLEAN 
+    error_text TEXT 
+    CreatedOn DATETIME 
+    CreatedOnDay TEXT 
+    }
+
+Table OrderB2bRequest {
+    id INTEGER [primary key]
+    CreatedOn DATETIME 
+    CreatedOnDay TEXT 
     payload TEXT 
     is_processed BOOLEAN 
     error_text TEXT 
@@ -67,6 +93,9 @@ Table Supplier {
 // Relationships
     Ref: Item.(order_id) > Order.(id)
     Ref: Item.(product_id) > Product.(id)
+    Ref: Order.(CreatedOnDay) > DailyFlow.(day)
     Ref: Order.(customer_id) > Customer.(id)
+    Ref: OrderB2bMessage.(CreatedOnDay) > DailyFlow.(day)
+    Ref: OrderB2bRequest.(CreatedOnDay) > DailyFlow.(day)
     Ref: ProductSupplier.(product_id) > Product.(id)
     Ref: ProductSupplier.(supplier_id) > Supplier.(id)

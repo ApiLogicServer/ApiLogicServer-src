@@ -34,7 +34,7 @@ Ask me to ***'show me what you can help me with'*** for a complete list of servi
 8. **Create B2B APIs** - Complex integration endpoints with partner systems
 9. **Add events** - Integrate with Kafka, webhooks, or other event systems
 10. **Customize models** - Add tables, attributes, or derived fields
-11. **Executable Requirements** - Copy a requirements set into `docs/requirements/<name>/`, say "implement reqs <name>", and I execute the spec end-to-end with an ad-libs audit report
+11. **Executable Requirements** - Name a requirements set (a path, or a folder already in `docs/requirements/`), say "implement reqs <name>" — I copy it in if needed —, and I execute the spec end-to-end with an ad-libs audit report
 12. **Governance Report** - Say "vital signs" or "health check" for rule adoption, dependency tracking, and docstring hygiene
 13. **Logic Diagram** - Say "create logic diagram" for an SVG showing the rule chain
 14. **Queries and Dashboards** - Ask for a query, report, or a dashboard/chart

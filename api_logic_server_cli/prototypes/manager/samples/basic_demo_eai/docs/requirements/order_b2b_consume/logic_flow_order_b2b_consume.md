@@ -1,4 +1,4 @@
-# Logic Flow — samples/basic_demo_eai [order_b2b_consume]
+# Logic Flow — demo_eai [order_b2b_consume]
 
 > Scoped to requirement: **order_b2b_consume**
 
@@ -13,7 +13,7 @@
 
 ### Rules
 
-1. `OrderB2bMessage` → `_publish_order_b2b` (after_flush) — OrderB2bMessage event: publishes the raw blob to topic order_b2b_processed after Tx 1 commits, so
+1. `OrderB2bMessage` → `_publish_order_b2b` (after_flush) — OrderB2bMessage event: publishes the raw blob to order_b2b_processed after Tx 1 commits, so Consumer 2
 
 </td>
 </tr>
@@ -32,9 +32,9 @@ Feature: Kafka Subscribe Order Integration
     And map Items.QuantityOrdered to Item.quantity
 
 version: 1.0
-created: 2026-10-24
-created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
+created: 2026-11-19T14:30:00
+created_by: claude-opus-5-5 (valjhuber@gmail.com)
 ```
 
 ---
-_Generated 2026-10-24 15:06_
+_Generated 2026-11-19 17:40_

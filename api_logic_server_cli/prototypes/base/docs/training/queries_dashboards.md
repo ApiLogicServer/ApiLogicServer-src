@@ -1,6 +1,6 @@
 ---
 title: Queries and Dashboards
-version: 1.5 (Jul 2026) — Added link to published user-facing demo (Admin-Customization#ai-assistant), which documents this exact capability with the same sales-by-region/sales-by-category example this file was tested against
+version: 1.6 (Nov 2026) — per-period totals maintained by rules (insert_parent + stamped day key); quiet days shown as zero; charts no longer cached (the template froze them at server start). 1.5 (Jul 2026) — Added link to published user-facing demo (Admin-Customization#ai-assistant), which documents this exact capability with the same sales-by-region/sales-by-category example this file was tested against
 usage: AI reads this when user asks for a dashboard, chart, graph, or a saved/reusable query
 overhead: zero until invoked — file is read on demand only
 ---
@@ -89,6 +89,39 @@ there to see real, running code for both pieces before writing your own.
 
 ---
 
+## Per-period totals: maintain them with rules, then read them
+
+When the ask is a count or sum **per day / month** of something that happens (orders placed, messages received,
+requests rejected) — an operations or flow dashboard — do not group-by the transaction tables on every read. Keep a
+**totals table** and maintain it with rules, so the figures are governed like any other derived value (they appear
+in the logic diagram, the traceability report and the tests) and are adjusted incrementally, never recomputed:
+
+1. **The period key comes from stamping.** Turn on stamping in `logic/logic_discovery/system/all_classes_stamping.py`
+   (`enable_stamping := True`); add `CreatedOn` plus `CreatedOnDay` (`'YYYY-MM-DD'`, TEXT) or `CreatedOnYearMonth`
+   to the child table. `CreatedOn` is stamped only when empty, so imported / seeded rows keep their own dates. Do not
+   write a per-table event to date rows — that duplicates the system handler.
+2. **The totals table** (e.g. `daily_flow`, PK `day` TEXT) gets one column per figure; each child carries an FK to it
+   on its day key (`CreatedOnDay` → `daily_flow.day`).
+3. **The rules**, with `insert_parent=True` so the first row of a day creates its bucket
+   (see `logic_bank_api.md`, "insert_parent"):
+   ```python
+   Rule.count(derive=models.DailyFlow.order_count, as_count_of=models.Order, insert_parent=True)
+   Rule.sum(derive=models.DailyFlow.order_amount, as_sum_of=models.Order.amount_total, insert_parent=True)
+   Rule.count(derive=models.DailyFlow.failed_count, as_count_of=models.XyzMessage,
+              where=lambda row: row.error_text is not None, insert_parent=True)
+   Rule.formula(derive=models.DailyFlow.stuck_count,      # arrived, neither done nor failed
+                as_expression=lambda row: row.received_count - row.processed_count - row.failed_count)
+   ```
+   A count over a column that something writes OUTSIDE the governed session is never maintained: check that every
+   write the counts depend on goes through `safrs.DB.session` (e.g. `EaiSubscribeMapper.record_error_text` does).
+4. **Retention:** never purge the child rows the totals count — a delete adjusts the counts, so history vanishes.
+   Put a TODO saying so in the totals logic file (to purge, clear payloads but keep rows, or freeze closed days).
+5. **Reading:** the dashboard reads the totals table and **fills a fixed calendar window (e.g. the last 30 days) with
+   zeros** for days that have no bucket. No rule can create a row for a day when nothing happened ("Absence of an
+   Event", `logic_bank_api.md`): a quiet day must still show as zero, or the chart cannot show the flow stopping.
+
+Use plain group-by queries (Part 1) for ad-hoc analysis — "sales by category" — not for running per-period totals.
+
 ## Part 1 — Queries (grouped/aggregate data, no chart)
 
 A query is just a custom read endpoint: a SQLAlchemy `session.query(...)` with joins,
@@ -137,15 +170,14 @@ rows. Shape the result as:
 
 🚨 **`/chart_graphics/<name>` must return RENDERED HTML, not the raw JSON from step 1.**
 Every project already has `ui/templates/bar_chart.jinja` (Chart.js, reads exactly the
-`chart_type`/`title`/`columns`/`results` shape from step 1) — render through it. Returning
+`chart_type`/`title`/`columns`/`results` shape from step 1) — render through it. It draws ONE series; for several
+series in one chart (received / processed / failed), add a multi-series template beside it rather than editing it. Returning
 `jsonify(query_result)` from this route is the single most common mistake: the route
 "works" (200 OK, correct data) but the Admin App iframe shows a raw JSON dump instead of a
 chart, because nothing ever turned the data into HTML/Chart.js.
 
 ```python
 from jinja2 import Environment, FileSystemLoader
-
-dashboard_result = {}  # cache — module level, outside add_service()
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators=[]):
 
@@ -157,22 +189,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                   f'style="flex: 1; border: none; width: 90%; height: 200px;"></iframe></div>')
         return f'<div style="display: flex; flex-direction: row; gap: 10px; border: none;">{iframe}</div>'
 
-    def get_dashboards():
-        if len(dashboard_result) > 0:
-            return dashboard_result
-        env = Environment(loader=FileSystemLoader('ui/templates'))
-        template = env.get_template('bar_chart.jinja')
-        result = sales_by_category_query()  # your query function(s) from step 1
-        color = 'rgba(75, 192, 192, 0.2)'
-        dashboard_result['sales_by_category'] = template.render(result=result, color=color)
-        return dashboard_result
+    CHARTS = {'sales_by_category': sales_by_category_query}   # your query function(s) from step 1
 
     @app.route('/chart_graphics/<path:path>', methods=['GET'])
     def chart_graphics(path):
-        dashboards = get_dashboards()
-        if path in dashboards:
-            return dashboards[path]   # already-rendered HTML string — NOT jsonify()
-        return jsonify({"result": "not found"}), 404
+        # Rendered on EVERY request - never cache at module level: a cache freezes the charts at server start, and
+        # the dashboard then shows stale data until a restart.
+        if path not in CHARTS:
+            return jsonify({"result": "not found"}), 404
+        template = Environment(loader=FileSystemLoader('ui/templates')).get_template('bar_chart.jinja')
+        color = 'rgba(75, 192, 192, 0.2)'
+        return template.render(result=CHARTS[path](), color=color)   # rendered HTML - NOT jsonify()
 ```
 
 Wrap each chart's query in try/except — one bad query should degrade to an error message

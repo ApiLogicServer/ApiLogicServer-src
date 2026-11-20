@@ -316,16 +316,19 @@ def resolve_lookups(
 
 def record_error_text(blob_model, blob_id: int, error_text: str) -> None:
     """
-    Persist why Consumer 2 failed onto the blob row, in a NEW session and transaction.
+    Persist why Consumer 2 failed onto the blob row - through the governed session, so the rules see it.
 
-    Not safrs.DB.session: that scoped session still holds the failed Tx 2's pending rows, so any query on it
-    autoflushes them, runs the rules again and raises the original error - and an exception escaping a Kafka
-    handler would end up in the consumer loop.  A fresh Session on the same engine is unaffected.
+    The failed Tx 2 left its pending rows in safrs.DB.session (any query would autoflush them and raise the original
+    error again), so this first ROLLS BACK that session - discarding the failed Tx 2, the one rollback the consumer
+    needs - then writes error_text and commits on the same, now clean session. LogicBank listens on that session, so a
+    rule on the blob (e.g. a count of failed messages per day) is maintained like any other.  The caller still wraps
+    this in its own try/except, so a failure here cannot end the consumer.
+    (Before Nov 2026 this wrote in a fresh Session(engine): safe, but invisible to the rules.)
     """
     import safrs
-    from sqlalchemy.orm import Session
-    with Session(safrs.DB.engine) as fresh_session:
-        blob = fresh_session.get(blob_model, blob_id)
-        if blob:
-            blob.error_text = error_text
-            fresh_session.commit()
+    session = safrs.DB.session
+    session.rollback()
+    blob = session.get(blob_model, blob_id)
+    if blob:
+        blob.error_text = error_text
+        session.commit()

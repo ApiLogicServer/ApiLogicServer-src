@@ -73,9 +73,9 @@ def main():
     )
     if migration_files:
         latest_file = os.path.join(versions_dir, migration_files[0])
-        with open(latest_file, "r") as f:
+        with open(latest_file, "r", encoding='utf-8') as f:
             lines = f.readlines()
-        with open(latest_file, "w") as f:
+        with open(latest_file, "w", encoding='utf-8') as f:
             for line in lines:
                 f.write(line)
                 if line.strip().startswith("def downgrade"):

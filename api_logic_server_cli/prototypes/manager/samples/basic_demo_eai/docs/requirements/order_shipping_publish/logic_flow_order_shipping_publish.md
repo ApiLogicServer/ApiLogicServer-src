@@ -1,4 +1,4 @@
-# Logic Flow — samples/basic_demo_eai [order_shipping_publish]
+# Logic Flow — demo_eai [order_shipping_publish]
 
 > Scoped to requirement: **order_shipping_publish**
 
@@ -13,7 +13,7 @@
 
 ### Rules
 
-1. `Order` → `_send_order_to_shipping` (after_flush) — Order event: publishes the Order to Kafka topic order_shipping (by-example, shape from
+1. `Order` → `_send_order_to_shipping` (after_flush) — Order publish: sends the Order to Kafka topic order_shipping when date_shipped is set and differs from its prior
 
 </td>
 </tr>
@@ -32,9 +32,9 @@ Feature: Kafka Publish Shipping Notification
     And use by-example publish rather than key-only publish
 
 version: 1.0
-created: 2026-10-24
-created_by: claude-sonnet-5-5 (valjhuber@gmail.com)
+created: 2026-11-19T14:32:00
+created_by: claude-opus-5-5 (valjhuber@gmail.com)
 ```
 
 ---
-_Generated 2026-10-24 15:06_
+_Generated 2026-11-19 17:40_

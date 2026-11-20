@@ -3,12 +3,13 @@ title: LogicBank Patterns - The Hitchhiker's Guide
 description: General patterns for working with LogicBank rules (deterministic and probabilistic)
 source: Generic training for ApiLogicServer projects with GenAI integration
 usage: AI assistants read this for general LogicBank patterns across ALL rule types
-version: 1.0
-date: Nov 14, 2025
+version: 1.3
+date: Oct 29, 2026
 related: 
   - logic_bank_api.md (deterministic rule API)
   - probabilistic_logic.md (AI/probabilistic rule API)
 changelog:
+  - 1.3 (Oct 29, 2026): New PATTERN 3c, "Recording Changes (Auditing)": routes a requirement that says audit / auditing / history / track changes / who changed to the right mechanism (RuleExtension.copy_row for attribute changes; a hand-written event when old and new values, who or why are needed; the Request Pattern only when a caller reads a result back). The CE had audit only under the Request Pattern (SysAuditReq), while the simpler one-rule form (nw_sample employee_audit.py) was filed as a copy technique. Also states what the engine does not do: copy_row copies the new values only, its `initialize_target` argument is accepted but never called, and the stamping handler is off by default. Verified by a blind run (Oct 29, 2026, demo_emp_types copy, Keycloak): the routing worked and Recipe B recorded old/new value, who and when. The run also showed the first draft was wrong in three places, fixed here: `.id` under Keycloak, "append-only via Grants" (impossible), and recording a decision inside a constraint.
   - 1.0 (Nov 14, 2025): Extracted general patterns from probabilistic prompt for reuse
   - 1.1 (Feb 16, 2026): Request Object Pattern
   - 1.2 (Oct 13, 2026): PATTERN 1 - added a warning that copying a signature from
@@ -320,6 +321,108 @@ convenience for same-named columns, not a general-purpose field-mapping tool (fo
 Row Dict Mapper in the project CE's B2B Integration section).
 
 ---
+
+=============================================================================
+PATTERN 3c: Recording Changes (Auditing)
+=============================================================================
+
+**Signals** - any of these in a requirement means "record changes": *audit, auditing, audit trail, audit log,
+history, change history, version history, track changes, keep a record of, log who changed, who and when,
+before and after, old value, record every override / approval / exception.*
+
+**Route it - do not default to a Sys*Req table:**
+
+| The requirement wants | Use |
+|---|---|
+| A copy of a row when some attributes change (who changed a salary or a limit, a snapshot of the new values) | `RuleExtension.copy_row` into an audit table - ONE rule (Recipe A) |
+| The OLD value as well as the new, a reason, or who/when set explicitly | A hand-written event that inserts the audit row (Recipe B) |
+| A decision or an event recorded (a credit controller let a document through, an approval was used) | The same event form, inserted when the decision is taken (Recipe B) |
+| A caller asks for something and reads a result back | The Request Pattern (PATTERN 3) - **not** an audit |
+
+The Request Pattern's "audit trail" benefit is a side effect of persisting a request. It is not the way to record
+changes to existing data: nobody inserts a request when a limit is edited.
+
+**The audit table** (create it with the DDL, before the rule): its own `id`, a foreign key to the audited table
+(for example `employee_id`), the columns to record, and optionally `CreatedOn` / `CreatedBy`.
+
+**Append-only cannot be enforced with Grants.** Permissions accumulate: `DefaultRolePermission` turns an access on for a
+role and a `Grant` can only add to it, never take it away. Denying insert would also block the engine's own audit
+inserts, which run as the request user. So any role with insert or update can add or edit history rows through the
+API. Do not claim the history is immutable; list it in ad-libs (🔴) so a person decides.
+
+**Recipe A - a snapshot of the new values when attributes change** (reference: `samples/nw_sample/logic/logic_discovery/
+employee_auditing/employee_audit.py`):
+
+```python
+from logic_bank.extensions.rule_extensions import RuleExtension
+from database.models import *
+
+def declare_logic():
+    RuleExtension.copy_row(copy_from=Employee,
+                           copy_to=EmployeeAudit,
+                           copy_when=lambda logic_row: logic_row.ins_upd_dlt == "upd" and
+                                   logic_row.are_attributes_changed([Employee.Salary, Employee.Title]))
+```
+
+Like-named columns are copied and the new row is linked to its parent. Details:
+- It copies the row **after** the change. It does not record the old value.
+- `copy_row` has an `initialize_target` argument. As of LogicBank 1.34 it is accepted and **never called**: do not use
+  it to set extra columns. Use Recipe B.
+
+**Recipe B - old and new values, who, when, why** (the manual form, written as an event):
+
+```python
+import datetime
+from logic_bank.exec_row_logic.logic_row import LogicRow
+from logic_bank.logic_bank import Rule
+from database import models
+
+def _current_user_id() -> str:
+    """The signed-in user's login, or 'system' when there is none (seed script, message consumer, security off).
+    SQL-provider users carry the login in `id`; Keycloak users (a DotMap built from the token) carry it in `name`
+    and have NO `id` - reading `.id` there returns an empty DotMap, not an error, and would be stored as 'DotMapX()'."""
+    try:
+        from security.system.authorization import Security
+        user = Security.current_user()
+        for attr in ('id', 'name'):
+            value = user.get(attr) if hasattr(user, 'get') else getattr(user, attr, None)
+            if value not in (None, '') and not hasattr(value, 'keys'):
+                return str(value)
+        return 'system'
+    except Exception:
+        return 'system'
+
+def audit_credit_limit(row: models.CustomerCompany, old_row: models.CustomerCompany, logic_row: LogicRow):
+    """CustomerCompany event: when credit_limit changes, records the old and new value, who and when."""
+    if logic_row.is_updated() and logic_row.are_attributes_changed([models.CustomerCompany.credit_limit]):
+        audit = logic_row.new_logic_row(models.CreditLimitChange)       # pass the CLASS
+        audit.link(to_parent=logic_row)                                  # sets the foreign key
+        audit.row.old_limit = old_row.credit_limit
+        audit.row.new_limit = row.credit_limit
+        audit.row.changed_by = _current_user_id()
+        audit.row.changed_on = datetime.datetime.now()
+        audit.insert(reason="credit limit change")                      # triggers rules on the audit row
+
+Rule.commit_row_event(on_class=models.CustomerCompany, calling=audit_credit_limit)
+```
+
+The same shape records a **decision**: an event that does `new_logic_row(...)`, sets the columns and `insert()`s.
+Put it in its own event on the row, with a guard that detects the decision itself (for example, "now over the limit,
+and further over than before"), not in the branch of a constraint: a constraint is re-checked on every update of that
+row, so a rename of a row that is already over the limit would record a decision that was not taken.
+
+**Who and when.** The all-classes stamping handler (`logic/logic_discovery/system/all_classes_stamping.py`) can fill
+`CreatedOn` / `CreatedBy` on any row that has those columns, but it is **off by default** (`enable_stamping := False`).
+Do not assume it ran. Set `changed_by` / `changed_on` explicitly in the event, as above, or switch stamping on.
+(Known problem: the handler reads `Security.current_user().id`, which under Keycloak is an empty DotMap, so stamped
+`CreatedBy` / `UpdatedBy` come out as `DotMapX()`. Use `_current_user_id()` above.)
+No signed-in user is a real case (seed script, message consumer): decide what to record and list it in ad-libs.
+
+**Record the choice in ad-libs.** Which mechanism, which attributes trigger it, and (🔴) anything the requirement did
+not say: whether deletes are audited, how long history is kept, who may read it.
+
+**NOT the Request Pattern**, and not PATTERN 3b alone: 3b is how to copy between same-shaped rows once an event has
+fired; this section is how to decide that a change must be recorded and which form to use.
 
 =============================================================================
 PATTERN 4: Rule API Syntax Reference

@@ -1,5 +1,5 @@
 about:
-  date: October 24, 2026 15:03:09
+  date: November 19, 2026 17:33:29
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -31,6 +31,41 @@ resources:
       resource: Order
     type: Customer
     user_key: name
+  DailyFlow:
+    attributes:
+    - label: ' day*'
+      name: day
+      required: true
+      search: true
+      sort: true
+    - name: order_count
+    - name: order_amount
+    - name: message_stuck
+    - name: request_stuck
+    - name: message_received
+    - name: message_processed
+    - name: message_failed
+    - name: request_received
+    - name: request_processed
+    - name: request_failed
+    tab_groups:
+    - direction: tomany
+      fks:
+      - CreatedOnDay
+      name: OrderList
+      resource: Order
+    - direction: tomany
+      fks:
+      - CreatedOnDay
+      name: OrderB2bMessageList
+      resource: OrderB2bMessage
+    - direction: tomany
+      fks:
+      - CreatedOnDay
+      name: OrderB2bRequestList
+      resource: OrderB2bRequest
+    type: DailyFlow
+    user_key: day
   Item:
     attributes:
     - label: ' id*'
@@ -86,6 +121,54 @@ resources:
       name: customer
       resource: Customer
     type: Order
+    user_key: id
+  OrderB2bMessage:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: CreatedOnDay
+    - name: received_at
+      type: DATETIME
+    - name: error_text
+    - name: CreatedOn
+      type: DATETIME
+    - name: payload
+      required: true
+      type: textarea
+    - name: is_processed
+      type: Boolean
+    tab_groups:
+    - direction: toone
+      fks:
+      - CreatedOnDay
+      name: daily_flow
+      resource: DailyFlow
+    type: OrderB2bMessage
+    user_key: id
+  OrderB2bRequest:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: CreatedOnDay
+    - name: CreatedOn
+      type: DATETIME
+    - name: error_text
+    - name: payload
+      required: true
+      type: textarea
+    - name: is_processed
+      type: Boolean
+    tab_groups:
+    - direction: toone
+      fks:
+      - CreatedOnDay
+      name: daily_flow
+      resource: DailyFlow
+    type: OrderB2bRequest
     user_key: id
   Product:
     attributes:
@@ -154,21 +237,6 @@ resources:
       resource: ProductSupplier
     type: Supplier
     user_key: name
-  OrderB2bMessage:
-    attributes:
-    - label: ' id*'
-      name: id
-      search: true
-      sort: true
-    - name: received_at
-      type: DATETIME
-    - name: is_processed
-      type: Boolean
-    - name: error_text
-    - name: payload
-      type: textarea
-    type: OrderB2bMessage
-    user_key: id
 settings:
   HomeJS: /admin-app/home.js
   max_list_columns: 8

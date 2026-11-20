@@ -255,7 +255,7 @@ def logging_setup() -> logging.Logger:
     logging_config = f'{project_path}/config/logging.yml'
     if os.getenv('APILOGICPROJECT_LOGGING_CONFIG'):
         logging_config = project_path.joinpath(os.getenv("APILOGICPROJECT_LOGGING_CONFIG"))
-    with open(logging_config,'rt') as f:  # see also logic/declare_logic.py
+    with open(logging_config,'rt', encoding='utf-8') as f:  # see also logic/declare_logic.py
             config=yaml.safe_load(f.read())
             f.close()
     logging.config.dictConfig(config)  # log levels: notset 0, debug 10, info 20, warn 30, error 40, critical 50
@@ -395,7 +395,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
         flask_app.db = db
         with flask_app.app_context():
 
-            with open(Path(project_path).joinpath('security/system/custom_swagger.json')) as json_file:
+            with open(Path(project_path).joinpath('security/system/custom_swagger.json'), encoding='utf-8') as json_file:
                 custom_swagger = json.load(json_file)
             safrs_api = SAFRSAPI(flask_app, app_db= db, host=args.swagger_host, port=args.swagger_port, client_uri=args.client_uri,
                                  prefix = args.api_prefix, custom_swagger=custom_swagger)

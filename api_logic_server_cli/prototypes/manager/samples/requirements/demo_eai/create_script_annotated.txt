@@ -38,11 +38,18 @@ create project demo_eai from samples/dbs/basic_demo.sqlite
 add security (degrade to SQL if Keycloak is not available)
 
 // C - Implement Requirements
-// The build (a few minutes): the five requirements are read, copied into the project's docs/requirements/, and become
-// rules, a B2B API, Kafka subscribe and publish, and security grants. Every artifact the Kafka subscribe guide lists is
+// The build (a few minutes): the six requirements are read, copied into the project's docs/requirements/, and become
+// rules, a B2B API, Kafka subscribe and publish, security grants, and an order-flow dashboard on the Admin App home page. Every artifact the Kafka subscribe guide lists is
 // generated, even with no broker. The AI also writes ad-libs.md: the judgment calls it made, for you to review
 // (the closing message points you at it).
 implement requirements samples/requirements/demo_eai/docs/requirements/demo_eai
+
+// C2 - Seed order history
+// The dashboard (requirement 6) needs history to show flow. The 30 days before today are seeded through the rules (a
+// script run inside the app, not SQL), so every amount, total and balance is derived and the credit limit checked. The
+// shape is chosen to show what an operator looks for: normal weekday / weekend volume, one bad-data day (messages arrive,
+// most rejected), and the flow stopping (no activity 3 and 2 days ago). Deterministic: a rebuild draws the same picture.
+seed order history for the dashboard: the 30 days before today, through the rules (not SQL), with weekday and weekend volumes (orders arriving as B2B requests and as Kafka messages), one day with mostly rejected messages, and no activity 3 and 2 days ago
 
 // D - Verify Kafka
 // With a broker running: enables live Kafka, resets the topics first (messages left by earlier runs would otherwise be
@@ -68,5 +75,9 @@ run the tests
 // H - Traceability Report
 // Requirements traced to rules, tests and the engine's own log of what ran. The closing message is printed last, on
 // purpose (mid-run text is easy to lose): what to review (the rules, ad-libs.md) and where the report is.
+// I - Clean up
+// The tests left messages on the topics. Empty them, so a restart of this demo starts from a clean queue.
+empty the Kafka topics, so a server restart does not read the test messages again (skip if no broker is running)
+
 run the requirements traceability report
 When the report is done, print this verbatim: "Next: scan these two files: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made). Then open the report: demo_eai/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."

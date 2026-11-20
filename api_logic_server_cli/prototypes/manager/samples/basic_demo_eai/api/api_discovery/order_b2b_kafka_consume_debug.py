@@ -36,7 +36,7 @@ SAMPLE_FILE = "docs/requirements/demo_eai/message_formats/order_b2b.json"
 
 
 def _simulate(payload: str, session) -> dict:
-    """Order_b2b debug: runs the live consumer's parse-and-save function directly (no Kafka); returns the outcome."""
+    """order_b2b debug: runs the live consumer's parse-and-save function directly (no Kafka); returns the outcome."""
     from integration.kafka.kafka_subscribe_discovery.order_b2b import process_order_b2b_payload
     order_row, blob = process_order_b2b_payload(payload, session)
     return {"blob_id": blob.id, "order_id": order_row.id}

@@ -27,6 +27,15 @@ def headers(user: str = 'admin') -> dict:
     return _headers[user]
 
 
+def open_log(context) -> None:
+    """Open the scenario's logic log once, before its first API call (later calls in the same scenario do nothing,
+    so the log is not reopened and truncated, and no earlier scenario's log receives this scenario's rows)."""
+    name = context.scenario.name
+    if getattr(context, 'log_opened_for', None) != name:
+        test_utils.prt(f'\n{name}\n', name)
+        context.log_opened_for = name
+
+
 def unique(name: str) -> str:
     """A name no earlier run (or scenario) used: tests modify the database and must be repeatable."""
     return f'{name} {int(time.time() * 1000)}'
