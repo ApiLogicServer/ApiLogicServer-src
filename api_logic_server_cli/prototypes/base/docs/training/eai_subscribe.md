@@ -3,13 +3,14 @@ title: EAI Consume Pattern — Kafka + XML/JSON → DB
 description: Two-message Kafka consume pattern with generic by-name XML/JSON mapper. Covers blob-row bridge, 3-tier mapping contract, local debug mode, and generated test data.
 source: Generic training for ApiLogicServer projects with GenAI integration
 usage: AI assistants read this when detecting Kafka consume, EAI, or XML/JSON-to-DB patterns in a user prompt
-version: 1.8
-date: April 4, 2026
+version: 1.9
+date: November 21, 2026
 related:
   - implement_requirements.md (Kafka outbound, row_event patterns)
   - logic_bank_patterns.md (row_event, commit_row_event)
   - logic_bank_api.md (full rule API)
 changelog:
+  - 1.9 (Nov 21 2026) - Mapper templates (XML, JSON) start with the requirement's Feature: docstring, so the traceability report links the mapper (two demo_eai builds in a row listed it as not traced).
   - 1.8 (Nov 19, 2026): (1) `record_error_text` now rolls back the failed Tx 2 and writes `error_text` through the GOVERNED
     session (`safrs.DB.session`), not a fresh `Session(engine)`: the fresh session was invisible to the rules, so a rule
     counting failed messages (an order-flow dashboard's daily totals) never moved. (2) Consumers COMMIT offsets after each
@@ -272,6 +273,11 @@ def declare_logic():
 
 ### 4. Mapper (`integration/XyzMapper.py`) — see 3-tier contract below
 
+The mapper's module docstring starts with the requirement's `Feature:` line and its Scenario text, verbatim, like the
+subscribe handler and the debug service. `integration/*.py` is scanned by the Requirements Traceability Report: a
+mapper without the line is listed as "not traced to a requirement" (real case, demo_eai, Nov 2026: two builds in a
+row, because the templates below had no docstring).
+
 ---
 
 ## 3-Tier Mapping Contract
@@ -435,6 +441,11 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
 **XML format** (`ET.fromstring` + element children):
 ```python
 # integration/XyzMapper.py
+"""
+Feature: <the requirement's Feature name, as in requirements.md>   <- the Scenario text follows, verbatim
+
+Xyz mapper (Kafka topic xyz): <what it maps, in one line>.
+"""
 import xml.etree.ElementTree as ET
 from database import models
 from integration.system.EaiSubscribeMapper import populate_row, _local
@@ -468,6 +479,11 @@ def parse(payload: str, exceptions: dict = None) -> tuple:
 **JSON format** (flat parent dict + child array — most common case):
 ```python
 # integration/XyzMapper.py  (JSON variant)
+"""
+Feature: <the requirement's Feature name, as in requirements.md>   <- the Scenario text follows, verbatim
+
+Xyz mapper (Kafka topic xyz): <what it maps, in one line>.
+"""
 import json
 from database import models
 from integration.system.EaiSubscribeMapper import populate_row_from_dict
