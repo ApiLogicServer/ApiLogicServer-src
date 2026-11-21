@@ -1,6 +1,6 @@
 # Team Development
 
-Status: draft, 2026-11-21.
+Updated 2026-11-21.
 
 &nbsp;
 
@@ -34,8 +34,9 @@ SQL. Moving from SQLite to Postgres is a database URL, not a code change.
 4. **The portable subset:** `Numeric` for money; no raw SQL in logic or APIs; SQLite foreign keys on in dev.
 5. **Concurrency and locking:** test on Postgres only (the Manager's Postgres container, or CI).
 
-Open: the CE teaches the one-developer flow (SQLite DDL, then `rebuild-from-database`). A team mode would make 1-2 the
-default.
+**Note:** the AI assistant's default schema flow is a one-developer flow (SQLite DDL, then `rebuild-from-database`).
+In a team, ask it to make schema changes as Alembic migrations instead (`database/alembic/readme_alembic.md`), so
+practice 2 holds.
 
 &nbsp;
 
@@ -119,7 +120,6 @@ An organization can add its own standards to every project it creates, without f
 Typical uses: naming conventions, the organization's DDL rules for Postgres (Section 1), a standard Keycloak realm
 (Section 3), the Kafka connection pattern (Section 4).
 
-Documented today only briefly, in the Docs pages
+More in the Docs pages
 [AI-Enabled Projects, "Extend Context Engineering"](https://apilogicserver.github.io/Docs/Project-AI-Enabled/#extend-context-engineering)
 and [Existing DB, "Extensible Scaffold"](https://apilogicserver.github.io/Docs/Project-Existing-DB/#extensible-scaffold-context-engineering).
-Open: a worked example (an overlay repo with one added training file), and whether the Manager CE should point to it.
