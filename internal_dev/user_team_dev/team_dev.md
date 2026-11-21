@@ -123,3 +123,25 @@ Typical uses: naming conventions, the organization's DDL rules for Postgres (Sec
 More in the Docs pages
 [AI-Enabled Projects, "Extend Context Engineering"](https://apilogicserver.github.io/Docs/Project-AI-Enabled/#extend-context-engineering)
 and [Existing DB, "Extensible Scaffold"](https://apilogicserver.github.io/Docs/Project-Existing-DB/#extensible-scaffold-context-engineering).
+
+&nbsp;
+
+## 6. CI/CD (tech preview)
+
+Every project includes a GitHub Actions workflow, `.github/workflows/tests.yml`. It installs the project, starts the
+server, runs the Behave tests (the job fails if a scenario fails), and attaches the Requirements Traceability Report
+and the logs to the run.
+
+- **Manual by default:** in the repo, Actions > Tests > *Run workflow*. It never runs by itself.
+- **On every push:** add `push:` and `pull_request:` under `on:` in the file (its header shows how).
+- **Off:** delete the file.
+- **No services needed:** SQLite, SQL authentication, Kafka simulated (live-only scenarios are skipped). The workflow
+  sets `SECURITY_PROVIDER=sql` and an empty `KAFKA_SERVER`, so a project that uses Keycloak and a broker locally still
+  runs in CI.
+
+**Next steps for a team:**
+- **Postgres:** a second job with a Postgres service container, the same tests against it (Section 1, practice 1). Build
+  the database from the migrations first.
+- **Security scan:** GitHub's CodeQL action, Python, suite `security-extended`.
+- **Other CI systems** (GitLab, Jenkins): the same four steps: install, start the server, run
+  `test/api_logic_server_behave/behave_run.py --outfile=logs/behave.log`, keep the report.
