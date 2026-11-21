@@ -1,0 +1,14 @@
+{
+  "Account": "Flow Msg 1795196426980",
+  "Notes": "behave kafka message",
+  "Items": [
+    {
+      "Name": "Widget",
+      "QuantityOrdered": 1
+    },
+    {
+      "Name": "Gadget",
+      "QuantityOrdered": 2
+    }
+  ]
+}

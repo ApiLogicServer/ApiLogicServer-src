@@ -1,6 +1,6 @@
 ---
 title: Queries and Dashboards
-version: 1.6 (Nov 2026) — per-period totals maintained by rules (insert_parent + stamped day key); quiet days shown as zero; charts no longer cached (the template froze them at server start). 1.5 (Jul 2026) — Added link to published user-facing demo (Admin-Customization#ai-assistant), which documents this exact capability with the same sales-by-region/sales-by-category example this file was tested against
+version: 1.7 (Nov 2026) — home.js and /dashboard iframes use relative URLs (src="/dashboard", src="/chart_graphics/<name>") (was http://localhost:5656/dashboard, which broke on Codespaces, containers and deployed servers). 1.6 (Nov 2026) — per-period totals maintained by rules (insert_parent + stamped day key); quiet days shown as zero; charts no longer cached (the template froze them at server start). 1.5 (Jul 2026) — Added link to published user-facing demo (Admin-Customization#ai-assistant), which documents this exact capability with the same sales-by-region/sales-by-category example this file was tested against
 usage: AI reads this when user asks for a dashboard, chart, graph, or a saved/reusable query
 overhead: zero until invoked — file is read on demand only
 ---
@@ -183,9 +183,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
     @app.route('/dashboard', methods=['GET'])
     def dashboard():
-        server = request.host_url
+        # relative src: the chart loads from whatever host the page came from (local, Codespace, deployed, https)
         iframe = (f'<div class="dashboard-iframe"><iframe '
-                  f'src="{server}chart_graphics/sales_by_category" '
+                  f'src="/chart_graphics/sales_by_category" '
                   f'style="flex: 1; border: none; width: 90%; height: 200px;"></iframe></div>')
         return f'<div style="display: flex; flex-direction: row; gap: 10px; border: none;">{iframe}</div>'
 
@@ -230,7 +230,7 @@ const sla_doc =
     '<div class="MuiTypography-root jss4" style="color: rgba(0, 0, 0, 0.66)">' +
     '<div style="text-align:center">' +
     '<div class="dashboard-iframe">' +
-    '<iframe id="iframeTargetDashboard" src="http://localhost:5656/dashboard" style="flex: 1; border: none; width: 100%; height: 200px;"></iframe>' +
+    '<iframe id="iframeTargetDashboard" src="/dashboard" style="flex: 1; border: none; width: 100%; height: 200px;"></iframe>' +
     '</div>' +
     '<h2>Welcome to Your GenAI-Logic Project</h2>' +
     '</div><br>' +
@@ -248,8 +248,12 @@ If `home.js` uses a different structure (e.g. `getContent()` builds the string d
 rather than via a `const sla_doc`), insert the iframe as the first element appended, before
 any other content — the principle is "chart first," not the specific variable name.
 
-Use the project's actual running port (usually `5656`) — hardcoded, not templated;
-`home.js` is plain JS served statically, no build step to inject it at request time.
+Use a **relative** `src="/dashboard"`, never `http://localhost:5656/dashboard`. The Admin App is served by
+the project's own server, so a relative URL reaches whatever host and port the page was opened on. A hard-coded
+`localhost:5656` works only on the developer's machine: on a Codespace, in a container or on a deployed server the
+browser asks its own localhost, and the chart frame is blank. The same holds for the chart iframes `/dashboard` returns: `src="/chart_graphics/<name>"`, not
+`request.host_url`, which behind a proxy (Codespaces) can come out as `http://` on an `https://` page, and the browser
+blocks it as mixed content.
 
 **Verify:** restart the server, open the Admin App home page — the iframe should load
 `/dashboard`, which loads `/chart_graphics/<name>` for each chart, and show an actual
@@ -259,7 +263,7 @@ rendered bar chart (not text). Common failures:
   Confirmed live (Jul 2026): query and route both returned `200 OK` with correct data, but
   the page showed a JSON dump because the Jinja render step was skipped entirely.
 - **Iframe is blank / 404** → step 3 was skipped (no iframe present in `home.js` at all),
-  or the `src` port/host doesn't match the running server. Check browser console for the
+  or the `src` is an absolute URL (`http://localhost:5656/...`) that does not match the host the page was opened on: use the relative `/dashboard`. Check browser console for the
   inner request's status.
 
 ---

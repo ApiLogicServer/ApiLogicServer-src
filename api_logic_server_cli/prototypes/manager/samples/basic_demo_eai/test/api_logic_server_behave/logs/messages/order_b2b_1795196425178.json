@@ -1,0 +1,14 @@
+{
+  "Account": "Kafka Cust 1795196425170",
+  "Notes": "behave kafka message",
+  "Items": [
+    {
+      "Name": "Widget",
+      "QuantityOrdered": 1
+    },
+    {
+      "Name": "Gadget",
+      "QuantityOrdered": 2
+    }
+  ]
+}

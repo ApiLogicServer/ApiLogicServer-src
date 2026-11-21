@@ -15,7 +15,7 @@ from pathlib import Path
 Called by iFrame in home.js when admin app is loaded
 
 Returns iFrame for ui/admin/home.js, with entries like this to populate the dashboard:
-<iframe src="http://localhost:5656/chart_graphics/sales_per_category" style="flex: 1; border: none; width: 90%; height: 200px;">
+<iframe src="/chart_graphics/sales_per_category" style="flex: 1; border: none; width: 90%; height: 200px;">
 
 curl -X GET "http://localhost:5656/dashboard"
 
@@ -37,17 +37,16 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if request.method == 'OPTIONS':
             return jsonify({"result": "ok"})
 
-        server = request.host_url
-    
+        # relative src: the charts load from whatever host the page came from (local, Codespace, deployed, https)
         iframe_template = '<div class="dashboard-iframe"><iframe src="{url}" style="flex: 1; border: none; width: 90%; height: 200px;"></iframe></div>'
         
-        iframe_1 = iframe_template.format(url=f"{server}chart_graphics/sales_by_category")
+        iframe_1 = iframe_template.format(url=f"/chart_graphics/sales_by_category")
 
         
-        iframe_2 = iframe_template.format(url=f"{server}chart_graphics/number_of_sales_per_category")
+        iframe_2 = iframe_template.format(url=f"/chart_graphics/number_of_sales_per_category")
 
         
-        iframe_3 = iframe_template.format(url=f"{server}chart_graphics/count_orders_by_month")
+        iframe_3 = iframe_template.format(url=f"/chart_graphics/count_orders_by_month")
 
         
 

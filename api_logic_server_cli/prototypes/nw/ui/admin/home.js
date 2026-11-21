@@ -3,7 +3,7 @@ const sla_doc =
     '<div style="text-align:center">' +
 '<div class="dashboard-iframe">' +
 
-'<iframe id="iframeTargetDashboard" src="http://localhost:5656/dashboard" style="flex: 1; border: none; width: 100%; height: 200px;"></iframe>' +
+'<iframe id="iframeTargetDashboard" src="/dashboard" style="flex: 1; border: none; width: 100%; height: 200px;"></iframe>' +
 
 '</div>' +
     '<h2>Welcome to GenAI-Logic/API Logic Server - Sample</h2>' +

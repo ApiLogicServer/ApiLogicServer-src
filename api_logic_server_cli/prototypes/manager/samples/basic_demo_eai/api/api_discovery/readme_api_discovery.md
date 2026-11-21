@@ -5,6 +5,12 @@ Add a file, restart, and its endpoints appear in Swagger. Files here include the
 (`/.well-known/mcp.json`), any custom or B2B API you ask for, and, for each Kafka subscribe pipeline,
 a `*_kafka_consume_debug.py` file (below).
 
+## The dashboard
+
+`dashboard_services.py` serves the order-flow charts on the Admin App home page. How the totals reach the screen
+(five hops: `home.js`, `/dashboard`, `/chart_graphics/<name>`, the chart function, the Jinja template) is explained in
+[dashboard_services_readme.md](dashboard_services_readme.md).
+
 ## The `*_debug` services: worth using
 
 For each Kafka subscribe pipeline `<topic>`, the AI generates `<topic>_kafka_consume_debug.py`. It is about ten lines;

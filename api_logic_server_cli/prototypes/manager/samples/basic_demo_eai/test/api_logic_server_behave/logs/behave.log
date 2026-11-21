@@ -259,5 +259,5 @@ Feature: Row-Level Security # features/row_level_security.feature:1
     And an admin user sees "Sec Low"                                 # features/steps/demo_eai_steps.py:404
 
 &nbsp;&nbsp;
-/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py completed at November 19, 2026 19:46:08
-Behave run time: 7.398 s
+/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/demo_eai/test/api_logic_server_behave/behave_run.py completed at November 20, 2026 09:40:28
+Behave run time: 7.407 s

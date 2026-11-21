@@ -14,7 +14,7 @@ import datetime
 import logging
 
 import safrs
-from flask import request, jsonify
+from flask import jsonify
 from jinja2 import Environment, FileSystemLoader
 
 from database import models
@@ -85,9 +85,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @app.route('/dashboard', methods=['GET'])
     def dashboard():
         """API service dashboard: two order-flow charts side by side, each in its own iframe."""
-        server = request.host_url
-        iframes = ''.join(
-            f'<div class="dashboard-iframe" style="flex: 1;"><iframe src="{server}chart_graphics/{name}" '
+        iframes = ''.join(   # relative src: works on any host (local, Codespace, deployed, https)
+            f'<div class="dashboard-iframe" style="flex: 1;"><iframe src="/chart_graphics/{name}" '
             f'style="border: none; width: 100%; height: 300px;"></iframe></div>' for name in CHARTS)
         return f'<div style="display: flex; flex-direction: row; gap: 10px; border: none;">{iframes}</div>'
 

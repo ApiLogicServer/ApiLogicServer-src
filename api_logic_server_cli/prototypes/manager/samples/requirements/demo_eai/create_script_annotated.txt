@@ -77,12 +77,12 @@ create tests from rules, using default names
 // Starts the server if needed, runs the suite, reports pass and fail, and stops the server it started.
 run the tests
 
-// H - Traceability Report
-// Requirements traced to rules, tests and the engine's own log of what ran. The closing message is printed last, on
-// purpose (mid-run text is easy to lose): what to review (the rules, ad-libs.md) and where the report is.
-// I - Clean up
+// H - Clean up
 // The tests left messages on the topics. Empty them, so a restart of this demo starts from a clean queue.
 empty the Kafka topics, so a server restart does not read the test messages again (skip if no broker is running)
 
+// I - Traceability Report
+// Requirements traced to rules, tests and the engine's own log of what ran. The closing message is printed last, on
+// purpose (mid-run text is easy to lose): what to review (the rules, ad-libs.md) and where the report is.
 run the requirements traceability report
 When the report is done, print this verbatim: "Next: scan these two files: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made). Then open the report: demo_eai/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
