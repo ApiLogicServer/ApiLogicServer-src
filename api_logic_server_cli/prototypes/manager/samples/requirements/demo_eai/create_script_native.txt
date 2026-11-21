@@ -11,7 +11,7 @@ add security (Keycloak if the container is running, else degrade to a simple SQL
 
 implement requirements samples/requirements/demo_eai/docs/requirements/demo_eai (copy that directory into demo_eai_native/docs/requirements/ first)
 
-update the Admin App to show the new tables: replace ui/admin/admin.yaml with admin-merge.yaml (keep a backup), and show the message and request payloads as text areas
+update the Admin App to show the new tables: replace ui/admin/admin.yaml with admin-merge.yaml (keep a backup), show the message and request payloads as text areas, and drop the tab groups that link a table to its daily totals
 
 verify message subscriptions (all topics): live through the Kafka broker if one is running, else simulated; reset the topics first so old messages are not replayed
 

@@ -1,6 +1,6 @@
 ---
 title: Queries and Dashboards
-version: 1.7 (Nov 2026) — home.js and /dashboard iframes use relative URLs (src="/dashboard", src="/chart_graphics/<name>") (was http://localhost:5656/dashboard, which broke on Codespaces, containers and deployed servers). 1.6 (Nov 2026) — per-period totals maintained by rules (insert_parent + stamped day key); quiet days shown as zero; charts no longer cached (the template froze them at server start). 1.5 (Jul 2026) — Added link to published user-facing demo (Admin-Customization#ai-assistant), which documents this exact capability with the same sales-by-region/sales-by-category example this file was tested against
+version: 1.8 (Nov 2026) — per-period totals: backfill the day key for existing rows; remove the child-to-totals toone tab group (404 on a null key). 1.7 (Nov 2026) — home.js and /dashboard iframes use relative URLs (src="/dashboard", src="/chart_graphics/<name>") (was http://localhost:5656/dashboard, which broke on Codespaces, containers and deployed servers). 1.6 (Nov 2026) — per-period totals maintained by rules (insert_parent + stamped day key); quiet days shown as zero; charts no longer cached (the template froze them at server start). 1.5 (Jul 2026) — Added link to published user-facing demo (Admin-Customization#ai-assistant), which documents this exact capability with the same sales-by-region/sales-by-category example this file was tested against
 usage: AI reads this when user asks for a dashboard, chart, graph, or a saved/reusable query
 overhead: zero until invoked — file is read on demand only
 ---
@@ -116,6 +116,15 @@ in the logic diagram, the traceability report and the tests) and are adjusted in
    write the counts depend on goes through `safrs.DB.session` (e.g. `EaiSubscribeMapper.record_error_text` does).
 4. **Retention:** never purge the child rows the totals count — a delete adjusts the counts, so history vanishes.
    Put a TODO saying so in the totals logic file (to purge, clear payloads but keep rows, or freeze closed days).
+4b. **Existing rows get a day key too.** When the child table already has rows (e.g. the sample orders), the new
+   day-key column is empty for them, so they are in no bucket. Backfill it once, through the ORM with the rules active
+   (a one-time script that sets `CreatedOnDay` from `CreatedOn`): `insert_parent` creates and adjusts the day rows
+   (LogicBank >= 1.34.05). See `logic_bank_api.md`, "initialize derived columns for pre-existing rows". Rows with no
+   `CreatedOn` at all stay without a key; say so as an ad-lib.
+4c. **Admin App: no child-to-totals tab group.** `rebuild-from-database` writes a `toone` tab group from each child to
+   the totals table (`fks: [CreatedOnDay]`, resource `DailyFlow`). Remove it from `ui/admin/admin.yaml`: the key is
+   nullable, and a child with no key makes the Admin App fetch `DailyFlow/-`, a 404 toast (the project CE's nullable-FK
+   rule). The totals table keeps its own list page; nobody navigates from an order to its day.
 5. **Reading:** the dashboard reads the totals table and **fills a fixed calendar window (e.g. the last 30 days) with
    zeros** for days that have no bucket. No rule can create a row for a day when nothing happened ("Absence of an
    Event", `logic_bank_api.md`): a quiet day must still show as zero, or the chart cannot show the flow stopping.

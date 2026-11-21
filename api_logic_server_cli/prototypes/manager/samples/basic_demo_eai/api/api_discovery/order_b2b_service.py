@@ -13,6 +13,7 @@ import json
 import logging
 
 import safrs
+from api.system import api_utils
 from flask import request
 from safrs import jsonapi_rpc
 
@@ -63,7 +64,7 @@ class OrderB2B(safrs.JABase):
 
         # Tx 2: create the order (rules: price, totals, credit check), and mark the request processed.
         try:
-            app_logger.info(f"OrderB2B: request {request_id}, account {request_dict_data.get('Account')}")
+            app_logger.info(f"OrderB2B: request {request_id}, account {api_utils.safe_log(request_dict_data.get('Account'))}")
             order = OrderB2BMapper().dict_to_row(row_dict=request_dict_data, session=session)
             session.add(order)
             b2b_request.is_processed = True

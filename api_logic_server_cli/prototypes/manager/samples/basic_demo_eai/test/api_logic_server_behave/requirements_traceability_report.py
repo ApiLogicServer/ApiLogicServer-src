@@ -41,6 +41,8 @@ Tips
 * for tab: & emsp;
 
 Changelog:
+  2.16 - Framework files are not reported as "not traced to a requirement": rules in logic_discovery/system/ (e.g. the
+        stamping handler, turned on by a requirement) and add-auth's api_discovery/authentication_expose_api_models.py.
   2.15 - A helper is traced to the requirement that uses it. A logic file that a requirement's implementing file imports
         (check_credit.py importing place_order/ai_requests/supplier_selection.py) belongs to that requirement: it appears under
         "Implemented by", its rules count and are listed with the requirement, and it is no longer reported as untraced.
@@ -117,7 +119,7 @@ Changelog:
 
 """
 
-__version__ = "2.15"
+__version__ = "2.16"
 
 tab = "&emsp;"
 behave_debug_info = " # "
@@ -132,8 +134,8 @@ PLACEHOLDER_FEATURES = {"About Sample"}
 
 SKIP_FILES = {"auto_discovery.py", "__init__.py", "use_case.py"}
 API_STUB_FILES = {"auto_discovery.py", "system.py", "new_service.py", "newer_service.py",
-                  "mcp_discovery.py", "__init__.py"}
-""" api_discovery scaffold files - not project APIs """
+                  "mcp_discovery.py", "__init__.py", "authentication_expose_api_models.py"}
+""" api_discovery scaffold files - not project APIs (authentication_expose_api_models.py is written by add-auth) """
 
 C_HEADER = "#3f6792"
 C_ROW = "#f2f2f2"
@@ -1041,8 +1043,9 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
     no_impl = [r["label"] for r in records if not r["matched"]]
     no_tests = [r["label"] for r in records if not r["scenarios"]]
     untraced_files = [rel for rel in sources if rel not in traced
-                      and "/system/" not in rel and rel.endswith(".py")]
-    loose = [r for r in rules if r["file"] not in traced]
+                      and "/system/" not in rel and rel.endswith(".py")
+                      and Path(rel).name not in API_STUB_FILES]
+    loose = [r for r in rules if r["file"] not in traced and "/system/" not in r["file"]]   # system/: framework (e.g. stamping)
     cov = rule_coverage(rules, behave_log, scenario_logs)
     coverage = cov[0] if cov else None
     results = scenario_results(behave_log)

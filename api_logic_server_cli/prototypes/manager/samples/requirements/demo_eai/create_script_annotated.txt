@@ -47,7 +47,7 @@ implement requirements samples/requirements/demo_eai/docs/requirements/demo_eai
 // C1 - Admin App
 // The build added tables (the daily totals, the messages, the requests); rebuild-from-database wrote them to
 // admin-merge.yaml and left admin.yaml alone, since it may hold your edits. This project has none, so replace it.
-update the Admin App to show the new tables: replace ui/admin/admin.yaml with admin-merge.yaml (keep a backup), and show the message and request payloads as text areas
+update the Admin App to show the new tables: replace ui/admin/admin.yaml with admin-merge.yaml (keep a backup), show the message and request payloads as text areas, and drop the tab groups that link a table to its daily totals
 
 // C2 - Seed order history
 // The dashboard (requirement 6) needs history to show flow. The 30 days before today are seeded through the rules (a
@@ -85,4 +85,4 @@ empty the Kafka topics, so a server restart does not read the test messages agai
 // Requirements traced to rules, tests and the engine's own log of what ran. The closing message is printed last, on
 // purpose (mid-run text is easy to lose): what to review (the rules, ad-libs.md) and where the report is.
 run the requirements traceability report
-When the report is done, print this verbatim: "Next: scan these two files: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made). Then open the report: demo_eai/docs/requirements/Requirements Traceability Report.md (in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."
+When the report is done, print this verbatim: "Next: scan these two files: logic/logic_discovery/check_credit.py (the rules) and docs/requirements/demo_eai/ad-libs.md (the judgment calls the AI made). Then open the report: docs/requirements/Requirements Traceability Report.md (all three paths are in the project; in VS Code: open the file, then Cmd/Ctrl+Shift+V for the rendered preview)."

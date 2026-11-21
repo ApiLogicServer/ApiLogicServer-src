@@ -1,5 +1,5 @@
 ---
-version: 3.71 - 11/19/26 - Opt-in B2B request log ("record each request, with its outcome"): request row committed first, failure recorded on the governed session. Verify Message Subscriptions: offsets are now committed (FlaskKafka 1.02), so only the first start reads old messages. Order-flow dashboards: see queries_dashboards.md 1.6 (rule-maintained daily totals, stamping keys, zero days, no cache).
+version: 3.72 - 11/21/26 - B2B APIs log partner values through api_utils.safe_log() (CodeQL log-injection). 3.71 - 11/19/26 - Opt-in B2B request log ("record each request, with its outcome"): request row committed first, failure recorded on the governed session. Verify Message Subscriptions: offsets are now committed (FlaskKafka 1.02), so only the first start reads old messages. Order-flow dashboards: see queries_dashboards.md 1.6 (rule-maintained daily totals, stamping keys, zero days, no cache).
 version: 3.70 - 11/17/26 - Executable Requirements: "implement reqs" now finds the existing logic file by content (the `Feature:` line, or the verbatim requirement text in its docstring), not by name; the naming convention is the fallback. One match: edit it; none: new use case; several: ask. A renamed or moved logic file was otherwise missed, and a second file written beside it: duplicate derivations stop the server, but duplicate constraints and events run twice.
 version: 3.69 - 11/13/26 - Requirements Traceability Report (generator 2.15+): each "Logic diagram" fold now shows the numbered rules beside the diagram (the same list as logic_flow_<req>.md), so the numbers on the diagram arrows can be matched to rules. The list is read from logic_flow_<req>.md, which `logic_diagram_gv.py --each` writes with the SVG; without it the fold shows the diagram alone.
 version: 3.68 - 11/10/26 - "Migrate AI Rules": two gaps found by migrating samples/allocate_dept_account_demo by hand. (1) The sequence assumed `integration/ai/llm_client.py` exists; older projects lack it, so STEP 2b copies it from the installed package first. (2) Detection now also looks for other key variable names (`OPENAI_API_KEY`, `os.environ`/`os.getenv` reads of a key) and STEP 4 / the summary must tell the user that the old variable is no longer read; failures the old handler swallowed are now logged.
@@ -3454,6 +3454,8 @@ When creating new B2B APIs, follow this proven pattern:
 - Provide meaningful success messages with key information (ID, customer, item count)
 - Use YAML format in docstrings for clean Swagger documentation
 - Always use actual database data in examples (check with sqlite3 queries)
+- Log partner-supplied values through `api_utils.safe_log()` (`from api.system import api_utils`): it strips line breaks, so a
+  partner cannot forge lines in `logs/als.log` (CWE-117; CodeQL `py/log-injection`, real case: demo_eai, Nov 2026)
 
 **Opt-in: record each request (B2B request log).** Only when the requirement asks for it — phrasing like "record each
 request, with its outcome" — keep a row per call, the same shape as an EAI blob table: `<Api>Request` (id, `CreatedOn`

@@ -9,9 +9,9 @@ A governable system is one you can **read**, **trust**, and **maintain**: each r
 It is generated from the project's own files, nothing written by hand, so it is as current as the last run and covers the whole project, not a sample. Open **Background** (below the summary) for what the terms mean, how to read the report, and what it can and can't tell you.
 
 
-**Project:** basic_demo_eai &nbsp;|&nbsp; **Generated:** November 20, 2026 09:40 &nbsp;|&nbsp; **Rules:** 18 &nbsp;|&nbsp; **Test scenarios:** 35 &nbsp;|&nbsp; **Generator:** requirements_traceability_report.py 2.15
+**Project:** basic_demo_eai &nbsp;|&nbsp; **Generated:** November 21, 2026 08:29 &nbsp;|&nbsp; **Rules:** 18 &nbsp;|&nbsp; **Test scenarios:** 35 &nbsp;|&nbsp; **Generator:** requirements_traceability_report.py 2.16
 
-**Last test run:** November 20, 2026 09:40, took 7.4 s (0m before this report; test results and logic logs below are from that run)
+**Last test run:** November 20, 2026 09:40, took 7.4 s (22h 48m before this report; test results and logic logs below are from that run)
 
 
 &nbsp;
@@ -19,13 +19,13 @@ It is generated from the project's own files, nothing written by hand, so it is 
 
 ## At a Glance
 
-**✅ 6 requirement(s), all implemented; 6 tested; 35 of 35 scenarios passed; last run 0m ago.**
+**✅ 6 requirement(s), all implemented; 6 tested; 35 of 35 scenarios passed; last run 22h 48m ago.**
 
 | | |
 |---|---|
 | Requirements | 6 (6 implemented) |
 | Tested | 6 of 6 |
-| Last test run | ✅ 35 passed, 0 failed (November 20, 2026 09:40, 0m ago); took 7.4 s |
+| Last test run | ✅ 35 passed, 0 failed (November 20, 2026 09:40, 22h 48m ago); took 7.4 s |
 | Rules | 18 (15 declarative, 0 Python functions, 3 Python events) |
 | Rules shown running in a test log | 17 of 18 |
 | Security | enabled (Keycloak provider); 11 role(s), 2 row-level grant(s) |
@@ -33,27 +33,6 @@ It is generated from the project's own files, nothing written by hand, so it is 
 | Kafka | live (localhost:9092): subscribe tested through the broker; outbound messages checked in the log |
 
 _Status: ✅ every requirement is implemented and tested, all scenarios pass, and the results are current. ⚠ a requirement is untested or unimplemented, there is no test run, or files changed since the last run. ❌ a scenario failed. This reports what was traced and tested, not that the system is correct._
-
-**About this project** _(from [readme.md](../../readme.md))_
-
-This app illustrates using IntegrationServices for B2B push-style integrations with APIs, and internal integration with messages.
-
-**This sample** is a single API Logic Server providing APIs *and logic* — it both
-subscribes and publishes, so there's no second project to stand up:
-
-1. **Order Logic:** enforcing database integrity (Check Credit) and application
-   integration (notify shipping)
-
-2. A **Custom API** (`OrderB2B`), matching an agreed-upon format for B2B partners
-
-3. **Kafka Subscribe:** listens on topic `order_b2b` for inbound orders from a
-   message broker
-
-4. **Kafka Publish:** publishes to topic `order_shipping` when an order ships —
-   consumed by whatever downstream shipping system you plug in (not part of this
-   demo)
-
-5. **Standard APIs** for ad-hoc integration, user interfaces, etc
 
 <details markdown>
 <summary>Background: what this report is, and how to read it</summary>
@@ -242,7 +221,7 @@ Every requirement should have rules that implement it, and tests that prove it. 
 | Requirements | 6 |
 | Implemented (at least one file) | 6 of 6 |
 | Tested (at least one scenario) | 6 of 6 |
-| Implementation not traced to a requirement | `logic/logic_discovery/system/all_classes_stamping.py` |
+| Implementation not traced to a requirement | none |
 | Tests not traced to a requirement | none |
 | Test results (last run) | ✅ 35 passed, 0 failed; took 7.4 s |
 | Scenarios with a logic log | 33 of 35 |
@@ -571,12 +550,6 @@ Feature: Order Flow Dashboard
 </tr></table>
 
 </details>
-
-#### Rules not traced to a requirement
-
-| Rule / item | Type | Logic | Description | Where |
-|---|---|---|---|---|
-| `all classes.early_row_event → handle_all()` | early_row_event_all_classes | event (Python) | Generic handler - executed for every row update across all classes. | [all_classes_stamping.py](../../logic/logic_discovery/system/all_classes_stamping.py) |
 
 
 &nbsp;
@@ -3432,12 +3405,12 @@ Behave run time: 7.407 s
 
 | | |
 |---|---|
-| Generated | November 20, 2026 09:40 |
-| Generator | `requirements_traceability_report.py` 2.15 |
+| Generated | November 21, 2026 08:29 |
+| Generator | `requirements_traceability_report.py` 2.16 |
 | Report text from | reports/Requirements Traceability Report Template.md (sha256 a19673a13fa0) |
 | Tests last ran | November 20, 2026 09:40 |
 | Project | basic_demo_eai |
-| Source commit | a01011da (uncommitted changes) |
+| Source commit | 9f2cd3e9 (uncommitted changes) |
 | Project created | November 19, 2026 18:49:15 |
 | Requirement files read | `docs/requirements/check_credit/requirements.md` (sha256 3ed113d5)<br>`docs/requirements/demo_eai/requirements.md` (sha256 5f955924)<br>`docs/requirements/order_b2b_consume/requirements.md` (sha256 8aa5249b)<br>`docs/requirements/order_flow_dashboard/requirements.md` (sha256 e5d1d5fa)<br>`docs/requirements/shipping_notification/requirements.md` (sha256 ebe2f99c) |
 | Regenerate | `python requirements_traceability_report.py run`, from `test/api_logic_server_behave` |

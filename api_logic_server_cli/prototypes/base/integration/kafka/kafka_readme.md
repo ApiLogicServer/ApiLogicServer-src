@@ -129,16 +129,18 @@ bash integration/kafka/<topic>_reset.sh   # only needed for live-Kafka runs
 
 ---
 
-## Offset Commit — Dev/Demo vs Production
+## Offset Commit
 
-`FlaskKafka.py` ships with `consumer.commit()` **disabled** (`enable.auto.commit=false`).
+Offsets are **committed by default**: after each message is handled, `FlaskKafka.py` commits its offset, so a server
+restart resumes after the last message instead of reading the whole topic again (which would process every message
+again, creating duplicate rows). The offset is committed whether the message succeeded or failed. That is safe in the
+2-message pattern: Consumer 1 has already saved the raw message, and a failure is recorded on that row (`error_text`).
 
-**Why:** offsets are never committed, so every server restart replays all messages from `earliest`.
-This is intentional for demos and debugging — no need to resend messages or reset topics between runs.
-The `is_processed` guard on Consumer 2 makes replays a safe no-op: if the blob is already processed, the handler logs one line and returns.
+`APILOGICPROJECT_KAFKA_COMMIT_OFFSETS = false` (in `config/default.env`) turns commits off: every server start then
+re-reads the whole topic. Use it only to re-run a pipeline by hand during development, never in production.
 
-**Production:** uncomment `self.consumer.commit(asynchronous=False)` in `FlaskKafka.py` `_run_handlers()`
-for standard at-least-once delivery where offsets advance after each successful handler and restarts do not replay.
+Also use a project-unique `KAFKA_CONSUMER_GROUP`: projects sharing a group share the offsets, and split the messages.
+To clear test messages between runs, empty the queue: `curl -X POST http://localhost:5656/consume_debug/<topic>/reset`.
 
 ---
 
