@@ -1,0 +1,47 @@
+Customer:
+  - id (INTEGER)
+  - name (VARCHAR)
+  - balance (DECIMAL)
+  - credit_limit (DECIMAL)
+  * Filterable: name, balance, credit_limit
+  * Example: 'List customers with credit over 5000'
+
+Item:
+  - id (INTEGER)
+  - order_id (INTEGER)
+  - product_id (INTEGER)
+  - quantity (INTEGER)
+  - amount (DECIMAL)
+  - unit_price (DECIMAL)
+  * Filterable: order_id, product_id, unit_price
+  * Relationships:
+    ↪ relates to Order
+    ↪ relates to Product
+  * Example: 'Find all items for order 42'
+
+Email:
+  - id (INTEGER)
+  - message (VARCHAR)
+  - customer_id (INTEGER)
+  * Relationships:
+    ↪ relates to Customer
+  * Example: 'Post an message "text" for customer 2 means POST to this resource'
+
+Order:
+  - id (INTEGER)
+  - notes (VARCHAR)
+  - customer_id (INTEGER)
+  - CreatedOn (DATE)
+  - date_shipped (DATE)
+  - amount_total (DECIMAL)
+  * Filterable: notes, customer_id, date_shipped, amount_total
+  * Relationships:
+    ↪ relates to Customer
+  * Example: 'Get orders shipped in 2024'
+
+Product:
+  - id (INTEGER)
+  - name (VARCHAR)
+  - unit_price (DECIMAL)
+  * Filterable: name, unit_price
+  * Example: 'Show products with price over 100'

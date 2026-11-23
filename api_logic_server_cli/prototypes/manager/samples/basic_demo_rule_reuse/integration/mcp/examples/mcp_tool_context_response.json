@@ -1,0 +1,34 @@
+{
+    "schema_version": "1.0",
+    "resources": [
+        {
+            "tool_type": "json-api",
+            "base_url": "http://localhost:5656/api",
+            "path": "/Order",
+            "method": "GET",
+            "query_params": [
+                {
+                    "name": "date_shipped",
+                    "op": "eq",
+                    "val": "null"
+                },
+                {
+                    "name": "CreatedOn",
+                    "op": "lt",
+                    "val": "2023-07-14"
+                }
+            ]
+        },
+        {
+            "tool_type": "json-api",
+            "base_url": "http://localhost:5656/api",
+            "path": "/SysEmail",
+            "method": "POST",
+            "body": {
+                "subject": "Discount Offer",
+                "message": "Dear customer, we are offering a discount on your next purchase. Please check your account for more details.",
+                "customer_id": "$0[*].customer_id"
+            }
+        }
+    ]
+}

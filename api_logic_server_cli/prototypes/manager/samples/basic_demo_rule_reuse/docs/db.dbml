@@ -1,0 +1,64 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Table Customer {
+    id INTEGER [primary key]
+    name VARCHAR 
+    balance DECIMAL 
+    credit_limit DECIMAL 
+    email VARCHAR 
+    email_opt_out BOOLEAN 
+    }
+
+Table Item {
+    id INTEGER [primary key]
+    order_id INTEGER 
+    product_id INTEGER 
+    quantity INTEGER 
+    amount DECIMAL 
+    unit_price DECIMAL 
+    }
+
+Table Order {
+    id INTEGER [primary key]
+    notes VARCHAR 
+    customer_id INTEGER 
+    CreatedOn DATE 
+    date_shipped DATE 
+    amount_total DECIMAL 
+    }
+
+Table Product {
+    id INTEGER [primary key]
+    name VARCHAR 
+    count_suppliers INTEGER 
+    unit_price DECIMAL 
+    }
+
+Table ProductSupplier {
+    id INTEGER [primary key]
+    product_id INTEGER 
+    supplier_id INTEGER 
+    supplier_part_number VARCHAR 
+    unit_cost DECIMAL 
+    lead_time_days INTEGER 
+    }
+
+Table Supplier {
+    id INTEGER [primary key]
+    name VARCHAR 
+    contact_name VARCHAR 
+    phone VARCHAR 
+    email VARCHAR 
+    region VARCHAR 
+    }
+
+
+
+// Relationships
+    Ref: Item.(order_id) > Order.(id)
+    Ref: Item.(product_id) > Product.(id)
+    Ref: Order.(customer_id) > Customer.(id)
+    Ref: ProductSupplier.(product_id) > Product.(id)
+    Ref: ProductSupplier.(supplier_id) > Supplier.(id)

@@ -6,6 +6,7 @@ import html
 import os
 import hashlib
 import ast
+import difflib
 import re
 import shutil
 import subprocess
@@ -41,6 +42,14 @@ Tips
 * for tab: & emsp;
 
 Changelog:
+  2.17 - Uses: a requirement can rely on a rule another requirement defines, by its name (LogicBank 1.34.06: a derivation
+        is <Table>.<column>; a constraint or event <Table>.<name=>). 'Uses: Customer.credit_limit_check' lists that rule with
+        the requirement (marked "used from §1 ...") and counts it as implemented. A name no rule has is reported, with the
+        closest names. A requirement met entirely by rules other requirements define is shown as "covered by
+        existing rules" (information, not a gap). Prompt headings without a keyword or colon ('On Placing Orders, Check
+        Credit') are recognized; two with the same name are told apart by their context. A logic file is matched to the
+        requirement whose text its docstring holds (before its file name), and its Uses: lines count too - so a
+        placeholder logic file for a covered requirement links to it, not to a same-named file's requirement.
   2.16 - Framework files are not reported as "not traced to a requirement": rules in logic_discovery/system/ (e.g. the
         stamping handler, turned on by a requirement) and add-auth's api_discovery/authentication_expose_api_models.py.
   2.15 - A helper is traced to the requirement that uses it. A logic file that a requirement's implementing file imports
@@ -119,7 +128,7 @@ Changelog:
 
 """
 
-__version__ = "2.16"
+__version__ = "2.17"
 
 tab = "&emsp;"
 behave_debug_info = " # "
@@ -606,8 +615,34 @@ def extract_rules(path: Path, root: Path) -> list:
             rule["how"] = "declarative (Allocate)"
         else:
             rule["text"] = _tidy(_seg(src, call))[:140]
+        rule["name"] = _rule_name(kind, args, rule)
         rules.append(rule)
     return rules
+
+
+def _strip_module(text: str) -> str:
+    """ 'models.Customer.balance' -> 'Customer.balance' """
+    return text[len("models."):] if text.startswith("models.") else text
+
+
+def _rule_name(kind: str, args: dict, rule: dict):
+    """ the rule's name, as LogicBank 1.34.06 names it (<Table>.<name>): a derivation by its column; a constraint or
+        event by its name=, else its calling function; None for a lambda. Requirements refer to rules by it (Uses:). """
+    if rule.get("derive"):
+        return _strip_module(rule["derive"])
+    cls_node = args.get("validate") if kind in ("constraint", "commit_constraint") else args.get("on_class")
+    if cls_node is None or not isinstance(cls_node, (ast.Attribute, ast.Name)):
+        return None
+    cls = _strip_module(ast.unparse(cls_node))
+    name = args.get("name")
+    if isinstance(name, ast.Constant) and isinstance(name.value, str):
+        return f"{cls}.{name.value}"
+    calling = args.get("calling")
+    if isinstance(calling, ast.Name):
+        return f"{cls}.{calling.id}"
+    if isinstance(calling, ast.Attribute):
+        return f"{cls}.{calling.attr}"
+    return None
 
 
 def collect_rules(root: Path) -> list:
@@ -629,6 +664,9 @@ def _requirement_text(section: str) -> list:
 
 
 CONTEXT_REQ_RE = re.compile(r'^\s*(?:On|When|For)\s+(.+?)\s*,\s*(?:Requirement|Use\s*case)\s*:?\s+([^.:]{1,60}?)\s*:\s*$', re.I)
+CONTEXT_NAME_RE = re.compile(r'^\s*(?:On|When|For)\s+([^,]+?)\s*,\s*([A-Z][\w-]*(?:\s+[A-Z][\w-]*){0,5})\s*:?\s*$')
+""" 'On Placing Orders, Check Credit' (no keyword, colon optional): the name must be capitalized words, so an ordinary
+    sentence ('When the order ships, publish it') is not taken for a heading """
 REQUIREMENT_RE = re.compile(r'^\s*(?:Requirement|Use\s*case)\s*(?::\s*([^.:]{1,60}?)\s*:?|\s+([^.:]{1,60}?)\s*:)\s*$', re.I)
 CONTEXT_RE = re.compile(r'^\s*(?:On|When|For)\s+(.+?)\s*:\s*$', re.I)
 HEADING_RE = re.compile(r'^\s*#{1,6}\s')
@@ -642,18 +680,18 @@ def _prompt_requirements(text: str) -> list:
                 1. The Customer's balance ...
         or      On Placing Orders, Requirement Check Credit:
 
-        returns [(use case phrase or None, requirement name, body lines)]; a heading ends a block """
+        returns [(use case phrase or None, requirement name, body lines, the heading line)]; a heading ends a block """
     found, context, current = [], None, None
     for line in text.splitlines():
-        m = CONTEXT_REQ_RE.match(line)
+        m = CONTEXT_REQ_RE.match(line) or CONTEXT_NAME_RE.match(line)
         if m:
             context = m.group(1)
-            current = [context, m.group(2), []]
+            current = [context, m.group(2), [], line.strip()]
             found.append(current)
             continue
         m = REQUIREMENT_RE.match(line)
         if m:
-            current = [context, m.group(1) or m.group(2), []]
+            current = [context, m.group(1) or m.group(2), [], line.strip()]
             found.append(current)
             continue
         m = CONTEXT_RE.match(line)
@@ -685,6 +723,20 @@ def _use_case_of(files: list):
     return None
 
 
+USES_RE = re.compile(r'^\s*Uses:\s*(.+)$', re.M)
+
+
+def _uses(text: str) -> list:
+    """ rule names a requirement refers to: 'Uses: Customer.credit_limit_check (Check Credit)' -> ['Customer.credit_limit_check'];
+        several per line (comma separated) or several lines """
+    names = []
+    for line in USES_RE.findall(text):
+        for each in re.findall(r'\b([A-Za-z_]\w*\.[A-Za-z_]\w*)\b', re.sub(r'\([^)]*\)', '', line)):
+            if each not in names:
+                names.append(each)
+    return names
+
+
 def parse_requirements(root: Path) -> list:
     """ requirement items from docs/requirements/**/requirements.md:
         '## N. Title' sections (with Feature: lines); else blocks of the original prompt ('Requirement <name>:');
@@ -705,6 +757,7 @@ def parse_requirements(root: Path) -> list:
                 item = items.setdefault(key, {"num": int(m.group(1)), "title": m.group(2),
                                               "features": set(), "sources": []})
                 item["features"] |= {f.strip() for f in re.findall(r'Feature:\s*(.+)', section)}
+                item["uses"] = list(dict.fromkeys(item.get("uses", []) + _uses(section)))
                 if not item.get("text"):
                     item["text"] = _requirement_text(section)
                 if rel not in item["sources"]:
@@ -712,13 +765,19 @@ def parse_requirements(root: Path) -> list:
             continue
         blocks = _prompt_requirements(text)
         if blocks:
-            for pos, (context, name, body) in enumerate(blocks):
-                item = items.setdefault((None, _norm(name)), {"num": None, "title": name, "features": set(),
-                                                              "sources": [], "use_case": None, "order": (0, 0)})
+            for pos, (context, name, body, heading) in enumerate(blocks):
+                # keyed by context and name: 'On Placing Orders, Check Credit' and 'On Moving Orders..., Check Credit'
+                # are two requirements, not one
+                item = items.setdefault((None, _norm(context or ""), _norm(name)),
+                                        {"num": None, "title": name, "features": set(), "sources": [],
+                                         "use_case": None, "order": (0, 0), "folders": set()})
+                item["folders"].add(each.parent.name)
+                item.setdefault("headings", set()).add(heading)
                 item["title"] = name                      # the spec's wording beats a folder name
                 item["use_case"] = item.get("use_case") or context
                 item["order"] = min(item["order"], (-len(blocks), pos)) if item["order"] != (0, 0) \
                     else (-len(blocks), pos)               # the file with most blocks (the spec) sets the order
+                item["uses"] = list(dict.fromkeys(item.get("uses", []) + _uses("\n".join(body))))
                 if not item.get("text"):
                     item["text"] = _requirement_text("\n".join(body))
                 if rel not in item["sources"]:
@@ -728,6 +787,7 @@ def parse_requirements(root: Path) -> list:
         item = items.setdefault((None, _norm(use_case)), {"num": None, "title": use_case,
                                                           "features": set(), "sources": []})
         item["features"] |= {f.strip() for f in re.findall(r'Feature:\s*(.+)', text)}
+        item["uses"] = list(dict.fromkeys(item.get("uses", []) + _uses(text)))
         if not item.get("text"):
             item["text"] = _requirement_text(text)
         item["sources"].append(rel)
@@ -737,6 +797,20 @@ def parse_requirements(root: Path) -> list:
     for each in items.values():
         if each["num"] is not None:
             numbered_features |= each["features"]
+    titles = {}
+    for each in items.values():
+        if each["num"] is None:
+            titles.setdefault(_norm(each["title"]), []).append(each)
+    for same in titles.values():          # two requirements with one name: tell them apart by their context
+        if len(same) > 1:
+            for each in same:
+                if each.get("use_case"):
+                    each["title"] = f"{each['title']} ({each['use_case']})"
+    for each in items.values():
+        if each["num"] is None and each["features"] and each["features"] <= numbered_features and each.get("uses"):
+            for target in items.values():
+                if target["num"] is not None and each["features"] & target["features"]:
+                    target["uses"] = list(dict.fromkeys(target.get("uses", []) + each["uses"]))
     kept = [each for each in items.values()
             if not (each["num"] is None and each["features"] and each["features"] <= numbered_features)]
     return sorted(kept, key=lambda i: (i["num"] is None, i["num"] or 0, i.get("order", (0, 0)), i["title"]))
@@ -998,9 +1072,19 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
     lines.extend(text("requirements"))
 
     sources = {_rel(f, root): _read(f) for f in files}
+    # a logic file whose module docstring holds a requirement's heading (the verbatim requirement text, as the CE writes
+    # it) belongs to that requirement - matched by content, so a file name shared by two use cases does not confuse them
+    squash = lambda t: re.sub(r'\s+', ' ', t).strip().lower()
+    docs = {rel: squash(_module_doc(root / rel)) for rel in sources if rel.endswith(".py")}
+    anchored = {}
+    for n_item, item in enumerate(items):
+        for heading in item.get("headings", ()):
+            for rel, doc in docs.items():
+                if heading and squash(heading) in doc:
+                    anchored.setdefault(rel, set()).add(n_item)
     records, traced = [], set()
     missing_diagram = False
-    for item in items:
+    for n_item, item in enumerate(items):
         if item["num"] is not None and not item["features"]:
             continue   # a numbered section with no Feature: (e.g. "How to Test") is a note, not a requirement
         label = f"§{item['num']} {item['title']}" if item["num"] is not None else item["title"]
@@ -1010,8 +1094,10 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
                       for f in item["features"])
             if not hit and item["num"] is not None:
                 hit = re.search(rf'§\s*{item["num"]}\b', src) is not None
-            if not hit and item["num"] is None:
-                hit = _norm(Path(rel).stem) == _norm(item["title"])
+            if not hit and n_item in anchored.get(rel, ()):
+                hit = True
+            if not hit and item["num"] is None and not (anchored.get(rel, set()) - {n_item}):   # not anchored elsewhere
+                hit = _norm(Path(rel).stem) in {_norm(item["title"])} | {_norm(f) for f in item.get("folders", ())}
             if hit:
                 matched.append(rel)
                 traced.add(rel)
@@ -1024,12 +1110,31 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
                     traced.add(helper)
                     req_by_file.setdefault(helper, []).append(label)
             i += 1
-        wanted = {_norm(f) for f in item["features"]} | {_norm(item["title"])}
+        wanted = {_norm(f) for f in item["features"]} | {_norm(item["title"])} \
+            | {_norm(f) for f in item.get("folders", ()) if f != "requirements"}   # tests may be named for the folder
         scenarios = sum(n for name, n in features.items() if _norm(name) in wanted)
         records.append({"item": item, "label": label, "matched": matched, "wanted": wanted,
                         "use_case": _use_case_of(matched) or item.get("use_case"),
                         "scenarios": scenarios,
                         "n_rules": sum(1 for r in rules if r["file"] in matched)})
+
+    # Uses: a requirement may rely on a rule another requirement defines, by its name (LogicBank 1.34.06 rule names)
+    by_name = {}
+    for r in rules:
+        if r.get("name"):
+            by_name.setdefault(r["name"], []).append(r)
+    for rec in records:
+        rec["used"], rec["unresolved"] = [], []
+        rec["own_rules"] = rec["n_rules"]
+        refs = list(rec["item"].get("uses", []))
+        for rel in rec["matched"]:              # Uses: may also be in a matched logic file (a placeholder's docstring)
+            refs += [u for u in _uses(sources.get(rel, "")) if u not in refs]
+        for ref in refs:
+            if ref in by_name:
+                rec["used"].extend(r for r in by_name[ref] if r not in rec["used"] and r["file"] not in rec["matched"])
+            else:
+                rec["unresolved"].append(ref)
+        rec["n_rules"] += len(rec["used"])
 
     # use cases are optional: with none specified nothing below changes. Requirements are grouped by use case, in order of appearance.
     use_cases = list(dict.fromkeys(r["use_case"] for r in records if r["use_case"]))
@@ -1040,7 +1145,9 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
     # ---- coverage summary
     all_wanted = set().union(*[r["wanted"] for r in records]) if records else set()
     tests_untraced = [name for name in features if _norm(name) not in all_wanted]
-    no_impl = [r["label"] for r in records if not r["matched"]]
+    no_impl = [r["label"] for r in records if not r["matched"] and not r["used"]]
+    no_impl += [f"{r['label']} (unresolved: {', '.join(r['unresolved'])})" for r in records
+                if r["unresolved"] and r["label"] not in no_impl]
     no_tests = [r["label"] for r in records if not r["scenarios"]]
     untraced_files = [rel for rel in sources if rel not in traced
                       and "/system/" not in rel and rel.endswith(".py")
@@ -1114,8 +1221,15 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
         lines += (["| Use case | Requirement | Implemented by | Rules | Tests |", "|---|---|---|---|---|"] if has_uc
                   else ["| Requirement | Implemented by | Rules | Tests |", "|---|---|---|---|"])
     for rec in records:
-        impl = "<br>".join(f"[{m}]({_link(root / m, report_dir)})" for m in rec["matched"]) \
-            if rec["matched"] else "⚠ none found"
+        impl_parts = [f"[{m}]({_link(root / m, report_dir)})" for m in rec["matched"]]
+        impl_parts += [f"uses `{r['name']}` ({_cell('; '.join(req_by_file.get(r['file'], [])) or r['file'])})"
+                       for r in rec["used"]]
+        impl_parts += [f"⚠ unresolved: `{ref}`" for ref in rec["unresolved"]]
+        if rec["used"] and not rec["own_rules"] and not rec["unresolved"]:
+            files = impl_parts[:len(rec["matched"])]
+            impl_parts = ["covered by existing rules:"] + impl_parts[len(rec["matched"]):] + \
+                         [f"(placeholder: {f})" for f in files]
+        impl = "<br>".join(impl_parts) if impl_parts else "⚠ none found"
         tests = _tests_text(rec, results, defined=True)
         uc_cell = f"{_cell(rec['use_case'] or '-')} | " if has_uc else ""
         lines.append(f"| {uc_cell}{_cell(rec['label'])} | {impl} | {rec['n_rules']} | {tests} |")
@@ -1164,10 +1278,24 @@ def sec_requirements(root: Path, report_dir: Path, rules: list, msg_rows: list,
             rows.extend(_rule_row(r, root, report_dir) for r in file_rules)
             if not file_rules:
                 rows.extend(_artifact_rows(rel, root, report_dir, msg_rows))
+        if rec["used"] and not rec["own_rules"] and not rec["unresolved"]:   # met entirely by rules other requirements define
+            met_by = ", ".join(f"`{r['name']}` ({'; '.join(req_by_file.get(r['file'], [])) or r['file']})" for r in rec["used"])
+            block += [f"**Covered by existing rules.** This requirement needs no rules of its own: it is met by {met_by}, "
+                      "which the engine enforces on every write path, automatically. Rules are not written per path, so "
+                      "a requirement about one path is usually already met. Kept for its tests, and so that a change to "
+                      "the rule it uses shows here.", ""]
+        for r in rec["used"]:                  # rules this requirement refers to (Uses:), defined by another requirement
+            owner = "; ".join(req_by_file.get(r["file"], [])) or r["file"]
+            rows.append(_rule_row({**r, "text": r["text"], "desc": (r["desc"] + " " if r["desc"] else "")
+                                   + f"(used from {owner}: `{r['name']}`)"}, root, report_dir))
         if rows:
             block += TABLE_HEAD + rows
-        else:
+        elif not rec["unresolved"]:
             block.append("⚠ no implementing file found")
+        for ref in rec["unresolved"]:
+            close = difflib.get_close_matches(ref, list(by_name), n=3, cutoff=0.6)
+            block.append(f"⚠ unresolved reference `{ref}`: no rule has that name"
+                         + (f" (did you mean {', '.join(f'`{c}`' for c in close)}?)" if close else "") + "  ")
         stems = [Path(m).stem for m in matched if any(r["file"] == m for r in rules)]
         diagrams = _diagram_blocks(stems, root, report_dir)
         missing_diagram = missing_diagram or len(diagrams) < len([st for st in stems if st])

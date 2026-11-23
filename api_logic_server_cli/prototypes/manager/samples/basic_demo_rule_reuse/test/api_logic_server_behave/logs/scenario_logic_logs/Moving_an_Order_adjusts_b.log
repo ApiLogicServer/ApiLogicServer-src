@@ -1,0 +1,74 @@
+  Moving an Order adjusts both balances  - 2026-11-22 09:08:59,378 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109d7ebe0) (sqlalchemy before_flush)			 - 2026-11-22 09:08:59,379 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: Ann 1795367339378, balance: None, credit_limit: 1000, email: None, email_opt_out: None  row: 0x109d7b2d0  session: 0x109d7ebe0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,379 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: Ann 1795367339378, balance: 0, credit_limit: 1000, email: None, email_opt_out: None  row: 0x109d7b2d0  session: 0x109d7ebe0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,379 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109d7ebe0)   										 - 2026-11-22 09:08:59,379 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109d7ebe0)   										 - 2026-11-22 09:08:59,379 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-22 09:08:59,379 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x109d7ebe0))       	 - 2026-11-22 09:08:59,379 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109d7e580) (sqlalchemy before_flush)			 - 2026-11-22 09:08:59,381 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: Bob 1795367339380, balance: None, credit_limit: 1000, email: None, email_opt_out: None  row: 0x109dd20d0  session: 0x109d7e580  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,381 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: Bob 1795367339380, balance: 0, credit_limit: 1000, email: None, email_opt_out: None  row: 0x109dd20d0  session: 0x109d7e580  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,381 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109d7e580)   										 - 2026-11-22 09:08:59,381 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109d7e580)   										 - 2026-11-22 09:08:59,382 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-22 09:08:59,382 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x109d7e580))       	 - 2026-11-22 09:08:59,382 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109d7e8b0) (sqlalchemy before_flush)			 - 2026-11-22 09:08:59,384 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: test O1, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109dd2fd0  session: 0x109d7e8b0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,384 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test O1, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109dd2fd0  session: 0x109d7e8b0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,384 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109d7e8b0)   										 - 2026-11-22 09:08:59,384 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109d7e8b0)   										 - 2026-11-22 09:08:59,384 - logic_logger - INFO
+..Order[22] {AfterFlush Event} id: 22, notes: test O1, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109dd2fd0  session: 0x109d7e8b0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,384 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-22 09:08:59,385 - logic_logger - INFO
+  Customer		## - 2026-11-22 09:08:59,385 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x109b298a0>)		## - 2026-11-22 09:08:59,385 - logic_logger - INFO
+  Order		## - 2026-11-22 09:08:59,385 - logic_logger - INFO
+    2. RowEvent Order.send_row_to_kafka() name: shipping_publish 		## - 2026-11-22 09:08:59,385 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x109d7e8b0))       	 - 2026-11-22 09:08:59,385 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109d7ecf0) (sqlalchemy before_flush)			 - 2026-11-22 09:08:59,388 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 22, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x109dd3250  session: 0x109d7ecf0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,388 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 22, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x109dd3250  session: 0x109d7ecf0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,388 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 22, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x109dd3250  session: 0x109d7ecf0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,388 - logic_logger - INFO
+....Order[22] {Update - Adjusting order: amount_total} id: 22, notes: test O1, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x109f14750  session: 0x109d7ecf0  ins_upd_dlt: upd, initial: upd - 2026-11-22 09:08:59,388 - logic_logger - INFO
+......Customer[20] {Update - Adjusting customer: balance} id: 20, name: Ann 1795367339378, balance:  [0E-10-->] 300.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109f15850  session: 0x109d7ecf0  ins_upd_dlt: upd, initial: upd - 2026-11-22 09:08:59,389 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109d7ecf0)   										 - 2026-11-22 09:08:59,389 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109d7ecf0)   										 - 2026-11-22 09:08:59,389 - logic_logger - INFO
+....Order[22] {AfterFlush Event} id: 22, notes: test O1, customer_id: 20, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x109f14750  session: 0x109d7ecf0  ins_upd_dlt: upd, initial: upd - 2026-11-22 09:08:59,389 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-22 09:08:59,389 - logic_logger - INFO
+  Customer		## - 2026-11-22 09:08:59,389 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x109b298a0>)		## - 2026-11-22 09:08:59,389 - logic_logger - INFO
+  Item		## - 2026-11-22 09:08:59,389 - logic_logger - INFO
+    2. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		## - 2026-11-22 09:08:59,389 - logic_logger - INFO
+    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		## - 2026-11-22 09:08:59,389 - logic_logger - INFO
+  Order		## - 2026-11-22 09:08:59,389 - logic_logger - INFO
+    4. RowEvent Order.send_row_to_kafka() name: shipping_publish 		## - 2026-11-22 09:08:59,389 - logic_logger - INFO
+    5. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		## - 2026-11-22 09:08:59,389 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x109d7ecf0))       	 - 2026-11-22 09:08:59,389 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109d7ef10) (sqlalchemy before_flush)			 - 2026-11-22 09:08:59,391 - logic_logger - INFO
+..Order[22] {Update - client} id: 22, notes: test O1, customer_id:  [20-->] 21, CreatedOn: None, date_shipped: None, amount_total: 300.0000000000  row: 0x109f157d0  session: 0x109d7ef10  ins_upd_dlt: upd, initial: upd - 2026-11-22 09:08:59,392 - logic_logger - INFO
+....Customer[21] {Update - Adjusting customer: balance, balance} id: 21, name: Bob 1795367339380, balance:  [0E-10-->] 300.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109f15bd0  session: 0x109d7ef10  ins_upd_dlt: upd, initial: upd - 2026-11-22 09:08:59,392 - logic_logger - INFO
+....Customer[20] {Update - Adjusting Old customer} id: 20, name: Ann 1795367339378, balance:  [300.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x109f15dd0  session: 0x109d7ef10  ins_upd_dlt: upd, initial: upd - 2026-11-22 09:08:59,392 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109d7ef10)   										 - 2026-11-22 09:08:59,392 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109d7ef10)   										 - 2026-11-22 09:08:59,393 - logic_logger - INFO
+..Order[22] {AfterFlush Event} id: 22, notes: test O1, customer_id:  [20-->] 21, CreatedOn: None, date_shipped: None, amount_total: 300.0000000000  row: 0x109f157d0  session: 0x109d7ef10  ins_upd_dlt: upd, initial: upd - 2026-11-22 09:08:59,393 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-22 09:08:59,393 - logic_logger - INFO
+  Customer		## - 2026-11-22 09:08:59,393 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x109b298a0>)		## - 2026-11-22 09:08:59,393 - logic_logger - INFO
+  Order		## - 2026-11-22 09:08:59,393 - logic_logger - INFO
+    2. RowEvent Order.send_row_to_kafka() name: shipping_publish 		## - 2026-11-22 09:08:59,393 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x109d7ef10))       	 - 2026-11-22 09:08:59,393 - logic_logger - INFO

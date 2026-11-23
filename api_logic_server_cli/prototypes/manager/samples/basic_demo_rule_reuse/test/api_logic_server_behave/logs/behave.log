@@ -1,0 +1,130 @@
+Feature: About Sample # features/about.feature:6
+
+  Scenario: Transaction Processing                           # features/about.feature:8
+    Given Sample Database                                    # features/steps/about.py:8
+    When Transactions are submitted                          # features/steps/about.py:12
+    Then Enforce business policies with Logic (rules + code) # features/steps/about.py:16
+
+Feature: App Integration # features/app_integration.feature:1
+
+  Scenario: Shipping an Order publishes it                        # features/app_integration.feature:3
+    Given Customer "Ann" with credit limit 1000                   # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 1 Widget             # features/steps/order_steps.py:68
+    When Order "O1" is shipped                                    # features/steps/order_steps.py:105
+    Then Order "O1" is published to topic "order_shipping" 1 time # features/steps/order_steps.py:163
+
+  Scenario: Editing an unshipped Order does not publish            # features/app_integration.feature:9
+    Given Customer "Ann" with credit limit 1000                    # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 1 Widget              # features/steps/order_steps.py:68
+    When Order "O1" notes are changed                              # features/steps/order_steps.py:117
+    Then Order "O1" is published to topic "order_shipping" 0 times # features/steps/order_steps.py:163
+
+  Scenario: Editing a shipped Order does not publish again        # features/app_integration.feature:15
+    Given Customer "Ann" with credit limit 1000                   # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 1 Widget             # features/steps/order_steps.py:68
+    And Order "O1" is shipped                                     # features/steps/order_steps.py:105
+    When Order "O1" notes are changed                             # features/steps/order_steps.py:117
+    Then Order "O1" is published to topic "order_shipping" 1 time # features/steps/order_steps.py:163
+
+Feature: Check Credit # features/check_credit.feature:1
+
+  Scenario: Order with Item is created                        # features/check_credit.feature:3
+    Given Customer "Ann" with credit limit 1000               # features/steps/order_steps.py:60
+    When Order "O1" is created for "Ann" with 2 Gadget        # features/steps/order_steps.py:68
+    Then Item of Order "O1" has unit_price 150 and amount 300 # features/steps/order_steps.py:156
+    And Order "O1" amount_total is 300                        # features/steps/order_steps.py:150
+    And Customer "Ann" balance is 300                         # features/steps/order_steps.py:144
+
+  Scenario: Item quantity is changed                          # features/check_credit.feature:10
+    Given Customer "Ann" with credit limit 1000               # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 2 Gadget         # features/steps/order_steps.py:68
+    When Item of Order "O1" quantity is changed to 3          # features/steps/order_steps.py:80
+    Then Item of Order "O1" has unit_price 150 and amount 450 # features/steps/order_steps.py:156
+    And Order "O1" amount_total is 450                        # features/steps/order_steps.py:150
+    And Customer "Ann" balance is 450                         # features/steps/order_steps.py:144
+
+  Scenario: Item product is changed                          # features/check_credit.feature:18
+    Given Customer "Ann" with credit limit 1000              # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 2 Gadget        # features/steps/order_steps.py:68
+    When Item of Order "O1" product is changed to Widget     # features/steps/order_steps.py:85
+    Then Item of Order "O1" has unit_price 90 and amount 180 # features/steps/order_steps.py:156
+    And Order "O1" amount_total is 180                       # features/steps/order_steps.py:150
+    And Customer "Ann" balance is 180                        # features/steps/order_steps.py:144
+
+  Scenario: Item is deleted                           # features/check_credit.feature:26
+    Given Customer "Ann" with credit limit 1000       # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 2 Gadget # features/steps/order_steps.py:68
+    When Item of Order "O1" is deleted                # features/steps/order_steps.py:95
+    Then Order "O1" amount_total is 0                 # features/steps/order_steps.py:150
+    And Customer "Ann" balance is 0                   # features/steps/order_steps.py:144
+
+  Scenario: Item is moved to another Order            # features/check_credit.feature:33
+    Given Customer "Ann" with credit limit 1000       # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 2 Gadget # features/steps/order_steps.py:68
+    And Order "O2" is created for "Ann" with 1 Widget # features/steps/order_steps.py:68
+    When Item of Order "O1" is moved to Order "O2"    # features/steps/order_steps.py:90
+    Then Order "O1" amount_total is 0                 # features/steps/order_steps.py:150
+    And Order "O2" amount_total is 390                # features/steps/order_steps.py:150
+    And Customer "Ann" balance is 390                 # features/steps/order_steps.py:144
+
+  Scenario: Order is deleted                          # features/check_credit.feature:42
+    Given Customer "Ann" with credit limit 1000       # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 2 Gadget # features/steps/order_steps.py:68
+    And Order "O2" is created for "Ann" with 1 Widget # features/steps/order_steps.py:68
+    When Order "O1" is deleted                        # features/steps/order_steps.py:123
+    Then Customer "Ann" balance is 90                 # features/steps/order_steps.py:144
+
+  Scenario: Shipped Order leaves the balance          # features/check_credit.feature:49
+    Given Customer "Ann" with credit limit 1000       # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 2 Gadget # features/steps/order_steps.py:68
+    When Order "O1" is shipped                        # features/steps/order_steps.py:105
+    Then Customer "Ann" balance is 0                  # features/steps/order_steps.py:144
+
+  Scenario: Unshipped Order re-enters the balance     # features/check_credit.feature:55
+    Given Customer "Ann" with credit limit 1000       # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 2 Gadget # features/steps/order_steps.py:68
+    And Order "O1" is shipped                         # features/steps/order_steps.py:105
+    When Order "O1" is unshipped                      # features/steps/order_steps.py:111
+    Then Customer "Ann" balance is 300                # features/steps/order_steps.py:144
+
+  Scenario: Order within the credit limit is accepted  # features/check_credit.feature:62
+    Given Customer "Ann" with credit limit 1000        # features/steps/order_steps.py:60
+    When Order "O1" is created for "Ann" with 3 Gadget # features/steps/order_steps.py:68
+    Then the transaction is accepted                   # features/steps/order_steps.py:131
+    And Customer "Ann" balance is 450                  # features/steps/order_steps.py:144
+
+  Scenario: Order exactly at the credit limit is accepted  # features/check_credit.feature:68
+    Given Customer "Ann" with credit limit 300             # features/steps/order_steps.py:60
+    When Order "O1" is created for "Ann" with 2 Gadget     # features/steps/order_steps.py:68
+    Then the transaction is accepted                       # features/steps/order_steps.py:131
+    And Customer "Ann" balance is 300                      # features/steps/order_steps.py:144
+
+  Scenario: Order over the credit limit is rejected              # features/check_credit.feature:74
+    Given Customer "Ann" with credit limit 200                   # features/steps/order_steps.py:60
+    When Order "O1" is created for "Ann" with 2 Gadget           # features/steps/order_steps.py:68
+    Then the transaction is rejected with "exceeds credit limit" # features/steps/order_steps.py:137
+    And Customer "Ann" balance is 0                              # features/steps/order_steps.py:144
+
+Feature: Move Order Check Credit # features/move_order_check_credit.feature:1
+
+  Scenario: Moving an Order adjusts both balances     # features/move_order_check_credit.feature:3
+    Given Customer "Ann" with credit limit 1000       # features/steps/order_steps.py:60
+    And Customer "Bob" with credit limit 1000         # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 2 Gadget # features/steps/order_steps.py:68
+    When Order "O1" is moved to Customer "Bob"        # features/steps/order_steps.py:100
+    Then the transaction is accepted                  # features/steps/order_steps.py:131
+    And Customer "Ann" balance is 0                   # features/steps/order_steps.py:144
+    And Customer "Bob" balance is 300                 # features/steps/order_steps.py:144
+
+  Scenario: Moving an Order over the new Customer's limit is rejected  # features/move_order_check_credit.feature:12
+    Given Customer "Ann" with credit limit 1000                        # features/steps/order_steps.py:60
+    And Customer "Bob" with credit limit 200                           # features/steps/order_steps.py:60
+    And Order "O1" is created for "Ann" with 2 Gadget                  # features/steps/order_steps.py:68
+    When Order "O1" is moved to Customer "Bob"                         # features/steps/order_steps.py:100
+    Then the transaction is rejected with "exceeds credit limit"       # features/steps/order_steps.py:137
+    And Customer "Ann" balance is 300                                  # features/steps/order_steps.py:144
+    And Customer "Bob" balance is 0                                    # features/steps/order_steps.py:144
+
+&nbsp;&nbsp;
+/Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/basic_demo_rule_reuse/test/api_logic_server_behave/behave_run.py completed at November 22, 2026 09:08:59
+Behave run time: 0.347 s

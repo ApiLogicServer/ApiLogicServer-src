@@ -5,6 +5,33 @@ Add a file, restart, and its endpoints appear in Swagger. Files here include the
 (`/.well-known/mcp.json`), any custom or B2B API you ask for, and, for each Kafka subscribe pipeline,
 a `*_kafka_consume_debug.py` file (below).
 
+## Adding an endpoint
+
+Add a `.py` file here with an `add_service` function; it is loaded at the next server start. A plain Flask route, for a
+non-database endpoint:
+
+```python
+# api/api_discovery/hello_service.py
+from flask import request, jsonify
+import logging
+from api.system.api_utils import safe_log
+
+app_logger = logging.getLogger("api_logic_server_app")
+
+def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators=[]):
+    """API service hello: a non-database endpoint (try http://localhost:5656/hello_service?user=Ann)."""
+
+    @app.route('/hello_service')
+    def hello_service():
+        """API service hello: echoes the user parameter."""
+        user = request.args.get('user')
+        app_logger.info(f'hello_service: {safe_log(user)}')   # safe_log: no line breaks from callers in the log
+        return jsonify({"result": f'hello, {user}'})
+```
+
+For an endpoint that writes data (and so runs the rules), ask your AI assistant for a custom API; the B2B order API in
+the `basic_demo_eai` sample is a full example. Writes through `safrs.DB.session` are governed by the rules like any other.
+
 ## The `*_debug` services: worth using
 
 For each Kafka subscribe pipeline `<topic>`, the AI generates `<topic>_kafka_consume_debug.py`. It is about ten lines;

@@ -1,9 +1,11 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.31
-# Last Updated: November 19, 2026
+# Version: 1.0.32
+# Last Updated: November 21, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 # Changelog:
+#   1.0.32 (Nov 21 2026) - Rule names (LogicBank >= 1.34.06): name= on constraints and events; derivations are named
+#     by their column. Requirements refer to rules by name (Uses:); see "RULE NAMES" below.
 #   1.0.31 (Nov 19 2026) - insert_parent: LogicBank 1.34.05 fixes two more cases (several new children of the same
 #     new parent in one transaction; moving a row to a parent that does not exist yet). Projects no longer pre-create
 #     bucket rows to work around them.
@@ -559,6 +561,19 @@ CRITICAL - DOCSTRINGS: COPY THE REQUIREMENT, NOTHING ELSE:
   Any restatement or paraphrase — even a neutral-looking summary — violates this rule.
   The requirement text already contains everything needed. Copy it verbatim; add nothing.
 
+CRITICAL — RULE NAMES (LogicBank >= 1.34.06): every rule has a name, <Table>.<name>, and requirements refer to
+rules by it.
+  - Derivations (sum, count, formula, copy) are named by the column they derive: `Order.amount_total`. Nothing to add.
+  - Constraints and events: ALWAYS pass `name=`, a short snake_case name for what the rule does, unique on its table:
+        Rule.constraint(validate=models.Customer, as_condition=lambda row: row.balance <= row.credit_limit,
+                        error_msg="balance ({row.balance}) exceeds credit ({row.credit_limit})", name="credit_limit_check")
+        Rule.after_flush_row_event(on_class=models.Order, calling=..., when_condition=..., name="shipping_publish")
+    Qualified, these are `Customer.credit_limit_check` and `Order.shipping_publish`. Without name=, a rule with a
+    calling function is named after it, and a lambda has no name; a duplicate name= on one table stops the server.
+    The name appears in the logic log ("Constraint Failure (Customer.credit_limit_check): ...").
+  - Choose names that read as the requirement does (credit_limit_check, not constraint_1): other requirements
+    refer to them, and reviewers see them in the log and the report.
+
 CRITICAL: Keep simple rules on ONE LINE (no exceptions). Goal: Visual scannability - see rule count at a glance.
 
 ✅ CORRECT - One rule per line:
@@ -655,6 +670,7 @@ class Rule:
                 to constraints, not just formulas/row_events.
             error_msg: string, with {row.attribute} replacements
             error_attributes: list of attributes
+            name: the rule's name, unique on the class (eg, "credit_limit_check"); always pass it - see RULE NAMES
 
         """
         if error_attributes is None:
@@ -738,7 +754,8 @@ class Rule:
     def after_flush_row_event(on_class: object, calling: Callable = None,
                               if_condition: any = None,
                               when_condition: any = None,
-                              with_args: dict = None):
+                              with_args: dict = None,
+                              name: str = None):
         """
         Events are triggered after database flush for integration (Kafka, etc.)
         
@@ -775,6 +792,7 @@ class Rule:
             if_condition: Lambda function; execute calling on every commit while it is True
             when_condition: Lambda function; execute calling only when it was False (or the row is new) and is now True
             with_args: Dictionary with parameters like {"topic": "topic_name"}
+            name: the rule's name, unique on the class (eg, "shipping_publish"); always pass it - see RULE NAMES
         """
 
 

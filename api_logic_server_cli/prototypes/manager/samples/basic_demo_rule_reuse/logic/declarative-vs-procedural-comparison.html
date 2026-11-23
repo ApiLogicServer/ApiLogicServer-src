@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Page Moved - Declarative vs Procedural Comparison</title>
+    <meta http-equiv="refresh" content="3; url=https://apilogicserver.github.io/basic_demo/logic/procedural/declarative-vs-procedural-comparison.html">
+    <link rel="canonical" href="https://apilogicserver.github.io/basic_demo/logic/procedural/declarative-vs-procedural-comparison.html">
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .redirect-box { 
+            border: 2px solid #007acc; 
+            padding: 30px; 
+            border-radius: 8px; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .countdown { 
+            font-weight: bold; 
+            color: #007acc; 
+            font-size: 1.2em;
+        }
+        .manual-link {
+            display: inline-block;
+            background: #007acc;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .manual-link:hover {
+            background: #005c99;
+        }
+        h1 { color: #333; margin-top: 0; }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #ddd;
+            border-radius: 3px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #007acc;
+            width: 100%;
+            transition: width 1s linear;
+        }
+    </style>
+    <script>
+        let seconds = 3;
+        function redirect() {
+            window.location.href = "https://apilogicserver.github.io/basic_demo/logic/procedural/declarative-vs-procedural-comparison.html";
+        }
+        function updateCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            const progressElement = document.getElementById('progress-fill');
+            
+            if (countdownElement) {
+                countdownElement.textContent = seconds;
+            }
+            if (progressElement) {
+                progressElement.style.width = ((3-seconds)/3 * 100) + '%';
+            }
+            
+            if (seconds <= 0) {
+                redirect();
+            } else {
+                seconds--;
+                setTimeout(updateCountdown, 1000);
+            }
+        }
+        window.onload = function() {
+            updateCountdown();
+            // Fallback redirect in case JavaScript fails
+            setTimeout(redirect, 3100);
+        }
+    </script>
+</head>
+<body>
+    <div class="redirect-box">
+        <h1>📄 Page Moved</h1>
+        <p>The <strong>Declarative vs Procedural Logic Comparison</strong> has moved to a new location.</p>
+        
+        <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+        </div>
+        
+        <p>Redirecting automatically in <span id="countdown" class="countdown">3</span> seconds...</p>
+        
+        <p><strong>If you are not redirected automatically:</strong></p>
+        <a href="https://apilogicserver.github.io/basic_demo/logic/procedural/declarative-vs-procedural-comparison.html" class="manual-link">
+            👉 Go to New Location
+        </a>
+        
+        <hr style="margin: 25px 0; border: none; border-top: 1px solid #ddd;">
+        <p><small>
+            <strong>New URL:</strong><br>
+            <code>https://apilogicserver.github.io/basic_demo/logic/procedural/declarative-vs-procedural-comparison.html</code>
+        </small></p>
+    </div>
+</body>
+</html>

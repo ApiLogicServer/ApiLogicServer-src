@@ -1,0 +1,15 @@
+
+The following rules have been activated
+ - 2026-11-22 09:08:59,128 - logic_logger - DEBUG
+Rule Bank[0x1095bd400] (loaded 2026-11-22 09:08:57.411109)		##   - 2026-11-22 09:08:59,128 - logic_logger - INFO
+Mapped Class[Order] rules:		##   - 2026-11-22 09:08:59,128 - logic_logger - INFO
+  RowEvent Order.send_row_to_kafka() name: shipping_publish 		##   - 2026-11-22 09:08:59,128 - logic_logger - INFO
+  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		##   - 2026-11-22 09:08:59,128 - logic_logger - INFO
+Mapped Class[Customer] rules:		##   - 2026-11-22 09:08:59,128 - logic_logger - INFO
+  Constraint Customer.credit_limit_check 		##   - 2026-11-22 09:08:59,128 - logic_logger - INFO
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x109b298a0>)		##   - 2026-11-22 09:08:59,128 - logic_logger - INFO
+Mapped Class[Item] rules:		##   - 2026-11-22 09:08:59,128 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		##   - 2026-11-22 09:08:59,128 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		##   - 2026-11-22 09:08:59,128 - logic_logger - INFO
+Logic Bank - 10 rules loaded - 2026-11-22 09:08:59,128 - logic_logger - INFO
+Logic Bank - 10 rules loaded - 2026-11-22 09:08:59,128 - logic_logger - INFO

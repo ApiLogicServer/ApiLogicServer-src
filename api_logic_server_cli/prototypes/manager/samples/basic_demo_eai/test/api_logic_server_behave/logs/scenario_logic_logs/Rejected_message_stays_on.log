@@ -1,52 +1,52 @@
- Rejected message stays on the blob with its error (live Kafka only)  - 2026-11-20 09:40:26,264 - logic_logger - INFO
+ Rejected message stays on the blob with its error (live Kafka only)  - 2026-11-21 19:19:12,697 - logic_logger - INFO
 
-Logic Phase:		ROW LOGIC		(session=0x10c20fbd0) (sqlalchemy before_flush)			 - 2026-11-20 09:40:26,269 - logic_logger - INFO
-..Customer[None] {Insert - client} id: None, name: Kafka Live Bad 1795196426267, balance: 0, credit_limit: 5000, email: None, email_opt_out: None  row: 0x10c9fcf50  session: 0x10c20fbd0  ins_upd_dlt: ins, initial: ins - 2026-11-20 09:40:26,269 - logic_logger - INFO
-..Customer[None] {server aggregate_defaults: balance } id: None, name: Kafka Live Bad 1795196426267, balance: 0, credit_limit: 5000, email: None, email_opt_out: None  row: 0x10c9fcf50  session: 0x10c20fbd0  ins_upd_dlt: ins, initial: ins - 2026-11-20 09:40:26,270 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c20fbd0)   										 - 2026-11-20 09:40:26,270 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c20fbd0)   										 - 2026-11-20 09:40:26,270 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10bf15ae0) (sqlalchemy before_flush)			 - 2026-11-21 19:19:12,703 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: Kafka Live Bad 1795317552700, balance: 0, credit_limit: 5000, email: None, email_opt_out: None  row: 0x10c22a9d0  session: 0x10bf15ae0  ins_upd_dlt: ins, initial: ins - 2026-11-21 19:19:12,703 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: Kafka Live Bad 1795317552700, balance: 0, credit_limit: 5000, email: None, email_opt_out: None  row: 0x10c22a9d0  session: 0x10bf15ae0  ins_upd_dlt: ins, initial: ins - 2026-11-21 19:19:12,703 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10bf15ae0)   										 - 2026-11-21 19:19:12,703 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10bf15ae0)   										 - 2026-11-21 19:19:12,704 - logic_logger - INFO
 
-These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-20 09:40:26,270 - logic_logger - INFO
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-21 19:19:12,704 - logic_logger - INFO
 
-Logic Phase:		COMPLETE(session=0x10c20fbd0))       	 - 2026-11-20 09:40:26,270 - logic_logger - INFO
+Logic Phase:		COMPLETE(session=0x10bf15ae0))       	 - 2026-11-21 19:19:12,704 - logic_logger - INFO
 
-Logic Phase:		ROW LOGIC		(session=0x10c20e9c0) (sqlalchemy before_flush)			 - 2026-11-20 09:40:26,278 - logic_logger - INFO
-..OrderB2bMessage[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {..., is_processed: False, error_text: None  row: 0x10c0e8f50  session: 0x10c20e9c0  ins_upd_dlt: ins, initial: ins - 2026-11-20 09:40:26,278 - logic_logger - INFO
-..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-20 09:40:26.278718, CreatedOnDay: 2026-11-20, payload: {..., is_processed: False, error_text: None  row: 0x10c0e8f50  session: 0x10c20e9c0  ins_upd_dlt: ins, initial: ins - 2026-11-20 09:40:26,278 - logic_logger - INFO
-....DailyFlow[2026-11-20] {Update - Adjusting daily_flow: message_received} day: 2026-11-20, order_count: 16, order_amount: 4950.00, message_received:  [2-->] 3, message_processed: 1, message_rejected: 1, message_pending: 0, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10bf6fd80  session: 0x10c20e9c0  ins_upd_dlt: upd, initial: upd - 2026-11-20 09:40:26,279 - logic_logger - INFO
-....DailyFlow[2026-11-20] {Formula message_pending} day: 2026-11-20, order_count: 16, order_amount: 4950.00, message_received:  [2-->] 3, message_processed: 1, message_rejected: 1, message_pending:  [0-->] 1, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10bf6fd80  session: 0x10c20e9c0  ins_upd_dlt: upd, initial: upd - 2026-11-20 09:40:26,280 - logic_logger - INFO
-....DailyFlow[2026-11-20] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-20, order_count: 16, order_amount: 4950.00, message_received:  [2-->] 3, message_processed: 1, message_rejected: 1, message_pending:  [0-->] 1, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10bf6fd80  session: 0x10c20e9c0  ins_upd_dlt: upd, initial: upd - 2026-11-20 09:40:26,280 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c20e9c0)   										 - 2026-11-20 09:40:26,280 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c20e9c0)   										 - 2026-11-20 09:40:26,282 - logic_logger - INFO
-..OrderB2bMessage[101] {AfterFlush Event} id: 101, CreatedOn: 2026-11-20 09:40:26.278718, CreatedOnDay: 2026-11-20, payload: {..., is_processed: False, error_text: None  row: 0x10c0e8f50  session: 0x10c20e9c0  ins_upd_dlt: ins, initial: ins - 2026-11-20 09:40:26,282 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10bf17350) (sqlalchemy before_flush)			 - 2026-11-21 19:19:12,713 - logic_logger - INFO
+..OrderB2bMessage[None] {Insert - client} id: None, CreatedOn: None, CreatedOnDay: None, payload: {..., is_processed: False, error_text: None  row: 0x10bda0ed0  session: 0x10bf17350  ins_upd_dlt: ins, initial: ins - 2026-11-21 19:19:12,713 - logic_logger - INFO
+..OrderB2bMessage[None] {early_row_event_all_classes - handle_all did stamping} id: None, CreatedOn: 2026-11-21 19:19:12.713913, CreatedOnDay: 2026-11-21, payload: {..., is_processed: False, error_text: None  row: 0x10bda0ed0  session: 0x10bf17350  ins_upd_dlt: ins, initial: ins - 2026-11-21 19:19:12,713 - logic_logger - INFO
+....DailyFlow[2026-11-21] {Update - Adjusting daily_flow: message_received} day: 2026-11-21, order_count: 16, order_amount: 4950.00, message_received:  [2-->] 3, message_processed: 1, message_rejected: 1, message_pending: 0, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10bf1f120  session: 0x10bf17350  ins_upd_dlt: upd, initial: upd - 2026-11-21 19:19:12,714 - logic_logger - INFO
+....DailyFlow[2026-11-21] {Formula message_pending} day: 2026-11-21, order_count: 16, order_amount: 4950.00, message_received:  [2-->] 3, message_processed: 1, message_rejected: 1, message_pending:  [0-->] 1, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10bf1f120  session: 0x10bf17350  ins_upd_dlt: upd, initial: upd - 2026-11-21 19:19:12,715 - logic_logger - INFO
+....DailyFlow[2026-11-21] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-21, order_count: 16, order_amount: 4950.00, message_received:  [2-->] 3, message_processed: 1, message_rejected: 1, message_pending:  [0-->] 1, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10bf1f120  session: 0x10bf17350  ins_upd_dlt: upd, initial: upd - 2026-11-21 19:19:12,715 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10bf17350)   										 - 2026-11-21 19:19:12,715 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10bf17350)   										 - 2026-11-21 19:19:12,718 - logic_logger - INFO
+..OrderB2bMessage[101] {AfterFlush Event} id: 101, CreatedOn: 2026-11-21 19:19:12.713913, CreatedOnDay: 2026-11-21, payload: {..., is_processed: False, error_text: None  row: 0x10bda0ed0  session: 0x10bf17350  ins_upd_dlt: ins, initial: ins - 2026-11-21 19:19:12,718 - logic_logger - INFO
 
-These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-20 09:40:26,284 - logic_logger - INFO
-  DailyFlow		## - 2026-11-20 09:40:26,284 - logic_logger - INFO
-    1. Derive <class 'database.models.DailyFlow'>.message_rejected as Count(<class 'database.models.OrderB2bMessage'> Where Rule.count(derive=models.DailyFlow.message_rejected, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True) - <function declare_logic.<locals>.<lambda> at 0x10bf7c7c0>, insert_parent)		## - 2026-11-20 09:40:26,285 - logic_logger - INFO
-    2. Derive <class 'database.models.DailyFlow'>.message_received as Count(<class 'database.models.OrderB2bMessage'> Where  - None, insert_parent)		## - 2026-11-20 09:40:26,285 - logic_logger - INFO
-    3. Derive <class 'database.models.DailyFlow'>.message_pending as Formula (1): Rule.formula(derive=models.DailyFlow.message_pend [...]		## - 2026-11-20 09:40:26,285 - logic_logger - INFO
-    4. Derive <class 'database.models.DailyFlow'>.message_processed as Count(<class 'database.models.OrderB2bMessage'> Where Rule.count(derive=models.DailyFlow.message_processed, as_count_of=models.OrderB2bMessage, where=lambda row: row.is_processed == True, insert_parent=True) - <function declare_logic.<locals>.<lambda> at 0x10bf7c720>, insert_parent)		## - 2026-11-20 09:40:26,285 - logic_logger - INFO
-  OrderB2bMessage		## - 2026-11-20 09:40:26,285 - logic_logger - INFO
-    5. RowEvent OrderB2bMessage._publish_order_b2b() 		## - 2026-11-20 09:40:26,285 - logic_logger - INFO
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-21 19:19:12,721 - logic_logger - INFO
+  DailyFlow		## - 2026-11-21 19:19:12,721 - logic_logger - INFO
+    1. Derive <class 'database.models.DailyFlow'>.message_rejected as Count(<class 'database.models.OrderB2bMessage'> Where Rule.count(derive=models.DailyFlow.message_rejected, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True) - <function declare_logic.<locals>.<lambda> at 0x10bc79b20>, insert_parent)		## - 2026-11-21 19:19:12,721 - logic_logger - INFO
+    2. Derive <class 'database.models.DailyFlow'>.message_processed as Count(<class 'database.models.OrderB2bMessage'> Where Rule.count(derive=models.DailyFlow.message_processed, as_count_of=models.OrderB2bMessage, where=lambda row: row.is_processed == True, insert_parent=True) - <function declare_logic.<locals>.<lambda> at 0x10bc79a80>, insert_parent)		## - 2026-11-21 19:19:12,721 - logic_logger - INFO
+    3. Derive <class 'database.models.DailyFlow'>.message_received as Count(<class 'database.models.OrderB2bMessage'> Where  - None, insert_parent)		## - 2026-11-21 19:19:12,721 - logic_logger - INFO
+    4. Derive <class 'database.models.DailyFlow'>.message_pending as Formula (1): Rule.formula(derive=models.DailyFlow.message_pend [...]		## - 2026-11-21 19:19:12,721 - logic_logger - INFO
+  OrderB2bMessage		## - 2026-11-21 19:19:12,721 - logic_logger - INFO
+    5. RowEvent OrderB2bMessage._publish_order_b2b() 		## - 2026-11-21 19:19:12,721 - logic_logger - INFO
 
-Logic Phase:		COMPLETE(session=0x10c20e9c0))       	 - 2026-11-20 09:40:26,285 - logic_logger - INFO
+Logic Phase:		COMPLETE(session=0x10bf17350))       	 - 2026-11-21 19:19:12,721 - logic_logger - INFO
 
-Logic Phase:		ROW LOGIC		(session=0x10c20f570) (sqlalchemy before_flush)			 - 2026-11-20 09:40:26,289 - logic_logger - INFO
-..OrderB2bMessage[101] {Update - client} id: 101, CreatedOn: 2026-11-20 09:40:26.278718, CreatedOnDay: 2026-11-20, payload: {..., is_processed: False, error_text:  [None-->] resolve_lookups: no Product found for fk_col='product_id' from source fields  row: 0x10c9fdcd0  session: 0x10c20f570  ins_upd_dlt: upd, initial: upd - 2026-11-20 09:40:26,289 - logic_logger - INFO
-....DailyFlow[2026-11-20] {Update - Adjusting daily_flow: message_rejected} day: 2026-11-20, order_count: 16, order_amount: 4950.00, message_received: 3, message_processed: 1, message_rejected:  [1-->] 2, message_pending: 1, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10c5057b0  session: 0x10c20f570  ins_upd_dlt: upd, initial: upd - 2026-11-20 09:40:26,289 - logic_logger - INFO
-....DailyFlow[2026-11-20] {Formula message_pending} day: 2026-11-20, order_count: 16, order_amount: 4950.00, message_received: 3, message_processed: 1, message_rejected:  [1-->] 2, message_pending:  [1-->] 0, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10c5057b0  session: 0x10c20f570  ins_upd_dlt: upd, initial: upd - 2026-11-20 09:40:26,289 - logic_logger - INFO
-....DailyFlow[2026-11-20] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-20, order_count: 16, order_amount: 4950.00, message_received: 3, message_processed: 1, message_rejected:  [1-->] 2, message_pending:  [1-->] 0, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10c5057b0  session: 0x10c20f570  ins_upd_dlt: upd, initial: upd - 2026-11-20 09:40:26,289 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10c20f570)   										 - 2026-11-20 09:40:26,289 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10c20f570)   										 - 2026-11-20 09:40:26,290 - logic_logger - INFO
-..OrderB2bMessage[101] {AfterFlush Event} id: 101, CreatedOn: 2026-11-20 09:40:26.278718, CreatedOnDay: 2026-11-20, payload: {..., is_processed: False, error_text:  [None-->] resolve_lookups: no Product found for fk_col='product_id' from source fields  row: 0x10c9fdcd0  session: 0x10c20f570  ins_upd_dlt: upd, initial: upd - 2026-11-20 09:40:26,290 - logic_logger - INFO
+Logic Phase:		ROW LOGIC		(session=0x10bf157b0) (sqlalchemy before_flush)			 - 2026-11-21 19:19:12,727 - logic_logger - INFO
+..OrderB2bMessage[101] {Update - client} id: 101, CreatedOn: 2026-11-21 19:19:12.713913, CreatedOnDay: 2026-11-21, payload: {..., is_processed: False, error_text:  [None-->] resolve_lookups: no Product found for fk_col='product_id' from source fields  row: 0x10cd44e50  session: 0x10bf157b0  ins_upd_dlt: upd, initial: upd - 2026-11-21 19:19:12,727 - logic_logger - INFO
+....DailyFlow[2026-11-21] {Update - Adjusting daily_flow: message_rejected} day: 2026-11-21, order_count: 16, order_amount: 4950.00, message_received: 3, message_processed: 1, message_rejected:  [1-->] 2, message_pending: 1, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10bf1f5f0  session: 0x10bf157b0  ins_upd_dlt: upd, initial: upd - 2026-11-21 19:19:12,727 - logic_logger - INFO
+....DailyFlow[2026-11-21] {Formula message_pending} day: 2026-11-21, order_count: 16, order_amount: 4950.00, message_received: 3, message_processed: 1, message_rejected:  [1-->] 2, message_pending:  [1-->] 0, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10bf1f5f0  session: 0x10bf157b0  ins_upd_dlt: upd, initial: upd - 2026-11-21 19:19:12,728 - logic_logger - INFO
+....DailyFlow[2026-11-21] {Prune Formula: request_pending [['request_received', 'request_processed', 'request_rejected']]} day: 2026-11-21, order_count: 16, order_amount: 4950.00, message_received: 3, message_processed: 1, message_rejected:  [1-->] 2, message_pending:  [1-->] 0, request_received: 19, request_processed: 16, request_rejected: 3, request_pending: 0  row: 0x10bf1f5f0  session: 0x10bf157b0  ins_upd_dlt: upd, initial: upd - 2026-11-21 19:19:12,728 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10bf157b0)   										 - 2026-11-21 19:19:12,728 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10bf157b0)   										 - 2026-11-21 19:19:12,728 - logic_logger - INFO
+..OrderB2bMessage[101] {AfterFlush Event} id: 101, CreatedOn: 2026-11-21 19:19:12.713913, CreatedOnDay: 2026-11-21, payload: {..., is_processed: False, error_text:  [None-->] resolve_lookups: no Product found for fk_col='product_id' from source fields  row: 0x10cd44e50  session: 0x10bf157b0  ins_upd_dlt: upd, initial: upd - 2026-11-21 19:19:12,728 - logic_logger - INFO
 
-These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-20 09:40:26,290 - logic_logger - INFO
-  DailyFlow		## - 2026-11-20 09:40:26,290 - logic_logger - INFO
-    1. Derive <class 'database.models.DailyFlow'>.message_rejected as Count(<class 'database.models.OrderB2bMessage'> Where Rule.count(derive=models.DailyFlow.message_rejected, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True) - <function declare_logic.<locals>.<lambda> at 0x10bf7c7c0>, insert_parent)		## - 2026-11-20 09:40:26,290 - logic_logger - INFO
-    2. Derive <class 'database.models.DailyFlow'>.message_received as Count(<class 'database.models.OrderB2bMessage'> Where  - None, insert_parent)		## - 2026-11-20 09:40:26,290 - logic_logger - INFO
-    3. Derive <class 'database.models.DailyFlow'>.message_pending as Formula (1): Rule.formula(derive=models.DailyFlow.message_pend [...]		## - 2026-11-20 09:40:26,290 - logic_logger - INFO
-    4. Derive <class 'database.models.DailyFlow'>.message_processed as Count(<class 'database.models.OrderB2bMessage'> Where Rule.count(derive=models.DailyFlow.message_processed, as_count_of=models.OrderB2bMessage, where=lambda row: row.is_processed == True, insert_parent=True) - <function declare_logic.<locals>.<lambda> at 0x10bf7c720>, insert_parent)		## - 2026-11-20 09:40:26,290 - logic_logger - INFO
-  OrderB2bMessage		## - 2026-11-20 09:40:26,290 - logic_logger - INFO
-    5. RowEvent OrderB2bMessage._publish_order_b2b() 		## - 2026-11-20 09:40:26,290 - logic_logger - INFO
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-21 19:19:12,728 - logic_logger - INFO
+  DailyFlow		## - 2026-11-21 19:19:12,728 - logic_logger - INFO
+    1. Derive <class 'database.models.DailyFlow'>.message_rejected as Count(<class 'database.models.OrderB2bMessage'> Where Rule.count(derive=models.DailyFlow.message_rejected, as_count_of=models.OrderB2bMessage, where=lambda row: row.error_text is not None, insert_parent=True) - <function declare_logic.<locals>.<lambda> at 0x10bc79b20>, insert_parent)		## - 2026-11-21 19:19:12,728 - logic_logger - INFO
+    2. Derive <class 'database.models.DailyFlow'>.message_processed as Count(<class 'database.models.OrderB2bMessage'> Where Rule.count(derive=models.DailyFlow.message_processed, as_count_of=models.OrderB2bMessage, where=lambda row: row.is_processed == True, insert_parent=True) - <function declare_logic.<locals>.<lambda> at 0x10bc79a80>, insert_parent)		## - 2026-11-21 19:19:12,728 - logic_logger - INFO
+    3. Derive <class 'database.models.DailyFlow'>.message_received as Count(<class 'database.models.OrderB2bMessage'> Where  - None, insert_parent)		## - 2026-11-21 19:19:12,728 - logic_logger - INFO
+    4. Derive <class 'database.models.DailyFlow'>.message_pending as Formula (1): Rule.formula(derive=models.DailyFlow.message_pend [...]		## - 2026-11-21 19:19:12,728 - logic_logger - INFO
+  OrderB2bMessage		## - 2026-11-21 19:19:12,728 - logic_logger - INFO
+    5. RowEvent OrderB2bMessage._publish_order_b2b() 		## - 2026-11-21 19:19:12,729 - logic_logger - INFO
 
-Logic Phase:		COMPLETE(session=0x10c20f570))       	 - 2026-11-20 09:40:26,290 - logic_logger - INFO
+Logic Phase:		COMPLETE(session=0x10bf157b0))       	 - 2026-11-21 19:19:12,729 - logic_logger - INFO

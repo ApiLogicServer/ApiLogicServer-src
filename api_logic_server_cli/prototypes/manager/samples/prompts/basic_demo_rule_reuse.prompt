@@ -1,0 +1,38 @@
+// Executable Requirements - basic_demo
+
+// Paste this entire text into your Coding Assistant
+// Or, paste just this: Create basic_demo_rule_reuse from samples/prompts/basic_demo_rule_reuse.prompt
+
+Create basic_demo_rule_reuse from samples/dbs/basic_demo.sqlite
+
+Include a notes field for orders.
+
+On Placing Orders, Check Credit    
+    1. The Customer's balance is less than the credit limit
+    2. The Customer's balance is the sum of the unshipped Order amount_total
+    3. The Order's amount_total is the sum of the Item amount
+    4. The Item amount is the quantity * unit_price
+    5. The Item unit_price is copied from the Product unit_price
+
+Use case: App Integration
+    1. Publish the Order to Kafka topic 'order_shipping' when the date_shipped becomes not None.
+
+On Moving Orders to a different Customer, Check Credit
+    1. Recompute the customers balances as the sum of the unhipped order totals
+    2. The Customer's balance must not exceed the credit limit
+
+// Expected handling of the use case above (it is redundant): the AI adds NO new rule.
+//   It names one path (moving an order), but Check Credit's rules already run on every path: the balance
+//   sum adjusts both the old and the new Customer, and the credit check runs on both. So the AI:
+//     1. links the requirement to the existing rules:
+//            Uses: Customer.balance (Check Credit), Customer.credit_limit_check (Check Credit)
+//     2. writes a placeholder logic file, logic/logic_discovery/move_order/check_credit.py: the requirement
+//        as its docstring, no rules, and the Uses: line (so a later "implement reqs" finds it, adds nothing)
+//     3. flags it in ad-libs.md as redundant, with the test to write: moving an Order to a Customer whose
+//        balance would then exceed the credit limit is rejected
+//     4. creates no tests now: they are created when you ask ("create tests"), and then include that path.
+//   The report then shows this requirement "covered by existing rules" (Customer.balance,
+//   Customer.credit_limit_check).
+//   The constraint and the publish event get names (Customer.credit_limit_check, Order.shipping_publish).
+//   Why no new rule: a second constraint runs twice (and raises the error twice), and suggests each path
+//   needs its own rule - the opposite of what rules mean.

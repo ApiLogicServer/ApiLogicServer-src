@@ -1,0 +1,10 @@
+
+behave_run 1.0 started at: /Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/basic_demo_rule_reuse/test/api_logic_server_behave
+4 features passed, 0 failed, 0 skipped
+17 scenarios passed, 0 failed, 0 skipped
+85 steps passed, 0 failed, 0 skipped, 0 undefined
+Took 0m0.283s
+
+Behave Run Exit -- /Users/val/dev/genai-logic/ApiLogicServer-dev/build_and_test/genai-logic/basic_demo_rule_reuse/test/api_logic_server_behave/behave_run.py at November 22, 2026 09:08:59, run time: 0.347 s, result: 0
+
+

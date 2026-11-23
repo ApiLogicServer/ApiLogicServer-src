@@ -145,3 +145,125 @@ and the logs to the run.
 - **Security scan:** GitHub's CodeQL action, Python, suite `security-extended`.
 - **Other CI systems** (GitLab, Jenkins): the same four steps: install, start the server, run
   `test/api_logic_server_behave/behave_run.py --outfile=logs/behave.log`, keep the report.
+
+&nbsp;
+
+## 7. Two developers change the schema
+
+**Rule:** never merge `db.sqlite`. It is a local build product; rebuild it from what is in git.
+
+| What changes | Lives in git as | When both developers changed it |
+|---|---|---|
+| Schema | One Alembic migration per change (`database/alembic/versions/`) | Keep both files. Alembic reports two "heads": make the later one follow the earlier (its `down_revision`), or `alembic merge heads` |
+| `models.py` | Generated | Don't hand-merge: regenerate from the merged schema (`rebuild-from-database`) |
+| Test data | The seed script (ORM code) | Ordinary code merge |
+| Rules, APIs, tests | `logic/`, `api/`, `test/` | Ordinary code merge |
+
+**Start with a baseline.** A new project's `database/alembic/versions/` is empty: no migration describes the starting
+schema, so replaying the migrations builds nothing. Add a baseline before the first schema change (below).
+
+**When A has merged first, B:**
+1. Pulls main, keeps both migrations, and points theirs at A's.
+2. Rebuilds the database: delete `db.sqlite`, `alembic upgrade head` (A's change, then B's), run the seed.
+3. Regenerates `models.py` from it (`rebuild-from-database`) and finishes the seed merge.
+4. Runs the tests and pushes. CI applies the same migrations to Postgres.
+
+Steps 2-3 are one request to the AI assistant: *"I merged main; rebuild my database, models and seed data."*
+
+**What still needs people:** real conflicts, for example both renaming the same column, or a new required column the
+other's seed doesn't fill. The tests find them.
+
+**Make each schema change a migration.** The assistant's default flow (SQLite DDL, then `rebuild-from-database`)
+changes your database but writes no migration, so the change would not reach the rest of the team. In a team, ask for
+each change as an Alembic migration (`op.add_column(...)` and similar, which also run on Postgres), apply it, then
+`rebuild-from-database`.
+
+**Catch a schema change without a migration, at commit.** A git `pre-commit` hook (git runs it for every commit: the
+terminal, VS Code's Source Control panel, or your AI assistant) can refuse a commit that changes `database/models.py`
+without adding a file in `database/alembic/versions/`, and say why. Keep the hook in a committed folder (for example
+`devops/git-hooks/`) and have each developer run `git config core.hooksPath devops/git-hooks` once. A hook can be skipped
+(`git commit --no-verify`), so run the same check in CI as well (Section 6). When it refuses a commit, ask the assistant
+to *"write the migration for my model change"*: it writes the `op.*` operations, applies them, regenerates `models.py`,
+and you commit again.
+
+### Background: the baseline migration, or the existing database as the base
+
+A migration chain needs a starting point. There are two kinds, and teams usually use both.
+
+**Baseline migration ("revision 0").** One migration that creates the whole starting schema; every later migration is a
+change on top of it. Any new database is then built by replaying the chain from empty: a new developer's SQLite, CI's
+Postgres, a test environment. Nothing is copied between machines, and the same chain builds every engine.
+To create it: point Alembic at an empty database, generate the migration from `models.py`
+(`alembic revision --autogenerate -m "baseline"`), review it, and commit it. It is the only migration written that way;
+later ones are the changes.
+
+**The existing database as the base.** When the production database already exists (a project created from an existing
+database), it is not rebuilt: it already holds the baseline schema and its data. Mark it as being at the baseline,
+without running anything: `alembic stamp <baseline revision>`. From then on it receives only the later migrations.
+
+**Together:** dev and CI build from the baseline migration; production (and any long-lived copy of it) is stamped at the
+baseline and only ever upgraded. Check once that the two agree: build a fresh database from the baseline and compare its
+schema with production's.
+
+**Over time:** when the chain grows long, squash it: a new baseline equal to the current schema, with existing databases
+stamped at it. Replays stay fast and the history stays readable.
+
+**One setting to check:** `database/alembic.ini` sets `sqlalchemy.url` to the database it was generated for, a path on
+one machine. In a team, take the URL from the environment instead (`SQLALCHEMY_DATABASE_URI`, Section 2), so the same
+file works for every developer and in CI.
+
+
+&nbsp;
+
+## 8. Who owns the schema
+
+The migration chain is the same either way; what differs is who writes and who approves.
+
+| Model | Who writes migrations | Who approves | Suits |
+|---|---|---|---|
+| **Distributed** | Any developer | Code review, like any change | Small teams |
+| **DBA-owned** | The DBA | The DBA | Teams with strict schema standards; changes are serialized, so chains never fork |
+| **Hybrid** (recommended for larger teams) | The developer (or their AI assistant) drafts it in the pull request | The DBA, as a required reviewer | Most teams with a DBA |
+
+**Setting up the hybrid on GitHub:** a `CODEOWNERS` file that names the DBA for `database/alembic/` and
+`database/models.py`, plus branch protection that requires code-owner review. Developers are never blocked from
+proposing; nothing reaches main without the DBA.
+
+**Why approve rather than write:** with rules, schema changes are frequent. Every sum, count or formula is a derived
+column, and a dashboard adds a totals table, so implementing a requirement often touches the schema. A DBA who must
+write each change becomes a bottleneck; one who reviews a short migration, next to the requirement that needed it,
+does not. It is the same pattern as the rules: AI drafts, a person approves.
+
+**Put the DBA's standards in the context engineering** (Section 5): naming, types, indexes, what may never be dropped.
+The assistant's drafts then follow them before the DBA sees them.
+
+&nbsp;
+
+## 9. Derived columns: answering the DBA
+
+Every sum, count and formula is a stored column, so a DBA will ask about denormalization.
+
+**The core answer: one engine, not N applications.** The classic objection to stored derived values is that many
+applications and services each maintain them, each its own way, and they drift apart; hence "derive it at read time".
+Here there is one declaration in one engine, and every writer goes through it: the Admin App, the APIs, Kafka
+consumers, AI agents over MCP, and any service added later. No writer computes a derived value, so no two can
+disagree; the engine does it at commit, the same way every time. Derived data maintained this way is more consistent
+than in a shop where several applications share a database and each maintains its own totals.
+
+**The exception: writes around the logic tier.** Direct SQL, ETL and bulk loads bypass the rules. This is the
+well-known exposure of every 3-tier architecture, not something new here, and it is handled the usual way: the
+database credentials belong to the app server, and very few other programs have them. Beyond that:
+- route data changes through the API where you can;
+- after an approved bulk load, run a one-time recompute through the application;
+- if you want proof, schedule a drift check: a query comparing stored and recomputed values.
+
+**Operational points:**
+- **Why store them:** constraints need the value at commit (a balance must be checked against the credit limit inside
+  the transaction), and a stored sum is adjusted by the change (one row) instead of re-scanning the children on each read.
+- **Hot rows:** a parent aggregate (a customer's balance, a day's totals) is updated by every child transaction; review
+  high-volume ones as you would any hot row. LogicBank's pessimistic locking option prevents lost updates on them.
+- **Visibility:** every derived column is named in a rule, and the traceability report, the logic diagrams and the
+  column lineage list them. A naming convention or column comments, set in the CE overlay (Section 5), show them in
+  the schema too.
+- **Adding one to a table with data:** backfill the existing rows once, through the application, as part of the
+  migration.

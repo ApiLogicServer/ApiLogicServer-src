@@ -1,0 +1,19 @@
+{
+  "About Sample / Transaction Processing": 0.006,
+  "App Integration / Shipping an Order publishes it": 0.026,
+  "App Integration / Editing an unshipped Order does not publish": 0.016,
+  "App Integration / Editing a shipped Order does not publish again": 0.017,
+  "Check Credit / Order with Item is created": 0.014,
+  "Check Credit / Item quantity is changed": 0.017,
+  "Check Credit / Item product is changed": 0.02,
+  "Check Credit / Item is deleted": 0.016,
+  "Check Credit / Item is moved to another Order": 0.026,
+  "Check Credit / Order is deleted": 0.022,
+  "Check Credit / Shipped Order leaves the balance": 0.015,
+  "Check Credit / Unshipped Order re-enters the balance": 0.017,
+  "Check Credit / Order within the credit limit is accepted": 0.012,
+  "Check Credit / Order exactly at the credit limit is accepted": 0.012,
+  "Check Credit / Order over the credit limit is rejected": 0.017,
+  "Move Order Check Credit / Moving an Order adjusts both balances": 0.019,
+  "Move Order Check Credit / Moving an Order over the new Customer's limit is rejected": 0.019
+}

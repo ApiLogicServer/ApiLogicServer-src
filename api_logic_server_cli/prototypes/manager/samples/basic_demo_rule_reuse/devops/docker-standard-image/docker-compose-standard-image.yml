@@ -1,0 +1,35 @@
+
+# Runs this project in the standard image (apilogicserver/api_logic_server) - no build required.
+#
+# cd <project>
+# docker compose -f devops/docker-standard-image/docker-compose-standard-image.yml up      # open http://localhost:5656
+# docker compose -f devops/docker-standard-image/docker-compose-standard-image.yml down
+#
+# Equivalent, without compose (run `down` first if you used compose, they share the container name):
+# docker run -it --rm --name api_logic_project -p 5656:5656 --env-file ./devops/docker-standard-image/env.list -v ${PWD}:/app apilogicserver/api_logic_server python3 /app/api_logic_server_run.py
+#
+# Podman: same commands, `podman` / `podman compose`.
+
+services:
+  api-logic-server:
+    image: apilogicserver/api_logic_server
+    container_name: api_logic_project
+    environment:
+      - APILOGICPROJECT_VERBOSE=false
+      - APILOGICPROJECT_SECURITY_ENABLED=false
+      # Keycloak (only if security is enabled with the keycloak provider).
+      # The container cannot reach Keycloak at "localhost" - use the host's IP (or host.docker.internal), eg:
+      # - APILOGICPROJECT_KEYCLOAK_REALM=kcals
+      # - APILOGICPROJECT_KEYCLOAK_BASE_URL=http://<your-host-ip>:8080/realms/kcals
+      # - APILOGICPROJECT_KEYCLOAK_BASE=http://<your-host-ip>:8080
+      # - APILOGICPROJECT_KEYCLOAK_CLIENT_ID=alsclient
+    env_file:
+      - ./env.list
+    volumes:
+      - ./../..:/app
+    ports:
+      - 5656:5656
+    command: python3 /app/api_logic_server_run.py
+    stdin_open: true
+    tty: true
+    restart: unless-stopped

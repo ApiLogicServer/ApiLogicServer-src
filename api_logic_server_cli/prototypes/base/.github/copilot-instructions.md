@@ -1,5 +1,5 @@
 ---
-version: 3.72 - 11/21/26 - B2B APIs log partner values through api_utils.safe_log() (CodeQL log-injection). 3.71 - 11/19/26 - Opt-in B2B request log ("record each request, with its outcome"): request row committed first, failure recorded on the governed session. Verify Message Subscriptions: offsets are now committed (FlaskKafka 1.02), so only the first start reads old messages. Order-flow dashboards: see queries_dashboards.md 1.6 (rule-maintained daily totals, stamping keys, zero days, no cache).
+version: 3.73 - 11/21/26 - Rule names and reuse (LogicBank 1.34.06): "implement reqs" names every constraint and event (name=), and checks for an existing rule before writing one; a redundant requirement is linked to it (Uses:, and a placeholder logic file with no rules as its content anchor) and logged as an ad-lib, with the path it names noted as a test to write when tests are created - no duplicate rule, and no tests created unasked. 3.72 - 11/21/26 - B2B APIs log partner values through api_utils.safe_log() (CodeQL log-injection). 3.71 - 11/19/26 - Opt-in B2B request log ("record each request, with its outcome"): request row committed first, failure recorded on the governed session. Verify Message Subscriptions: offsets are now committed (FlaskKafka 1.02), so only the first start reads old messages. Order-flow dashboards: see queries_dashboards.md 1.6 (rule-maintained daily totals, stamping keys, zero days, no cache).
 version: 3.70 - 11/17/26 - Executable Requirements: "implement reqs" now finds the existing logic file by content (the `Feature:` line, or the verbatim requirement text in its docstring), not by name; the naming convention is the fallback. One match: edit it; none: new use case; several: ask. A renamed or moved logic file was otherwise missed, and a second file written beside it: duplicate derivations stop the server, but duplicate constraints and events run twice.
 version: 3.69 - 11/13/26 - Requirements Traceability Report (generator 2.15+): each "Logic diagram" fold now shows the numbered rules beside the diagram (the same list as logic_flow_<req>.md), so the numbers on the diagram arrows can be matched to rules. The list is read from logic_flow_<req>.md, which `logic_diagram_gv.py --each` writes with the SVG; without it the fold shows the diagram alone.
 version: 3.68 - 11/10/26 - "Migrate AI Rules": two gaps found by migrating samples/allocate_dept_account_demo by hand. (1) The sequence assumed `integration/ai/llm_client.py` exists; older projects lack it, so STEP 2b copies it from the installed package first. (2) Detection now also looks for other key variable names (`OPENAI_API_KEY`, `os.environ`/`os.getenv` reads of a key) and STEP 4 / the summary must tell the user that the old variable is no longer read; failures the old handler swallowed are now logged.
@@ -1006,6 +1006,31 @@ STEP 5: Read docs/training/implement_requirements.md COMPLETELY (silently)
 STEP 6: Implement all steps in requirements.md in sequence.
          Schema is already correct from the assessment above — no DDL surprises mid-implementation.
          LOGIC FILES: before writing each logic file:
+           [ ] EXISTING RULE FIRST — before writing any rule, look for one that already does the job, in every logic
+               file: the same derived column; a constraint on the same table that reads the same columns; an event on
+               the same table with the same topic or purpose. If one exists, do NOT write another (a second derivation
+               stops the server; a second constraint or event is not detected and runs twice). Instead:
+                 1. link the requirement to it: add `Uses: <Table.name> (<its requirement>)` under the requirement in
+                    docs/requirements/<use_case_name>/requirements.md (rule names: logic_bank_api.md, "RULE NAMES");
+                 1b. still write the requirement's logic file, in its use-case folder as usual
+                    (logic/logic_discovery/<use_case>/<name>.py), as a PLACEHOLDER with no rules: the module docstring is
+                    the verbatim requirement (the content anchor, so a later "implement reqs" finds it and adds nothing),
+                    and declare_logic() holds only a docstring naming what it uses, for example:
+                        def declare_logic():
+                            """No rules of its own: covered by existing rules, which run on every write path.
+                            Uses: Customer.balance (Check Credit), Customer.credit_limit_check (Check Credit)"""
+                    Name the rules, not the files that hold them (names survive renames). The traceability report reads
+                    this Uses: line too, and shows the requirement as "covered by existing rules";
+                 2. if the requirement names a path ("on moving an order to another customer"), note that path in the
+                    ad-lib below as the test to write. Do NOT create tests now: tests are created only when the user
+                    asks ("create tests"), and testing.md ("Requirements with only Uses:") turns the note into a scenario;
+                 3. log it in ad-libs.md: "redundant: <Table.name> already enforces this on every path; no new rule
+                    added; test to write: <the path>" (🟡 FYI if it restates the rule; 🔴 if it seems to want something different - then ask, and
+                    never change the existing rule silently).
+               Do not decide that two different expressions are equivalent: if the target matches but the condition
+               differs, show both and ask. A requirement that names one path for a rule that runs on every path is
+               the common case: rules are not per path.
+           [ ] NAME constraints and events (`name=`, logic_bank_api.md "RULE NAMES"); derivations are named by their column.
            [ ] A clause that names something the data does not define ("authorized courier", "designated
                office", "approved supplier") is IMPLEMENTED, never skipped. Pick the closest column the
                data does carry, put the compared value in a SysConfig column (Step 4a), default it to what the

@@ -31,6 +31,13 @@ Step 4d. COVERAGE CLOSE-OUT → Re-walk the Step 2b plan against the .feature fi
 Step 5.  SUGGEST "run the tests" (DO NOT run automatically as part of creating tests)
 ```
 
+**Requirements with only `Uses:`.** A requirement implemented by an existing rule (its requirements.md has a `Uses:`
+line and no rules of its own) still gets its own Feature, named as its `Feature:` / heading, with scenarios for what it
+states. If it names a path, test that path: "On moving orders to a different customer, the balance must not exceed the
+credit limit" -> a scenario that moves an order to a customer whose balance would then exceed the limit, and expects
+the rejection (and the balances unchanged). This is how the report shows the requirement tested. The path is noted in ad-libs.md ("test to write") by "implement reqs"; write
+the scenario here, when tests are created.
+
 **COVERAGE MATRIX (Step 2b) - applied to every rule, not sampled.** Each applicable row needs its own scenario.
 The full text, with the move-to-another-parent detail, is in "Key Testing Patterns" further down.
 

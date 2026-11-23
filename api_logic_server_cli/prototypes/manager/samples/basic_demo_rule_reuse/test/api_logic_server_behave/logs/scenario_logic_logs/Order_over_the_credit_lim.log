@@ -1,0 +1,44 @@
+  Order over the credit limit is rejected  - 2026-11-22 09:08:59,361 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109d7c490) (sqlalchemy before_flush)			 - 2026-11-22 09:08:59,362 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: Ann 1795367339361, balance: None, credit_limit: 200, email: None, email_opt_out: None  row: 0x109d7b150  session: 0x109d7c490  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,362 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: Ann 1795367339361, balance: 0, credit_limit: 200, email: None, email_opt_out: None  row: 0x109d7b150  session: 0x109d7c490  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,362 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109d7c490)   										 - 2026-11-22 09:08:59,362 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109d7c490)   										 - 2026-11-22 09:08:59,363 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-22 09:08:59,363 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x109d7c490))       	 - 2026-11-22 09:08:59,363 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109d7d9d0) (sqlalchemy before_flush)			 - 2026-11-22 09:08:59,364 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: test O1, customer_id: 19, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x109d7a350  session: 0x109d7d9d0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,365 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: test O1, customer_id: 19, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109d7a350  session: 0x109d7d9d0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,365 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x109d7d9d0)   										 - 2026-11-22 09:08:59,365 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x109d7d9d0)   										 - 2026-11-22 09:08:59,365 - logic_logger - INFO
+..Order[21] {AfterFlush Event} id: 21, notes: test O1, customer_id: 19, CreatedOn: None, date_shipped: None, amount_total: 0  row: 0x109d7a350  session: 0x109d7d9d0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,365 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-22 09:08:59,365 - logic_logger - INFO
+  Customer		## - 2026-11-22 09:08:59,365 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x109b298a0>)		## - 2026-11-22 09:08:59,365 - logic_logger - INFO
+  Order		## - 2026-11-22 09:08:59,365 - logic_logger - INFO
+    2. RowEvent Order.send_row_to_kafka() name: shipping_publish 		## - 2026-11-22 09:08:59,365 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x109d7d9d0))       	 - 2026-11-22 09:08:59,365 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109d7d8c0) (sqlalchemy before_flush)			 - 2026-11-22 09:08:59,369 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: 21, product_id: 1, quantity: 2, amount: None, unit_price: None  row: 0x109d7b550  session: 0x109d7d8c0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,369 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 21, product_id: 1, quantity: 2, amount: None, unit_price: 150.0000000000  row: 0x109d7b550  session: 0x109d7d8c0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,369 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: 21, product_id: 1, quantity: 2, amount: 300.0000000000, unit_price: 150.0000000000  row: 0x109d7b550  session: 0x109d7d8c0  ins_upd_dlt: ins, initial: ins - 2026-11-22 09:08:59,369 - logic_logger - INFO
+....Order[21] {Update - Adjusting order: amount_total} id: 21, notes: test O1, customer_id: 19, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 300.0000000000  row: 0x109dd2050  session: 0x109d7d8c0  ins_upd_dlt: upd, initial: upd - 2026-11-22 09:08:59,369 - logic_logger - INFO
+......Customer[19] {Update - Adjusting customer: balance} id: 19, name: Ann 1795367339361, balance:  [0E-10-->] 300.0000000000, credit_limit: 200.0000000000, email: None, email_opt_out: None  row: 0x109dd2ed0  session: 0x109d7d8c0  ins_upd_dlt: upd, initial: upd - 2026-11-22 09:08:59,369 - logic_logger - INFO
+......Customer[19] {Constraint Failure (Customer.credit_limit_check): Customer balance (300.0000000000) exceeds credit limit (200.0000000000)} id: 19, name: Ann 1795367339361, balance:  [0E-10-->] 300.0000000000, credit_limit: 200.0000000000, email: None, email_opt_out: None  row: 0x109dd2ed0  session: 0x109d7d8c0  ins_upd_dlt: upd, initial: upd - 2026-11-22 09:08:59,369 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2026-11-22 09:08:59,369 - logic_logger - INFO
+  Customer		## - 2026-11-22 09:08:59,369 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x109b298a0>)		## - 2026-11-22 09:08:59,370 - logic_logger - INFO
+    2. Constraint Customer.credit_limit_check 		## - 2026-11-22 09:08:59,370 - logic_logger - INFO
+  Item		## - 2026-11-22 09:08:59,370 - logic_logger - INFO
+    3. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		## - 2026-11-22 09:08:59,370 - logic_logger - INFO
+    4. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		## - 2026-11-22 09:08:59,370 - logic_logger - INFO
+  Order		## - 2026-11-22 09:08:59,370 - logic_logger - INFO
+    5. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		## - 2026-11-22 09:08:59,370 - logic_logger - INFO

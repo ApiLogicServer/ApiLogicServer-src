@@ -1,0 +1,57 @@
+# Tech preview: run the project's Behave tests and the Requirements Traceability Report in GitHub Actions.
+#
+# MANUAL ONLY: it runs when you press "Run workflow" (repo > Actions > Tests). It never runs by itself.
+# To run it on every push and pull request, add under `on:`:
+#     push:
+#     pull_request:
+# To turn it off completely, delete this file (GitHub reads only .yml / .yaml files in .github/workflows/).
+#
+# No services needed: SQLite, SQL authentication (database/authentication_db.sqlite), Kafka simulated
+# (scenarios that need a live broker are skipped). The job fails if any scenario fails.
+# The traceability report and the logs are attached to the run (Summary > Artifacts).
+
+name: Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      SECURITY_PROVIDER: sql     # the SQL user database, not Keycloak
+      KAFKA_SERVER: ""           # no broker: Kafka runs simulated
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Start the server
+        run: |
+          mkdir -p logs
+          python api_logic_server_run.py > logs/server.log 2>&1 &
+          for i in $(seq 1 60); do curl -s -o /dev/null http://localhost:5656/ && exit 0; sleep 2; done
+          echo "server did not start"; cat logs/server.log; exit 1
+
+      - name: Run the tests
+        working-directory: test/api_logic_server_behave
+        run: python behave_run.py --outfile=logs/behave.log
+
+      - name: Requirements Traceability Report
+        if: always()
+        working-directory: test/api_logic_server_behave
+        run: python requirements_traceability_report.py run
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            docs/requirements/Requirements Traceability Report.md
+            test/api_logic_server_behave/logs/
+            logs/
