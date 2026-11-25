@@ -12,46 +12,20 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "17.05.44"  # last public release: 17.05.38
+__version__ = "17.05.44"  # last public release: 17.05.44
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t11/22/2026 - 17.05.44  LogicBank 1.34.06, rule reuse in > 1 reqmt \n"\
-    "\t11/21/2026 - 17.05.42  demo_eai dashboard, docker fix/qs, podman installer/win, open llm for ai rules, remove genai-* \n"\
-    "\t11/10/2026 - 17.05.25  codeQL, Ontology (SHACL, lineage), subtype groups in dgms, samples reorg, LB 1.34.04, AI fix \n"\
-    "\t11/01/2026 - 17.05.17  Modernization (example 2) \n"\
-    "\t10/26/2026 - 17.05.10  L1, Revised Behave Report, Students and Courses, Mgr readme launch fixes \n"\
-    "\t10/16/2026 - 17.05.01  Students and Courses, Mgr launch fixes \n"\
-    "\t10/12/2026 - 17.04.12  LogicBank issues 27-39, README / samples (eai) updates, readme fixes \n"\
+    "\t11/22/2026 - 17.05.44  demo_eai dashboard, rules in > 1 reqmt, container quickstart, ai rules/open llm, ontology, modernization  \n"\
     "\t09/10/2026 - 17.04.00  Group-by subtotals - basic_demo_sales_by_month \n"\
-    "\t09/06/2026 - 17.03.27  More doc for podman, security api fix #116 \n"\
-    "\t09/04/2026 - 17.03.25  RFI declared & mixed, CE usage reduction, samples readmes \n"\
     "\t08/23/2026 - 17.03.20  Vulnerabilities fixed, Requirements from Interview (RFI) docs, LB locking \n"\
-    "\t08/07/2026 - 17.03.10  CE for Dashboards & Vibe, LB and CS fixes / examples, no Ont, CLVS, pip-audit \n"\
-    "\t07/22/2026 - 17.03.06  Context Engineering for Dashboards & Vibe, LB and CS fixes \n"\
     "\t07/10/2026 - 17.02.08  entity types diagram, LB 1.31.05 evt bug, admin home page fixes, simple browser (mgr), count inits \n"\
     "\t06/11/2026 - 17.00.35  logic report / flow diagram, cvls with hazmat, basic_demo_logic_gov, sec & raw logic fixes \n"\
     "\t05/14/2026 - 17.00.24  gov rpt, ad-lib with approach (fair gemini), sample names \n"\
-    "\t04/21/2026 - 17.00.00  EAI/Kafka CE pub/sub automation (see demo_eai, fix issue 110), executable requirements  \n"\
-    "\t02/06/2026 - 16.01.22: save nl logic by use-case/reqmt, logic operation, docent, demo fix \n"\
-    "\t01/06/2026 - 16.01.03: win11 Python 3.13 fixes for panda, oracle, kafka, postgres \n"\
-    "\t12/11/2025 - 16.00.04: bug fix [106] - SqlServer autoinsert \n"\
-    "\t11/25/2025 - 16.00.03: Probabalistic logic (w/ fallback, cand*) - see basic_demo/readme_ai_mcp.md \n"\
-    "\t08/17/2025 - 15.01.03: LogicBan 01.30, with fix for copy_children[19] \n"\
-    "\t08/13/2025 - 15.01.02: Id vs ID in codegen (parent_accessor_from_fk: [#100]), pyodbc fix in blt \n"\
-    "\t08/09/2025 - 15.01.00: improved vibe instructions \n"\
-    "\t08/06/2025 - 15.00.65: instructions for custom API endpoints, behave testing \n"\
-    "\t07/20/2025 - 15.00.52: Python 3.13 compatibility fixes - psycopg2→psycopg3, SQLAlchemy 2.0+, pkg_resources→importlib.metadata.  mgr dbs \n"\
-    "\t07/17/2025 - 15.00.49: venv fix+, ext bldr * fix, copilot vibe tweaks - creation, mcp logic, basic_demo autonums \n"\
-    "\t07/10/2025 - 15.00.41: copilot vibe support for logic, UI, MCP,  bug[98] \n"\
-    "\t06/30/2025 - 15.00.33: Tech Preview: genai-logic genai-add-app --vibe, bug [96, 97] \n"\
     "\t06/10/2025 - 15.00.12: MCP Security, win fixes for readme, graphics quotes \n"\
     "\t06/08/2025 - 15.00.10: MCP, optional shortening of stacktrace lines, bugfix[92] \n"\
-    "\t05/16/2025 - 14.05.00: safrs 3.1.7, running mcp preview \n"\
     "\t04/27/2025 - 14.04.00: Graphics preview, Vibe install fix, Improved IDE Chat Logic, MCP Exploration \n"\
     "\t03/30/2025 - 14.03.25: WebGenAI fixes for Kafka and Keycloak \n"\
     "\t03/19/2025 - 14.03.20: licensed webgenai docker, [87] sra fix for home.js \n"\
-    "\t02/26/2025 - 14.03.14: [85: reserved words], genai_demo fixes \n"\
-    "\t01/17/2025 - 14.02.20: WebGenAI support, genai_demo \n"\
     "\t01/06/2024 - 14.01.00: N8N, Rebuild test data, Fixup, Project Import, Improved reporting of missing attributes, Simplified RowDictMaper  \n"\
     "\t11/18/2024 - 12.02.00: genai: 'qualified any' now supported in logic training \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\
