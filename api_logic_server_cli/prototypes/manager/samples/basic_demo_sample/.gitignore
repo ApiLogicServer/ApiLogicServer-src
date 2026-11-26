@@ -7,3 +7,5 @@ venv/
 test/api_logic_server_behave/scenario_logic_logs/
 devops/docker-compose-dev-local-nginx/www
 devops/docker-compose-dev-azure-nginx/www
+# real secrets (see devops/docker-compose-prod/secrets.env.example) - never commit
+secrets.env

@@ -39,6 +39,14 @@ def _filter_unsupported_sqlite_ops(context, revision, directives):
 # access to the values within the .ini file in use.
 config = context.config
 
+# Target database: SQLALCHEMY_DATABASE_URI from the environment, like the server (config/config.py), so the same
+# migrations run against dev, pre-prod and prod; without it, alembic.ini's URL (the dev database).
+import os, sys
+_db_url = os.getenv("SQLALCHEMY_DATABASE_URI") or config.get_main_option("sqlalchemy.url")
+if sys.version_info >= (3, 13) and _db_url.startswith("postgresql://"):   # psycopg3, as config.py does
+    _db_url = _db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+config.set_main_option("sqlalchemy.url", _db_url.replace("%", "%%"))       # ini syntax: escape % (e.g. in passwords)
+
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
@@ -102,7 +110,6 @@ def run_migrations_online():
         with context.begin_transaction():
             context.run_migrations()
 
-print("hello")
 if context.is_offline_mode():
     run_migrations_offline()
 else:

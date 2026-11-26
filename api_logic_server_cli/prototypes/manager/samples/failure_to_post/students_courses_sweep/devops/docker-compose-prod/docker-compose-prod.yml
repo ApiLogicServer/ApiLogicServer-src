@@ -1,0 +1,14 @@
+# "Prod-shaped" run on your machine: the same image as dev, configured only by environment.
+#   cp secrets.env.example secrets.env   (then edit; secrets.env is gitignored)
+#   docker compose -f devops/docker-compose-prod/docker-compose-prod.yml up
+services:
+  api-logic-server:
+    image: apilogicserver/studentscoursessweep:latest
+    ports:
+      - "5656:5656"
+    environment:                              # non-secret settings (a real cloud: the service's settings / ConfigMap)
+      - APILOGICPROJECT_ENV=${APILOGICPROJECT_ENV:-prod}   # pre-prod: APILOGICPROJECT_ENV=preprod docker compose ... up
+      - SECURITY_ENABLED=true
+      - APILOGICPROJECT_CONSUME_DEBUG=false
+    env_file:
+      - secrets.env                           # secrets (a real cloud: Secret Manager / Key Vault, injected the same way)

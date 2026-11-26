@@ -25,6 +25,8 @@ services:
         environment:
           - APILOGICPROJECT_VERBOSE=true
           - SECURITY_ENABLED=true
+          - APILOGICPROJECT_ENV=dev  # dev/test deployment: allows the placeholder SECRET_KEY. For pre-prod / prod,
+                                      # remove this line and set SECRET_KEY from your secrets store.
           ## todid - use default database uri's:
           # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=sqlite:///../database/db.sqlite
           # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=sqlite:///../database/authentication_db.sqlite

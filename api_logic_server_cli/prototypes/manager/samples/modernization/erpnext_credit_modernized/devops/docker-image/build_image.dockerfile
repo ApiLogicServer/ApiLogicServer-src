@@ -17,4 +17,8 @@ COPY ../../ .
 # enables docker to write into container, for sqlite
 RUN chown -R api_logic_server /home/api_logic_project
 
+# containers default to prod: with security enabled, the server refuses the placeholder SECRET_KEY.
+# Pre-prod and local container tests override it: docker run -e APILOGICPROJECT_ENV=preprod (or dev)
+ENV APILOGICPROJECT_ENV=prod
+
 CMD [ "python", "./api_logic_server_run.py" ]

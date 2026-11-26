@@ -34,6 +34,18 @@ Configuration (database URI, security, ports) is by environment variable - see `
 
 &nbsp;
 
+## Dev, pre-prod and prod
+
+One image runs in every environment; only its environment variables differ.  Dev uses `config/default.env` (see `config/readme-config.md`).  Pre-prod and prod get their settings from the deployment and their secrets from a secrets store, never from a committed file.
+
+`docker-compose-prod` runs a prod-shaped environment on your machine: the project's image, `APILOGICPROJECT_ENV=prod`, and secrets from a gitignored `secrets.env` (copy it from `secrets.env.example`, which explains each value).  With SQL security, the server refuses to start in prod until you set a real `SECRET_KEY`.
+
+Pre-prod (test, staging) uses the same folder: on the pre-prod machine, its own `secrets.env` holds the pre-prod database and key, and `APILOGICPROJECT_ENV=preprod docker compose -f docker-compose-prod.yml up` starts it.  There is deliberately no `docker-compose-test`: one deployment definition, different values per environment.
+
+> Walkthrough, including creating the prod database and migrating its schema with Alembic: [DevOps Quick Start: Dev to Prod](https://apilogicserver.github.io/Docs/DevOps-Quick-Start-Dev-to-Prod/).
+
+&nbsp;
+
 ## Deploying to the cloud
 
 Use these directories to deploy your system to the cloud.  This means you can provide a preview of [working software](https://apilogicserver.github.io/Docs/Working-Software-Now/) for your team:

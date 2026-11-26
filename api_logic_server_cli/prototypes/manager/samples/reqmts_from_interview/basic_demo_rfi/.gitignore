@@ -10,3 +10,5 @@ devops/docker-compose-dev-azure-nginx/www
 .vscode/settings.json
 logs/*
 !logs/readme.md
+# real secrets (see devops/docker-compose-prod/secrets.env.example) - never commit
+secrets.env

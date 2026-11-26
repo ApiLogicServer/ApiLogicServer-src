@@ -67,11 +67,22 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
 
     
     flask_app.config["PROPAGATE_EXCEPTIONS"] = True
-    flask_app.config["JWT_SECRET_KEY"] = "ApiLogicServerSecret"  # Change this!
+    jwt_secret = Config.SECRET_KEY or "ApiLogicServerSecret"  # SECRET_KEY: default.env in dev, secrets store in pre-prod / prod
+    flask_app.config["JWT_SECRET_KEY"] = jwt_secret
     flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=222)  #  change as you see fit
     flask_app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 
     Config.SECURITY_PROVIDER.configure_auth(flask_app=flask_app)   # type-specific configuration
+
+    # The SQL provider signs tokens with SECRET_KEY (HS256); Keycloak signs them itself (RS256), so no secret is used here.
+    signs_with_secret = str(flask_app.config.get("JWT_ALGORITHM", "HS256")).upper().startswith("HS")
+    if signs_with_secret and jwt_secret in Config.PLACEHOLDER_SECRET_KEYS:
+        if Config.APILOGICPROJECT_ENV != "dev":
+            security_logger.error(f"\nSECRET_KEY is the shipped placeholder, and APILOGICPROJECT_ENV is '{Config.APILOGICPROJECT_ENV}'. "
+                                  "Anyone could sign login tokens. Set SECRET_KEY from your secrets store "
+                                  "(or APILOGICPROJECT_ENV=dev for local testing). Server not started.\n")
+            sys.exit(1)
+        security_logger.info("SECRET_KEY is the shipped placeholder - fine for dev; set your own before pre-prod / prod")
 
     jwt = JWTManager(flask_app)
     

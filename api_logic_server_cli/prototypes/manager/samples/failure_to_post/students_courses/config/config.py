@@ -123,6 +123,11 @@ class Config:
 
     # General Config
     SECRET_KEY = environ.get("SECRET_KEY")
+    ''' signs login tokens (SQL security provider); from the secrets store in pre-prod and prod '''
+    PLACEHOLDER_SECRET_KEYS = ("whatnothow", "ApiLogicServerSecret")
+    ''' shipped defaults - the server refuses to start with one of these outside dev (security/system/authentication.py) '''
+    APILOGICPROJECT_ENV = os.getenv("APILOGICPROJECT_ENV", "dev").lower().strip()
+    ''' dev | preprod | prod - default.env says dev; the deployment sets it; the project dockerfile defaults to prod '''
     FLASK_APP = environ.get("FLASK_APP")
     FLASK_ENV = environ.get("FLASK_ENV")
     DEBUG = environ.get("DEBUG")
