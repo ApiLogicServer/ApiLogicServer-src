@@ -4,8 +4,10 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.47
+version: 2.48
 changelog:
+  - 2.48 (Nov 25 2026) - BLT section: the AI never starts BLT (a "do a BLT?" request is a question). BLT rebuilds
+    `build_and_test/genai-logic`, where an AI session here is rooted, so starting it ends that session.
   - 2.47 (Nov 15 2026) - **Retired GenAI (prompt engineering) content archived.** Cut the "GenAI Prompt Engineering
     Architecture" section and the body of AI mode 3 "GenAI CLI Services" (~230 lines: ChatGPT pipeline, prompt inserts,
     WGResult, fine-tuning, the Jul 2026 command audit). The `genai-logic genai` family was removed Nov 10 (Manager CE
@@ -1308,6 +1310,11 @@ This understanding should be reflected in two source files in `org_git/ApiLogicS
 - **See also:** [Architecture-Internals.md#docs-used-in-project-creation](https://apilogicserver.github.io/Docs/Architecture-Internals/#docs-used-in-project-creation)
 
 **BLT (Build-Load-Test):**
+- 🚨 **Val runs BLT, not the AI.** Never start it yourself, even when asked "do a BLT and ...?" — that is a question;
+  answer it and let Val run it. BLT deletes and rebuilds `build_and_test/genai-logic`, the directory an AI session
+  here is rooted in (its venv, its subagents, its working files), so starting it from such a session ends that
+  session mid-run. Real case (Nov 25 2026): an AI started BLT in the background to verify a fix and lost its session.
+  When a change needs BLT, say so and stop; after Val's BLT, verify against the rebuilt venv.
 - Rebuilds API Logic Server from dev source
 - **Builds from the current working tree of `org_git/ApiLogicServer-src` — committed or not.** Uncommitted
   edits and brand-new untracked files are included; no `git commit` (or push) is needed before a BLT run

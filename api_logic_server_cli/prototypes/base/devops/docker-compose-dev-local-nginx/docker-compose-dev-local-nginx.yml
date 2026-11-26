@@ -21,6 +21,8 @@ services:
           - APILOGICPROJECT_VERBOSE=true
           - APILOGICPROJECT_CLIENT_URI=//${HOST_IP}
           - SECURITY_ENABLED=true
+          - APILOGICPROJECT_ENV=dev  # dev/test deployment: allows the placeholder SECRET_KEY. For pre-prod / prod,
+                                      # remove this line and set SECRET_KEY from your secrets store.
           - PYTHONPATH=/app/ApiLogicProject 
           ## TODO: verify Database uri's here, 
           # if-postgres - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@postgresql-service/apilogicserver_database_name

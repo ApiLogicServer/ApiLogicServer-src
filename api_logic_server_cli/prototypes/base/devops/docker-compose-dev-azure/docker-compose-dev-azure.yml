@@ -9,6 +9,8 @@ services:
         environment:
           - APILOGICPROJECT_VERBOSE=true
           - SECURITY_ENABLED=true
+          - APILOGICPROJECT_ENV=dev  # dev/test deployment: allows the placeholder SECRET_KEY. For pre-prod / prod,
+                                      # remove this line and set SECRET_KEY from your secrets store.
           - APILOGICPROJECT_CLIENT_URI=//apilogicserver_project_name_lower.azurewebsites.net
           # - APILOGICPROJECT_HTTP_SCHEME=https
           - PYTHONPATH=/app/ApiLogicProject 

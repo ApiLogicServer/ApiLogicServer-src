@@ -43,13 +43,17 @@ practice 2 holds.
 ## 2. Configuring a project for dev, pre-prod and prod
 
 One code base; each environment differs only in **environment variables**. They override `config/default.env`, which
-overrides `config/config.py`.
+overrides `config/config.py`. This is the standard industry practice, not specific to GenAI-Logic; the diagrams and
+the per-environment sources (deployment config, secrets stores) are in
+[Environments and Secrets](https://apilogicserver.github.io/Docs/DevOps-Container-Configuration/#environments-and-secrets-dev-pre-prod-prod).
 
 | Setting | Dev | Pre-prod (CI, staging) | Prod |
 |---|---|---|---|
 | `SQLALCHEMY_DATABASE_URI` | default: `database/db.sqlite` | `postgresql://...` (test database) | `postgresql://...` |
 | `SQLALCHEMY_DATABASE_URI_AUTHENTICATION` | default: `database/authentication_db.sqlite` | Postgres, or Keycloak (no auth db) | Keycloak, or Postgres |
 | `SECURITY_ENABLED` | `true` (SQL provider) or `false` | `true` | `true` |
+| `APILOGICPROJECT_ENV` | `dev` (`default.env`) | `preprod` | `prod` (the project's container image default) |
+| `SECRET_KEY` (signs login tokens, SQL security) | placeholder in `default.env` (logs a reminder) | from the secrets store | **from the secrets store**; the server will not start with the placeholder |
 | `KAFKA_SERVER`, `KAFKA_CONSUMER_GROUP` | unset (simulated), or local broker | test broker; group unique per environment | prod broker; own group |
 | `APILOGICPROJECT_CONSUME_DEBUG` | `true` | `true` for test runs | **`false`** (the debug services have no login) |
 | `APILOGICPROJECT_KAFKA_COMMIT_OFFSETS` | default (`true`) | default | default; never `false` |
